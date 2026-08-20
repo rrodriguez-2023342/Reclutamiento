@@ -2,17 +2,19 @@ import prisma from './prisma.js'
 import { ADMIN_ROLE, ALLOWED_ROLES } from './roles.constant.js'
 import { hashPassword } from '../utils/password.utils.js'
 
+// Crea los roles permitidos en la base de datos si no existen
 export const seedRoles = async () => {
   for (const nombre of ALLOWED_ROLES) {
     await prisma.role.upsert({
       where: { nombre },
-      update: {},
-      create: { nombre },
+      update: {}, // No modifica nada si ya existe
+      create: { nombre }, // Crea el rol si no existe
     })
   }
   console.log(`Roles asegurados: ${ALLOWED_ROLES.join(', ')}`)
 }
 
+// Crea un usuario administrador por defecto si no existe
 export const seedDefaultAdmin = async () => {
   const adminRole = await prisma.role.findUnique({ where: { nombre: ADMIN_ROLE } })
   if (!adminRole) throw new Error(`Rol ${ADMIN_ROLE} no encontrado al crear admin`)
@@ -33,7 +35,7 @@ export const seedDefaultAdmin = async () => {
     create: {
       nombre: adminNombre,
       correo: adminEmail,
-      password: hashed,
+      password: hashed, 
       rol_id: adminRole.id,
       activo: true,
     },

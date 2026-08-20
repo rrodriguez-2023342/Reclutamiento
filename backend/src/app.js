@@ -1,6 +1,7 @@
 import express from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
+import roleRoutes from './routes/role.routes.js'
 
 const app = express()
 
@@ -11,6 +12,8 @@ app.use(express.json())
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
+
+app.use('/api/roles', roleRoutes)
 
 app.use((req, res) => {
   res.status(404).json({ status: 'error', message: 'Ruta no encontrada' })

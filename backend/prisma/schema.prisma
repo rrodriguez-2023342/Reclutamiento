@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum EstadoPostulante {
+  PENDIENTE  @map("Pendiente")
+  EN_PROCESO @map("En Proceso")
+  CONTRATADO @map("Contratado")
+  RECHAZADO  @map("Rechazado")
+}
+
+enum EstadoCivil {
+  SOLTERO    @map("Soltero (a)")
+  CASADO     @map("Casado (a)")
+  UNIDO      @map("Unido (a)")
+  VIUDO      @map("Viudo (a)")
+  DIVORCIADO @map("Divorciado (a)")
+}
+
+enum ViviendaTipo {
+  PROPIA    @map("Propia")
+  ALQUILADA @map("Alquilada")
+  FAMILIAR  @map("Familiar")
+  OTRA      @map("Otra")
+}
+
+enum MedioEnterado {
+  ANUNCIO    @map("Anuncio")
+  REFERENCIA @map("Referencia")
+  OTRO       @map("Otro")
+}
+
+model Role {
+  id       Int       @id @default(autoincrement())
+  nombre   String    @unique @map("nombre") @db.VarChar(50)
+  usuarios Usuario[]
+
+  @@map("roles")
+}
+
+model Usuario {
+  id          Int          @id @default(autoincrement())
+  nombre      String       @map("nombre") @db.VarChar(100)
+  correo      String       @unique @map("correo") @db.VarChar(100)
+  password    String       @map("password") @db.VarChar(255)
+  rol_id      Int          @map("rol_id")
+  activo      Boolean      @default(true) @map("activo")
+  creado_en   DateTime     @default(now()) @map("creado_en") @db.Timestamp
+  rol         Role         @relation(fields: [rol_id], references: [id])
+  postulantes Postulante[]
+
+  @@map("usuarios")
+}
+
+model Postulante {
+  id                           Int              @id @default(autoincrement())
+  usuario_id                   Int              @map("usuario_id")
+  estado                       EstadoPostulante @map("estado")
+  fecha_registro               DateTime         @map("fecha_registro") @db.Date
+  nombre_completo              String           @map("nombre_completo") @db.VarChar(150)
+  direccion                    String           @map("direccion") @db.Text
+  lugar_nacimiento             String           @map("lugar_nacimiento") @db.VarChar(100)
+  fecha_nacimiento             DateTime         @map("fecha_nacimiento") @db.Date
+  telefono                     String           @map("telefono") @db.VarChar(20)
+  correo                       String           @map("correo") @db.VarChar(100)
+  estado_civil                 EstadoCivil      @map("estado_civil")
+  dpi                          String           @unique @map("dpi") @db.VarChar(20)
+  dpi_extendido_en             String?          @map("dpi_extendido_en") @db.VarChar(100)
+  nit                          String?          @map("nit") @db.VarChar(20)
+  igss                         String?          @map("igss") @db.VarChar(20)
+  perfil_facebook              String?          @map("perfil_facebook") @db.VarChar(100)
+  afiliacion_gremial           Boolean?         @map("afiliacion_gremial")
+  afiliacion_religiosa         Boolean?         @map("afiliacion_religiosa")
+  afiliacion_politica          Boolean?         @map("afiliacion_politica")
+  afiliacion_deportiva         Boolean?         @map("afiliacion_deportiva")
+  practica_deporte             Boolean?         @map("practica_deporte")
+  deporte_cual                 String?          @map("deporte_cual") @db.VarChar(100)
+  ha_estado_enfermo_gravedad   Boolean?         @map("ha_estado_enfermo_gravedad")
+  toma_medicamento             Boolean?         @map("toma_medicamento")
+  fuma_o_bebe                  Boolean?         @map("fuma_o_bebe")
+  fuma_bebe_frecuencia         String?          @map("fuma_bebe_frecuencia") @db.VarChar(100)
+  impedimento_fisico           Boolean?         @map("impedimento_fisico")
+  personas_dependientes        Int?             @map("personas_dependientes")
+  fortaleza_1                  String?          @map("fortaleza_1") @db.VarChar(255)
+  fortaleza_2                  String?          @map("fortaleza_2") @db.VarChar(255)
+  fortaleza_3                  String?          @map("fortaleza_3") @db.VarChar(255)
+  debilidad_1                  String?          @map("debilidad_1") @db.VarChar(255)
+  debilidad_2                  String?          @map("debilidad_2") @db.VarChar(255)
+  debilidad_3                  String?          @map("debilidad_3") @db.VarChar(255)
+  total_efectivo_hogar         Decimal?         @map("total_efectivo_hogar") @db.Decimal(10, 2)
+  vivienda_tipo                ViviendaTipo?    @map("vivienda_tipo")
+  vivienda_valor               Decimal?         @map("vivienda_valor") @db.Decimal(10, 2)
+  vivienda_renta_monto         Decimal?         @map("vivienda_renta_monto") @db.Decimal(10, 2)
+  tiene_vehiculo               Boolean?         @map("tiene_vehiculo")
+  licencia_tipo                String?          @map("licencia_tipo") @db.VarChar(50)
+  licencia_numero              String?          @map("licencia_numero") @db.VarChar(50)
+  deudas_pendientes            Boolean?         @map("deudas_pendientes")
+  deudas_monto                 Decimal?         @map("deudas_monto") @db.Decimal(10, 2)
+  deudas_institucion           String?          @map("deudas_institucion") @db.VarChar(150)
+  detenido_policia             Boolean?         @map("detenido_policia")
+  procesado_legalmente         Boolean?         @map("procesado_legalmente")
+  puesto_solicita              String           @map("puesto_solicita") @db.VarChar(100)
+  salario_aspira               Decimal?         @map("salario_aspira") @db.Decimal(10, 2)
+  fecha_inicio_disponible      DateTime?        @map("fecha_inicio_disponible") @db.Date
+  trabajar_extraordinario      Boolean?         @map("trabajar_extraordinario")
+  trabajar_turnos_rotativos    Boolean?         @map("trabajar_turnos_rotativos")
+  medio_enterado               MedioEnterado?   @map("medio_enterado")
+  porque_gustaria_trabajar     String?          @map("porque_gustaria_trabajar") @db.Text
+  porque_deberiamoss_contratar String?          @map("porque_deberiamoss_contratar") @db.Text
+  usuario                      Usuario          @relation(fields: [usuario_id], references: [id])
+
+  // Relaciones futuras 1:N (se agregaran en la siguiente iteracion):
+  // datosFamiliares   DatosFamiliares[]
+  // educacionHistorial EducacionHistorial[]
+  // idiomas           Idioma[]
+  // capacitaciones    Capacitacion[]
+  // experienciasLaborales ExperienciaLaboral[]
+  // referenciasPersonales ReferenciaPersonal[]
+
+  @@map("postulantes")
+}

@@ -3,6 +3,7 @@ import helmet from 'helmet'
 import cors from 'cors'
 import roleRoutes from './routes/role.routes.js'
 import authRoutes from './routes/auth.routes.js'
+import postulantesRoutes from './routes/postulantes.route.js'
 
 const app = express()
 
@@ -19,6 +20,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/roles', roleRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api/postulantes', postulantesRoutes)
 
 // MANEJO DE ERRORES
 app.use((req, res) => {

@@ -20,8 +20,10 @@ function Login() {
   const onSubmit = async (data) => {
     setError(null)
     try {
-      await login(data)
-      navigate('/dashboard', { replace: true })
+      const result = await login(data)
+      // Si debe cambiar contraseña, ir a la página de cambio; si no, al dashboard
+      const destination = result.mustChangePassword ? '/cambiar-password' : '/dashboard'
+      navigate(destination, { replace: true, state: { fromLogin: true } })
     } catch (err) {
       setError(err.response?.data?.message || 'Error al iniciar sesión')
     }
@@ -86,7 +88,7 @@ function Login() {
               <input className="h-4 w-4 accent-[#3162e9]" defaultChecked name="remember" type="checkbox" />
               Recordarme
             </label>
-            <a className="font-medium text-[#315cf5] transition hover:text-[#183fca]" href="#recuperar-contrasena">
+            <a className="font-medium text-[#315cf5] transition hover:text-[#183fca]" href="/recuperar">
               ¿Olvidaste tu contraseña?
             </a>
           </div>

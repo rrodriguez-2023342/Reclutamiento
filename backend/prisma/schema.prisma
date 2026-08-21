@@ -70,15 +70,18 @@ model Role {
 }
 
 model Usuario {
-  id          Int          @id @default(autoincrement())
-  nombre      String       @map("nombre") @db.VarChar(100)
-  correo      String       @unique @map("correo") @db.VarChar(100)
-  password    String       @map("password") @db.VarChar(255)
-  rol_id      Int          @map("rol_id")
-  activo      Boolean      @default(true) @map("activo")
-  creado_en   DateTime     @default(now()) @map("creado_en") @db.Timestamp
-  rol         Role         @relation(fields: [rol_id], references: [id])
-  postulantes Postulante[]
+  id                  Int          @id @default(autoincrement())
+  nombre              String       @map("nombre") @db.VarChar(100)
+  correo              String       @unique @map("correo") @db.VarChar(100)
+  password            String       @map("password") @db.VarChar(255)
+  rol_id              Int          @map("rol_id")
+  activo              Boolean      @default(true) @map("activo")
+  creado_en           DateTime     @default(now()) @map("creado_en") @db.Timestamp
+  mustChangePassword  Boolean      @default(false) @map("must_change_password")
+  resetToken          String?      @unique @map("reset_token") @db.VarChar(255)
+  resetTokenExpiry    DateTime?    @map("reset_token_expiry") @db.Timestamp
+  rol                 Role         @relation(fields: [rol_id], references: [id])
+  postulantes         Postulante[]
 
   @@map("usuarios")
 }

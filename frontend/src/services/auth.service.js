@@ -12,5 +12,25 @@ export const getCurrentUser = async () => {
   return data.user
 }
 
-// Función de cierre de sesión
-export const logout = () => {}
+// Función de cierre de sesión: llama al backend y limpia el token en el interceptor
+export const logout = async () => {
+  await api.post('/auth/logout')
+}
+
+// Cambiar contraseña (usuario autenticado)
+export const changePassword = async ({ currentPassword, newPassword }) => {
+  const { data } = await api.put('/auth/change-password', { currentPassword, newPassword })
+  return data
+}
+
+// Solicitar reset de contraseña (forgot password)
+export const forgotPassword = async (correo) => {
+  const { data } = await api.post('/auth/forgot-password', { correo })
+  return data
+}
+
+// Resetear contraseña con token
+export const resetPassword = async (token, newPassword) => {
+  const { data } = await api.post('/auth/reset-password', { token, newPassword })
+  return data
+}

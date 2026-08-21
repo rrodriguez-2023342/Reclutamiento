@@ -2,6 +2,7 @@ import { createContext, useCallback, useEffect, useState } from 'react'
 import * as authService from '../services/auth.service.js'
 
 // Contexto de autenticación para la aplicación.
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext(null)
 
 // Proveedor de autenticación que maneja el estado del usuario y las funciones de inicio/cierre de sesión.
@@ -34,12 +35,26 @@ export function AuthProvider({ children }) {
     return userData
   }, [])
 
-  // Cerrar sesión: elimina el token y limpia el usuario.
-  const logout = useCallback(() => {
-    authService.logout()
-    localStorage.removeItem('token')
-    setUser(null)
+  // Cerrar sesión
+  const logout = useCallback(async () => {
+    try {
+      await authService.logout()
+    } finally {
+      localStorage.removeItem('token')
+      setUser(null)
+    }
   }, [])
+
+  // Operaciones de contraseña disponibles tanto dentro como fuera de sesión.
+  const changePassword = useCallback(async (credentials) => {
+    const result = await authService.changePassword(credentials)
+    setUser((currentUser) => (
+      currentUser ? { ...currentUser, mustChangePassword: false } : currentUser
+    ))
+    return result
+  }, [])
+  const forgotPassword = useCallback((correo) => authService.forgotPassword(correo), [])
+  const resetPassword = useCallback((token, newPassword) => authService.resetPassword(token, newPassword), [])
 
   const value = {
     user,
@@ -47,6 +62,9 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!user,
     login,
     logout,
+    changePassword,
+    forgotPassword,
+    resetPassword,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

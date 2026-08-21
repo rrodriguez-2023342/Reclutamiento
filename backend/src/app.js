@@ -28,9 +28,10 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   console.error(err)
   // Si el error trae un código (err.status) se usa; si no, 500.
-  res.status(err.status || 500).json({
+  const status = Number.isInteger(err.status) ? err.status : 500
+  res.status(status).json({
     status: 'error',
-    message: err.message || 'Error interno del servidor',
+    message: status >= 500 ? 'Error interno del servidor' : err.message,
   })
 })
 

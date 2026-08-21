@@ -1,10 +1,25 @@
 import { Router } from 'express'
-import { login, me } from '../controllers/auth.controller.js'
+import {
+  login,
+  me,
+  logout,
+  changePassword,
+  forgotPassword,
+  resetPassword,
+} from '../controllers/auth.controller.js'
 import { authenticate } from '../middlewares/auth.middleware.js'
+import { strictAuthRateLimit, authRateLimit } from '../middlewares/rate-limit.js'
 
 const router = Router()
 
-router.post('/login', login) // Ruta publica para el Login
-router.get('/me', authenticate, me) // Ruta para obtener los datos del usuario autenticado
+// Rutas públicas con rate limit estricto
+router.post('/login', strictAuthRateLimit, login)
+router.post('/forgot-password', strictAuthRateLimit, forgotPassword)
+router.post('/reset-password', strictAuthRateLimit, resetPassword)
+
+// Rutas protegidas
+router.post('/logout', authRateLimit, authenticate, logout)
+router.get('/me', authenticate, me)
+router.put('/change-password', authRateLimit, authenticate, changePassword)
 
 export default router

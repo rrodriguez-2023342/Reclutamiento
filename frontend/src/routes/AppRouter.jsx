@@ -1,10 +1,13 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Login from '../pages/auth/Login.jsx'
+import ChangePassword from '../pages/auth/ChangePassword.jsx'
+import ForgotPassword from '../pages/auth/ForgotPassword.jsx'
+import ResetPassword from '../pages/auth/ResetPassword.jsx'
 import PublicRoute from './PublicRoute.jsx'
 import ProtectedRoute from './ProtectedRoute.jsx'
 import { useAuth } from '../hooks/useAuth.js'
 
-// Componente temporal de dashboard para mostrar información del usuario autenticado.
+// Componente temporal de dashboard
 function DashboardTemporal() {
   const { user, logout } = useAuth()
 
@@ -25,10 +28,20 @@ function DashboardTemporal() {
   )
 }
 
+// Wrapper para redirigir si mustChangePassword
+function ProtectedWithPasswordCheck({ children }) {
+  const { user } = useAuth()
+  if (user?.mustChangePassword) {
+    return <Navigate to="/cambiar-password" replace state={{ fromLogin: true }} />
+  }
+  return children
+}
+
 // Rutas de la aplicación.
 function AppRouter() {
   return (
     <Routes>
+      {/* Rutas públicas */}
       <Route
         path="/login"
         element={
@@ -38,13 +51,39 @@ function AppRouter() {
         }
       />
       <Route
-        path="/dashboard"
+        path="/recuperar"
+        element={
+          <PublicRoute>
+            <ForgotPassword />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/reset-password/:token"
+        element={<ResetPassword />}
+      />
+
+      {/* Rutas protegidas con verificación de cambio de contraseña obligatorio */}
+      <Route
+        path="/cambiar-password"
         element={
           <ProtectedRoute>
-            <DashboardTemporal />
+            <ChangePassword />
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <DashboardTemporal />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Catch-all: si autenticado va a dashboard, si no a login */}
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   )

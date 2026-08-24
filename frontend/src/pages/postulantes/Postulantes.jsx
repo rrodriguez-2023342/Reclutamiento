@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight, ChevronDown, Eye, Pencil, Plus, Search } from 'lucide-react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import DashboardLayout from '../../layouts/DashboardLayout.jsx'
 import { getPlazasPostulantes, getPostulantes } from '../../services/postulantes.service.js'
 
@@ -38,6 +39,8 @@ function SelectField({ ariaLabel, value, onChange, children }) {
 }
 
 function Postulantes() {
+  const location = useLocation()
+  const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [estado, setEstado] = useState('')
@@ -47,6 +50,13 @@ function Postulantes() {
   const [plazas, setPlazas] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [successMessage, setSuccessMessage] = useState(location.state?.mensaje || '')
+
+  useEffect(() => {
+    if (!successMessage) return undefined
+    const timer = window.setTimeout(() => setSuccessMessage(''), 5000)
+    return () => window.clearTimeout(timer)
+  }, [successMessage])
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedSearch(search.trim()), 300)
@@ -80,12 +90,13 @@ function Postulantes() {
 
   return (
     <DashboardLayout title="Gestión de Postulantes" headerSearch={{ value: search, onChange: updateSearch, placeholder: 'Buscar postulante...' }}>
+      {successMessage && <div role="status" className="mb-5 rounded-2xl border border-[#b9e8ce] bg-[#edfff4] px-5 py-4 font-semibold text-[#087947]">{successMessage}</div>}
       <section className="rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-6">
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_192px_176px_232px]">
           <label className="flex h-14 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15"><Search className="h-5 w-5 shrink-0" /><input value={search} onChange={(event) => updateSearch(event.target.value)} placeholder="Buscar por nombre o DPI..." className="w-full bg-transparent text-base outline-none placeholder:text-[#7787a2]" /></label>
           <SelectField ariaLabel="Filtrar por estado" value={estado} onChange={updateEstado}>{STATUS_OPTIONS.map(({ value, label }) => <option key={value} value={value}>Estado: {label}</option>)}</SelectField>
           <SelectField ariaLabel="Filtrar por plaza" value={puesto} onChange={updatePuesto}><option value="">Plaza: Todas</option>{plazas.map((plaza) => <option key={plaza} value={plaza}>{plaza}</option>)}</SelectField>
-          <button type="button" disabled title="El formulario de nuevo postulante se agregará próximamente" className="flex h-14 items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-5 text-base font-bold text-white opacity-60"><Plus className="h-5 w-5" />Nuevo Postulante</button>
+          <button type="button" onClick={() => navigate('/postulantes/nuevo')} className="flex h-14 items-center justify-center gap-2 cursor-pointer rounded-2xl bg-[#3162e9] px-5 text-base font-bold text-white transition hover:bg-[#183fca]"><Plus className="h-5 w-5" />Nuevo Postulante</button>
         </div>
       </section>
 
@@ -97,11 +108,11 @@ function Postulantes() {
               {loading && <tr><td colSpan="6" className="px-7 py-14 text-center text-[#5b6e8b]">Cargando postulantes…</td></tr>}
               {!loading && error && <tr><td colSpan="6" className="px-7 py-14 text-center text-[#df353c]">{error}</td></tr>}
               {!loading && !error && result.data.length === 0 && <tr><td colSpan="6" className="px-7 py-14 text-center text-[#5b6e8b]">No hay postulantes que coincidan con los filtros.</td></tr>}
-              {!loading && !error && result.data.map((postulante) => <tr key={postulante.id} className="text-base"><td className="border-b border-[#dfe5ee] px-7 py-6 font-bold text-[#071b3b]">{postulante.nombre_completo}</td><td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">{formatDpi(postulante.dpi)}</td><td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">{postulante.puesto_solicita}</td><td className="border-b border-[#dfe5ee] px-5 py-6"><span className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${statusStyles[postulante.estado] || 'bg-[#f1f4f9] text-[#5b6e8b]'}`}>{statusLabels[postulante.estado] || postulante.estado}</span></td><td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">{formatDate(postulante.fecha_registro)}</td><td className="border-b border-[#dfe5ee] px-7 py-6"><div className="flex justify-end gap-2"><button type="button" disabled title="El detalle se agregará próximamente" aria-label={`Ver ${postulante.nombre_completo}`} className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] opacity-60"><Eye className="h-5 w-5" /></button><button type="button" disabled title="La edición se agregará próximamente" aria-label={`Editar ${postulante.nombre_completo}`} className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] opacity-60"><Pencil className="h-5 w-5" /></button></div></td></tr>)}
+              {!loading && !error && result.data.map((postulante) => <tr key={postulante.id} className="text-base"><td className="border-b border-[#dfe5ee] px-7 py-6 font-bold text-[#071b3b]">{postulante.nombre_completo}</td><td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">{formatDpi(postulante.dpi)}</td><td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">{postulante.puesto_solicita}</td><td className="border-b border-[#dfe5ee] px-5 py-6"><span className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${statusStyles[postulante.estado] || 'bg-[#f1f4f9] text-[#5b6e8b]'}`}>{statusLabels[postulante.estado] || postulante.estado}</span></td><td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">{formatDate(postulante.fecha_registro)}</td><td className="border-b border-[#dfe5ee] px-7 py-6"><div className="flex justify-end gap-2"><button type="button" disabled title="El detalle se agregará próximamente" aria-label={`Ver ${postulante.nombre_completo}`} className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] opacity-60 cursor-pointer disabled:cursor-not-allowed"><Eye className="h-5 w-5" /></button><button type="button" disabled title="La edición se agregará próximamente" aria-label={`Editar ${postulante.nombre_completo}`} className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] opacity-60 cursor-pointer disabled:cursor-not-allowed"><Pencil className="h-5 w-5" /></button></div></td></tr>)}
             </tbody>
           </table>
         </div>
-        <footer className="flex flex-col gap-4 px-7 py-5 text-[#5b6e8b] sm:flex-row sm:items-center sm:justify-between"><p>Mostrando {firstItem} a {lastItem} de {result.total.toLocaleString('es-GT')} postulantes</p><div className="flex items-center gap-2"><button type="button" disabled={loading || result.page <= 1} onClick={() => goToPage(result.page - 1)} className="flex h-11 items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"><ChevronLeft className="h-4 w-4" />Anterior</button><span className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-[#3162e9] px-3 font-bold text-white">{result.page}</span><button type="button" disabled={loading || result.page >= result.totalPages} onClick={() => goToPage(result.page + 1)} className="flex h-11 items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45">Siguiente<ChevronRight className="h-4 w-4" /></button></div></footer>
+        <footer className="flex flex-col gap-4 px-7 py-5 text-[#5b6e8b] sm:flex-row sm:items-center sm:justify-between"><p>Mostrando {firstItem} a {lastItem} de {result.total.toLocaleString('es-GT')} postulantes</p><div className="flex items-center gap-2"><button type="button" disabled={loading || result.page <= 1} onClick={() => goToPage(result.page - 1)} className="flex h-11 items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] cursor-pointer disabled:cursor-not-allowed disabled:opacity-45"><ChevronLeft className="h-4 w-4" />Anterior</button><span className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-[#3162e9] px-3 font-bold text-white">{result.page}</span><button type="button" disabled={loading || result.page >= result.totalPages} onClick={() => goToPage(result.page + 1)} className="flex h-11 items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] cursor-pointer disabled:cursor-not-allowed disabled:opacity-45">Siguiente<ChevronRight className="h-4 w-4" /></button></div></footer>
       </section>
     </DashboardLayout>
   )

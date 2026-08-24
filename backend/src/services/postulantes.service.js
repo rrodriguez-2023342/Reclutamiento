@@ -46,7 +46,7 @@ function crearError(mensaje, status) {
 
 class PostulanteService {
   // Lista paginada con búsqueda (nombre, DPI, correo, puesto) y filtro por estado
-  async listar({ page = 1, limit = 10, q, estado }) {
+  async listar({ page = 1, limit = 10, q, estado, puesto }) {
     const where = {}
 
     if (estado) {
@@ -62,6 +62,10 @@ class PostulanteService {
       ]
     }
 
+    if (puesto) {
+      where.puesto_solicita = puesto
+    }
+
     const [data, total] = await prisma.$transaction([
       prisma.postulante.findMany({
         where,
@@ -74,6 +78,16 @@ class PostulanteService {
     ])
 
     return { data, total, page, totalPages: Math.ceil(total / limit) || 1 }
+  }
+
+  async listarPlazas() {
+    const plazas = await prisma.postulante.findMany({
+      distinct: ['puesto_solicita'],
+      select: { puesto_solicita: true },
+      orderBy: { puesto_solicita: 'asc' },
+    })
+
+    return plazas.map(({ puesto_solicita }) => puesto_solicita)
   }
 
   // Devuelve un postulante con todas sus secciones. null si no existe

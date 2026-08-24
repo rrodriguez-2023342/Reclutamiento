@@ -185,6 +185,7 @@ export const listarQuerySchema = z
     page: z.coerce.number({ error: 'Página inválida' }).int().min(1).default(1),
     limit: z.coerce.number({ error: 'Límite inválido' }).int().min(1).max(100).default(10),
     q: z.string().trim().max(100).optional(),
+    puesto: z.string().trim().max(100).optional(),
     estado: z.enum(ESTADOS_POSTULANTE, { error: 'Estado inválido' }).optional(),
   })
-  .transform((query) => ({ ...query, q: query.q || undefined }))
+  .transform((query) => ({ ...query, q: query.q || undefined, puesto: query.puesto || undefined }))

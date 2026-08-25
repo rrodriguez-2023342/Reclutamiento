@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { ArrowLeft, CircleAlert, UserRound } from "lucide-react";
+import { ArrowLeft, CircleAlert, Pencil, UserRound } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
@@ -555,6 +555,14 @@ function DetallePostulante() {
             >
               <ArrowLeft className="h-4 w-4" />
               Regresar
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(`/postulantes/${p.id}/editar`)}
+              className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#dce3ee] px-4 py-3 font-semibold text-[#071b3b] transition hover:bg-[#f6f8fc]"
+            >
+              <Pencil className="h-4 w-4" />
+              Editar
             </button>
             {actions.map((item) => (
               <button

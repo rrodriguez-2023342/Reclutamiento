@@ -1,4 +1,5 @@
 import prisma from '../config/prisma.js'
+import { sendEstadoPostulanteEmail } from '../config/email.js'
 
 // Constantes de estado y transiciones válidas para el flujo de postulantes
 const ETIQUETAS_ESTADO = {
@@ -173,7 +174,7 @@ class PostulanteService {
     return this.obtenerPorId(id)
   }
 
-  // Cambia el estado validando la transición
+  // Cambia el estado validando la transición y notifica por correo al postulante
   async cambiarEstado(id, nuevoEstado) {
     const postulante = await prisma.postulante.findUnique({ where: { id }, select: { id: true, estado: true } })
     if (!postulante) {
@@ -199,11 +200,22 @@ class PostulanteService {
       data.fecha_registro = new Date()
     }
 
-    return prisma.postulante.update({
+    const actualizado = await prisma.postulante.update({
       where: { id },
       data,
-      select: { id: true, estado: true, fecha_registro: true, nombre_completo: true },
+      select: { id: true, estado: true, fecha_registro: true, nombre_completo: true, correo: true },
     })
+
+    // El correo es un aviso complementario: si falla el envío NO se revierte el cambio de estado
+    let correoEnviado = false
+    try {
+      await sendEstadoPostulanteEmail(actualizado.correo, actualizado.nombre_completo, nuevoEstado)
+      correoEnviado = true
+    } catch (errorCorreo) {
+      console.error('No fue posible enviar el correo de cambio de estado:', errorCorreo.message)
+    }
+
+    return { ...actualizado, correoEnviado }
   }
 }
 

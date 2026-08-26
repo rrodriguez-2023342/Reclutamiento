@@ -34,3 +34,8 @@ export const resetPassword = async (token, newPassword) => {
   const { data } = await api.post('/auth/reset-password', { token, newPassword })
   return data
 }
+
+export const verifyCurrentPassword = async (password) => {
+  const { data } = await api.post('/auth/verify-password', { password })
+  return data
+}

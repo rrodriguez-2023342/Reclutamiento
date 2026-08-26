@@ -106,6 +106,17 @@ class AuthService {
     return { success: true, message: 'Contraseña actualizada correctamente' }
   }
 
+  async verifyCurrentPassword(userId, password) {
+    const user = await prisma.usuario.findUnique({ where: { id: userId } })
+    if (!user || !(await verifyPassword(user.password, password))) {
+      const err = new Error('Contraseña incorrecta')
+      err.status = 401
+      throw err
+    }
+
+    return { success: true }
+  }
+
   // Solicitar reset de contraseña (forgot password)
   async requestPasswordReset(correo) {
     const user = await prisma.usuario.findUnique({ where: { correo } })

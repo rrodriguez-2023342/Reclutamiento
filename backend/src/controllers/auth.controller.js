@@ -12,6 +12,10 @@ const changePasswordSchema = z.object({
   newPassword: z.string().min(6, 'La nueva contraseña debe tener al menos 6 caracteres'),
 })
 
+const verifyPasswordSchema = z.object({
+  password: z.string().min(1, 'La contraseña es requerida'),
+})
+
 const forgotPasswordSchema = z.object({
   correo: z.string().email('Correo inválido'),
 })
@@ -58,6 +62,20 @@ export const changePassword = async (req, res) => {
   const { currentPassword, newPassword } = parsed.data
   const result = await authService.changePassword(req.userId, currentPassword, newPassword)
 
+  res.json(result)
+}
+
+export const verifyCurrentPassword = async (req, res) => {
+  const parsed = verifyPasswordSchema.safeParse(req.body)
+
+  if (!parsed.success) {
+    return res.status(400).json({
+      status: 'error',
+      message: parsed.error.issues[0].message,
+    })
+  }
+
+  const result = await authService.verifyCurrentPassword(req.userId, parsed.data.password)
   res.json(result)
 }
 

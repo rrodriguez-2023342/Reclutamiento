@@ -26,6 +26,16 @@ const INCLUDE_COMPLETO = {
   capacitaciones: true,
   experienciaLaboral: true,
   referenciasPersonales: true,
+  documentos: {
+    select: {
+      id: true,
+      tipo: true,
+      nombre_archivo: true,
+      mime_type: true,
+      tamano_bytes: true,
+      fecha_subida: true,
+    },
+  },
 }
 
 // Secciones hijas que se pueden actualizar en bloque

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, ArrowRight, CircleAlert, Plus, Save } from "lucide-react";
+import { ArrowLeft, ArrowRight, CircleAlert, Plus, Save, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
@@ -18,10 +18,17 @@ import {
   getPostulanteById,
   updatePostulante,
 } from "../../services/postulantes.service.js";
+import { subirDocumento, getDocumentos } from "../../services/documentos.service.js";
 import {
   defaultPostulanteValues,
   postulanteSchema,
 } from "../../validators/postulantes.validator.js";
+import {
+  TIPOS_DOCUMENTO,
+  etiquetasTipoDocumento,
+  acceptPorTipo,
+} from "./etiquetas.js";
+import { verifyCurrentPassword } from "../../services/auth.service.js";
 
 const DRAFT_KEY = "borrador-postulante";
 const civilStates = [
@@ -230,10 +237,16 @@ function FormularioPostulante({ postulanteId }) {
   const [maxStep, setMaxStep] = useState(1);
   const [serverError, setServerError] = useState("");
   const [draftDismissed, setDraftDismissed] = useState(false);
+  const [documentosExistentes, setDocumentosExistentes] = useState([]);
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [cancelPassword, setCancelPassword] = useState("");
+  const [cancelError, setCancelError] = useState("");
+  const [cancelando, setCancelando] = useState(false);
   const {
     register,
     control,
     setValue,
+    getValues,
     trigger,
     handleSubmit,
     reset,
@@ -272,9 +285,15 @@ function FormularioPostulante({ postulanteId }) {
   useEffect(() => {
     if (!esEdicion) return undefined;
     let active = true;
-    getPostulanteById(postulanteId)
-      .then((data) => {
-        if (active && data) reset(normalizarPostulante(data));
+    Promise.all([
+      getPostulanteById(postulanteId),
+      getDocumentos(postulanteId).catch(() => []),
+    ])
+      .then(([data, docs]) => {
+        if (active && data) {
+          reset(normalizarPostulante(data));
+          setDocumentosExistentes(docs);
+        }
       })
       .catch((errorCargaApi) => {
         if (!active) return;
@@ -316,28 +335,57 @@ function FormularioPostulante({ postulanteId }) {
     5: ["educacionHistorial", "idiomas", "capacitaciones"],
     6: ["experienciaLaboral"],
     7: ["referenciasPersonales"],
+    8: [],
   };
-  const next = async () => {
-    const valid = await trigger(stepFields[step]);
-    if (!valid) return;
-    setStep((current) => current + 1);
-    setMaxStep((current) => Math.max(current, step + 1));
+  const next = async (event) => {
+    event?.preventDefault();
+    if (step >= 8) return;
+    try {
+      const valid = await trigger(stepFields[step]);
+      if (!valid) {
+        setServerError("Complete los campos requeridos antes de continuar.");
+        return;
+      }
+      setServerError("");
+      const nextStep = step + 1;
+      setStep(nextStep);
+      setMaxStep((current) => Math.max(current, nextStep));
+    } catch (err) {
+      console.error("Error validando paso:", err);
+      setServerError("Error de validación. Intente de nuevo.");
+    }
   };
   const submit = async (data) => {
+    if (step !== 8) return;
     setServerError("");
     try {
+      let postulanteIdFinal = postulanteId;
+
       if (esEdicion) {
         await updatePostulante(postulanteId, data);
-        navigate(`/postulantes/${postulanteId}`, {
-          state: { mensaje: "Postulante actualizado correctamente" },
-        });
       } else {
-        await createPostulante(data);
+        const creado = await createPostulante(data);
+        postulanteIdFinal = creado.id;
         window.localStorage.removeItem(DRAFT_KEY);
-        navigate("/postulantes", {
-          state: { mensaje: "Postulante registrado correctamente" },
-        });
       }
+
+      // Subir documentos seleccionados (si los hay)
+      const documentos = getValues("documentos") || {};
+      for (const tipo of TIPOS_DOCUMENTO) {
+        const archivo = documentos[tipo];
+        if (archivo instanceof File) {
+          try {
+            await subirDocumento(postulanteIdFinal, tipo, archivo);
+          } catch (docError) {
+            console.error(`Error subiendo ${tipo}:`, docError);
+          }
+        }
+      }
+
+      navigate(
+        esEdicion ? `/postulantes/${postulanteId}` : "/postulantes",
+        { state: { mensaje: esEdicion ? "Postulante actualizado correctamente" : "Postulante registrado correctamente" } },
+      );
     } catch (error) {
       setServerError(
         error.response?.data?.message ||
@@ -351,6 +399,21 @@ function FormularioPostulante({ postulanteId }) {
     window.localStorage.removeItem(DRAFT_KEY);
     reset(defaultPostulanteValues);
     setDraftDismissed(true);
+  };
+
+  const cancelarFormulario = async (event) => {
+    event.preventDefault();
+    setCancelError("");
+    setCancelando(true);
+    try {
+      await verifyCurrentPassword(cancelPassword);
+      if (!esEdicion) window.localStorage.removeItem(DRAFT_KEY);
+      navigate(esEdicion ? `/postulantes/${postulanteId}` : "/postulantes");
+    } catch (error) {
+      setCancelError(error.response?.data?.message || "No fue posible validar la contraseña.");
+    } finally {
+      setCancelando(false);
+    }
   };
 
   const titulo = esEdicion ? "Editar Postulante" : "Nuevo Postulante";
@@ -386,15 +449,39 @@ function FormularioPostulante({ postulanteId }) {
   return (
     <DashboardLayout
       title={titulo}
+      locked
       headerSearch={{
         value: "",
         onChange: () => {},
         placeholder: "Buscar postulante...",
       }}
     >
+      {cancelOpen && (
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-[#071b3b]/50 p-4">
+          <form onSubmit={cancelarFormulario} className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <h2 className="text-xl font-bold text-[#071b3b]">Cancelar formulario</h2>
+            <p className="mt-2 text-sm text-[#5b6e8b]">Confirma la contraseña del usuario conectado para salir.</p>
+            {cancelError && <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-600">{cancelError}</p>}
+            <label className="mt-4 block text-sm font-semibold text-[#071b3b]">
+              Contraseña
+              <input type="password" autoFocus value={cancelPassword} onChange={(event) => setCancelPassword(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dce3ee] px-4 outline-none focus:border-[#3162e9]" />
+            </label>
+            <div className="mt-6 flex justify-end gap-3">
+              <button type="button" onClick={() => { setCancelOpen(false); setCancelPassword(""); setCancelError(""); }} className="rounded-xl border border-[#dce3ee] px-4 py-2 font-semibold text-[#071b3b] cursor-pointer">Continuar formulario</button>
+              <button type="submit" disabled={cancelando || !cancelPassword} className="rounded-xl bg-[#df353c] px-4 py-2 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60">{cancelando ? "Validando..." : "Confirmar salida"}</button>
+            </div>
+          </form>
+        </div>
+      )}
       <StepIndicator currentStep={step} maxStep={maxStep} onGoTo={setStep} />
       <form
-        onSubmit={handleSubmit(submit)}
+        onSubmit={(e) => {
+          if (step !== 8) { e.preventDefault(); return; }
+          handleSubmit(submit)(e);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && step !== 8) e.preventDefault();
+        }}
         className="mt-7 rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-7 lg:p-10"
       >
         {draft && !draftDismissed && (
@@ -976,32 +1063,98 @@ function FormularioPostulante({ postulanteId }) {
             </div>
           </section>
         )}
+        {step === 8 && (
+          <section>
+            <Title
+              title="Sección 8: Documentos (opcional)"
+              description="Adjunte los documentos requeridos. Solo se aceptan PDF (máx. 5 MB) para documentos e imágenes para la foto."
+            />
+            <div className="space-y-4">
+              {TIPOS_DOCUMENTO.map((tipo) => {
+                const existente = documentosExistentes.find((d) => d.tipo === tipo);
+                const archivoNuevo = values.documentos?.[tipo];
+                return (
+                  <div key={tipo} className="rounded-xl border border-[#dce3ee] bg-white p-4 sm:flex sm:items-center sm:justify-between gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="text-sm font-medium text-[#071b3b]">{etiquetasTipoDocumento[tipo]}</span>
+                      <span className="text-xs text-[#5b6e8b]">
+                        {tipo === "FOTO"
+                          ? "JPG, PNG, WebP (máx. 5 MB)"
+                          : "PDF (máx. 5 MB)"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {existente && !archivoNuevo && (
+                        <span className="text-xs text-[#087947] font-medium truncate max-w-[200px]">
+                          {existente.nombre_archivo}
+                        </span>
+                      )}
+                      {archivoNuevo && (
+                        <span className="text-xs text-[#3162e9] font-medium truncate max-w-[200px]">
+                          Nuevo: {archivoNuevo.name}
+                        </span>
+                      )}
+                      <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-[#3162e9] bg-[#f4f7ff] px-4 text-sm font-bold text-[#1e3a8a] transition hover:bg-[#e8efff]">
+                        <Upload className="h-4 w-4" />
+                        {archivoNuevo ? "Cambiar archivo" : "Seleccionar archivo"}
+                        <input
+                          type="file"
+                          accept={acceptPorTipo[tipo]}
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              if (file.size > 5 * 1024 * 1024) {
+                                alert("El archivo excede el tamaño máximo de 5 MB");
+                                e.target.value = "";
+                                return;
+                              }
+                              setValue(`documentos.${tipo}`, file, {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                              });
+                            }
+                          }}
+                          className="sr-only"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
         <div className="mt-9 flex flex-col-reverse gap-4 border-t border-[#dfe5ee] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
             {step === 1 ? (
               <button
                 type="button"
-                onClick={() =>
-                  navigate(
-                    esEdicion ? `/postulantes/${postulanteId}` : "/postulantes",
-                  )
-                }
+                onClick={() => setCancelOpen(true)}
                 className="rounded-xl border border-[#dce3ee] px-5 py-3 cursor-pointer font-semibold text-[#071b3b] transition hover:bg-[#f6f8fc]"
               >
                 {esEdicion ? "Cancelar edición" : "Cancelar registro"}
               </button>
             ) : (
-              <button
-                type="button"
-                onClick={() => setStep((current) => current - 1)}
-                className="inline-flex items-center gap-2 rounded-xl border border-[#dce3ee] px-5 py-3 cursor-pointer font-semibold text-[#071b3b] transition hover:bg-[#f6f8fc]"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Paso anterior
-              </button>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => setStep((current) => current - 1)}
+                  className="inline-flex items-center gap-2 rounded-xl border border-[#dce3ee] px-5 py-3 cursor-pointer font-semibold text-[#071b3b] transition hover:bg-[#f6f8fc]"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Paso anterior
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCancelOpen(true)}
+                  className="rounded-xl border border-[#f0b8bc] px-5 py-3 cursor-pointer font-semibold text-[#b4232a] transition hover:bg-[#fff1f2]"
+                >
+                  Cancelar formulario
+                </button>
+              </div>
             )}
           </div>
-          {step < 7 ? (
+          {step < 8 ? (
             <button
               type="button"
               onClick={next}

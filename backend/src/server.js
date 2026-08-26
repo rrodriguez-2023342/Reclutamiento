@@ -5,8 +5,9 @@ import { seedRoles, seedDefaultAdmin } from './config/seed.js'
 
 const PORT = process.env.PORT || 4000
 
-// Crea la carpeta "uploads" si todavía no existe.
+// Crea las carpetas de uploads si todavía no existen.
 fs.mkdirSync('uploads', { recursive: true })
+fs.mkdirSync('uploads/postulantes', { recursive: true })
 
 // Ejecuta los seeds para inicializar la base de datos con datos por defecto
 try {

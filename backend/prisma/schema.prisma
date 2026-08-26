@@ -61,6 +61,14 @@ enum MotivoRetiro {
   OTRO           @map("Otro")
 }
 
+enum TipoDocumento {
+  FOTO
+  ANTECEDENTES_PENALES
+  CARTA_RECOMENDACION
+  COPIA_DPI
+  TARJETA_SALUD
+}
+
 model Role {
   id       Int       @id @default(autoincrement())
   nombre   String    @unique @map("nombre") @db.VarChar(50)
@@ -148,6 +156,7 @@ model Postulante {
   capacitaciones               Capacitacion[]
   experienciaLaboral           ExperienciaLaboral[]
   referenciasPersonales        ReferenciaPersonal[]
+  documentos                   DocumentoPostulante[]
 
   @@map("postulantes")
 }
@@ -231,4 +240,19 @@ model ReferenciaPersonal {
   postulante    Postulante @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
 
   @@map("referencias_personales")
+}
+
+model DocumentoPostulante {
+  id             Int            @id @default(autoincrement())
+  postulante_id  Int            @map("postulante_id")
+  tipo           TipoDocumento  @map("tipo")
+  nombre_archivo String         @map("nombre_archivo") @db.VarChar(255)
+  ruta           String         @map("ruta") @db.VarChar(500)
+  mime_type      String         @map("mime_type") @db.VarChar(100)
+  tamano_bytes   Int            @map("tamano_bytes")
+  fecha_subida   DateTime       @default(now()) @map("fecha_subida") @db.Timestamp
+  postulante     Postulante     @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
+
+  @@unique([postulante_id, tipo])
+  @@map("documentos_postulante")
 }

@@ -32,7 +32,7 @@ const experienciaSchema = z.object({
   fecha_ingreso: optionalDate, fecha_retiro: optionalDate, salario_inicial: optionalNumber(0, 99999999.99), salario_final: optionalNumber(0, 99999999.99), tareas_realizadas: optionalText(5000),
   motivo_retiro: z.preprocess(emptyToUndefined, z.enum(['RENUNCIA', 'DESPIDO', 'REORGANIZACION', 'OTRO']).optional()),
 })
-const referenciaSchema = z.object({ nombre: z.string().trim().min(1, 'El nombre es requerido').max(150), telefono: phone, direccion: optionalText(5000) })
+const referenciaSchema = z.object({ nombre: z.string().trim().min(1, 'El nombre es requerido').max(150), telefono: phone.optional(), direccion: optionalText(5000) })
 
 export const postulanteSchema = z.object({
   nombre_completo: z.string().trim().min(1, 'El nombre completo es requerido').max(150),

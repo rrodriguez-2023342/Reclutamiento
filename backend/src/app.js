@@ -5,6 +5,7 @@ import roleRoutes from './routes/role.routes.js'
 import authRoutes from './routes/auth.routes.js'
 import postulantesRoutes from './routes/postulantes.route.js'
 import dashboardRoutes from './routes/dashboard.route.js'
+import documentosRoutes from './routes/documento.routes.js'
 
 const app = express()
 
@@ -23,6 +24,7 @@ app.use('/api/roles', roleRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/postulantes', postulantesRoutes)
 app.use('/api/dashboard', dashboardRoutes)
+app.use('/api/postulantes', documentosRoutes)
 
 // MANEJO DE ERRORES
 app.use((req, res) => {

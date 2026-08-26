@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { ArrowLeft, CircleAlert, Pencil, UserRound } from "lucide-react";
+import { ArrowLeft, Check, CircleAlert, Download, Pencil, Trash2, Upload, UserRound, X } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
@@ -7,14 +7,23 @@ import {
   updateEstadoPostulante,
 } from "../../services/postulantes.service.js";
 import {
+  getDocumentos,
+  descargarDocumento,
+  eliminarDocumento,
+  subirDocumento,
+} from "../../services/documentos.service.js";
+import {
   etiquetasEstadoCivil,
   etiquetasEstadoPostulante,
   etiquetasMedioEnterado,
   etiquetasMotivoRetiro,
   etiquetasNivelEducativo,
   etiquetasParentesco,
+  etiquetasTipoDocumento,
   etiquetasVivienda,
   estilosEstadoPostulante,
+  TIPOS_DOCUMENTO,
+  acceptPorTipo,
 } from "../../components/postulantes/etiquetas.js";
 
 const sections = [
@@ -25,6 +34,7 @@ const sections = [
   "Info Socioeconómica",
   "Condiciones de Trabajo",
   "Referencias Personales",
+  "Documentos",
 ];
 const transitions = {
   PENDIENTE: [
@@ -176,7 +186,7 @@ function Modal({ action, onClose, onConfirm, loading }) {
   );
 }
 
-function SectionContent({ section, p }) {
+function SectionContent({ section, p, onReload }) {
   const title = `Detalles del Candidato - ${sections[section]}`;
   if (section === 0)
     return (
@@ -391,19 +401,203 @@ function SectionContent({ section, p }) {
         </div>
       </>
     );
+  if (section === 6)
+    return (
+      <>
+        <h2 className="text-2xl font-bold text-[#071b3b]">{title}</h2>
+        <div className="mt-8">
+          <MiniTable
+            name={sections[section]}
+            headers={["Nombre", "Teléfono", "Dirección"]}
+            rows={(p.referenciasPersonales || []).map((item) => [
+              item.nombre,
+              item.telefono,
+              text(item.direccion),
+            ])}
+          />
+        </div>
+      </>
+    );
+  return (
+    <DocumentosSection p={p} onReload={onReload} />
+  );
+}
+
+function DocumentosSection({ p, onReload }) {
+  const [documentos, setDocumentos] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [eliminando, setEliminando] = useState(null);
+  const [subiendo, setSubiendo] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    getDocumentos(p.id)
+      .then((data) => {
+        if (active) setDocumentos(data);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (active) setCargando(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [p.id]);
+
+  const handleDescargar = async (tipo) => {
+    try {
+      const blob = await descargarDocumento(p.id, tipo);
+      const doc = documentos.find((d) => d.tipo === tipo);
+      const url = window.URL.createObjectURL(blob);
+      const a = window.document.createElement("a");
+      a.href = url;
+      a.download = doc?.nombre_archivo || tipo;
+      window.document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+    } catch {
+      alert("No fue posible descargar el documento.");
+    }
+  };
+
+  const handleEliminar = async (tipo) => {
+    if (!window.confirm("¿Está seguro de eliminar este documento?")) return;
+    setEliminando(tipo);
+    try {
+      await eliminarDocumento(p.id, tipo);
+      setDocumentos((prev) => prev.filter((d) => d.tipo !== tipo));
+      onReload?.();
+    } catch {
+      alert("No fue posible eliminar el documento.");
+    } finally {
+      setEliminando(null);
+    }
+  };
+
+  const handleSubir = async (tipo, file) => {
+    if (!file) return;
+    setSubiendo(tipo);
+    try {
+      await subirDocumento(p.id, tipo, file);
+      const docs = await getDocumentos(p.id);
+      setDocumentos(docs);
+      onReload?.();
+    } catch {
+      alert("No fue posible subir el documento.");
+    } finally {
+      setSubiendo(null);
+    }
+  };
+
+  if (cargando) {
+    return (
+      <>
+        <h2 className="text-2xl font-bold text-[#071b3b]">
+          Detalles del Candidato - Documentos
+        </h2>
+        <p className="mt-8 text-[#5b6e8b]">Cargando documentos…</p>
+      </>
+    );
+  }
+
   return (
     <>
-      <h2 className="text-2xl font-bold text-[#071b3b]">{title}</h2>
-      <div className="mt-8">
-        <MiniTable
-          name={sections[section]}
-          headers={["Nombre", "Teléfono", "Dirección"]}
-          rows={(p.referenciasPersonales || []).map((item) => [
-            item.nombre,
-            item.telefono,
-            text(item.direccion),
-          ])}
-        />
+      <h2 className="text-2xl font-bold text-[#071b3b]">
+        Detalles del Candidato - Documentos
+      </h2>
+      <div className="mt-8 space-y-4">
+        {TIPOS_DOCUMENTO.map((tipo) => {
+          const doc = documentos.find((d) => d.tipo === tipo);
+          const esFoto = tipo === "FOTO";
+          return (
+            <div
+              key={tipo}
+              className="flex flex-col gap-3 rounded-xl border border-[#dfe5ee] p-4 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                {doc ? (
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#c9f3dd] text-[#087947]">
+                    <Check className="h-4 w-4" />
+                  </span>
+                ) : (
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#ffe0e2] text-[#df353c]">
+                    <X className="h-4 w-4" />
+                  </span>
+                )}
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-[#071b3b]">
+                    {etiquetasTipoDocumento[tipo]}
+                  </p>
+                  {doc ? (
+                    <p className="mt-0.5 text-xs text-[#5b6e8b] truncate max-w-[300px]">
+                      {doc.nombre_archivo} ·{" "}
+                      {(doc.tamano_bytes / 1024).toFixed(0)} KB
+                    </p>
+                  ) : (
+                    <p className="mt-0.5 text-xs text-[#5b6e8b]">
+                      No subido
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                {doc && esFoto && doc.mime_type?.startsWith("image/") && (
+                  <span className="text-xs text-[#5b6e8b] italic">
+                    Foto cargada
+                  </span>
+                )}
+                {doc && (
+                  <button
+                    type="button"
+                    onClick={() => handleDescargar(tipo)}
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#dce3ee] px-3 py-2 text-xs font-semibold text-[#071b3b] transition hover:bg-[#f6f8fc]"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    Descargar
+                  </button>
+                )}
+                {doc && (
+                  <button
+                    type="button"
+                    onClick={() => handleEliminar(tipo)}
+                    disabled={eliminando === tipo}
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#dce3ee] px-3 py-2 text-xs font-semibold text-[#df353c] transition hover:bg-[#ffe0e2] disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    {eliminando === tipo ? "…" : "Eliminar"}
+                  </button>
+                )}
+                <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[#3162e9] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#183fca]">
+                  <Upload className="h-3.5 w-3.5" />
+                  {subiendo === tipo
+                    ? "Subiendo…"
+                    : doc
+                      ? "Reemplazar"
+                      : "Subir"}
+                  <input
+                    type="file"
+                    accept={acceptPorTipo[tipo]}
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        if (file.size > 5 * 1024 * 1024) {
+                          alert("El archivo excede 5 MB");
+                          e.target.value = "";
+                          return;
+                        }
+                        handleSubir(tipo, file);
+                        e.target.value = "";
+                      }
+                    }}
+                    disabled={subiendo === tipo}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </>
   );
@@ -599,7 +793,7 @@ function DetallePostulante() {
           ))}
         </nav>
         <section className="min-h-[430px] rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-10">
-          <SectionContent section={section} p={p} />
+          <SectionContent section={section} p={p} onReload={load} />
           <div className="mt-10 rounded-2xl bg-[#f0f4fa] px-5 py-4 text-sm text-[#5b6e8b]">
             Esta solicitud fue digitalizada por{" "}
             <span className="font-semibold text-[#071b3b]">

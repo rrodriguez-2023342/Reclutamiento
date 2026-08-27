@@ -69,6 +69,19 @@ enum TipoDocumento {
   TARJETA_SALUD
 }
 
+model Plaza {
+  id          Int             @id @default(autoincrement())
+  nombre      String          @unique @map("nombre") @db.VarChar(100)
+  descripcion String?         @map("descripcion") @db.Text
+  salario_min Decimal?        @map("salario_min") @db.Decimal(12, 2)
+  salario_max Decimal?        @map("salario_max") @db.Decimal(12, 2)
+  activa      Boolean         @default(true) @map("activa")
+  creado_en   DateTime        @default(now()) @map("creado_en") @db.Timestamp
+  postulantes Postulante[]
+
+  @@map("plazas")
+}
+
 model Role {
   id       Int       @id @default(autoincrement())
   nombre   String    @unique @map("nombre") @db.VarChar(50)
@@ -141,7 +154,8 @@ model Postulante {
   deudas_institucion           String?              @map("deudas_institucion") @db.VarChar(150)
   detenido_policia             Boolean?             @map("detenido_policia")
   procesado_legalmente         Boolean?             @map("procesado_legalmente")
-  puesto_solicita              String               @map("puesto_solicita") @db.VarChar(100)
+  plaza_id                     Int?                 @map("plaza_id")
+  plaza                        Plaza?               @relation(fields: [plaza_id], references: [id], onDelete: SetNull)
   salario_aspira               Decimal?             @map("salario_aspira") @db.Decimal(10, 2)
   fecha_inicio_disponible      DateTime?            @map("fecha_inicio_disponible") @db.Date
   trabajar_extraordinario      Boolean?             @map("trabajar_extraordinario")

@@ -42,12 +42,6 @@ export const listarPostulantes = async (req, res) => {
   res.json({ status: 'ok', data: resultado })
 }
 
-// Devuelve un postulante con todas sus secciones
-export const listarPlazasPostulantes = async (req, res) => {
-  const plazas = await postulanteService.listarPlazas()
-  res.json({ status: 'ok', data: plazas })
-}
-
 export const getPostulanteById = async (req, res) => {
   const id = parsearId(req, res)
   if (!id) return

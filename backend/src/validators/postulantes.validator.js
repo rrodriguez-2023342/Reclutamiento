@@ -99,7 +99,7 @@ export const createPostulanteSchema = z.object({
   correo: z.string().trim().email('Correo inválido').max(100),
   estado_civil: z.enum(ESTADOS_CIVILES, { error: 'Estado civil inválido' }),
   dpi: dpiSchema,
-  puesto_solicita: z.string().trim().min(1, 'El puesto al que aspira es requerido').max(100),
+  plaza_id: z.coerce.number({ error: 'Seleccione una plaza válida' }).int('Seleccione una plaza válida').positive('Seleccione una plaza válida'),
 
   // Identificación (opcionales)
   dpi_extendido_en: textoOpcional(100),
@@ -185,7 +185,7 @@ export const listarQuerySchema = z
     page: z.coerce.number({ error: 'Página inválida' }).int().min(1).default(1),
     limit: z.coerce.number({ error: 'Límite inválido' }).int().min(1).max(100).default(10),
     q: z.string().trim().max(100).optional(),
-    puesto: z.string().trim().max(100).optional(),
+    plaza_id: z.coerce.number({ error: 'Plaza inválida' }).int().positive().optional(),
     estado: z.enum(ESTADOS_POSTULANTE, { error: 'Estado inválido' }).optional(),
   })
-  .transform((query) => ({ ...query, q: query.q || undefined, puesto: query.puesto || undefined }))
+  .transform((query) => ({ ...query, q: query.q || undefined, plaza_id: query.plaza_id || undefined }))

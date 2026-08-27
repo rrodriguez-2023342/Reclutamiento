@@ -1,7 +1,6 @@
 import { Router } from 'express'
 import {
   listarPostulantes,
-  listarPlazasPostulantes,
   getPostulanteById,
   createPostulante,
   updatePostulante,
@@ -15,7 +14,6 @@ const router = Router()
 router.use(authenticate)
 
 router.get('/', listarPostulantes) // Listar con paginación, búsqueda y filtro por estado
-router.get('/plazas', listarPlazasPostulantes)
 router.get('/:id', getPostulanteById) // Obtener un postulante con todas sus secciones
 router.post('/', createPostulante) // Crear un postulante con todo anidado
 router.put('/:id', updatePostulante) // Actualizar campos generales y/o secciones

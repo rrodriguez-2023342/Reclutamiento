@@ -20,6 +20,7 @@ const TRANSICIONES_PERMITIDAS = {
 // Relaciones que se devuelven siempre al consultar un postulante
 const INCLUDE_COMPLETO = {
   usuario: { select: { id: true, nombre: true, correo: true } },
+  plaza: { select: { id: true, nombre: true, salario_min: true, salario_max: true } },
   datosFamiliares: true,
   educacionHistorial: true,
   idiomas: true,
@@ -56,8 +57,8 @@ function crearError(mensaje, status) {
 }
 
 class PostulanteService {
-  // Lista paginada con búsqueda (nombre, DPI, correo, puesto) y filtro por estado
-  async listar({ page = 1, limit = 10, q, estado, puesto }) {
+  // Lista paginada con búsqueda (nombre, DPI, correo, plaza) y filtro por estado y plaza
+  async listar({ page = 1, limit = 10, q, estado, plaza_id }) {
     const where = {}
 
     if (estado) {
@@ -69,18 +70,21 @@ class PostulanteService {
         { nombre_completo: { contains: q } },
         { dpi: { contains: q } },
         { correo: { contains: q } },
-        { puesto_solicita: { contains: q } },
+        { plaza: { nombre: { contains: q } } },
       ]
     }
 
-    if (puesto) {
-      where.puesto_solicita = puesto
+    if (plaza_id) {
+      where.plaza_id = plaza_id
     }
 
     const [data, total] = await prisma.$transaction([
       prisma.postulante.findMany({
         where,
-        include: { usuario: { select: { id: true, nombre: true } } },
+        include: {
+          usuario: { select: { id: true, nombre: true } },
+          plaza: { select: { id: true, nombre: true } },
+        },
         orderBy: [{ fecha_registro: 'desc' }, { id: 'desc' }],
         skip: (page - 1) * limit,
         take: limit,
@@ -89,16 +93,6 @@ class PostulanteService {
     ])
 
     return { data, total, page, totalPages: Math.ceil(total / limit) || 1 }
-  }
-
-  async listarPlazas() {
-    const plazas = await prisma.postulante.findMany({
-      distinct: ['puesto_solicita'],
-      select: { puesto_solicita: true },
-      orderBy: { puesto_solicita: 'asc' },
-    })
-
-    return plazas.map(({ puesto_solicita }) => puesto_solicita)
   }
 
   // Devuelve un postulante con todas sus secciones. null si no existe

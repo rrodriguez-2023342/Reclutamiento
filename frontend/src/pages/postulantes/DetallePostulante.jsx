@@ -373,7 +373,7 @@ function SectionContent({ section, p, onReload }) {
         <div className="mt-8">
           <Details
             items={[
-              ["Puesto solicitado", text(p.puesto_solicita)],
+              ["Plaza aplicada", text(p.plaza?.nombre)],
               ["Salario aspirado", decimal(p.salario_aspira)],
               ["Inicio disponible", date(p.fecha_inicio_disponible)],
               ["Tiempo extraordinario", boolean(p.trabajar_extraordinario)],
@@ -735,7 +735,7 @@ function DetallePostulante() {
               <p className="mt-2 text-[#5b6e8b]">
                 Candidato aplicando para:{" "}
                 <span className="font-semibold text-[#3162e9]">
-                  {p.puesto_solicita}
+                  {p.plaza?.nombre || "—"}
                 </span>{" "}
                 · Registrado el {date(p.fecha_registro)}
               </p>

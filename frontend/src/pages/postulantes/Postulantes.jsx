@@ -10,10 +10,8 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
-import {
-  getPlazasPostulantes,
-  getPostulantes,
-} from "../../services/postulantes.service.js";
+import { getPostulantes } from "../../services/postulantes.service.js";
+import { getPlazas } from "../../services/plazas.service.js";
 
 const PAGE_SIZE = 6;
 
@@ -76,7 +74,7 @@ function Postulantes() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [estado, setEstado] = useState("");
-  const [puesto, setPuesto] = useState("");
+  const [plazaId, setPlazaId] = useState("");
   const [page, setPage] = useState(1);
   const [result, setResult] = useState({
     data: [],
@@ -107,8 +105,8 @@ function Postulantes() {
 
   useEffect(() => {
     let active = true;
-    getPlazasPostulantes()
-      .then((data) => active && setPlazas(data))
+    getPlazas({ activa: true })
+      .then((data) => active && setPlazas(data.map(({ id, nombre }) => ({ id, nombre }))))
       .catch(() => active && setPlazas([]));
     return () => {
       active = false;
@@ -122,7 +120,7 @@ function Postulantes() {
       limit: PAGE_SIZE,
       ...(debouncedSearch && { q: debouncedSearch }),
       ...(estado && { estado }),
-      ...(puesto && { puesto }),
+      ...(plazaId && { plaza_id: plazaId }),
     })
       .then((data) => {
         if (active) {
@@ -144,7 +142,7 @@ function Postulantes() {
     return () => {
       active = false;
     };
-  }, [page, debouncedSearch, estado, puesto]);
+  }, [page, debouncedSearch, estado, plazaId]);
 
   const firstItem = result.total === 0 ? 0 : (result.page - 1) * PAGE_SIZE + 1;
   const lastItem = Math.min(result.page * PAGE_SIZE, result.total);
@@ -158,8 +156,8 @@ function Postulantes() {
     setPage(1);
     setLoading(true);
   };
-  const updatePuesto = (value) => {
-    setPuesto(value);
+  const updatePlaza = (value) => {
+    setPlazaId(value);
     setPage(1);
     setLoading(true);
   };
@@ -209,13 +207,13 @@ function Postulantes() {
           </SelectField>
           <SelectField
             ariaLabel="Filtrar por plaza"
-            value={puesto}
-            onChange={updatePuesto}
+            value={plazaId}
+            onChange={updatePlaza}
           >
             <option value="">Plaza: Todas</option>
             {plazas.map((plaza) => (
-              <option key={plaza} value={plaza}>
-                {plaza}
+              <option key={plaza.id} value={plaza.id}>
+                {plaza.nombre}
               </option>
             ))}
           </SelectField>
@@ -234,23 +232,23 @@ function Postulantes() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left">
             <thead>
-              <tr className="text-base font-medium text-[#5b6e8b]">
-                <th className="border-b border-[#dfe5ee] px-7 py-5 font-medium">
+              <tr className="text-base font-semibold text-[#5b6e8b]">
+                <th className="border-b border-[#dfe5ee] px-7 py-5 font-semibold">
                   Nombre Completo
                 </th>
-                <th className="border-b border-[#dfe5ee] px-5 py-5 font-medium">
+                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
                   DPI (Guatemala)
                 </th>
-                <th className="border-b border-[#dfe5ee] px-5 py-5 font-medium">
+                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
                   Plaza Aplicada
                 </th>
-                <th className="border-b border-[#dfe5ee] px-5 py-5 font-medium">
+                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
                   Estado
                 </th>
-                <th className="border-b border-[#dfe5ee] px-5 py-5 font-medium">
+                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
                   Registro
                 </th>
-                <th className="border-b border-[#dfe5ee] px-7 py-5 text-right font-medium">
+                <th className="border-b border-[#dfe5ee] px-7 py-5 text-right font-semibold">
                   Acciones
                 </th>
               </tr>
@@ -297,7 +295,7 @@ function Postulantes() {
                       {formatDpi(postulante.dpi)}
                     </td>
                     <td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">
-                      {postulante.puesto_solicita}
+                      {postulante.plaza?.nombre || "—"}
                     </td>
                     <td className="border-b border-[#dfe5ee] px-5 py-6">
                       <span

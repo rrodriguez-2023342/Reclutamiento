@@ -18,6 +18,7 @@ import {
   getPostulanteById,
   updatePostulante,
 } from "../../services/postulantes.service.js";
+import { getPlazas } from "../../services/plazas.service.js";
 import { subirDocumento, getDocumentos } from "../../services/documentos.service.js";
 import {
   defaultPostulanteValues,
@@ -137,7 +138,7 @@ function normalizarPostulante(p) {
     nit: aTexto(p.nit),
     igss: aTexto(p.igss),
     perfil_facebook: aTexto(p.perfil_facebook),
-    puesto_solicita: aTexto(p.puesto_solicita),
+    plaza_id: p.plaza?.id || p.plaza_id || undefined,
     salario_aspira: aNumero(p.salario_aspira),
     fecha_inicio_disponible: aFecha(p.fecha_inicio_disponible),
     trabajar_extraordinario: p.trabajar_extraordinario ?? null,
@@ -242,6 +243,7 @@ function FormularioPostulante({ postulanteId }) {
   const [cancelPassword, setCancelPassword] = useState("");
   const [cancelError, setCancelError] = useState("");
   const [cancelando, setCancelando] = useState(false);
+  const [plazas, setPlazas] = useState([]);
   const {
     register,
     control,
@@ -262,6 +264,16 @@ function FormularioPostulante({ postulanteId }) {
   const experience = useFieldArray({ control, name: "experienciaLaboral" });
   const references = useFieldArray({ control, name: "referenciasPersonales" });
   const values = useWatch({ control }) || defaultPostulanteValues;
+
+  useEffect(() => {
+    let active = true;
+    getPlazas({ activa: true })
+      .then((data) => active && setPlazas(data))
+      .catch(() => active && setPlazas([]));
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!draft) return;
@@ -329,7 +341,7 @@ function FormularioPostulante({ postulanteId }) {
       "estado_civil",
       "dpi",
     ],
-    2: ["puesto_solicita"],
+    2: ["plaza_id"],
     3: [],
     4: ["datosFamiliares"],
     5: ["educacionHistorial", "idiomas", "capacitaciones"],
@@ -600,10 +612,17 @@ function FormularioPostulante({ postulanteId }) {
             />
             <div className="grid gap-5 md:grid-cols-3">
               <Field
-                label="Puesto al que aspira *"
-                error={errors.puesto_solicita?.message}
+                label="Plaza a la que aplica *"
+                error={errors.plaza_id?.message}
               >
-                <Input registration={register("puesto_solicita")} />
+                <Select registration={register("plaza_id", { valueAsNumber: true })}>
+                  <option value="">Seleccione una plaza</option>
+                  {plazas.map((plaza) => (
+                    <option key={plaza.id} value={plaza.id}>
+                      {plaza.nombre}
+                    </option>
+                  ))}
+                </Select>
               </Field>
               <Field label="Salario al que aspira">
                 <Input

@@ -27,6 +27,9 @@ class PlazaService {
     return prisma.plaza.findMany({
       where,
       orderBy: { nombre: 'asc' },
+      include: {
+        _count: { select: { postulantes: true } },
+      },
     })
   }
 

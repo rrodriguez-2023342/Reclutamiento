@@ -3,6 +3,7 @@ import helmet from 'helmet'
 import cors from 'cors'
 import roleRoutes from './routes/role.routes.js'
 import authRoutes from './routes/auth.routes.js'
+import usuarioRoutes from './routes/usuario.routes.js'
 import postulantesRoutes from './routes/postulantes.route.js'
 import plazaRoutes from './routes/plaza.routes.js'
 import dashboardRoutes from './routes/dashboard.route.js'
@@ -23,6 +24,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/roles', roleRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api/usuarios', usuarioRoutes)
 app.use('/api/postulantes', postulantesRoutes)
 app.use('/api/plazas', plazaRoutes)
 app.use('/api/dashboard', dashboardRoutes)

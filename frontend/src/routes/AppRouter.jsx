@@ -13,6 +13,10 @@ import Plazas from "../pages/plazas/Plazas.jsx";
 import NuevaPlaza from "../pages/plazas/NuevaPlaza.jsx";
 import EditarPlaza from "../pages/plazas/EditarPlaza.jsx";
 import DetallePlaza from "../pages/plazas/DetallePlaza.jsx";
+import Usuarios from "../pages/usuarios/Usuarios.jsx";
+import NuevoUsuario from "../pages/usuarios/NuevoUsuario.jsx";
+import DetalleUsuario from "../pages/usuarios/DetalleUsuario.jsx";
+import EditarUsuario from "../pages/usuarios/EditarUsuario.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import PublicRoute from "./PublicRoute.jsx";
 
@@ -21,6 +25,16 @@ function ProtectedWithPasswordCheck({ children }) {
 
   if (user?.mustChangePassword) {
     return <Navigate to="/cambiar-password" replace />;
+  }
+
+  return children;
+}
+
+function AdminRoute({ children }) {
+  const { user } = useAuth();
+
+  if (!user || user.rol !== 'Administrador') {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
@@ -141,6 +155,54 @@ function AppRouter() {
             <ProtectedWithPasswordCheck>
               <EditarPlaza />
             </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/usuarios"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <ProtectedWithPasswordCheck>
+                <Usuarios />
+              </ProtectedWithPasswordCheck>
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/usuarios/nuevo"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <ProtectedWithPasswordCheck>
+                <NuevoUsuario />
+              </ProtectedWithPasswordCheck>
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/usuarios/:id"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <ProtectedWithPasswordCheck>
+                <DetalleUsuario />
+              </ProtectedWithPasswordCheck>
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/usuarios/:id/editar"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <ProtectedWithPasswordCheck>
+                <EditarUsuario />
+              </ProtectedWithPasswordCheck>
+            </AdminRoute>
           </ProtectedRoute>
         }
       />

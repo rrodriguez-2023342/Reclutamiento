@@ -82,6 +82,30 @@ model Plaza {
   @@map("plazas")
 }
 
+model Empresa {
+  id          Int           @id @default(autoincrement())
+  nombre      String        @unique @map("nombre") @db.VarChar(150)
+  direccion   String?       @map("direccion") @db.Text
+  telefono    String?       @map("telefono") @db.VarChar(20)
+  activa      Boolean       @default(true) @map("activa")
+  creado_en   DateTime      @default(now()) @map("creado_en") @db.Timestamp
+  postulantes Postulante[]
+
+  @@map("empresas")
+}
+
+model Patrono {
+  id          Int           @id @default(autoincrement())
+  nombre      String        @unique @map("nombre") @db.VarChar(150)
+  direccion   String?       @map("direccion") @db.Text
+  telefono    String?       @map("telefono") @db.VarChar(20)
+  activa      Boolean       @default(true) @map("activa")
+  creado_en   DateTime      @default(now()) @map("creado_en") @db.Timestamp
+  postulantes Postulante[]
+
+  @@map("patronos")
+}
+
 model Role {
   id       Int       @id @default(autoincrement())
   nombre   String    @unique @map("nombre") @db.VarChar(50)
@@ -156,6 +180,10 @@ model Postulante {
   procesado_legalmente         Boolean?             @map("procesado_legalmente")
   plaza_id                     Int?                 @map("plaza_id")
   plaza                        Plaza?               @relation(fields: [plaza_id], references: [id], onDelete: SetNull)
+  empresa_id                   Int?                 @map("empresa_id")
+  empresa                      Empresa?             @relation(fields: [empresa_id], references: [id], onDelete: SetNull)
+  patrono_id                   Int?                 @map("patrono_id")
+  patrono                      Patrono?             @relation(fields: [patrono_id], references: [id], onDelete: SetNull)
   salario_aspira               Decimal?             @map("salario_aspira") @db.Decimal(10, 2)
   fecha_inicio_disponible      DateTime?            @map("fecha_inicio_disponible") @db.Date
   trabajar_extraordinario      Boolean?             @map("trabajar_extraordinario")

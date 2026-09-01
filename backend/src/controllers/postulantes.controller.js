@@ -84,6 +84,9 @@ export const updatePostulanteEstado = async (req, res) => {
   const data = validar(updateEstadoSchema, req.body, res)
   if (!data) return
 
-  const postulante = await postulanteService.cambiarEstado(id, data.estado)
+  const postulante = await postulanteService.cambiarEstado(id, data.estado, {
+    empresa_id: data.empresa_id,
+    patrono_id: data.patrono_id,
+  })
   res.json({ status: 'ok', data: postulante })
 }

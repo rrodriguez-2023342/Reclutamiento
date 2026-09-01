@@ -21,6 +21,8 @@ const TRANSICIONES_PERMITIDAS = {
 const INCLUDE_COMPLETO = {
   usuario: { select: { id: true, nombre: true, correo: true } },
   plaza: { select: { id: true, nombre: true, salario_min: true, salario_max: true } },
+  empresa: { select: { id: true, nombre: true } },
+  patrono: { select: { id: true, nombre: true } },
   datosFamiliares: true,
   educacionHistorial: true,
   idiomas: true,
@@ -84,6 +86,8 @@ class PostulanteService {
         include: {
           usuario: { select: { id: true, nombre: true } },
           plaza: { select: { id: true, nombre: true } },
+          empresa: { select: { id: true, nombre: true } },
+          patrono: { select: { id: true, nombre: true } },
         },
         orderBy: [{ fecha_registro: 'desc' }, { id: 'desc' }],
         skip: (page - 1) * limit,
@@ -179,7 +183,7 @@ class PostulanteService {
   }
 
   // Cambia el estado validando la transición y notifica por correo al postulante
-  async cambiarEstado(id, nuevoEstado) {
+  async cambiarEstado(id, nuevoEstado, extras = {}) {
     const postulante = await prisma.postulante.findUnique({ where: { id }, select: { id: true, estado: true } })
     if (!postulante) {
       throw crearError('Postulante no encontrado', 404)
@@ -202,6 +206,12 @@ class PostulanteService {
     const data = { estado: nuevoEstado }
     if (postulante.estado === 'RECHAZADO' && nuevoEstado === 'PENDIENTE') {
       data.fecha_registro = new Date()
+    }
+
+    // Si se contrata, asignar empresa y patrono
+    if (nuevoEstado === 'CONTRATADO') {
+      if (extras.empresa_id) data.empresa_id = extras.empresa_id
+      if (extras.patrono_id) data.patrono_id = extras.patrono_id
     }
 
     const actualizado = await prisma.postulante.update({

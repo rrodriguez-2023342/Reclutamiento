@@ -6,6 +6,8 @@ import authRoutes from './routes/auth.routes.js'
 import usuarioRoutes from './routes/usuario.routes.js'
 import postulantesRoutes from './routes/postulantes.route.js'
 import plazaRoutes from './routes/plaza.routes.js'
+import empresaRoutes from './routes/empresa.routes.js'
+import patronoRoutes from './routes/patrono.routes.js'
 import dashboardRoutes from './routes/dashboard.route.js'
 import documentosRoutes from './routes/documento.routes.js'
 
@@ -27,6 +29,8 @@ app.use('/api/auth', authRoutes)
 app.use('/api/usuarios', usuarioRoutes)
 app.use('/api/postulantes', postulantesRoutes)
 app.use('/api/plazas', plazaRoutes)
+app.use('/api/empresas', empresaRoutes)
+app.use('/api/patronos', patronoRoutes)
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/postulantes', documentosRoutes)
 

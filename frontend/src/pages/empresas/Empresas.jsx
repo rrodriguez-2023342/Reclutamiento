@@ -350,42 +350,42 @@ function Empresas() {
             </section>
 
             <footer className="mt-7 flex flex-col gap-4 px-2 py-2 text-[#5b6e8b] sm:flex-row sm:items-center sm:justify-between">
-              <p>
-                Mostrando {firstItem} a {lastItem} de{" "}
-                {result.total.toLocaleString("es-GT")} empresas
-              </p>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  disabled={loading || result.page <= 1}
-                  onClick={() => setPage((current) => Math.max(1, current - 1))}
-                  className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  Anterior
-                </button>
-                <span className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-[#3162e9] px-3 font-bold text-white">
-                  {result.page}
-                </span>
-                <button
-                  type="button"
-                  disabled={loading || result.page >= result.totalPages}
-                  onClick={() =>
-                    setPage((current) => Math.min(result.totalPages, current + 1))
-                  }
-                  className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
-                >
-                  Siguiente
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
+                <p>
+                    Mostrando {firstItem} a {lastItem} de{" "}
+                    {result.total.toLocaleString("es-GT")} empresas
+                </p>
+                <div className="flex items-center gap-2">
+                    <button
+                        type="button"
+                        disabled={loading || result.page <= 1}
+                        onClick={() => setPage((current) => Math.max(1, current - 1))}
+                        className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                        <ChevronLeft className="h-4 w-4" />
+                        Anterior
+                    </button>
+                    <span className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-[#3162e9] px-3 font-bold text-white">
+                        {result.page}
+                    </span>
+                    <button
+                        type="button"
+                        disabled={loading || result.page >= result.totalPages}
+                        onClick={() =>
+                            setPage((current) => Math.min(result.totalPages, current + 1))
+                        }
+                        className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                        Siguiente
+                        <ChevronRight className="h-4 w-4" />
+                    </button>
+                </div>
             </footer>
 
             <Modal
-              action={modalAction}
-              loading={actionLoading}
-              onClose={() => setModalAction(null)}
-              onConfirm={handleToggleStatus}
+                action={modalAction}
+                loading={actionLoading}
+                onClose={() => setModalAction(null)}
+                onConfirm={handleToggleStatus}
             />
         </DashboardLayout>
     );

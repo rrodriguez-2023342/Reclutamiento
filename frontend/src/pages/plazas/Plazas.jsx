@@ -81,7 +81,7 @@ function Plazas() {
     let active = true;
     getPlazas({
       ...(debouncedSearch && { q: debouncedSearch }),
-      ...(activa !== "" && { activa: activa === "true" }),
+      ...(activa !== "" && { activo: activa === "true" }),
     })
       .then((data) => {
         if (active) {
@@ -185,9 +185,9 @@ function Plazas() {
                   <BriefcaseBusiness className="h-7 w-7" strokeWidth={2} />
                 </span>
                 <span
-                  className={`rounded-full px-3 py-1 text-sm font-semibold ${plaza.activa ? "bg-[#baf0d3] text-[#047a4e]" : "bg-[#f1f4f9] text-[#65758f]"}`}
+                  className={`rounded-full px-3 py-1 text-sm font-semibold ${plaza.activo ? "bg-[#baf0d3] text-[#047a4e]" : "bg-[#f1f4f9] text-[#65758f]"}`}
                 >
-                  {plaza.activa ? "Abierta" : "Cerrada"}
+                  {plaza.activo ? "Abierta" : "Cerrada"}
                 </span>
               </div>
               <div className="mt-6">
@@ -205,7 +205,7 @@ function Plazas() {
                     {plaza._count?.postulantes || 0} postulantes
                   </span>
                   <span className="font-bold text-[#071b3b]">
-                    {plaza.activa ? "Activa" : "Inactiva"}
+                    {plaza.activo ? "Activa" : "Inactiva"}
                   </span>
                 </div>
                 <p className="mt-4 text-lg font-semibold text-[#2764ff]">

@@ -267,7 +267,7 @@ function FormularioPostulante({ postulanteId }) {
 
   useEffect(() => {
     let active = true;
-    getPlazas({ activa: true })
+    getPlazas({ activo: true })
       .then((data) => active && setPlazas(data))
       .catch(() => active && setPlazas([]));
     return () => {

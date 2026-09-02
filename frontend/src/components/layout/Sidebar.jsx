@@ -1,4 +1,5 @@
 import {
+  Building2,
   BriefcaseBusiness,
   FileText,
   LayoutDashboard,
@@ -15,6 +16,7 @@ const navigation = [
   { label: "Dashboard", icon: LayoutDashboard, to: "/dashboard" },
   { label: "Postulantes", icon: UsersRound, to: "/postulantes" },
   { label: "Plazas activas", icon: BriefcaseBusiness, to: "/plazas" },
+  { label: "Empresas", icon: Building2, to: "/empresas" },
   { label: "Usuarios", icon: Shield, to: "/usuarios" },
   { label: "Informes y docs", icon: FileText, to: "/informes" },
   { label: "Configuración", icon: Settings, to: "/configuracion" },

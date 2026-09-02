@@ -12,12 +12,11 @@ function crearError(mensaje, status) {
 
 // Servicio para manejar operaciones relacionadas con usuarios
 class UsuarioService {
-  async listar({ page = 1, limit = 10, q, rol_id, activa }) {
+  async listar({ page = 1, limit = 10, q, rol_id, activo }) {
     const where = {};
 
-    // Filtrar por estado activo/inactivo si se proporciona
-    if (activa !== undefined) {
-      where.activo = activa;
+    if (activo !== undefined) {
+      where.activo = activo;
     }
 
     // Filtrar por rol si se proporciona

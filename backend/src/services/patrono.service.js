@@ -1,20 +1,20 @@
 import prisma from '../config/prisma.js'
 
-// Funcion par crear errores personalizados con status
+// Funcion para crear un error con un mensaje
 function crearError(mensaje, status) {
   const error = new Error(mensaje)
   error.status = status
   return error
 }
 
-// Servicio para manejar operaciones relacionadas con patronos
+// Servicio para manejar las operaciones relacionadas con patronos
 class PatronoService {
-  // Listar patronos con paginacion, busqueda y filtro por estado
-  async listar({ page = 1, limit = 10, q, activa }) {
+  // Listar patronos con paginacion y filtros opcionales
+  async listar({ page = 1, limit = 10, q, activo }) {
     const where = {}
 
-    if (activa !== undefined) {
-      where.activo = activa
+    if (activo !== undefined) {
+      where.activo = activo
     }
 
     if (q) {
@@ -85,7 +85,7 @@ class PatronoService {
     })
   }
 
-  // Desactivar un patrono, verificando que este activo
+  // Desactivar un patrono
   async desactivar(id) {
     const patrono = await prisma.patrono.findUnique({
       where: { id },
@@ -104,7 +104,7 @@ class PatronoService {
     })
   }
 
-  // Activar un patrono, verificando que este desactivado
+  // Activar un patrono
   async activar(id) {
     const patrono = await prisma.patrono.findUnique({
       where: { id },

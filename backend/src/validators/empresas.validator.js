@@ -25,10 +25,10 @@ export const listarEmpresasQuerySchema = z
     page: z.coerce.number({ error: 'Página inválida' }).int().min(1).default(1),
     limit: z.coerce.number({ error: 'Límite inválido' }).int().min(1).max(100).default(10),
     q: z.string().trim().max(100).optional(),
-    activa: z.coerce.boolean().optional(),
+    activo: z.coerce.boolean().optional(),
   })
   .transform((query) => ({
     ...query,
     q: query.q || undefined,
-    activa: query.activa !== undefined ? query.activa : undefined,
+    activo: query.activo !== undefined ? query.activo : undefined,
   }))

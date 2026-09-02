@@ -106,9 +106,9 @@ function DetallePlaza() {
                 </div>
               </div>
               <span
-                className={`self-start rounded-full px-3 py-1 text-sm font-semibold ${plaza.activa ? "bg-[#c9f3dd] text-[#087947]" : "bg-[#f1f4f9] text-[#5b6e8b]"}`}
+                className={`self-start rounded-full px-3 py-1 text-sm font-semibold ${plaza.activo ? "bg-[#c9f3dd] text-[#087947]" : "bg-[#f1f4f9] text-[#5b6e8b]"}`}
               >
-                {plaza.activa ? "Activa" : "Inactiva"}
+                {plaza.activo ? "Activa" : "Inactiva"}
               </span>
             </div>
             <div className="grid gap-5 py-7 sm:grid-cols-2">

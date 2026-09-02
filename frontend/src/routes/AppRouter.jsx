@@ -17,6 +17,10 @@ import Usuarios from "../pages/usuarios/Usuarios.jsx";
 import NuevoUsuario from "../pages/usuarios/NuevoUsuario.jsx";
 import DetalleUsuario from "../pages/usuarios/DetalleUsuario.jsx";
 import EditarUsuario from "../pages/usuarios/EditarUsuario.jsx";
+import Empresas from "../pages/empresas/Empresas.jsx";
+import NuevaEmpresa from "../pages/empresas/NuevaEmpresa.jsx";
+import DetalleEmpresa from "../pages/empresas/DetalleEmpresa.jsx";
+import EditarEmpresa from "../pages/empresas/EditarEmpresa.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import PublicRoute from "./PublicRoute.jsx";
 
@@ -203,6 +207,46 @@ function AppRouter() {
                 <EditarUsuario />
               </ProtectedWithPasswordCheck>
             </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Empresas />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/nueva"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <NuevaEmpresa />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/:id"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <DetalleEmpresa />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/:id/editar"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <EditarEmpresa />
+            </ProtectedWithPasswordCheck>
           </ProtectedRoute>
         }
       />

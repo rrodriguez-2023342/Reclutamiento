@@ -1,20 +1,20 @@
 import prisma from '../config/prisma.js'
 
-// Funcion par crear errores personalizados con status
+// Funcion para crear un error con un mensaje
 function crearError(mensaje, status) {
   const error = new Error(mensaje)
   error.status = status
   return error
 }
 
-// Servicio para manejar operaciones relacionadas con empresas
+// Servicio para manejar las operaciones relacionadas con empresas
 class EmpresaService {
-  // Listar empresas con paginacion, busqueda y filtro por estado
-  async listar({ page = 1, limit = 10, q, activa }) {
+  // Listar empresas con paginacion y filtros opcionales
+  async listar({ page = 1, limit = 10, q, activo }) {
     const where = {}
 
-    if (activa !== undefined) {
-      where.activo = activa
+    if (activo !== undefined) {
+      where.activo = activo
     }
 
     if (q) {
@@ -63,7 +63,7 @@ class EmpresaService {
     })
   }
 
-  // Actualizar una empresa existente, verificando que no exista otra con el mismo nombre
+  //Actualizar una empresa existente, verificando que no exista otra con el mismo nombre
   async actualizar(id, data) {
     const empresa = await prisma.empresa.findUnique({ where: { id } })
     if (!empresa) {
@@ -85,7 +85,7 @@ class EmpresaService {
     })
   }
 
-  // Desactivar una empresa, verificando que este activa
+  // Desactivar una empresa
   async desactivar(id) {
     const empresa = await prisma.empresa.findUnique({
       where: { id },
@@ -104,7 +104,7 @@ class EmpresaService {
     })
   }
 
-  // Activar una empresa, verificando que este desactivada
+  // Activar una empresa
   async activar(id) {
     const empresa = await prisma.empresa.findUnique({
       where: { id },

@@ -75,7 +75,7 @@ model Plaza {
   descripcion String?         @map("descripcion") @db.Text
   salario_min Decimal?        @map("salario_min") @db.Decimal(12, 2)
   salario_max Decimal?        @map("salario_max") @db.Decimal(12, 2)
-  activa      Boolean         @default(true) @map("activa")
+  activo      Boolean         @default(true) @map("activa")
   creado_en   DateTime        @default(now()) @map("creado_en") @db.Timestamp
   postulantes Postulante[]
 
@@ -87,7 +87,7 @@ model Empresa {
   nombre      String        @unique @map("nombre") @db.VarChar(150)
   direccion   String?       @map("direccion") @db.Text
   telefono    String?       @map("telefono") @db.VarChar(20)
-  activa      Boolean       @default(true) @map("activa")
+  activo      Boolean       @default(true) @map("activa")
   creado_en   DateTime      @default(now()) @map("creado_en") @db.Timestamp
   postulantes Postulante[]
 
@@ -99,7 +99,7 @@ model Patrono {
   nombre      String        @unique @map("nombre") @db.VarChar(150)
   direccion   String?       @map("direccion") @db.Text
   telefono    String?       @map("telefono") @db.VarChar(20)
-  activa      Boolean       @default(true) @map("activa")
+  activo      Boolean       @default(true) @map("activa")
   creado_en   DateTime      @default(now()) @map("creado_en") @db.Timestamp
   postulantes Postulante[]
 

@@ -22,7 +22,7 @@ export const createPlazaSchema = z.object({
   descripcion: textoLibreOpcional(),
   salario_min: montoOpcional(),
   salario_max: montoOpcional(),
-  activa: z.boolean().nullish(),
+  activo: z.boolean().nullish(),
 });
 
 // Validacion para la actualizacion de plazas, permitiendo campos opcionales
@@ -32,10 +32,10 @@ export const updatePlazaSchema = createPlazaSchema.partial();
 export const listarPlazasQuerySchema = z
   .object({
     q: z.string().trim().max(100).optional(),
-    activa: z.coerce.boolean().optional(),
+    activo: z.coerce.boolean().optional(),
   })
   .transform((query) => ({
     ...query,
     q: query.q || undefined,
-    activa: query.activa !== undefined ? query.activa : undefined,
+    activo: query.activo !== undefined ? query.activo : undefined,
   }));

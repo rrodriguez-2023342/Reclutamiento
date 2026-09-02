@@ -24,7 +24,7 @@ export const plazaSchema = z
       .optional(),
     salario_min: optionalSalary,
     salario_max: optionalSalary,
-    activa: z.boolean(),
+    activo: z.boolean(),
   })
   .refine(
     ({ salario_min, salario_max }) =>
@@ -43,5 +43,5 @@ export const defaultPlazaValues = {
   descripcion: "",
   salario_min: undefined,
   salario_max: undefined,
-  activa: true,
+  activo: true,
 };

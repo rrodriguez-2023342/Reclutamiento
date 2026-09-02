@@ -5,7 +5,7 @@ class DashboardService {
     const [totalPostulantes, enProceso, totalPlazas, ultimasSolicitudes] = await prisma.$transaction([
       prisma.postulante.count(),
       prisma.postulante.count({ where: { estado: 'EN_PROCESO' } }),
-      prisma.plaza.count({ where: { activa: true } }),
+      prisma.plaza.count({ where: { activo: true } }),
       prisma.postulante.findMany({
         take: 4,
         orderBy: [{ fecha_registro: 'desc' }, { id: 'desc' }],

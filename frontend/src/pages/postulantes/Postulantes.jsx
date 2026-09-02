@@ -105,7 +105,7 @@ function Postulantes() {
 
   useEffect(() => {
     let active = true;
-    getPlazas({ activa: true })
+    getPlazas({ activo: true })
       .then((data) => active && setPlazas(data.map(({ id, nombre }) => ({ id, nombre }))))
       .catch(() => active && setPlazas([]));
     return () => {

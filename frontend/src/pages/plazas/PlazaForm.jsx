@@ -106,7 +106,7 @@ function PlazaForm({
           <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">
             <input
               type="checkbox"
-              {...register("activa")}
+              {...register("activo")}
               className="h-5 w-5 cursor-pointer accent-[#3162e9]"
             />
             <span className="font-semibold">Plaza activa</span>

@@ -10,11 +10,11 @@ function crearError(mensaje, status) {
 // Servicio para manejar las plazas
 class PlazaService {
   // Listar todas las plazas con filtros opcionales
-  async listar({ q, activa } = {}) {
+  async listar({ q, activo } = {}) {
     const where = {}
 
-    if (activa !== undefined) {
-      where.activa = activa
+    if (activo !== undefined) {
+      where.activo = activo
     }
 
     if (q) {

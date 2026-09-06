@@ -21,6 +21,10 @@ import Empresas from "../pages/empresas/Empresas.jsx";
 import NuevaEmpresa from "../pages/empresas/NuevaEmpresa.jsx";
 import DetalleEmpresa from "../pages/empresas/DetalleEmpresa.jsx";
 import EditarEmpresa from "../pages/empresas/EditarEmpresa.jsx";
+import Patronos from "../pages/patronos/Patronos.jsx";
+import NuevoPatrono from "../pages/patronos/NuevoPatrono.jsx";
+import DetallePatrono from "../pages/patronos/DetallePatrono.jsx";
+import EditarPatrono from "../pages/patronos/EditarPatrono.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import PublicRoute from "./PublicRoute.jsx";
 
@@ -246,6 +250,46 @@ function AppRouter() {
           <ProtectedRoute>
             <ProtectedWithPasswordCheck>
               <EditarEmpresa />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patronos"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Patronos />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patronos/nuevo"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <NuevoPatrono />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patronos/:id"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <DetallePatrono />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patronos/:id/editar"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <EditarPatrono />
             </ProtectedWithPasswordCheck>
           </ProtectedRoute>
         }

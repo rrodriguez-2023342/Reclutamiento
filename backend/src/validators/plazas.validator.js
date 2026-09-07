@@ -32,10 +32,10 @@ export const updatePlazaSchema = createPlazaSchema.partial();
 export const listarPlazasQuerySchema = z
   .object({
     q: z.string().trim().max(100).optional(),
-    activo: z.coerce.boolean().optional(),
+    activo: z.string().optional(),
   })
   .transform((query) => ({
     ...query,
     q: query.q || undefined,
-    activo: query.activo !== undefined ? query.activo : undefined,
+    activo: query.activo !== undefined ? query.activo === 'true' : undefined,
   }));

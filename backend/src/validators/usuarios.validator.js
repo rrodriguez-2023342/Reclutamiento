@@ -54,11 +54,11 @@ export const listarUsuariosQuerySchema = z
       .int()
       .positive()
       .optional(),
-    activo: z.coerce.boolean().optional(),
+    activo: z.string().optional(),
   })
   .transform((query) => ({
     ...query,
     q: query.q || undefined,
     rol_id: query.rol_id || undefined,
-    activo: query.activo !== undefined ? query.activo : undefined,
+    activo: query.activo !== undefined ? query.activo === 'true' : undefined,
   }));

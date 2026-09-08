@@ -146,14 +146,14 @@ function Patronos() {
 
             <section className="mt-7 grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
                 {loading && (
-                  <p className="col-span-full py-16 text-center text-[#65758f]">
-                    Cargando patronos...
-                  </p>
+                    <p className="col-span-full py-16 text-center text-[#65758f]">
+                        Cargando patronos...
+                    </p>
                 )}
                 {!loading && !error && result.data.length === 0 && (
-                  <p className="col-span-full py-16 text-center text-[#65758f]">
-                    No hay patronos que coincidan con la búsqueda.
-                  </p>
+                    <p className="col-span-full py-16 text-center text-[#65758f]">
+                        No hay patronos que coincidan con la búsqueda.
+                    </p>
                 )}
                 {!loading &&
                     result.data.map((patrono) => (

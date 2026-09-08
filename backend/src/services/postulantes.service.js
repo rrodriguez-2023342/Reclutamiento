@@ -19,10 +19,14 @@ const TRANSICIONES_PERMITIDAS = {
 
 // Relaciones que se devuelven siempre al consultar un postulante
 const INCLUDE_COMPLETO = {
-  usuario: { select: { id: true, nombre: true, correo: true } },
+  usuario: {
+    select: {
+      id: true, nombre: true, correo: true,
+      empresa: { select: { id: true, nombre_empresa: true } },
+      patrono: { select: { id: true, razon_social: true } },
+    },
+  },
   plaza: { select: { id: true, nombre: true, salario_min: true, salario_max: true } },
-  empresa: { select: { id: true, nombre_empresa: true } },
-  patrono: { select: { id: true, razon_social: true } },
   datosFamiliares: true,
   educacionHistorial: true,
   idiomas: true,
@@ -84,10 +88,14 @@ class PostulanteService {
       prisma.postulante.findMany({
         where,
         include: {
-          usuario: { select: { id: true, nombre: true } },
+          usuario: {
+            select: {
+              id: true, nombre: true,
+              empresa: { select: { id: true, nombre_empresa: true } },
+              patrono: { select: { id: true, razon_social: true } },
+            },
+          },
           plaza: { select: { id: true, nombre: true } },
-          empresa: { select: { id: true, nombre_empresa: true } },
-          patrono: { select: { id: true, razon_social: true } },
         },
         orderBy: [{ fecha_registro: 'desc' }, { id: 'desc' }],
         skip: (page - 1) * limit,
@@ -184,7 +192,7 @@ class PostulanteService {
 
   // Cambia el estado validando la transición y notifica por correo al postulante
   async cambiarEstado(id, nuevoEstado, extras = {}) {
-    const postulante = await prisma.postulante.findUnique({ where: { id }, select: { id: true, estado: true } })
+    const postulante = await prisma.postulante.findUnique({ where: { id }, select: { id: true, estado: true, usuario_id: true } })
     if (!postulante) {
       throw crearError('Postulante no encontrado', 404)
     }
@@ -208,10 +216,17 @@ class PostulanteService {
       data.fecha_registro = new Date()
     }
 
-    // Si se contrata, asignar empresa y patrono
+    // Si se contrata, asignar empresa y patrono al usuario
     if (nuevoEstado === 'CONTRATADO') {
-      if (extras.empresa_id) data.empresa_id = extras.empresa_id
-      if (extras.patrono_id) data.patrono_id = extras.patrono_id
+      const usuarioData = {}
+      if (extras.empresa_id) usuarioData.empresa_id = extras.empresa_id
+      if (extras.patrono_id) usuarioData.patrono_id = extras.patrono_id
+      if (Object.keys(usuarioData).length > 0) {
+        await prisma.usuario.update({
+          where: { id: postulante.usuario_id },
+          data: usuarioData,
+        })
+      }
     }
 
     const actualizado = await prisma.postulante.update({

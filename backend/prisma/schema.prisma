@@ -93,7 +93,7 @@ model Empresa {
   detalle_empresa String?       @map("detalle_empresa") @db.Text
   activo          Boolean       @default(true) @map("activa")
   creado_en       DateTime      @default(now()) @map("creado_en") @db.Timestamp
-  postulantes     Postulante[]
+  usuarios        Usuario[]
 
   @@map("empresas")
 }
@@ -113,7 +113,7 @@ model Patrono {
   dpi_extendido_en      String?       @map("dpi_extendido_en") @db.VarChar(100)
   activo                Boolean       @default(true) @map("activa")
   creado_en             DateTime      @default(now()) @map("creado_en") @db.Timestamp
-  postulantes           Postulante[]
+  usuarios              Usuario[]
 
   @@map("patronos")
 }
@@ -137,6 +137,10 @@ model Usuario {
   mustChangePassword  Boolean      @default(false) @map("must_change_password")
   resetToken          String?      @unique @map("reset_token") @db.VarChar(255)
   resetTokenExpiry    DateTime?    @map("reset_token_expiry") @db.Timestamp
+  empresa_id          Int?         @map("empresa_id")
+  empresa             Empresa?     @relation(fields: [empresa_id], references: [id], onDelete: SetNull)
+  patrono_id          Int?         @map("patrono_id")
+  patrono             Patrono?     @relation(fields: [patrono_id], references: [id], onDelete: SetNull)
   rol                 Role         @relation(fields: [rol_id], references: [id])
   postulantes         Postulante[]
 
@@ -192,10 +196,6 @@ model Postulante {
   procesado_legalmente         Boolean?             @map("procesado_legalmente")
   plaza_id                     Int?                 @map("plaza_id")
   plaza                        Plaza?               @relation(fields: [plaza_id], references: [id], onDelete: SetNull)
-  empresa_id                   Int?                 @map("empresa_id")
-  empresa                      Empresa?             @relation(fields: [empresa_id], references: [id], onDelete: SetNull)
-  patrono_id                   Int?                 @map("patrono_id")
-  patrono                      Patrono?             @relation(fields: [patrono_id], references: [id], onDelete: SetNull)
   salario_aspira               Decimal?             @map("salario_aspira") @db.Decimal(10, 2)
   fecha_inicio_disponible      DateTime?            @map("fecha_inicio_disponible") @db.Date
   trabajar_extraordinario      Boolean?             @map("trabajar_extraordinario")

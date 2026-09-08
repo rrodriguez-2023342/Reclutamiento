@@ -67,6 +67,7 @@ export const etiquetasTipoDocumento = {
   CARTA_RECOMENDACION: "Carta de Recomendación y Referencia Laboral",
   COPIA_DPI: "Copia de DPI",
   TARJETA_SALUD: "Tarjeta de Salud y Manipulación de Alimentos",
+  CURRICULUM: "Currículum",
 };
 
 // Tipos de documento (orden del wizard)
@@ -76,13 +77,15 @@ export const TIPOS_DOCUMENTO = [
   "CARTA_RECOMENDACION",
   "COPIA_DPI",
   "TARJETA_SALUD",
+  "CURRICULUM",
 ];
 
-// Accept attr por tipo de documento
+// Acceptar por tipo de documento
 export const acceptPorTipo = {
   FOTO: "image/jpeg,image/png,image/webp",
   ANTECEDENTES_PENALES: "application/pdf",
   CARTA_RECOMENDACION: "application/pdf",
   COPIA_DPI: "application/pdf",
   TARJETA_SALUD: "application/pdf",
+  CURRICULUM: "application/pdf",
 };

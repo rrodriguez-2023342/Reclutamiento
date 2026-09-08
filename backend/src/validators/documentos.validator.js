@@ -7,6 +7,7 @@ export const TIPOS_DOCUMENTO = [
   'CARTA_RECOMENDACION',
   'COPIA_DPI',
   'TARJETA_SALUD',
+  'CURRICULUM',
 ]
 
 // Mapeo de tipos de documento
@@ -16,6 +17,7 @@ const TIPOS_MIME = {
   CARTA_RECOMENDACION: ['application/pdf'],
   COPIA_DPI: ['application/pdf'],
   TARJETA_SALUD: ['application/pdf'],
+  CURRICULUM: ['application/pdf'],
 }
 
 const tipoSchema = z.enum(TIPOS_DOCUMENTO, { message: 'Tipo de documento inválido' })

@@ -1,13 +1,21 @@
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, ArrowRight, CircleAlert, Plus, Save, Upload } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CircleAlert,
+  Plus,
+  Save,
+  Upload,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
   BooleanField,
   Field,
   Input,
+  PasswordInput,
   Select,
   Textarea,
 } from "../../components/postulantes/formControls.jsx";
@@ -19,7 +27,10 @@ import {
   updatePostulante,
 } from "../../services/postulantes.service.js";
 import { getPlazas } from "../../services/plazas.service.js";
-import { subirDocumento, getDocumentos } from "../../services/documentos.service.js";
+import {
+  subirDocumento,
+  getDocumentos,
+} from "../../services/documentos.service.js";
 import {
   defaultPostulanteValues,
   postulanteSchema,
@@ -394,10 +405,13 @@ function FormularioPostulante({ postulanteId }) {
         }
       }
 
-      navigate(
-        esEdicion ? `/postulantes/${postulanteId}` : "/postulantes",
-        { state: { mensaje: esEdicion ? "Postulante actualizado correctamente" : "Postulante registrado correctamente" } },
-      );
+      navigate(esEdicion ? `/postulantes/${postulanteId}` : "/postulantes", {
+        state: {
+          mensaje: esEdicion
+            ? "Postulante actualizado correctamente"
+            : "Postulante registrado correctamente",
+        },
+      });
     } catch (error) {
       setServerError(
         error.response?.data?.message ||
@@ -422,7 +436,10 @@ function FormularioPostulante({ postulanteId }) {
       if (!esEdicion) window.localStorage.removeItem(DRAFT_KEY);
       navigate(esEdicion ? `/postulantes/${postulanteId}` : "/postulantes");
     } catch (error) {
-      setCancelError(error.response?.data?.message || "No fue posible validar la contraseña.");
+      setCancelError(
+        error.response?.data?.message ||
+          "No fue posible validar la contraseña.",
+      );
     } finally {
       setCancelando(false);
     }
@@ -470,17 +487,49 @@ function FormularioPostulante({ postulanteId }) {
     >
       {cancelOpen && (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-[#071b3b]/50 p-4">
-          <form onSubmit={cancelarFormulario} className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-            <h2 className="text-xl font-bold text-[#071b3b]">Cancelar formulario</h2>
-            <p className="mt-2 text-sm text-[#5b6e8b]">Confirma la contraseña del usuario conectado para salir.</p>
-            {cancelError && <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-600">{cancelError}</p>}
+          <form
+            onSubmit={cancelarFormulario}
+            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+          >
+            <h2 className="text-xl font-bold text-[#071b3b]">
+              Cancelar formulario
+            </h2>
+            <p className="mt-2 text-sm text-[#5b6e8b]">
+              Confirma la contraseña del usuario conectado para salir.
+            </p>
+            {cancelError && (
+              <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-600">
+                {cancelError}
+              </p>
+            )}
             <label className="mt-4 block text-sm font-semibold text-[#071b3b]">
-              Contraseña
-              <input type="password" autoFocus value={cancelPassword} onChange={(event) => setCancelPassword(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dce3ee] px-4 outline-none focus:border-[#3162e9]" />
+              <span className="mb-2 block">Contraseña</span>
+              <PasswordInput
+                autoFocus
+                value={cancelPassword}
+                onChange={(event) => setCancelPassword(event.target.value)}
+                className="h-12 w-full rounded-xl border border-[#dce3ee] px-4 outline-none focus:border-[#3162e9]"
+              />
             </label>
             <div className="mt-6 flex justify-end gap-3">
-              <button type="button" onClick={() => { setCancelOpen(false); setCancelPassword(""); setCancelError(""); }} className="rounded-xl border border-[#dce3ee] px-4 py-2 font-semibold text-[#071b3b] cursor-pointer">Continuar formulario</button>
-              <button type="submit" disabled={cancelando || !cancelPassword} className="rounded-xl bg-[#df353c] px-4 py-2 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60">{cancelando ? "Validando..." : "Confirmar salida"}</button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCancelOpen(false);
+                  setCancelPassword("");
+                  setCancelError("");
+                }}
+                className="rounded-xl border border-[#dce3ee] px-4 py-2 font-semibold text-[#071b3b] cursor-pointer"
+              >
+                Continuar formulario
+              </button>
+              <button
+                type="submit"
+                disabled={cancelando || !cancelPassword}
+                className="rounded-xl bg-[#df353c] px-4 py-2 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {cancelando ? "Validando..." : "Confirmar salida"}
+              </button>
             </div>
           </form>
         </div>
@@ -488,7 +537,10 @@ function FormularioPostulante({ postulanteId }) {
       <StepIndicator currentStep={step} maxStep={maxStep} onGoTo={setStep} />
       <form
         onSubmit={(e) => {
-          if (step !== 8) { e.preventDefault(); return; }
+          if (step !== 8) {
+            e.preventDefault();
+            return;
+          }
           handleSubmit(submit)(e);
         }}
         onKeyDown={(e) => {
@@ -615,7 +667,9 @@ function FormularioPostulante({ postulanteId }) {
                 label="Plaza a la que aplica *"
                 error={errors.plaza_id?.message}
               >
-                <Select registration={register("plaza_id", { valueAsNumber: true })}>
+                <Select
+                  registration={register("plaza_id", { valueAsNumber: true })}
+                >
                   <option value="">Seleccione una plaza</option>
                   {plazas.map((plaza) => (
                     <option key={plaza.id} value={plaza.id}>
@@ -1090,12 +1144,19 @@ function FormularioPostulante({ postulanteId }) {
             />
             <div className="space-y-4">
               {TIPOS_DOCUMENTO.map((tipo) => {
-                const existente = documentosExistentes.find((d) => d.tipo === tipo);
+                const existente = documentosExistentes.find(
+                  (d) => d.tipo === tipo,
+                );
                 const archivoNuevo = values.documentos?.[tipo];
                 return (
-                  <div key={tipo} className="rounded-xl border border-[#dce3ee] bg-white p-4 sm:flex sm:items-center sm:justify-between gap-4">
+                  <div
+                    key={tipo}
+                    className="rounded-xl border border-[#dce3ee] bg-white p-4 sm:flex sm:items-center sm:justify-between gap-4"
+                  >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-sm font-medium text-[#071b3b]">{etiquetasTipoDocumento[tipo]}</span>
+                      <span className="text-sm font-medium text-[#071b3b]">
+                        {etiquetasTipoDocumento[tipo]}
+                      </span>
                       <span className="text-xs text-[#5b6e8b]">
                         {tipo === "FOTO"
                           ? "JPG, PNG, WebP (máx. 5 MB)"
@@ -1115,7 +1176,9 @@ function FormularioPostulante({ postulanteId }) {
                       )}
                       <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-[#3162e9] bg-[#f4f7ff] px-4 text-sm font-bold text-[#1e3a8a] transition hover:bg-[#e8efff]">
                         <Upload className="h-4 w-4" />
-                        {archivoNuevo ? "Cambiar archivo" : "Seleccionar archivo"}
+                        {archivoNuevo
+                          ? "Cambiar archivo"
+                          : "Seleccionar archivo"}
                         <input
                           type="file"
                           accept={acceptPorTipo[tipo]}
@@ -1123,7 +1186,9 @@ function FormularioPostulante({ postulanteId }) {
                             const file = e.target.files[0];
                             if (file) {
                               if (file.size > 5 * 1024 * 1024) {
-                                alert("El archivo excede el tamaño máximo de 5 MB");
+                                alert(
+                                  "El archivo excede el tamaño máximo de 5 MB",
+                                );
                                 e.target.value = "";
                                 return;
                               }

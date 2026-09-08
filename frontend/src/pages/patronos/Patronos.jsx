@@ -111,7 +111,7 @@ function Patronos() {
                                 setSearch(event.target.value);
                                 setPage(1);
                             }}
-                            placeholder="Buscar por nombre o dirección"
+                            placeholder="Buscar por razón social, representante o NIT"
                             className="w-full bg-transparent text-base outline-none placeholder:text-[#91a0b7]"
                         />
                     </label>
@@ -146,14 +146,14 @@ function Patronos() {
 
             <section className="mt-7 grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
                 {loading && (
-                    <p className="col-span-full py-16 text-center text-[#65758f]">
-                        Cargando patronos...
-                    </p>
+                  <p className="col-span-full py-16 text-center text-[#65758f]">
+                    Cargando patronos...
+                  </p>
                 )}
                 {!loading && !error && result.data.length === 0 && (
-                    <p className="col-span-full py-16 text-center text-[#65758f]">
-                        No hay patronos que coincidan con la búsqueda.
-                    </p>
+                  <p className="col-span-full py-16 text-center text-[#65758f]">
+                    No hay patronos que coincidan con la búsqueda.
+                  </p>
                 )}
                 {!loading &&
                     result.data.map((patrono) => (
@@ -161,7 +161,7 @@ function Patronos() {
                             type="button"
                             key={patrono.id}
                             onClick={() => navigate(`/patronos/${patrono.id}`)}
-                            aria-label={`Ver información de ${patrono.nombre}`}
+                            aria-label={`Ver información de ${patrono.razon_social}`}
                             className="group min-h-[306px] cursor-pointer rounded-[26px] bg-white p-7 text-left shadow-[0_10px_24px_rgba(20,43,89,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_30px_rgba(20,43,89,0.10)] focus:outline-none focus:ring-2 focus:ring-[#3162e9]"
                         >
                             <div className="flex items-start justify-between gap-4">
@@ -176,15 +176,15 @@ function Patronos() {
                             </div>
                             <div className="mt-6">
                                 <h2 className="text-[22px] font-bold tracking-[-0.035em] text-[#071b3b]">
-                                    {patrono.nombre}
+                                    {patrono.razon_social}
                                 </h2>
                                 <p className="mt-1 line-clamp-1 text-base text-[#65758f]">
-                                    {patrono.direccion || "Sin dirección"}
+                                    {patrono.representante_legal || "Sin representante"}
                                 </p>
                             </div>
                             <div className="mt-6 border-t border-[#dce3ee] pt-5">
                                 <span className="flex items-center gap-2 text-base text-[#65758f]">
-                                    {patrono.telefono || "Sin teléfono"}
+                                    {patrono.nit || "Sin NIT"}
                                 </span>
                             </div>
                         </button>

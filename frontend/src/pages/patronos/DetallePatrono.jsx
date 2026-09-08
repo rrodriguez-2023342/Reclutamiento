@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, CalendarDays,     Landmark,
-    UserRound, Pencil, Power } from "lucide-react";
+import {
+    ArrowLeft,
+    CalendarDays,
+    UserRound,
+    Pencil,
+    Power,
+} from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
@@ -10,11 +15,38 @@ import {
 } from "../../services/patronos.service.js";
 
 function formatDate(value) {
-    if (!value) return "—";
+    if (!value) return "\u2014";
     const date = new Date(value);
     return Number.isNaN(date.getTime())
-        ? "—"
+        ? "\u2014"
         : new Intl.DateTimeFormat("es-GT", { dateStyle: "long" }).format(date);
+}
+
+function calcularEdad(fechaNacimiento) {
+    if (!fechaNacimiento) return "\u2014";
+    const nacimiento = new Date(fechaNacimiento);
+    if (Number.isNaN(nacimiento.getTime())) return "\u2014";
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+        edad--;
+    }
+    return `${edad} años`;
+}
+
+function traducirEnum(valor) {
+    if (!valor) return "\u2014";
+    const traducciones = {
+        MASCULINO: "Masculino",
+        FEMENINO: "Femenino",
+        SOLTERO: "Soltero (a)",
+        CASADO: "Casado (a)",
+        UNIDO: "Unido (a)",
+        VIUDO: "Viudo (a)",
+        DIVORCIADO: "Divorciado (a)",
+    };
+    return traducciones[valor] || valor;
 }
 
 function Modal({ action, loading, onClose, onConfirm }) {
@@ -74,7 +106,7 @@ function DetallePatrono() {
                 }
             })
             .finally(() => active && setLoading(false));
-        
+
         return () => {
             active = false;
         };
@@ -159,8 +191,8 @@ function DetallePatrono() {
                                             ? "Desactivar patrono"
                                             : "Activar patrono",
                                         description: patrono.activo
-                                            ? `¿Deseas desactivar a ${patrono.nombre}?`
-                                            : `¿Deseas activar a ${patrono.nombre}?`,
+                                            ? `¿Deseas desactivar a ${patrono.razon_social}?`
+                                            : `¿Deseas activar a ${patrono.razon_social}?`,
                                     })
                                 }
                                 className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-bold text-[#071b3b] transition hover:bg-[#f0f4fa]"
@@ -170,7 +202,7 @@ function DetallePatrono() {
                             </button>
                         </div>
                     </div>
-                        
+
                     <section className="rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
                         <div className="flex flex-col gap-5 border-b border-[#dce3ee] pb-7 sm:flex-row sm:items-center sm:justify-between">
                             <div className="flex items-center gap-4">
@@ -179,7 +211,7 @@ function DetallePatrono() {
                                 </span>
                                 <div>
                                     <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
-                                        {patrono.nombre}
+                                        {patrono.razon_social}
                                     </h1>
                                     <p className="mt-2 text-[#5b6e8b]">
                                         Información general del patrono
@@ -193,12 +225,14 @@ function DetallePatrono() {
                                 {patrono.activo ? "Activo" : "Inactivo"}
                             </span>
                         </div>
-                                
+
                         <div className="mt-7 grid gap-5 sm:grid-cols-2">
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">Nombre</p>
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Razón Social
+                                </p>
                                 <p className="mt-2 text-lg font-bold text-[#071b3b]">
-                                    {patrono.nombre}
+                                    {patrono.razon_social}
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
@@ -209,16 +243,84 @@ function DetallePatrono() {
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
                                 <p className="text-sm font-semibold text-[#5b6e8b]">
-                                    Dirección
+                                    Número Patronal
                                 </p>
                                 <p className="mt-2 text-lg font-bold text-[#071b3b]">
-                                    {patrono.direccion || "—"}
+                                    {patrono.numero_patronal || "\u2014"}
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">Teléfono</p>
+                                <p className="text-sm font-semibold text-[#5b6e8b]">NIT</p>
                                 <p className="mt-2 text-lg font-bold text-[#071b3b]">
-                                    {patrono.telefono || "—"}
+                                    {patrono.nit || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Representante Legal
+                                </p>
+                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                    {patrono.representante_legal || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    DPI Representante
+                                </p>
+                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                    {patrono.dpi_representante || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Vencimiento DPI
+                                </p>
+                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                    {formatDate(patrono.fecha_vencimiento_dpi)}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Fecha de Nacimiento
+                                </p>
+                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                    {formatDate(patrono.fecha_nacimiento)}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">Edad</p>
+                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                    {calcularEdad(patrono.fecha_nacimiento)}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">Sexo</p>
+                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                    {traducirEnum(patrono.sexo)}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Estado Civil
+                                </p>
+                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                    {traducirEnum(patrono.estado_civil)}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Profesión
+                                </p>
+                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                    {patrono.profesion || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    DPI Extendido en
+                                </p>
+                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                    {patrono.dpi_extendido_en || "\u2014"}
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">

@@ -72,7 +72,7 @@ function Empresas() {
             .finally(() => {
                 if (active) setLoading(false);
             });
-
+        
         return () => {
             active = false;
         };
@@ -87,7 +87,7 @@ function Empresas() {
                 <div
                     role="status"
                     className="mb-5 rounded-2xl border border-[#b9e8ce] bg-[#edfff4] px-5 py-4 font-semibold text-[#087947]"
-                >   
+                >
                     {successMessage}
                 </div>
             )}
@@ -111,7 +111,7 @@ function Empresas() {
                                 setSearch(event.target.value);
                                 setPage(1);
                             }}
-                            placeholder="Buscar por nombre o dirección"
+                            placeholder="Buscar por nombre de empresa"
                             className="w-full bg-transparent text-base outline-none placeholder:text-[#91a0b7]"
                         />
                     </label>
@@ -161,7 +161,7 @@ function Empresas() {
                             type="button"
                             key={empresa.id}
                             onClick={() => navigate(`/empresas/${empresa.id}`)}
-                            aria-label={`Ver información de ${empresa.nombre}`}
+                            aria-label={`Ver información de ${empresa.nombre_empresa}`}
                             className="group min-h-[306px] cursor-pointer rounded-[26px] bg-white p-7 text-left shadow-[0_10px_24px_rgba(20,43,89,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_30px_rgba(20,43,89,0.10)] focus:outline-none focus:ring-2 focus:ring-[#3162e9]"
                         >
                             <div className="flex items-start justify-between gap-4">
@@ -176,16 +176,11 @@ function Empresas() {
                             </div>
                             <div className="mt-6">
                                 <h2 className="text-[22px] font-bold tracking-[-0.035em] text-[#071b3b]">
-                                    {empresa.nombre}
+                                    {empresa.nombre_empresa}
                                 </h2>
-                                <p className="mt-1 line-clamp-1 text-base text-[#65758f]">
-                                    {empresa.direccion || "Sin dirección"}
+                                <p className="mt-1 line-clamp-2 text-base text-[#65758f]">
+                                    {empresa.detalle_empresa || "Sin detalle"}
                                 </p>
-                            </div>
-                            <div className="mt-6 border-t border-[#dce3ee] pt-5">
-                                <span className="flex items-center gap-2 text-base text-[#65758f]">
-                                    {empresa.telefono || "Sin teléfono"}
-                                </span>
                             </div>
                         </button>
                     ))}

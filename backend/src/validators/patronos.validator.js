@@ -1,22 +1,35 @@
 import { z } from 'zod'
 
-// Funcion para validar texto opcional con longitud maxima
-const textoOpcional = (max) => z.string().trim().max(max).nullish()
-
 // Schemas de validacion para patronos
 export const createPatronoSchema = z.object({
-  nombre: z.string().trim().min(1, 'El nombre es requerido').max(150),
-  direccion: textoOpcional(5000),
-  telefono: z.string().trim().regex(/^[\d\s()+-]{7,20}$/, 'Teléfono inválido').nullish(),
+  razon_social: z.string().trim().min(1, 'La razón social es requerida').max(150),
+  numero_patronal: z.string().trim().max(50).nullish(),
+  nit: z.string().trim().regex(/^\d{7}-\d$/, 'NIT inválido (formato: 1234567-8)').nullish(),
+  representante_legal: z.string().trim().max(150).nullish(),
+  dpi_representante: z.string().trim().regex(/^\d{13}$/, 'DPI inválido (13 dígitos)').nullish(),
+  fecha_vencimiento_dpi: z.string().nullish(),
+  fecha_nacimiento: z.string().nullish(),
+  sexo: z.enum(['MASCULINO', 'FEMENINO']).nullish(),
+  estado_civil: z.enum(['SOLTERO', 'CASADO', 'UNIDO', 'VIUDO', 'DIVORCIADO']).nullish(),
+  profesion: z.string().trim().max(100).nullish(),
+  dpi_extendido_en: z.string().trim().max(100).nullish(),
   activo: z.boolean().nullish(),
 })
 
 // Schema de validacion para actualizar patrono
 export const updatePatronoSchema = z.object({
-  nombre: z.string().trim().min(1, 'El nombre es requerido').max(150).optional(),
-  direccion: textoOpcional(5000),
-  telefono: z.string().trim().regex(/^[\d\s()+-]{7,20}$/, 'Teléfono inválido').optional(),
-  activo: z.boolean().optional(),
+  razon_social: z.string().trim().min(1, 'La razón social es requerida').max(150).nullish(),
+  numero_patronal: z.string().trim().max(50).nullish(),
+  nit: z.string().trim().regex(/^\d{7}-\d$/, 'NIT inválido (formato: 1234567-8)').nullish(),
+  representante_legal: z.string().trim().max(150).nullish(),
+  dpi_representante: z.string().trim().regex(/^\d{13}$/, 'DPI inválido (13 dígitos)').nullish(),
+  fecha_vencimiento_dpi: z.string().nullish(),
+  fecha_nacimiento: z.string().nullish(),
+  sexo: z.enum(['MASCULINO', 'FEMENINO']).nullish(),
+  estado_civil: z.enum(['SOLTERO', 'CASADO', 'UNIDO', 'VIUDO', 'DIVORCIADO']).nullish(),
+  profesion: z.string().trim().max(100).nullish(),
+  dpi_extendido_en: z.string().trim().max(100).nullish(),
+  activo: z.boolean().nullish(),
 })
 
 // Schema de validacion para listar patronos con query params

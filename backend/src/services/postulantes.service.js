@@ -21,8 +21,8 @@ const TRANSICIONES_PERMITIDAS = {
 const INCLUDE_COMPLETO = {
   usuario: { select: { id: true, nombre: true, correo: true } },
   plaza: { select: { id: true, nombre: true, salario_min: true, salario_max: true } },
-  empresa: { select: { id: true, nombre: true } },
-  patrono: { select: { id: true, nombre: true } },
+  empresa: { select: { id: true, nombre_empresa: true } },
+  patrono: { select: { id: true, razon_social: true } },
   datosFamiliares: true,
   educacionHistorial: true,
   idiomas: true,
@@ -86,8 +86,8 @@ class PostulanteService {
         include: {
           usuario: { select: { id: true, nombre: true } },
           plaza: { select: { id: true, nombre: true } },
-          empresa: { select: { id: true, nombre: true } },
-          patrono: { select: { id: true, nombre: true } },
+          empresa: { select: { id: true, nombre_empresa: true } },
+          patrono: { select: { id: true, razon_social: true } },
         },
         orderBy: [{ fecha_registro: 'desc' }, { id: 'desc' }],
         skip: (page - 1) * limit,

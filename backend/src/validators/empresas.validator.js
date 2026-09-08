@@ -1,22 +1,17 @@
 import { z } from 'zod'
 
-// Funcion para validar texto opcional con longitud maxima
-const textoOpcional = (max) => z.string().trim().max(max).nullish()
-
 // Schemas de validacion para empresas
 export const createEmpresaSchema = z.object({
-  nombre: z.string().trim().min(1, 'El nombre es requerido').max(150),
-  direccion: textoOpcional(5000),
-  telefono: z.string().trim().regex(/^[\d\s()+-]{7,20}$/, 'Teléfono inválido').nullish(),
+  nombre_empresa: z.string().trim().min(1, 'El nombre de la empresa es requerido').max(150),
+  detalle_empresa: z.string().trim().max(5000).nullish(),
   activo: z.boolean().nullish(),
 })
 
 // Schema de validacion para actualizar empresa
 export const updateEmpresaSchema = z.object({
-  nombre: z.string().trim().min(1, 'El nombre es requerido').max(150).optional(),
-  direccion: textoOpcional(5000),
-  telefono: z.string().trim().regex(/^[\d\s()+-]{7,20}$/, 'Teléfono inválido').optional(),
-  activo: z.boolean().optional(),
+  nombre_empresa: z.string().trim().min(1, 'El nombre de la empresa es requerido').max(150).nullish(),
+  detalle_empresa: z.string().trim().max(5000).nullish(),
+  activo: z.boolean().nullish(),
 })
 
 // Schema de validacion para listar empresas con query params

@@ -3,7 +3,11 @@ import { ArrowLeft, Save } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { Field, Input } from "../../components/postulantes/formControls.jsx";
+import {
+    Field,
+    Input,
+    Textarea,
+} from "../../components/postulantes/formControls.jsx";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { createEmpresa } from "../../services/empresas.service.js";
 import {
@@ -28,8 +32,7 @@ function NuevaEmpresa() {
             setServerError("");
             const payload = {
                 ...values,
-                direccion: values.direccion || null,
-                telefono: values.telefono || null,
+                detalle_empresa: values.detalle_empresa || null,
             };
             await createEmpresa(payload);
             navigate("/empresas", {
@@ -74,30 +77,29 @@ function NuevaEmpresa() {
                         <div
                             role="alert"
                             className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 font-semibold text-red-600"
-                        >   
+                        >
                             {serverError}
                         </div>
                     )}
 
                     <div className="grid gap-5">
-                        <Field label="Nombre *" error={errors.nombre?.message}>
+                        <Field
+                            label="Nombre de la Empresa *"
+                            error={errors.nombre_empresa?.message}
+                        >
                             <Input
-                                registration={register("nombre")}
+                                registration={register("nombre_empresa")}
                                 placeholder="Ej. Clarion Group"
                             />
                         </Field>
-                    
-                        <Field label="Dirección" error={errors.direccion?.message}>
-                            <Input
-                                registration={register("direccion")}
-                                placeholder="Ej. Zona 10, Ciudad de Guatemala"
-                            />
-                        </Field>
 
-                        <Field label="Teléfono" error={errors.telefono?.message}>
-                            <Input
-                                registration={register("telefono")}
-                                placeholder="Ej. 2334-5678"
+                        <Field
+                            label="Detalle de la Empresa"
+                            error={errors.detalle_empresa?.message}
+                        >
+                            <Textarea
+                                registration={register("detalle_empresa")}
+                                placeholder="Ej. Empresa dedicada a la consultoría..."
                             />
                         </Field>
 

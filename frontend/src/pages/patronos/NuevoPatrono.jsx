@@ -3,7 +3,11 @@ import { ArrowLeft, Save } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { Field, Input } from "../../components/postulantes/formControls.jsx";
+import {
+    Field,
+    Input,
+    Select,
+} from "../../components/postulantes/formControls.jsx";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { createPatrono } from "../../services/patronos.service.js";
 import {
@@ -28,8 +32,16 @@ function NuevoPatrono() {
             setServerError("");
             const payload = {
                 ...values,
-                direccion: values.direccion || null,
-                telefono: values.telefono || null,
+                numero_patronal: values.numero_patronal || null,
+                nit: values.nit || null,
+                representante_legal: values.representante_legal || null,
+                dpi_representante: values.dpi_representante || null,
+                fecha_vencimiento_dpi: values.fecha_vencimiento_dpi || null,
+                fecha_nacimiento: values.fecha_nacimiento || null,
+                sexo: values.sexo || null,
+                estado_civil: values.estado_civil || null,
+                profesion: values.profesion || null,
+                dpi_extendido_en: values.dpi_extendido_en || null,
             };
             await createPatrono(payload);
             navigate("/patronos", {
@@ -79,37 +91,118 @@ function NuevoPatrono() {
                         </div>
                     )}
 
-                    <div className="grid gap-5">
-                        <Field label="Nombre *" error={errors.nombre?.message}>
+                    <div className="grid gap-5 sm:grid-cols-2">
+                        <div className="sm:col-span-2">
+                            <Field
+                                label="Razón Social *"
+                                error={errors.razon_social?.message}
+                            >
+                                <Input
+                                    registration={register("razon_social")}
+                                    placeholder="Ej. Viclasa S.A."
+                                />
+                            </Field>
+                        </div>
+
+                        <Field
+                            label="Número Patronal"
+                            error={errors.numero_patronal?.message}
+                        >
                             <Input
-                                registration={register("nombre")}
-                                placeholder="Ej. Viclasa"
+                                registration={register("numero_patronal")}
+                                placeholder="Ej. 12345"
                             />
                         </Field>
-                    
-                        <Field label="Dirección" error={errors.direccion?.message}>
+
+                        <Field label="NIT" error={errors.nit?.message}>
                             <Input
-                                registration={register("direccion")}
-                                placeholder="Ej. Zona 7, Ciudad de Guatemala"
+                                registration={register("nit")}
+                                placeholder="Ej. 1234567-8"
                             />
                         </Field>
-                    
-                        <Field label="Teléfono" error={errors.telefono?.message}>
+
+                        <Field
+                            label="Representante Legal"
+                            error={errors.representante_legal?.message}
+                        >
                             <Input
-                                registration={register("telefono")}
-                                placeholder="Ej. 2334-5678"
+                                registration={register("representante_legal")}
+                                placeholder="Nombre del representante"
                             />
                         </Field>
-                    
-                        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">
-                            <input
-                                type="checkbox"
-                                {...register("activo")}
-                                className="h-5 w-5 cursor-pointer accent-[#3162e9]"
+
+                        <Field
+                            label="DPI del Representante"
+                            error={errors.dpi_representante?.message}
+                        >
+                            <Input
+                                registration={register("dpi_representante")}
+                                placeholder="13 dígitos"
                             />
-                            <span className="font-semibold">Patrono activo</span>
-                        </label>
+                        </Field>
+
+                        <Field
+                            label="Fecha Vencimiento DPI"
+                            error={errors.fecha_vencimiento_dpi?.message}
+                        >
+                            <Input
+                                registration={register("fecha_vencimiento_dpi")}
+                                type="date"
+                            />
+                        </Field>
+
+                        <Field
+                            label="Fecha de Nacimiento"
+                            error={errors.fecha_nacimiento?.message}
+                        >
+                            <Input registration={register("fecha_nacimiento")} type="date" />
+                        </Field>
+
+                        <Field label="Sexo" error={errors.sexo?.message}>
+                            <Select registration={register("sexo")}>
+                                <option value="">Seleccione...</option>
+                                <option value="MASCULINO">Masculino</option>
+                                <option value="FEMENINO">Femenino</option>
+                            </Select>
+                        </Field>
+
+                        <Field label="Estado Civil" error={errors.estado_civil?.message}>
+                            <Select registration={register("estado_civil")}>
+                                <option value="">Seleccione...</option>
+                                <option value="SOLTERO">Soltero (a)</option>
+                                <option value="CASADO">Casado (a)</option>
+                                <option value="UNIDO">Unido (a)</option>
+                                <option value="VIUDO">Viudo (a)</option>
+                                <option value="DIVORCIADO">Divorciado (a)</option>
+                            </Select>
+                        </Field>
+
+                        <Field label="Profesión" error={errors.profesion?.message}>
+                            <Input
+                                registration={register("profesion")}
+                                placeholder="Ej. Ingeniero"
+                            />
+                        </Field>
+
+                        <Field
+                            label="Dónde se extendió DPI"
+                            error={errors.dpi_extendido_en?.message}
+                        >
+                            <Input
+                                registration={register("dpi_extendido_en")}
+                                placeholder="Ej. Guatemala"
+                            />
+                        </Field>
                     </div>
+
+                    <label className="mt-5 flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">
+                        <input
+                            type="checkbox"
+                            {...register("activo")}
+                            className="h-5 w-5 cursor-pointer accent-[#3162e9]"
+                        />
+                        <span className="font-semibold">Patrono activo</span>
+                    </label>
 
                     <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                         <button

@@ -19,8 +19,7 @@ class EmpresaService {
 
     if (q) {
       where.OR = [
-        { nombre: { contains: q } },
-        { direccion: { contains: q } },
+        { nombre_empresa: { contains: q } },
       ]
     }
 
@@ -45,7 +44,7 @@ class EmpresaService {
   // Crear una nueva empresa, verificando que no exista otra con el mismo nombre
   async crear(data) {
     const existente = await prisma.empresa.findUnique({
-      where: { nombre: data.nombre },
+      where: { nombre_empresa: data.nombre_empresa },
     })
     if (existente) {
       throw crearError('Ya existe una empresa con ese nombre', 409)
@@ -55,9 +54,8 @@ class EmpresaService {
 
     return prisma.empresa.create({
       data: {
-        nombre: data.nombre,
-        direccion: data.direccion || null,
-        telefono: data.telefono || null,
+        nombre_empresa: data.nombre_empresa,
+        detalle_empresa: data.detalle_empresa || null,
         activo,
       },
     })
@@ -70,9 +68,9 @@ class EmpresaService {
       throw crearError('Empresa no encontrada', 404)
     }
 
-    if (data.nombre && data.nombre !== empresa.nombre) {
+    if (data.nombre_empresa && data.nombre_empresa !== empresa.nombre_empresa) {
       const duplicado = await prisma.empresa.findFirst({
-        where: { nombre: data.nombre, id: { not: id } },
+        where: { nombre_empresa: data.nombre_empresa, id: { not: id } },
       })
       if (duplicado) {
         throw crearError('Ya existe otra empresa con ese nombre', 409)
@@ -89,7 +87,7 @@ class EmpresaService {
   async desactivar(id) {
     const empresa = await prisma.empresa.findUnique({
       where: { id },
-      select: { id: true, nombre: true, activo: true },
+      select: { id: true, nombre_empresa: true, activo: true },
     })
     if (!empresa) {
       throw crearError('Empresa no encontrada', 404)
@@ -108,7 +106,7 @@ class EmpresaService {
   async activar(id) {
     const empresa = await prisma.empresa.findUnique({
       where: { id },
-      select: { id: true, nombre: true, activo: true },
+      select: { id: true, nombre_empresa: true, activo: true },
     })
     if (!empresa) {
       throw crearError('Empresa no encontrada', 404)

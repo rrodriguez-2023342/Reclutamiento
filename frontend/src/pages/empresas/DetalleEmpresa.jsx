@@ -15,10 +15,10 @@ import {
 } from "../../services/empresas.service.js";
 
 function formatDate(value) {
-    if (!value) return "—";
+    if (!value) return "\u2014";
     const date = new Date(value);
     return Number.isNaN(date.getTime())
-        ? "—"
+        ? "\u2014"
         : new Intl.DateTimeFormat("es-GT", { dateStyle: "long" }).format(date);
 }
 
@@ -79,7 +79,7 @@ function DetalleEmpresa() {
                 }
             })
             .finally(() => active && setLoading(false));
-        
+
         return () => {
             active = false;
         };
@@ -163,9 +163,9 @@ function DetalleEmpresa() {
                                         title: empresa.activo
                                             ? "Desactivar empresa"
                                             : "Activar empresa",
-                                                description: empresa.activo
-                                            ? `¿Deseas desactivar a ${empresa.nombre}?`
-                                            : `¿Deseas activar a ${empresa.nombre}?`,
+                                        description: empresa.activo
+                                            ? `¿Deseas desactivar a ${empresa.nombre_empresa}?`
+                                            : `¿Deseas activar a ${empresa.nombre_empresa}?`,
                                     })
                                 }
                                 className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-bold text-[#071b3b] transition hover:bg-[#f0f4fa]"
@@ -184,7 +184,7 @@ function DetalleEmpresa() {
                                 </span>
                                 <div>
                                     <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
-                                        {empresa.nombre}
+                                        {empresa.nombre_empresa}
                                     </h1>
                                     <p className="mt-2 text-[#5b6e8b]">
                                         Información general de la empresa
@@ -203,7 +203,7 @@ function DetalleEmpresa() {
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
                                 <p className="text-sm font-semibold text-[#5b6e8b]">Nombre</p>
                                 <p className="mt-2 text-lg font-bold text-[#071b3b]">
-                                    {empresa.nombre}
+                                    {empresa.nombre_empresa}
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
@@ -212,18 +212,12 @@ function DetalleEmpresa() {
                                     {empresa.activo ? "Activa" : "Inactiva"}
                                 </p>
                             </div>
-                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                            <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
                                 <p className="text-sm font-semibold text-[#5b6e8b]">
-                                    Dirección
+                                    Detalle de la Empresa
                                 </p>
                                 <p className="mt-2 text-lg font-bold text-[#071b3b]">
-                                    {empresa.direccion || "—"}
-                                </p>
-                            </div>
-                            <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">Teléfono</p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
-                                    {empresa.telefono || "—"}
+                                    {empresa.detalle_empresa || "\u2014"}
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">

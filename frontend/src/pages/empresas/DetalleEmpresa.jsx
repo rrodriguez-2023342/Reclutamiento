@@ -22,6 +22,10 @@ function formatDate(value) {
         : new Intl.DateTimeFormat("es-GT", { dateStyle: "long" }).format(date);
 }
 
+function isEmpty(valor) {
+    return valor === null || valor === undefined || valor === "";
+}
+
 function Modal({ action, loading, onClose, onConfirm }) {
     if (!action) return null;
 
@@ -49,7 +53,7 @@ function Modal({ action, loading, onClose, onConfirm }) {
                         disabled={loading}
                         className="rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                        {loading ? "Procesando..." : "Confirmar"}
+                            {loading ? "Procesando..." : "Confirmar"}
                     </button>
                 </div>
             </div>
@@ -213,10 +217,14 @@ function DetalleEmpresa() {
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(empresa.detalle_empresa) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
                                     Detalle de la Empresa
                                 </p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(empresa.detalle_empresa) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
                                     {empresa.detalle_empresa || "\u2014"}
                                 </p>
                             </div>

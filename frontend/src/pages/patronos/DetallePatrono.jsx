@@ -49,6 +49,10 @@ function traducirEnum(valor) {
     return traducciones[valor] || valor;
 }
 
+function isEmpty(valor) {
+    return valor === null || valor === undefined || valor === "";
+}
+
 function Modal({ action, loading, onClose, onConfirm }) {
     if (!action) return null;
 
@@ -242,48 +246,74 @@ function DetallePatrono() {
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.numero_patronal) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
                                     Número Patronal
                                 </p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.numero_patronal) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
                                     {patrono.numero_patronal || "\u2014"}
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">NIT</p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.nit) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
+                                    NIT
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.nit) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
                                     {patrono.nit || "\u2014"}
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.representante_legal) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
                                     Representante Legal
                                 </p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.representante_legal) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
                                     {patrono.representante_legal || "\u2014"}
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.dpi_representante) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
                                     DPI Representante
                                 </p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.dpi_representante) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
                                     {patrono.dpi_representante || "\u2014"}
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.fecha_vencimiento_dpi) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
                                     Vencimiento DPI
                                 </p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.fecha_vencimiento_dpi) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
                                     {formatDate(patrono.fecha_vencimiento_dpi)}
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.fecha_nacimiento) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
                                     Fecha de Nacimiento
                                 </p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.fecha_nacimiento) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
                                     {formatDate(patrono.fecha_nacimiento)}
                                 </p>
                             </div>
@@ -294,32 +324,50 @@ function DetallePatrono() {
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">Sexo</p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.sexo) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
+                                    Sexo
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.sexo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
                                     {traducirEnum(patrono.sexo)}
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.estado_civil) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
                                     Estado Civil
                                 </p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.estado_civil) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
                                     {traducirEnum(patrono.estado_civil)}
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.profesion) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
                                     Profesión
                                 </p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.profesion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
                                     {patrono.profesion || "\u2014"}
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.dpi_extendido_en) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
                                     DPI Extendido en
                                 </p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.dpi_extendido_en) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
                                     {patrono.dpi_extendido_en || "\u2014"}
                                 </p>
                             </div>

@@ -1,20 +1,23 @@
 import { z } from "zod";
 
-const emptyToUndefined = (value) =>
-  value === "" || value === null || Number.isNaN(value) ? undefined : value;
+// Funcion para convertir valores vacios a null
+const emptyToNull = (value) =>
+  value === "" || value === undefined || value === null || Number.isNaN(value) ? null : value;
+
+// Funciones para crear validaciones opcionales
 const optionalText = (max) =>
-  z.preprocess(emptyToUndefined, z.string().trim().max(max).optional());
+  z.preprocess(emptyToNull, z.string().trim().max(max).nullable());
 const optionalNumber = (min, max) =>
-  z.preprocess(emptyToUndefined, z.number().min(min).max(max).optional());
+  z.preprocess(emptyToNull, z.number().min(min).max(max).nullable());
 const optionalDate = z.preprocess(
-  emptyToUndefined,
+  emptyToNull,
   z
     .string()
     .refine(
       (value) => !Number.isNaN(new Date(`${value}T12:00:00`).getTime()),
       "Fecha inválida",
     )
-    .optional(),
+    .nullable(),
 );
 const optionalBoolean = z.boolean().nullable().optional();
 const phone = z
@@ -22,6 +25,7 @@ const phone = z
   .trim()
   .regex(/^[\d\s()+-]{7,20}$/, "Teléfono inválido");
 
+// Schema para validacion de familiares
 const familiarSchema = z.object({
   parentesco: z.enum(
     ["PADRE", "MADRE", "ESPOSO_A", "HIJO_A", "HERMANO_A", "EMERGENCIA"],
@@ -35,9 +39,10 @@ const familiarSchema = z.object({
   edad: optionalNumber(0, 120),
   direccion: optionalText(5000),
   ocupacion: optionalText(100),
-  telefono: z.preprocess(emptyToUndefined, phone.optional()),
+  telefono: z.preprocess(emptyToNull, phone.nullable()),
 });
 
+// Schema para validacion de historial educativo
 const educacionSchema = z.object({
   nivel: z.enum(
     [
@@ -56,12 +61,15 @@ const educacionSchema = z.object({
   ano_final: optionalNumber(1900, 2100),
 });
 
+// Schema para validacion de idiomas
 const idiomaSchema = z.object({
   idioma: z.string().trim().min(1, "El idioma es requerido").max(50),
   habla: optionalBoolean,
   lee: optionalBoolean,
   escribe: optionalBoolean,
 });
+
+// Schema para validacion de capacitaciones
 const capacitacionSchema = z.object({
   nombre_curso: z.string().trim().min(1, "El curso es requerido").max(150),
   establecimiento_pais: optionalText(150),
@@ -69,11 +77,13 @@ const capacitacionSchema = z.object({
   fecha_inicial: optionalDate,
   fecha_final: optionalDate,
 });
+
+// Schema para validacion de experiencia laboral
 const experienciaSchema = z.object({
   empresa: z.string().trim().min(1, "La empresa es requerida").max(150),
   puesto: z.string().trim().min(1, "El puesto es requerido").max(100),
   direccion: optionalText(5000),
-  telefono: z.preprocess(emptyToUndefined, phone.optional()),
+  telefono: z.preprocess(emptyToNull, phone.nullable()),
   jefe_inmediato: optionalText(150),
   fecha_ingreso: optionalDate,
   fecha_retiro: optionalDate,
@@ -81,8 +91,8 @@ const experienciaSchema = z.object({
   salario_final: optionalNumber(0, 99999999.99),
   tareas_realizadas: optionalText(5000),
   motivo_retiro: z.preprocess(
-    emptyToUndefined,
-    z.enum(["RENUNCIA", "DESPIDO", "REORGANIZACION", "OTRO"]).optional(),
+    emptyToNull,
+    z.enum(["RENUNCIA", "DESPIDO", "REORGANIZACION", "OTRO"]).nullable(),
   ),
 });
 const referenciaSchema = z.object({
@@ -91,6 +101,7 @@ const referenciaSchema = z.object({
   direccion: optionalText(5000),
 });
 
+// Schema principal para validacion del formulario de postulante
 export const postulanteSchema = z.object({
   nombre_completo: z
     .string()
@@ -132,8 +143,8 @@ export const postulanteSchema = z.object({
   trabajar_extraordinario: optionalBoolean,
   trabajar_turnos_rotativos: optionalBoolean,
   medio_enterado: z.preprocess(
-    emptyToUndefined,
-    z.enum(["ANUNCIO", "REFERENCIA", "OTRO"]).optional(),
+    emptyToNull,
+    z.enum(["ANUNCIO", "REFERENCIA", "OTRO"]).nullable(),
   ),
   porque_gustaria_trabajar: optionalText(5000),
   porque_deberiamoss_contratar: optionalText(5000),
@@ -157,8 +168,8 @@ export const postulanteSchema = z.object({
   personas_dependientes: optionalNumber(0, 99),
   total_efectivo_hogar: optionalNumber(0, 99999999.99),
   vivienda_tipo: z.preprocess(
-    emptyToUndefined,
-    z.enum(["PROPIA", "ALQUILADA", "FAMILIAR", "OTRA"]).optional(),
+    emptyToNull,
+    z.enum(["PROPIA", "ALQUILADA", "FAMILIAR", "OTRA"]).nullable(),
   ),
   vivienda_valor: optionalNumber(0, 99999999.99),
   vivienda_renta_monto: optionalNumber(0, 99999999.99),
@@ -178,6 +189,7 @@ export const postulanteSchema = z.object({
   referenciasPersonales: z.array(referenciaSchema).default([]),
 });
 
+// Valores por defecto para un nuevo postulante
 export const defaultPostulanteValues = {
   nombre_completo: "",
   direccion: "",

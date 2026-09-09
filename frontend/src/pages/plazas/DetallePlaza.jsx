@@ -23,6 +23,10 @@ function formatDate(value) {
     : new Intl.DateTimeFormat("es-GT", { dateStyle: "long" }).format(date);
 }
 
+function isEmpty(valor) {
+  return valor === null || valor === undefined || valor === "";
+}
+
 function DetallePlaza() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -113,28 +117,40 @@ function DetallePlaza() {
             </div>
             <div className="grid gap-5 py-7 sm:grid-cols-2">
               <div className="rounded-xl bg-[#f0f4fa] p-5">
-                <p className="text-sm font-semibold text-[#5b6e8b]">
+                <p
+                  className={`text-sm font-semibold ${isEmpty(plaza.salario_min) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                >
                   Salario mínimo
                 </p>
-                <p className="mt-2 text-xl font-bold text-[#3162e9]">
+                <p
+                  className={`mt-2 text-xl font-bold ${isEmpty(plaza.salario_min) ? "text-[#df353c]" : "text-[#3162e9]"}`}
+                >
                   {formatSalary(plaza.salario_min)}
                 </p>
               </div>
               <div className="rounded-xl bg-[#f0f4fa] p-5">
-                <p className="text-sm font-semibold text-[#5b6e8b]">
+                <p
+                  className={`text-sm font-semibold ${isEmpty(plaza.salario_max) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                >
                   Salario máximo
                 </p>
-                <p className="mt-2 text-xl font-bold text-[#3162e9]">
+                <p
+                  className={`mt-2 text-xl font-bold ${isEmpty(plaza.salario_max) ? "text-[#df353c]" : "text-[#3162e9]"}`}
+                >
                   {formatSalary(plaza.salario_max)}
                 </p>
               </div>
             </div>
             <div className="grid gap-7 sm:grid-cols-2">
               <div>
-                <h2 className="text-lg font-bold text-[#071b3b]">
+                <h2
+                  className={`text-lg font-bold ${isEmpty(plaza.descripcion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                >
                   Descripción
                 </h2>
-                <p className="mt-3 whitespace-pre-line leading-7 text-[#5b6e8b]">
+                <p
+                  className={`mt-3 whitespace-pre-line leading-7 ${isEmpty(plaza.descripcion) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                >
                   {plaza.descripcion || "No hay una descripción registrada."}
                 </p>
               </div>

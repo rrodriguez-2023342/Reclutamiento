@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 // Estados posibles de un postulante en el proceso de selección
-export const ESTADOS_POSTULANTE = ['PENDIENTE', 'EN_PROCESO', 'CONTRATADO', 'RECHAZADO']
+export const ESTADOS_POSTULANTE = ['POSTULANTE', 'RECLUTAMIENTO', 'CONTRATADO', 'RECHAZADO']
 
 const ESTADOS_CIVILES = ['SOLTERO', 'CASADO', 'UNIDO', 'VIUDO', 'DIVORCIADO']
 const TIPOS_VIVIENDA = ['PROPIA', 'ALQUILADA', 'FAMILIAR', 'OTRA']

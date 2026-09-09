@@ -17,15 +17,15 @@ const PAGE_SIZE = 6;
 
 const STATUS_OPTIONS = [
   { value: "", label: "Todos" },
-  { value: "PENDIENTE", label: "Pendiente" },
-  { value: "EN_PROCESO", label: "En proceso" },
+  { value: "POSTULANTE", label: "Postulante" },
+  { value: "RECLUTAMIENTO", label: "En Reclutamiento" },
   { value: "CONTRATADO", label: "Contratado" },
   { value: "RECHAZADO", label: "Rechazado" },
 ];
 
 const statusStyles = {
-  PENDIENTE: "bg-[#fff0bd] text-[#a86b00]",
-  EN_PROCESO: "bg-[#d9ebff] text-[#2765d9]",
+  POSTULANTE: "bg-[#fff0bd] text-[#a86b00]",
+  RECLUTAMIENTO: "bg-[#d9ebff] text-[#2765d9]",
   CONTRATADO: "bg-[#c9f3dd] text-[#087947]",
   RECHAZADO: "bg-[#ffe0e2] text-[#df353c]",
 };
@@ -106,7 +106,10 @@ function Postulantes() {
   useEffect(() => {
     let active = true;
     getPlazas({ activo: true })
-      .then((data) => active && setPlazas(data.map(({ id, nombre }) => ({ id, nombre }))))
+      .then(
+        (data) =>
+          active && setPlazas(data.map(({ id, nombre }) => ({ id, nombre }))),
+      )
       .catch(() => active && setPlazas([]));
     return () => {
       active = false;

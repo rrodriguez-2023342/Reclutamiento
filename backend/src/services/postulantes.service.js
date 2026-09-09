@@ -3,18 +3,18 @@ import { sendEstadoPostulanteEmail } from '../config/email.js'
 
 // Constantes de estado y transiciones válidas para el flujo de postulantes
 const ETIQUETAS_ESTADO = {
-  PENDIENTE: 'Pendiente',
-  EN_PROCESO: 'En Proceso',
+  POSTULANTE: 'Postulante',
+  RECLUTAMIENTO: 'En Reclutamiento',
   CONTRATADO: 'Contratado',
   RECHAZADO: 'Rechazado',
 }
 
 // Transiciones válidas: desde un estado, a qué estados puede pasar
 const TRANSICIONES_PERMITIDAS = {
-  PENDIENTE: ['EN_PROCESO'],
-  EN_PROCESO: ['CONTRATADO', 'RECHAZADO'],
+  POSTULANTE: ['RECLUTAMIENTO'],
+  RECLUTAMIENTO: ['CONTRATADO', 'RECHAZADO'],
   CONTRATADO: [],
-  RECHAZADO: ['PENDIENTE'],
+  RECHAZADO: ['POSTULANTE'],
 }
 
 // Relaciones que se devuelven siempre al consultar un postulante
@@ -136,7 +136,7 @@ class PostulanteService {
       data: {
         ...generales,
         usuario_id: usuarioId,
-        estado: 'PENDIENTE',
+        estado: 'POSTULANTE',
         fecha_registro: new Date(),
         datosFamiliares: { create: datosFamiliares },
         educacionHistorial: { create: educacionHistorial },
@@ -212,7 +212,7 @@ class PostulanteService {
 
     // Guarda el nuevo estado y, si es una re-aplicación, actualiza la fecha de registro
     const data = { estado: nuevoEstado }
-    if (postulante.estado === 'RECHAZADO' && nuevoEstado === 'PENDIENTE') {
+    if (postulante.estado === 'RECHAZADO' && nuevoEstado === 'POSTULANTE') {
       data.fecha_registro = new Date()
     }
 

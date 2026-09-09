@@ -47,15 +47,15 @@ export const etiquetasMedioEnterado = {
 };
 // Etiquetas para el estado del postulante
 export const etiquetasEstadoPostulante = {
-  PENDIENTE: "Pendiente",
-  EN_PROCESO: "En Proceso",
+  POSTULANTE: "Postulante",
+  RECLUTAMIENTO: "En Reclutamiento",
   CONTRATADO: "Contratado",
   RECHAZADO: "Rechazado",
 };
 // Etiquetas para el estilo del estado del postulante
 export const estilosEstadoPostulante = {
-  PENDIENTE: "bg-[#fff0bd] text-[#a86b00]",
-  EN_PROCESO: "bg-[#d9ebff] text-[#2765d9]",
+  POSTULANTE: "bg-[#fff0bd] text-[#a86b00]",
+  RECLUTAMIENTO: "bg-[#d9ebff] text-[#2765d9]",
   CONTRATADO: "bg-[#c9f3dd] text-[#087947]",
   RECHAZADO: "bg-[#ffe0e2] text-[#df353c]",
 };

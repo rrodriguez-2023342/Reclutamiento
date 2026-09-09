@@ -8,10 +8,10 @@ datasource db {
 }
 
 enum EstadoPostulante {
-  PENDIENTE  @map("Pendiente")
-  EN_PROCESO @map("En Proceso")
-  CONTRATADO @map("Contratado")
-  RECHAZADO  @map("Rechazado")
+  POSTULANTE   @map("Postulante")
+  RECLUTAMIENTO @map("Reclutamiento")
+  CONTRATADO   @map("Contratado")
+  RECHAZADO    @map("Rechazado")
 }
 
 enum EstadoCivil {

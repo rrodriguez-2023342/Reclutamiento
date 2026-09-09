@@ -1,5 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
-import { ArrowLeft, Check, CircleAlert, Download, Pencil, Trash2, Upload, UserRound, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  CircleAlert,
+  Download,
+  Pencil,
+  Trash2,
+  Upload,
+  UserRound,
+  X,
+} from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
@@ -37,14 +47,14 @@ const sections = [
   "Documentos",
 ];
 const transitions = {
-  PENDIENTE: [
+  POSTULANTE: [
     {
-      estado: "EN_PROCESO",
-      label: "Enviar a En Proceso",
-      description: "El postulante pasará a la etapa de proceso.",
+      estado: "RECLUTAMIENTO",
+      label: "Enviar a Reclutamiento",
+      description: "El postulante pasará a la etapa de reclutamiento.",
     },
   ],
-  EN_PROCESO: [
+  RECLUTAMIENTO: [
     {
       estado: "CONTRATADO",
       label: "Contratar",
@@ -58,9 +68,9 @@ const transitions = {
   ],
   RECHAZADO: [
     {
-      estado: "PENDIENTE",
+      estado: "POSTULANTE",
       label: "Reactivar postulación",
-      description: "La postulación volverá al estado pendiente.",
+      description: "La postulación volverá al estado de postulante.",
     },
   ],
   CONTRATADO: [],
@@ -221,9 +231,17 @@ function SectionContent({ section, p, onReload }) {
               ["No. afiliación I.G.S.S.", text(p.igss), p.igss],
               ["Correo electrónico", text(p.correo), p.correo],
               ["Teléfono", text(p.telefono), p.telefono],
-              ["Estado civil", etiquetasEstadoCivil[p.estado_civil] || "—", p.estado_civil],
+              [
+                "Estado civil",
+                etiquetasEstadoCivil[p.estado_civil] || "—",
+                p.estado_civil,
+              ],
               ["Extendido en", text(p.dpi_extendido_en), p.dpi_extendido_en],
-              ["Perfil de Facebook", text(p.perfil_facebook), p.perfil_facebook],
+              [
+                "Perfil de Facebook",
+                text(p.perfil_facebook),
+                p.perfil_facebook,
+              ],
             ]}
           />
         </div>
@@ -346,17 +364,53 @@ function SectionContent({ section, p, onReload }) {
         <div className="mt-8">
           <Details
             items={[
-              ["Afiliación gremial", boolean(p.afiliacion_gremial), p.afiliacion_gremial],
-              ["Afiliación religiosa", boolean(p.afiliacion_religiosa), p.afiliacion_religiosa],
-              ["Afiliación política", boolean(p.afiliacion_politica), p.afiliacion_politica],
-              ["Afiliación deportiva", boolean(p.afiliacion_deportiva), p.afiliacion_deportiva],
-              ["Practica deporte", boolean(p.practica_deporte), p.practica_deporte],
+              [
+                "Afiliación gremial",
+                boolean(p.afiliacion_gremial),
+                p.afiliacion_gremial,
+              ],
+              [
+                "Afiliación religiosa",
+                boolean(p.afiliacion_religiosa),
+                p.afiliacion_religiosa,
+              ],
+              [
+                "Afiliación política",
+                boolean(p.afiliacion_politica),
+                p.afiliacion_politica,
+              ],
+              [
+                "Afiliación deportiva",
+                boolean(p.afiliacion_deportiva),
+                p.afiliacion_deportiva,
+              ],
+              [
+                "Practica deporte",
+                boolean(p.practica_deporte),
+                p.practica_deporte,
+              ],
               ["Deporte", text(p.deporte_cual), p.deporte_cual],
-              ["Enfermedad grave", boolean(p.ha_estado_enfermo_gravedad), p.ha_estado_enfermo_gravedad],
-              ["Toma medicamento", boolean(p.toma_medicamento), p.toma_medicamento],
+              [
+                "Enfermedad grave",
+                boolean(p.ha_estado_enfermo_gravedad),
+                p.ha_estado_enfermo_gravedad,
+              ],
+              [
+                "Toma medicamento",
+                boolean(p.toma_medicamento),
+                p.toma_medicamento,
+              ],
               ["Fuma o bebe", boolean(p.fuma_o_bebe), p.fuma_o_bebe],
-              ["Frecuencia", text(p.fuma_bebe_frecuencia), p.fuma_bebe_frecuencia],
-              ["Impedimento físico", boolean(p.impedimento_fisico), p.impedimento_fisico],
+              [
+                "Frecuencia",
+                text(p.fuma_bebe_frecuencia),
+                p.fuma_bebe_frecuencia,
+              ],
+              [
+                "Impedimento físico",
+                boolean(p.impedimento_fisico),
+                p.impedimento_fisico,
+              ],
               [
                 "Dependientes",
                 p.personas_dependientes === null ||
@@ -365,18 +419,46 @@ function SectionContent({ section, p, onReload }) {
                   : `${p.personas_dependientes} personas`,
                 p.personas_dependientes,
               ],
-              ["Total efectivo hogar", decimal(p.total_efectivo_hogar), p.total_efectivo_hogar],
-              ["Tipo de vivienda", etiquetasVivienda[p.vivienda_tipo] || "—", p.vivienda_tipo],
+              [
+                "Total efectivo hogar",
+                decimal(p.total_efectivo_hogar),
+                p.total_efectivo_hogar,
+              ],
+              [
+                "Tipo de vivienda",
+                etiquetasVivienda[p.vivienda_tipo] || "—",
+                p.vivienda_tipo,
+              ],
               ["Valor vivienda", decimal(p.vivienda_valor), p.vivienda_valor],
-              ["Renta vivienda", decimal(p.vivienda_renta_monto), p.vivienda_renta_monto],
+              [
+                "Renta vivienda",
+                decimal(p.vivienda_renta_monto),
+                p.vivienda_renta_monto,
+              ],
               ["Tiene vehículo", boolean(p.tiene_vehiculo), p.tiene_vehiculo],
               ["Tipo licencia", text(p.licencia_tipo), p.licencia_tipo],
               ["Número licencia", text(p.licencia_numero), p.licencia_numero],
-              ["Deudas pendientes", boolean(p.deudas_pendientes), p.deudas_pendientes],
+              [
+                "Deudas pendientes",
+                boolean(p.deudas_pendientes),
+                p.deudas_pendientes,
+              ],
               ["Monto deudas", decimal(p.deudas_monto), p.deudas_monto],
-              ["Institución deuda", text(p.deudas_institucion), p.deudas_institucion],
-              ["Detenido por policía", boolean(p.detenido_policia), p.detenido_policia],
-              ["Procesado legalmente", boolean(p.procesado_legalmente), p.procesado_legalmente],
+              [
+                "Institución deuda",
+                text(p.deudas_institucion),
+                p.deudas_institucion,
+              ],
+              [
+                "Detenido por policía",
+                boolean(p.detenido_policia),
+                p.detenido_policia,
+              ],
+              [
+                "Procesado legalmente",
+                boolean(p.procesado_legalmente),
+                p.procesado_legalmente,
+              ],
             ]}
           />
         </div>
@@ -391,16 +473,36 @@ function SectionContent({ section, p, onReload }) {
             items={[
               ["Plaza aplicada", text(p.plaza?.nombre), p.plaza?.nombre],
               ["Salario aspirado", decimal(p.salario_aspira), p.salario_aspira],
-              ["Inicio disponible", date(p.fecha_inicio_disponible), p.fecha_inicio_disponible],
-              ["Tiempo extraordinario", boolean(p.trabajar_extraordinario), p.trabajar_extraordinario],
-              ["Turnos rotativos", boolean(p.trabajar_turnos_rotativos), p.trabajar_turnos_rotativos],
+              [
+                "Inicio disponible",
+                date(p.fecha_inicio_disponible),
+                p.fecha_inicio_disponible,
+              ],
+              [
+                "Tiempo extraordinario",
+                boolean(p.trabajar_extraordinario),
+                p.trabajar_extraordinario,
+              ],
+              [
+                "Turnos rotativos",
+                boolean(p.trabajar_turnos_rotativos),
+                p.trabajar_turnos_rotativos,
+              ],
               [
                 "Medio por el que se enteró",
                 etiquetasMedioEnterado[p.medio_enterado] || "—",
                 p.medio_enterado,
               ],
-              ["Por qué desea trabajar", text(p.porque_gustaria_trabajar), p.porque_gustaria_trabajar],
-              ["Por qué contratarle", text(p.porque_deberiamoss_contratar), p.porque_deberiamoss_contratar],
+              [
+                "Por qué desea trabajar",
+                text(p.porque_gustaria_trabajar),
+                p.porque_gustaria_trabajar,
+              ],
+              [
+                "Por qué contratarle",
+                text(p.porque_deberiamoss_contratar),
+                p.porque_deberiamoss_contratar,
+              ],
               [
                 "Fortalezas",
                 [p.fortaleza_1, p.fortaleza_2, p.fortaleza_3]
@@ -437,9 +539,7 @@ function SectionContent({ section, p, onReload }) {
         </div>
       </>
     );
-  return (
-    <DocumentosSection p={p} onReload={onReload} />
-  );
+  return <DocumentosSection p={p} onReload={onReload} />;
 }
 
 function DocumentosSection({ p, onReload }) {
@@ -554,9 +654,7 @@ function DocumentosSection({ p, onReload }) {
                       {(doc.tamano_bytes / 1024).toFixed(0)} KB
                     </p>
                   ) : (
-                    <p className="mt-0.5 text-xs text-[#5b6e8b]">
-                      No subido
-                    </p>
+                    <p className="mt-0.5 text-xs text-[#5b6e8b]">No subido</p>
                   )}
                 </div>
               </div>

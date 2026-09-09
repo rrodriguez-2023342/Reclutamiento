@@ -98,14 +98,28 @@ const initials = (name = "") =>
 function Details({ items }) {
   return (
     <dl className="grid gap-x-8 gap-y-7 sm:grid-cols-2 xl:grid-cols-3">
-      {items.map(([label, value]) => (
-        <div key={label}>
-          <dt className="text-sm text-[#5b6e8b]">{label}</dt>
-          <dd className="mt-1 break-words font-semibold text-[#071b3b]">
-            {value}
-          </dd>
-        </div>
-      ))}
+      {items.map(([label, value, rawValue]) => {
+        const empty =
+          rawValue === null || rawValue === undefined || rawValue === "";
+        return (
+          <div key={label}>
+            <dt
+              className={`text-sm ${
+                empty ? "text-[#df353c]" : "text-[#5b6e8b]"
+              }`}
+            >
+              {label}
+            </dt>
+            <dd
+              className={`mt-1 break-words font-semibold ${
+                empty ? "text-[#df353c]" : "text-[#071b3b]"
+              }`}
+            >
+              {value}
+            </dd>
+          </div>
+        );
+      })}
     </dl>
   );
 }
@@ -195,20 +209,21 @@ function SectionContent({ section, p, onReload }) {
         <div className="mt-8">
           <Details
             items={[
-              ["Nombre completo", text(p.nombre_completo)],
-              ["Dirección actual", text(p.direccion)],
+              ["Nombre completo", text(p.nombre_completo), p.nombre_completo],
+              ["Dirección actual", text(p.direccion), p.direccion],
               [
                 "Lugar y fecha de nacimiento",
                 `${text(p.lugar_nacimiento)}, ${date(p.fecha_nacimiento)}`,
+                p.lugar_nacimiento,
               ],
-              ["DPI / CUI", dpi(p.dpi)],
-              ["NIT", text(p.nit)],
-              ["No. afiliación I.G.S.S.", text(p.igss)],
-              ["Correo electrónico", text(p.correo)],
-              ["Teléfono", text(p.telefono)],
-              ["Estado civil", etiquetasEstadoCivil[p.estado_civil] || "—"],
-              ["Extendido en", text(p.dpi_extendido_en)],
-              ["Perfil de Facebook", text(p.perfil_facebook)],
+              ["DPI / CUI", dpi(p.dpi), p.dpi],
+              ["NIT", text(p.nit), p.nit],
+              ["No. afiliación I.G.S.S.", text(p.igss), p.igss],
+              ["Correo electrónico", text(p.correo), p.correo],
+              ["Teléfono", text(p.telefono), p.telefono],
+              ["Estado civil", etiquetasEstadoCivil[p.estado_civil] || "—", p.estado_civil],
+              ["Extendido en", text(p.dpi_extendido_en), p.dpi_extendido_en],
+              ["Perfil de Facebook", text(p.perfil_facebook), p.perfil_facebook],
             ]}
           />
         </div>
@@ -331,36 +346,37 @@ function SectionContent({ section, p, onReload }) {
         <div className="mt-8">
           <Details
             items={[
-              ["Afiliación gremial", boolean(p.afiliacion_gremial)],
-              ["Afiliación religiosa", boolean(p.afiliacion_religiosa)],
-              ["Afiliación política", boolean(p.afiliacion_politica)],
-              ["Afiliación deportiva", boolean(p.afiliacion_deportiva)],
-              ["Practica deporte", boolean(p.practica_deporte)],
-              ["Deporte", text(p.deporte_cual)],
-              ["Enfermedad grave", boolean(p.ha_estado_enfermo_gravedad)],
-              ["Toma medicamento", boolean(p.toma_medicamento)],
-              ["Fuma o bebe", boolean(p.fuma_o_bebe)],
-              ["Frecuencia", text(p.fuma_bebe_frecuencia)],
-              ["Impedimento físico", boolean(p.impedimento_fisico)],
+              ["Afiliación gremial", boolean(p.afiliacion_gremial), p.afiliacion_gremial],
+              ["Afiliación religiosa", boolean(p.afiliacion_religiosa), p.afiliacion_religiosa],
+              ["Afiliación política", boolean(p.afiliacion_politica), p.afiliacion_politica],
+              ["Afiliación deportiva", boolean(p.afiliacion_deportiva), p.afiliacion_deportiva],
+              ["Practica deporte", boolean(p.practica_deporte), p.practica_deporte],
+              ["Deporte", text(p.deporte_cual), p.deporte_cual],
+              ["Enfermedad grave", boolean(p.ha_estado_enfermo_gravedad), p.ha_estado_enfermo_gravedad],
+              ["Toma medicamento", boolean(p.toma_medicamento), p.toma_medicamento],
+              ["Fuma o bebe", boolean(p.fuma_o_bebe), p.fuma_o_bebe],
+              ["Frecuencia", text(p.fuma_bebe_frecuencia), p.fuma_bebe_frecuencia],
+              ["Impedimento físico", boolean(p.impedimento_fisico), p.impedimento_fisico],
               [
                 "Dependientes",
                 p.personas_dependientes === null ||
                 p.personas_dependientes === undefined
                   ? "—"
                   : `${p.personas_dependientes} personas`,
+                p.personas_dependientes,
               ],
-              ["Total efectivo hogar", decimal(p.total_efectivo_hogar)],
-              ["Tipo de vivienda", etiquetasVivienda[p.vivienda_tipo] || "—"],
-              ["Valor vivienda", decimal(p.vivienda_valor)],
-              ["Renta vivienda", decimal(p.vivienda_renta_monto)],
-              ["Tiene vehículo", boolean(p.tiene_vehiculo)],
-              ["Tipo licencia", text(p.licencia_tipo)],
-              ["Número licencia", text(p.licencia_numero)],
-              ["Deudas pendientes", boolean(p.deudas_pendientes)],
-              ["Monto deudas", decimal(p.deudas_monto)],
-              ["Institución deuda", text(p.deudas_institucion)],
-              ["Detenido por policía", boolean(p.detenido_policia)],
-              ["Procesado legalmente", boolean(p.procesado_legalmente)],
+              ["Total efectivo hogar", decimal(p.total_efectivo_hogar), p.total_efectivo_hogar],
+              ["Tipo de vivienda", etiquetasVivienda[p.vivienda_tipo] || "—", p.vivienda_tipo],
+              ["Valor vivienda", decimal(p.vivienda_valor), p.vivienda_valor],
+              ["Renta vivienda", decimal(p.vivienda_renta_monto), p.vivienda_renta_monto],
+              ["Tiene vehículo", boolean(p.tiene_vehiculo), p.tiene_vehiculo],
+              ["Tipo licencia", text(p.licencia_tipo), p.licencia_tipo],
+              ["Número licencia", text(p.licencia_numero), p.licencia_numero],
+              ["Deudas pendientes", boolean(p.deudas_pendientes), p.deudas_pendientes],
+              ["Monto deudas", decimal(p.deudas_monto), p.deudas_monto],
+              ["Institución deuda", text(p.deudas_institucion), p.deudas_institucion],
+              ["Detenido por policía", boolean(p.detenido_policia), p.detenido_policia],
+              ["Procesado legalmente", boolean(p.procesado_legalmente), p.procesado_legalmente],
             ]}
           />
         </div>
@@ -373,28 +389,31 @@ function SectionContent({ section, p, onReload }) {
         <div className="mt-8">
           <Details
             items={[
-              ["Plaza aplicada", text(p.plaza?.nombre)],
-              ["Salario aspirado", decimal(p.salario_aspira)],
-              ["Inicio disponible", date(p.fecha_inicio_disponible)],
-              ["Tiempo extraordinario", boolean(p.trabajar_extraordinario)],
-              ["Turnos rotativos", boolean(p.trabajar_turnos_rotativos)],
+              ["Plaza aplicada", text(p.plaza?.nombre), p.plaza?.nombre],
+              ["Salario aspirado", decimal(p.salario_aspira), p.salario_aspira],
+              ["Inicio disponible", date(p.fecha_inicio_disponible), p.fecha_inicio_disponible],
+              ["Tiempo extraordinario", boolean(p.trabajar_extraordinario), p.trabajar_extraordinario],
+              ["Turnos rotativos", boolean(p.trabajar_turnos_rotativos), p.trabajar_turnos_rotativos],
               [
                 "Medio por el que se enteró",
                 etiquetasMedioEnterado[p.medio_enterado] || "—",
+                p.medio_enterado,
               ],
-              ["Por qué desea trabajar", text(p.porque_gustaria_trabajar)],
-              ["Por qué contratarle", text(p.porque_deberiamoss_contratar)],
+              ["Por qué desea trabajar", text(p.porque_gustaria_trabajar), p.porque_gustaria_trabajar],
+              ["Por qué contratarle", text(p.porque_deberiamoss_contratar), p.porque_deberiamoss_contratar],
               [
                 "Fortalezas",
                 [p.fortaleza_1, p.fortaleza_2, p.fortaleza_3]
                   .filter(Boolean)
                   .join(" · ") || "—",
+                p.fortaleza_1 || p.fortaleza_2 || p.fortaleza_3,
               ],
               [
                 "Debilidades",
                 [p.debilidad_1, p.debilidad_2, p.debilidad_3]
                   .filter(Boolean)
                   .join(" · ") || "—",
+                p.debilidad_1 || p.debilidad_2 || p.debilidad_3,
               ],
             ]}
           />

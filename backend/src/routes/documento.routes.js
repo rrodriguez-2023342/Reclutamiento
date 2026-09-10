@@ -7,6 +7,7 @@ import {
   obtenerDocumento,
   descargarDocumento,
   eliminarDocumento,
+  verFoto,
 } from '../controllers/documento.controller.js'
 import { authenticate } from '../middlewares/auth.middleware.js'
 import { uploadDocumento } from '../config/multer.js'
@@ -23,10 +24,12 @@ function asegurarDirectorioPostulante(req, _res, next) {
   next()
 }
 
+// Agrega un documento para el postulante con el ID especificadp
 router.post('/:id/documentos', asegurarDirectorioPostulante, uploadDocumento.single('archivo'), subirDocumento)
-router.get('/:id/documentos', listarDocumentos)
-router.get('/:id/documentos/:tipo', obtenerDocumento)
-router.get('/:id/documentos/:tipo/descargar', descargarDocumento)
-router.delete('/:id/documentos/:tipo', eliminarDocumento)
+router.get('/:id/foto', verFoto) // Ruta para obtener la foto del postulante
+router.get('/:id/documentos', listarDocumentos) // Lista todos los documentos del postulante con el ID especificado
+router.get('/:id/documentos/:tipo', obtenerDocumento) // Obtiene un documento especifico del postulante con el ID y tipo especificados
+router.get('/:id/documentos/:tipo/descargar', descargarDocumento) // Descarga un documento especifico del postulante con el ID y tipo especificados
+router.delete('/:id/documentos/:tipo', eliminarDocumento) // Elimina un documento especifico del postulante con el ID y tipo especificados
 
 export default router

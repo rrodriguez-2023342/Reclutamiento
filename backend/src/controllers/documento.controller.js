@@ -1,5 +1,7 @@
 import { documentoService } from '../services/documento.service.js'
 import { documentosValidator } from '../validators/documentos.validator.js'
+import fs from 'fs'
+import path from 'path'
 
 // Funcion para validar el tipo de documento
 function validarTipo(tipo, res) {
@@ -81,5 +83,26 @@ export const eliminarDocumento = async (req, res) => {
       return res.status(error.status).json({ status: 'error', message: error.message })
     }
     res.status(500).json({ status: 'error', message: 'Error al eliminar documento' })
+  }
+}
+
+// Controlador para ver la foto del postulante inline (sin descarga)
+export const verFoto = async (req, res) => {
+  try {
+    const documento = await documentoService.obtenerPorTipo(req.params.id, 'FOTO')
+    if (!documento) {
+      return res.status(404).json({ status: 'error', message: 'Foto no encontrada' })
+    }
+    const rutaAbsoluta = path.resolve('uploads', documento.ruta)
+    if (!fs.existsSync(rutaAbsoluta)) {
+      return res.status(404).json({ status: 'error', message: 'Archivo no encontrado' })
+    }
+    res.setHeader('Content-Type', documento.mime_type)
+    res.sendFile(rutaAbsoluta)
+  } catch (error) {
+    if (error.status) {
+      return res.status(error.status).json({ status: 'error', message: error.message })
+    }
+    res.status(500).json({ status: 'error', message: 'Error al obtener la foto' })
   }
 }

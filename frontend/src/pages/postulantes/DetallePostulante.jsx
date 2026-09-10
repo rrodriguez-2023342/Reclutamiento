@@ -22,6 +22,7 @@ import {
   eliminarDocumento,
   subirDocumento,
 } from "../../services/documentos.service.js";
+import api from "../../services/api.js";
 import {
   etiquetasEstadoCivil,
   etiquetasEstadoPostulante,
@@ -732,11 +733,18 @@ function DetallePostulante() {
   const [action, setAction] = useState(null);
   const [updating, setUpdating] = useState(false);
   const [section, setSection] = useState(0);
+  const [fotoUrl, setFotoUrl] = useState(null);
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
       setPostulante(await getPostulanteById(id));
+      try {
+        const response = await api.get(`/postulantes/${id}/foto`, { responseType: 'blob' });
+        setFotoUrl(URL.createObjectURL(response.data));
+      } catch {
+        setFotoUrl(null);
+      }
     } catch (requestError) {
       setError(
         requestError.response?.status === 404
@@ -759,6 +767,9 @@ function DetallePostulante() {
     }, 5000);
     return () => window.clearTimeout(timer);
   }, [success]);
+  useEffect(() => {
+    return () => { if (fotoUrl) URL.revokeObjectURL(fotoUrl); };
+  }, [fotoUrl]);
   const confirm = async () => {
     if (!action) return;
     setUpdating(true);
@@ -835,9 +846,17 @@ function DetallePostulante() {
       <section className="rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-7">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex min-w-0 items-center gap-4">
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[#e7f0ff] text-2xl font-bold text-[#1e3a8a]">
-              {initials(p.nombre_completo) || <UserRound />}
-            </div>
+            {fotoUrl ? (
+              <img
+                src={fotoUrl}
+                alt={p.nombre_completo}
+                className="h-20 w-20 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[#e7f0ff] text-2xl font-bold text-[#1e3a8a]">
+                {initials(p.nombre_completo) || <UserRound />}
+              </div>
+            )}
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">

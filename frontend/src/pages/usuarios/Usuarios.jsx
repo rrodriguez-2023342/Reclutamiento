@@ -249,7 +249,7 @@ function Usuarios() {
                             }}
                             className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
                         >
-                            <option value="">Rol: Todos</option>
+                            <option value="">Todos</option>
                             {roles.map((role) => (
                                 <option key={role.id} value={role.id}>
                                     {role.nombre}
@@ -269,9 +269,9 @@ function Usuarios() {
                             }}
                             className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
                         >
-                            <option value="">Estado: Todos</option>
-                            <option value="true">Estado: Activos</option>
-                            <option value="false">Estado: Inactivos</option>
+                            <option value="">Todos</option>
+                            <option value="true">Activos</option>
+                            <option value="false">Inactivos</option>
                         </select>
                         <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#65758f]" />
                     </div>
@@ -431,7 +431,7 @@ function Usuarios() {
                     </table>
                 </div>
             </section>
-                    
+
             <footer className="mt-7 flex flex-col gap-4 px-2 py-2 text-[#5b6e8b] sm:flex-row sm:items-center sm:justify-between">
                 <p>
                     Mostrando {firstItem} a {lastItem} de{" "}
@@ -463,7 +463,7 @@ function Usuarios() {
                     </button>
                 </div>
             </footer>
-                
+
             <Modal
                 action={modalAction}
                 loading={actionLoading}

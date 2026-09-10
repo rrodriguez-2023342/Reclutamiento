@@ -72,14 +72,14 @@ function Empresas() {
             .finally(() => {
                 if (active) setLoading(false);
             });
-        
+
         return () => {
             active = false;
         };
     }, [page, debouncedSearch, activo]);
 
-  const firstItem = result.total === 0 ? 0 : (result.page - 1) * PAGE_SIZE + 1;
-  const lastItem = Math.min(result.page * PAGE_SIZE, result.total);
+    const firstItem = result.total === 0 ? 0 : (result.page - 1) * PAGE_SIZE + 1;
+    const lastItem = Math.min(result.page * PAGE_SIZE, result.total);
 
     return (
         <DashboardLayout title="Gestión de Empresas">
@@ -126,9 +126,9 @@ function Empresas() {
                             }}
                             className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
                         >
-                            <option value="">Estado: Todos</option>
-                            <option value="true">Estado: Activas</option>
-                            <option value="false">Estado: Inactivas</option>
+                            <option value="">Todos</option>
+                            <option value="true">Activas</option>
+                            <option value="false">Inactivas</option>
                         </select>
                         <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#65758f]" />
                     </div>

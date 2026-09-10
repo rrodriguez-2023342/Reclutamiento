@@ -204,7 +204,7 @@ function Postulantes() {
           >
             {STATUS_OPTIONS.map(({ value, label }) => (
               <option key={value} value={value}>
-                Estado: {label}
+                {label}
               </option>
             ))}
           </SelectField>
@@ -213,7 +213,7 @@ function Postulantes() {
             value={plazaId}
             onChange={updatePlaza}
           >
-            <option value="">Plaza: Todas</option>
+            <option value="">Todas</option>
             {plazas.map((plaza) => (
               <option key={plaza.id} value={plaza.id}>
                 {plaza.nombre}

@@ -214,6 +214,14 @@ class PostulanteService {
     const data = { estado: nuevoEstado }
     if (postulante.estado === 'RECHAZADO' && nuevoEstado === 'POSTULANTE') {
       data.fecha_registro = new Date()
+      data.motivo_rechazo = null
+      data.fecha_rechazo = null
+    }
+
+    // Si se rechaza, guardar motivo y fecha
+    if (nuevoEstado === 'RECHAZADO') {
+      data.motivo_rechazo = extras.motivo_rechazo || null
+      data.fecha_rechazo = new Date()
     }
 
     // Si se contrata, asignar empresa y patrono al usuario

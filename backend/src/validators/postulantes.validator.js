@@ -178,6 +178,7 @@ export const updatePostulanteSchema = createPostulanteSchema
   // Schema para actualizar el estado de un postulante
 export const updateEstadoSchema = z.object({
   estado: z.enum(ESTADOS_POSTULANTE, { error: 'Estado inválido' }),
+  motivo_rechazo: z.string().max(500).optional(),
   empresa_id: z.coerce.number({ error: 'Empresa inválida' }).int().positive().optional(),
   patrono_id: z.coerce.number({ error: 'Patrono inválido' }).int().positive().optional(),
 })

@@ -177,8 +177,9 @@ function MiniTable({ headers, rows, name }) {
     </div>
   );
 }
-function Modal({ action, onClose, onConfirm, loading }) {
+function Modal({ action, onClose, onConfirm, loading, motivo, setMotivo }) {
   if (!action) return null;
+  const esRechazo = action.estado === "RECHAZADO";
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4"
@@ -188,6 +189,20 @@ function Modal({ action, onClose, onConfirm, loading }) {
       <div className="w-full max-w-md rounded-[26px] bg-white p-6 shadow-2xl">
         <h2 className="text-xl font-bold text-[#071b3b]">{action.label}</h2>
         <p className="mt-2 text-[#5b6e8b]">{action.description}</p>
+        {esRechazo && (
+          <div className="mt-4">
+            <label className="block text-sm font-semibold text-[#5b6e8b]">
+              Motivo del rechazo <span className="text-[#df353c]">*</span>
+            </label>
+            <textarea
+              value={motivo}
+              onChange={(e) => setMotivo(e.target.value)}
+              rows={4}
+              placeholder="Describe el motivo del rechazo..."
+              className="mt-2 w-full rounded-xl border border-[#dce3ee] px-4 py-3 text-base text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15 resize-none"
+            />
+          </div>
+        )}
         <div className="mt-6 flex justify-end gap-3">
           <button
             type="button"
@@ -200,7 +215,7 @@ function Modal({ action, onClose, onConfirm, loading }) {
           <button
             type="button"
             onClick={onConfirm}
-            disabled={loading}
+            disabled={loading || (esRechazo && !motivo.trim())}
             className="rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? "Actualizando…" : "Confirmar"}
@@ -734,13 +749,16 @@ function DetallePostulante() {
   const [updating, setUpdating] = useState(false);
   const [section, setSection] = useState(0);
   const [fotoUrl, setFotoUrl] = useState(null);
+  const [motivoRechazo, setMotivoRechazo] = useState("");
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
       setPostulante(await getPostulanteById(id));
       try {
-        const response = await api.get(`/postulantes/${id}/foto`, { responseType: 'blob' });
+        const response = await api.get(`/postulantes/${id}/foto`, {
+          responseType: "blob",
+        });
         setFotoUrl(URL.createObjectURL(response.data));
       } catch {
         setFotoUrl(null);
@@ -768,19 +786,27 @@ function DetallePostulante() {
     return () => window.clearTimeout(timer);
   }, [success]);
   useEffect(() => {
-    return () => { if (fotoUrl) URL.revokeObjectURL(fotoUrl); };
+    return () => {
+      if (fotoUrl) URL.revokeObjectURL(fotoUrl);
+    };
   }, [fotoUrl]);
   const confirm = async () => {
     if (!action) return;
     setUpdating(true);
     try {
-      const resultado = await updateEstadoPostulante(id, action.estado);
+      const payload = { estado: action.estado };
+      if (action.estado === "RECHAZADO") {
+        payload.motivo_rechazo = motivoRechazo.trim();
+      }
+      const resultado = await updateEstadoPostulante(id, payload);
       setAction(null);
+      setMotivoRechazo("");
       setSuccess("Estado actualizado correctamente");
       setAvisoCorreo(resultado?.correoEnviado === false);
       await load();
     } catch (requestError) {
       setAction(null);
+      setMotivoRechazo("");
       setError(
         requestError.response?.data?.message ||
           "No fue posible actualizar el estado.",
@@ -822,9 +848,14 @@ function DetallePostulante() {
     <DashboardLayout title="Ficha del Candidato">
       <Modal
         action={action}
-        onClose={() => setAction(null)}
+        onClose={() => {
+          setAction(null);
+          setMotivoRechazo("");
+        }}
         onConfirm={confirm}
         loading={updating}
+        motivo={motivoRechazo}
+        setMotivo={setMotivoRechazo}
       />
       {success && (
         <div
@@ -875,6 +906,17 @@ function DetallePostulante() {
                 </span>{" "}
                 · Registrado el {date(p.fecha_registro)}
               </p>
+              {p.estado === "RECHAZADO" && p.motivo_rechazo && (
+                <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-4">
+                  <p className="text-sm font-semibold text-[#df353c]">
+                    Motivo de rechazo
+                    {p.fecha_rechazo ? ` — ${date(p.fecha_rechazo)}` : ""}
+                  </p>
+                  <p className="mt-1 text-sm text-[#071b3b]">
+                    {p.motivo_rechazo}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex flex-wrap gap-3">

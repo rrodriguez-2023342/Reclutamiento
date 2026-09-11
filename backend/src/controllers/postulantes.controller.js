@@ -87,6 +87,7 @@ export const updatePostulanteEstado = async (req, res) => {
   const postulante = await postulanteService.cambiarEstado(id, data.estado, {
     empresa_id: data.empresa_id,
     patrono_id: data.patrono_id,
+    motivo_rechazo: data.motivo_rechazo,
   })
   res.json({ status: 'ok', data: postulante })
 }

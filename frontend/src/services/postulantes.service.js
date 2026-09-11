@@ -25,7 +25,7 @@ export const updatePostulante = async (id, postulante) => {
 };
 
 // Actualizar estado del postulante por ID
-export const updateEstadoPostulante = async (id, estado) => {
-  const { data } = await api.patch(`/postulantes/${id}/estado`, { estado });
+export const updateEstadoPostulante = async (id, payload) => {
+  const { data } = await api.patch(`/postulantes/${id}/estado`, payload);
   return data.data;
 };

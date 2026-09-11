@@ -153,6 +153,8 @@ model Postulante {
   usuario_id                   Int                  @map("usuario_id")
   estado                       EstadoPostulante     @map("estado")
   fecha_registro               DateTime             @map("fecha_registro") @db.Date
+  motivo_rechazo               String?              @map("motivo_rechazo") @db.Text
+  fecha_rechazo                DateTime?            @map("fecha_rechazo") @db.Date
   nombre_completo              String               @map("nombre_completo") @db.VarChar(150)
   direccion                    String               @map("direccion") @db.Text
   lugar_nacimiento             String               @map("lugar_nacimiento") @db.VarChar(100)

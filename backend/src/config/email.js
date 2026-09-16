@@ -1,50 +1,28 @@
-import nodemailer from "nodemailer";
+import { BrevoClient } from "@getbrevo/brevo";
 
-// Acepta los nombres SMTP_* actuales y los usados en instalaciones anteriores.
-// Así la configuración no queda ligada a un proveedor concreto.
-const getEmailConfig = () => ({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT || 587),
-  secure: (process.env.SMTP_SECURE ?? process.env.SMTP_ENABLE_SSL) === "true",
-  user: process.env.SMTP_USER ?? process.env.SMTP_USERNAME,
-  pass: process.env.SMTP_PASS ?? process.env.SMTP_PASSWORD,
-  from:
-    process.env.SMTP_FROM ??
-    (process.env.EMAIL_FROM
-      ? `${process.env.EMAIL_FROM_NAME || "Sistema Reclutamiento"} <${process.env.EMAIL_FROM}>`
-      : "Sistema Reclutamiento <no-reply@reclutamiento.com>"),
+// Configuracion de Brevo para enviar correos
+const client = new BrevoClient({
+  apiKey: process.env.BREVO_API_KEY,
 });
 
-// Valida que la configuracio SMTP tenga los campos necesarios para enviar correos
-const validateEmailConfig = (config) => {
-  const missing = ["host", "user", "pass"].filter((key) => !config[key]);
-  if (missing.length) {
-    throw new Error(
-      `Configuración SMTP incompleta: falta ${missing.join(", ")}`,
-    );
-  }
-};
+// Funcion para obtener el remitente del correo
+const getSender = () => ({
+  name: process.env.BREVO_SENDER_NAME || "Sistema Reclutamiento",
+  email: process.env.BREVO_SENDER_EMAIL || "no-reply@reclutamiento.com",
+});
 
-// Configuración de Nodemailer con variables de entorno
-const createTransporter = () => {
-  const config = getEmailConfig();
-  validateEmailConfig(config);
-
-  return nodemailer.createTransport({
-    host: config.host,
-    port: config.port,
-    secure: config.secure, // true para 465, false para 587
-    auth: {
-      user: config.user,
-      pass: config.pass,
-    },
+// Envia un correo electronico utilizando Brevo
+const sendEmail = async ({ to, subject, html }) => {
+  await client.transactionalEmails.sendTransacEmail({
+    sender: getSender(),
+    to: [{ email: to }],
+    subject,
+    htmlContent: html,
   });
 };
 
 // Envía email de reset de contraseña
 export const sendPasswordResetEmail = async (to, nombre, resetToken) => {
-  const transporter = createTransporter();
-
   const resetUrl = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password/${resetToken}`;
 
   const html = `
@@ -61,12 +39,7 @@ export const sendPasswordResetEmail = async (to, nombre, resetToken) => {
     </div>
   `;
 
-  await transporter.sendMail({
-    from: getEmailConfig().from,
-    to,
-    subject: "Restablece tu contraseña",
-    html,
-  });
+  await sendEmail({ to, subject: "Restablece tu contraseña", html });
 };
 
 // Envía email con contraseña temporal (cuando admin crea usuario)
@@ -75,8 +48,6 @@ export const sendTemporalPasswordEmail = async (
   nombre,
   temporalPassword,
 ) => {
-  const transporter = createTransporter();
-
   const loginUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 
   const html = `
@@ -93,8 +64,7 @@ export const sendTemporalPasswordEmail = async (
     </div>
   `;
 
-  await transporter.sendMail({
-    from: getEmailConfig().from,
+  await sendEmail({
     to,
     subject: "Tu cuenta en Sistema de Reclutamiento - Contraseña temporal",
     html,
@@ -148,8 +118,6 @@ export const sendEstadoPostulanteEmail = async (to, nombre, nuevoEstado) => {
     throw new Error(`Estado sin correo configurado: ${nuevoEstado}`);
   }
 
-  const transporter = createTransporter();
-
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
       <h2 style="color: #1e3a8a;">Sistema de Reclutamiento</h2>
@@ -164,10 +132,5 @@ export const sendEstadoPostulanteEmail = async (to, nombre, nuevoEstado) => {
     </div>
   `;
 
-  await transporter.sendMail({
-    from: getEmailConfig().from,
-    to,
-    subject: contenido.subject,
-    html,
-  });
+  await sendEmail({ to, subject: contenido.subject, html });
 };

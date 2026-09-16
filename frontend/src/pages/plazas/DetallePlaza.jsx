@@ -9,10 +9,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { getPlazaById } from "../../services/plazas.service.js";
 
-function formatSalary(value) {
+const MONEDAS = {
+  QUETZAL: { simbolo: "Q", locale: "es-GT" },
+  DOLAR: { simbolo: "$", locale: "en-US" },
+};
+
+function formatSalary(value, tipoMoneda = "QUETZAL") {
   if (value === null || value === undefined || value === "")
     return "No especificado";
-  return `Q${Number(value).toLocaleString("es-GT", { maximumFractionDigits: 0 })}`;
+  const moneda = MONEDAS[tipoMoneda] || MONEDAS.QUETZAL;
+  return `${moneda.simbolo}${Number(value).toLocaleString(moneda.locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function formatDate(value) {
@@ -120,24 +126,24 @@ function DetallePlaza() {
                 <p
                   className={`text-sm font-semibold ${isEmpty(plaza.salario_min) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
                 >
-                  Salario mínimo
+                  Percentil mínimo
                 </p>
                 <p
                   className={`mt-2 text-xl font-bold ${isEmpty(plaza.salario_min) ? "text-[#df353c]" : "text-[#3162e9]"}`}
                 >
-                  {formatSalary(plaza.salario_min)}
+                  {formatSalary(plaza.salario_min, plaza.tipo_moneda)}
                 </p>
               </div>
               <div className="rounded-xl bg-[#f0f4fa] p-5">
                 <p
                   className={`text-sm font-semibold ${isEmpty(plaza.salario_max) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
                 >
-                  Salario máximo
+                  Percentil máximo
                 </p>
                 <p
                   className={`mt-2 text-xl font-bold ${isEmpty(plaza.salario_max) ? "text-[#df353c]" : "text-[#3162e9]"}`}
                 >
-                  {formatSalary(plaza.salario_max)}
+                  {formatSalary(plaza.salario_max, plaza.tipo_moneda)}
                 </p>
               </div>
             </div>

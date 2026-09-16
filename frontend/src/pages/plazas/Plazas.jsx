@@ -35,14 +35,41 @@ function StatusFilter({ value, onChange }) {
   );
 }
 
-function formatSalary(value) {
+function MonedaFilter({ value, onChange }) {
+  return (
+    <div className="relative">
+      <select
+        aria-label="Filtrar plazas por tipo de moneda"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
+      >
+        <option value="">Todas</option>
+        <option value="QUETZAL">Quetzales</option>
+        <option value="DOLAR">Dólares</option>
+      </select>
+      <ChevronDown
+        aria-hidden="true"
+        className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#65758f]"
+      />
+    </div>
+  );
+}
+
+const MONEDAS = {
+  QUETZAL: { simbolo: "Q", locale: "es-GT" },
+  DOLAR: { simbolo: "$", locale: "en-US" },
+};
+
+function formatSalary(value, tipoMoneda = "QUETZAL") {
   if (value === null || value === undefined || value === "") return null;
-  return `Q${Number(value).toLocaleString("es-GT", { maximumFractionDigits: 0 })}`;
+  const moneda = MONEDAS[tipoMoneda] || MONEDAS.QUETZAL;
+  return `${moneda.simbolo}${Number(value).toLocaleString(moneda.locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function salaryRange(plaza) {
-  const minimum = formatSalary(plaza.salario_min);
-  const maximum = formatSalary(plaza.salario_max);
+  const minimum = formatSalary(plaza.salario_min, plaza.tipo_moneda);
+  const maximum = formatSalary(plaza.salario_max, plaza.tipo_moneda);
   if (!minimum && !maximum) return "Salario no especificado";
   if (!minimum) return `Hasta ${maximum}`;
   if (!maximum) return `Desde ${minimum}`;
@@ -55,6 +82,7 @@ function Plazas() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [activa, setActiva] = useState("");
+  const [tipoMoneda, setTipoMoneda] = useState("");
   const [plazas, setPlazas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -82,6 +110,7 @@ function Plazas() {
     getPlazas({
       ...(debouncedSearch && { q: debouncedSearch }),
       ...(activa !== "" && { activo: activa === "true" }),
+      ...(tipoMoneda && { tipo_moneda: tipoMoneda }),
     })
       .then((data) => {
         if (active) {
@@ -102,7 +131,7 @@ function Plazas() {
     return () => {
       active = false;
     };
-  }, [debouncedSearch, activa]);
+  }, [debouncedSearch, activa, tipoMoneda]);
 
   const totalPages = Math.max(1, Math.ceil(plazas.length / PAGE_SIZE));
   const visiblePlazas = plazas.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -129,7 +158,7 @@ function Plazas() {
       )}
 
       <section className="rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-6">
-        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_auto]">
+        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_220px_auto]">
           <label className="flex h-14 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
             <Search className="h-5 w-5 shrink-0" />
             <input
@@ -146,6 +175,13 @@ function Plazas() {
             value={activa}
             onChange={(value) => {
               setActiva(value);
+              setPage(1);
+            }}
+          />
+          <MonedaFilter
+            value={tipoMoneda}
+            onChange={(value) => {
+              setTipoMoneda(value);
               setPage(1);
             }}
           />

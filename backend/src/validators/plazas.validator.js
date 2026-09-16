@@ -20,6 +20,7 @@ export const createPlazaSchema = z.object({
     .min(1, "El nombre de la plaza es requerido")
     .max(100),
   descripcion: textoLibreOpcional(),
+  tipo_moneda: z.enum(["QUETZAL", "DOLAR"]).nullish(),
   salario_min: montoOpcional(),
   salario_max: montoOpcional(),
   activo: z.boolean().nullish(),
@@ -33,6 +34,7 @@ export const listarPlazasQuerySchema = z
   .object({
     q: z.string().trim().max(100).optional(),
     activo: z.string().optional(),
+    tipo_moneda: z.enum(["QUETZAL", "DOLAR"]).optional(),
   })
   .transform((query) => ({
     ...query,

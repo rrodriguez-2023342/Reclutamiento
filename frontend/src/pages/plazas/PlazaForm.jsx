@@ -6,12 +6,18 @@ import { useNavigate } from "react-router-dom";
 import {
   Field,
   Input,
+  Select,
   Textarea,
 } from "../../components/postulantes/formControls.jsx";
 import {
   defaultPlazaValues,
   plazaSchema,
 } from "../../validators/plazas.validator.js";
+
+const MONEDAS = {
+  QUETZAL: { label: "Quetzales (GTQ)", simbolo: "Q" },
+  DOLAR: { label: "Dólares (USD)", simbolo: "$" },
+};
 
 function PlazaForm({
   title,
@@ -26,6 +32,7 @@ function PlazaForm({
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(plazaSchema),
@@ -37,6 +44,8 @@ function PlazaForm({
   }, [initialValues, reset]);
 
   const submitting = loading || isSubmitting;
+  const tipoMoneda = watch("tipo_moneda") || "QUETZAL";
+  const simbolo = MONEDAS[tipoMoneda]?.simbolo || "Q";
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -83,24 +92,48 @@ function PlazaForm({
               placeholder="Describe las responsabilidades y requisitos principales."
             />
           </Field>
+          <Field label="Tipo de moneda" error={errors.tipo_moneda?.message}>
+            <Select registration={register("tipo_moneda")}>
+              <option value="QUETZAL">Quetzales (GTQ)</option>
+              <option value="DOLAR">Dólares (USD)</option>
+            </Select>
+          </Field>
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Salario mínimo" error={errors.salario_min?.message}>
-              <Input
-                type="number"
-                min="0"
-                step="0.01"
-                registration={register("salario_min", { valueAsNumber: true })}
-                placeholder="0.00"
-              />
+            <Field
+              label={`Salario mínimo (${simbolo})`}
+              error={errors.salario_min?.message}
+            >
+              <div className="relative">
+                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-base font-semibold text-[#5b6e8b]">
+                  {simbolo}
+                </span>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  {...register("salario_min", { valueAsNumber: true })}
+                  placeholder="0.00"
+                  className="h-14 w-full rounded-xl border border-[#dce3ee] bg-white pl-10 pr-4 text-base text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
+                />
+              </div>
             </Field>
-            <Field label="Salario máximo" error={errors.salario_max?.message}>
-              <Input
-                type="number"
-                min="0"
-                step="0.01"
-                registration={register("salario_max", { valueAsNumber: true })}
-                placeholder="0.00"
-              />
+            <Field
+              label={`Salario máximo (${simbolo})`}
+              error={errors.salario_max?.message}
+            >
+              <div className="relative">
+                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-base font-semibold text-[#5b6e8b]">
+                  {simbolo}
+                </span>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  {...register("salario_max", { valueAsNumber: true })}
+                  placeholder="0.00"
+                  className="h-14 w-full rounded-xl border border-[#dce3ee] bg-white pl-10 pr-4 text-base text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
+                />
+              </div>
             </Field>
           </div>
           <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">

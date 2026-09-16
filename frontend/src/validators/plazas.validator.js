@@ -22,6 +22,7 @@ export const plazaSchema = z
       .trim()
       .max(5000, "La descripción es demasiado larga")
       .optional(),
+    tipo_moneda: z.enum(["QUETZAL", "DOLAR"]).optional(),
     salario_min: optionalSalary,
     salario_max: optionalSalary,
     activo: z.boolean(),
@@ -41,6 +42,7 @@ export const plazaSchema = z
 export const defaultPlazaValues = {
   nombre: "",
   descripcion: "",
+  tipo_moneda: "QUETZAL",
   salario_min: undefined,
   salario_max: undefined,
   activo: true,

@@ -10,11 +10,15 @@ function crearError(mensaje, status) {
 // Servicio para manejar las plazas
 class PlazaService {
   // Listar todas las plazas con filtros opcionales
-  async listar({ q, activo } = {}) {
+  async listar({ q, activo, tipo_moneda } = {}) {
     const where = {}
 
     if (activo !== undefined) {
       where.activo = activo
+    }
+
+    if (tipo_moneda) {
+      where.tipo_moneda = tipo_moneda
     }
 
     if (q) {

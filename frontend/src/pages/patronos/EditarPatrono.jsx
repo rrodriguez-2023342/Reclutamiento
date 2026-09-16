@@ -260,7 +260,7 @@ function EditarPatrono() {
                             />
                             <span className="font-semibold">Patrono activo</span>
                         </label>
-                        
+
                         <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                             <button
                                 type="button"
@@ -282,7 +282,7 @@ function EditarPatrono() {
                 )}
             </div>
         </DashboardLayout>
-    );  
-}   
+    );
+}
 
 export default EditarPatrono;

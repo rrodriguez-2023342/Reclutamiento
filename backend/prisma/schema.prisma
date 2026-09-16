@@ -75,10 +75,16 @@ enum TipoDocumento {
   CURRICULUM
 }
 
+enum TipoMoneda {
+  QUETZAL @map("GTQ")
+  DOLAR   @map("USD")
+}
+
 model Plaza {
   id          Int             @id @default(autoincrement())
   nombre      String          @unique @map("nombre") @db.VarChar(100)
   descripcion String?         @map("descripcion") @db.Text
+  tipo_moneda TipoMoneda      @default(QUETZAL) @map("tipo_moneda")
   salario_min Decimal?        @map("salario_min") @db.Decimal(12, 2)
   salario_max Decimal?        @map("salario_max") @db.Decimal(12, 2)
   activo      Boolean         @default(true) @map("activa")

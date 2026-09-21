@@ -98,6 +98,7 @@ model Empresa {
   id              Int           @id @default(autoincrement())
   nombre_empresa  String        @unique @map("nombre_empresa") @db.VarChar(150)
   detalle_empresa String?       @map("detalle_empresa") @db.Text
+  fecha_aniversario DateTime?  @map("fecha_aniversario") @db.Date
   activo          Boolean       @default(true) @map("activa")
   creado_en       DateTime      @default(now()) @map("creado_en") @db.Timestamp
   usuarios        Usuario[]
@@ -118,6 +119,9 @@ model Patrono {
   estado_civil          EstadoCivil?  @map("estado_civil")
   profesion             String?       @map("profesion") @db.VarChar(100)
   dpi_extendido_en      String?       @map("dpi_extendido_en") @db.VarChar(100)
+  direccion             String?       @map("direccion") @db.Text
+  telefono              String?       @map("telefono") @db.VarChar(20)
+  correo                String?       @map("correo") @db.VarChar(100)
   activo                Boolean       @default(true) @map("activa")
   creado_en             DateTime      @default(now()) @map("creado_en") @db.Timestamp
   usuarios              Usuario[]

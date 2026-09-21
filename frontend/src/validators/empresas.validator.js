@@ -4,6 +4,7 @@ import { z } from 'zod'
 export const empresaSchema = z.object({
     nombre_empresa: z.string().trim().min(1, 'El nombre de la empresa es requerido').max(150, 'El nombre no puede exceder 150 caracteres'),
     detalle_empresa: z.string().trim().max(5000).nullish(),
+    fecha_aniversario: z.string().nullish(),
     activo: z.boolean().default(true),
 })
 
@@ -11,5 +12,6 @@ export const empresaSchema = z.object({
 export const defaultEmpresaValues = {
     nombre_empresa: '',
     detalle_empresa: '',
+    fecha_aniversario: '',
     activo: true,
 }

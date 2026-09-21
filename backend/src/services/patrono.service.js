@@ -67,6 +67,9 @@ class PatronoService {
         estado_civil: data.estado_civil || null,
         profesion: data.profesion || null,
         dpi_extendido_en: data.dpi_extendido_en || null,
+        direccion: data.direccion || null,
+        telefono: data.telefono || null,
+        correo: data.correo || null,
         activo,
       },
     })

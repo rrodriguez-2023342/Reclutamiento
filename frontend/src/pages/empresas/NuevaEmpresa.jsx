@@ -33,6 +33,7 @@ function NuevaEmpresa() {
             const payload = {
                 ...values,
                 detalle_empresa: values.detalle_empresa || null,
+                fecha_aniversario: values.fecha_aniversario || null,
             };
             await createEmpresa(payload);
             navigate("/empresas", {
@@ -100,6 +101,16 @@ function NuevaEmpresa() {
                             <Textarea
                                 registration={register("detalle_empresa")}
                                 placeholder="Ej. Empresa dedicada a la consultoría..."
+                            />
+                        </Field>
+
+                        <Field
+                            label="Fecha de aniversario"
+                            error={errors.fecha_aniversario?.message}
+                        >
+                            <Input
+                                type="date"
+                                registration={register("fecha_aniversario")}
                             />
                         </Field>
 

@@ -57,6 +57,9 @@ function EditarPatrono() {
                         estado_civil: data.estado_civil || undefined,
                         profesion: data.profesion || "",
                         dpi_extendido_en: data.dpi_extendido_en || "",
+                        direccion: data.direccion || "",
+                        telefono: data.telefono || "",
+                        correo: data.correo || "",
                         activo: data.activo ?? true,
                     });
                 }
@@ -91,6 +94,9 @@ function EditarPatrono() {
                 estado_civil: values.estado_civil || null,
                 profesion: values.profesion || null,
                 dpi_extendido_en: values.dpi_extendido_en || null,
+                direccion: values.direccion || null,
+                telefono: values.telefono || null,
+                correo: values.correo || null,
             };
             await updatePatrono(id, payload);
             navigate("/patronos", {
@@ -248,6 +254,38 @@ function EditarPatrono() {
                                 <Input
                                     registration={register("dpi_extendido_en")}
                                     placeholder="Ej. Guatemala"
+                                />
+                            </Field>
+
+                            <Field
+                                label="Dirección"
+                                error={errors.direccion?.message}
+                                className="sm:col-span-2"
+                            >
+                                <Input
+                                    registration={register("direccion")}
+                                    placeholder="Ej. 4ta Avenida 12-34, Zona 1"
+                                />
+                            </Field>
+
+                            <Field
+                                label="Teléfono"
+                                error={errors.telefono?.message}
+                            >
+                                <Input
+                                    registration={register("telefono")}
+                                    placeholder="Ej. 55551234"
+                                />
+                            </Field>
+
+                            <Field
+                                label="Correo electrónico"
+                                error={errors.correo?.message}
+                            >
+                                <Input
+                                    type="email"
+                                    registration={register("correo")}
+                                    placeholder="Ej. correo@ejemplo.com"
                                 />
                             </Field>
                         </div>

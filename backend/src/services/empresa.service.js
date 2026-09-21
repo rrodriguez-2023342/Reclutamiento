@@ -7,6 +7,12 @@ function crearError(mensaje, status) {
   return error
 }
 
+// Convierte una fecha string a Date usando año fijo 2000 (para aniversarios)
+function convertirAFechaAniversario(fechaStr) {
+  const fecha = new Date(fechaStr)
+  return new Date(2000, fecha.getMonth(), fecha.getDate())
+}
+
 // Servicio para manejar las operaciones relacionadas con empresas
 class EmpresaService {
   // Listar empresas con paginacion y filtros opcionales
@@ -26,7 +32,7 @@ class EmpresaService {
     const [data, total] = await prisma.$transaction([
       prisma.empresa.findMany({
         where,
-        orderBy: [{ creado_en: 'desc' }, { id: 'desc' }],
+        orderBy: { nombre_empresa: 'asc' },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -56,6 +62,7 @@ class EmpresaService {
       data: {
         nombre_empresa: data.nombre_empresa,
         detalle_empresa: data.detalle_empresa || null,
+        fecha_aniversario: data.fecha_aniversario ? convertirAFechaAniversario(data.fecha_aniversario) : null,
         activo,
       },
     })
@@ -75,6 +82,10 @@ class EmpresaService {
       if (duplicado) {
         throw crearError('Ya existe otra empresa con ese nombre', 409)
       }
+    }
+
+    if (data.fecha_aniversario) {
+      data.fecha_aniversario = convertirAFechaAniversario(data.fecha_aniversario);
     }
 
     return prisma.empresa.update({

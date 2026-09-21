@@ -372,6 +372,42 @@ function DetallePatrono() {
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.direccion) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
+                                    Dirección
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.direccion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {patrono.direccion || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.telefono) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
+                                    Teléfono
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.telefono) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {patrono.telefono || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.correo) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
+                                    Correo electrónico
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.correo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {patrono.correo || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
                                 <p className="text-sm font-semibold text-[#5b6e8b]">
                                     Fecha de creación
                                 </p>

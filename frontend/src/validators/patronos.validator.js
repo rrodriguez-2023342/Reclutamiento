@@ -13,6 +13,9 @@ export const patronoSchema = z.object({
     estado_civil: z.enum(['SOLTERO', 'CASADO', 'UNIDO', 'VIUDO', 'DIVORCIADO']).nullish(),
     profesion: z.string().trim().max(100).nullish(),
     dpi_extendido_en: z.string().trim().max(100).nullish(),
+    direccion: z.string().trim().max(500).nullish(),
+    telefono: z.string().trim().regex(/^\d{8,15}$/, 'Teléfono inválido').nullish(),
+    correo: z.string().trim().email('Correo inválido').max(100).nullish(),
     activo: z.boolean().default(true),
 })
 
@@ -29,5 +32,8 @@ export const defaultPatronoValues = {
     estado_civil: undefined,
     profesion: '',
     dpi_extendido_en: '',
+    direccion: '',
+    telefono: '',
+    correo: '',
     activo: true,
 }

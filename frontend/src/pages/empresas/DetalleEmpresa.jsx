@@ -22,6 +22,14 @@ function formatDate(value) {
         : new Intl.DateTimeFormat("es-GT", { dateStyle: "long" }).format(date);
 }
 
+function formatAniversario(value) {
+    if (!value) return "\u2014";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime())
+        ? "\u2014"
+        : new Intl.DateTimeFormat("es-GT", { day: "numeric", month: "long" }).format(date);
+}
+
 function isEmpty(valor) {
     return valor === null || valor === undefined || valor === "";
 }
@@ -226,6 +234,19 @@ function DetalleEmpresa() {
                                     className={`mt-2 text-lg font-bold ${isEmpty(empresa.detalle_empresa) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                 >
                                     {empresa.detalle_empresa || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(empresa.fecha_aniversario) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
+                                    Fecha de aniversario
+                                </p>
+                                <p
+                                    className={`mt-2 flex items-center gap-2 text-lg font-bold ${isEmpty(empresa.fecha_aniversario) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    <CalendarDays className="h-4 w-4 text-[#3162e9]" />
+                                    {formatAniversario(empresa.fecha_aniversario)}
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">

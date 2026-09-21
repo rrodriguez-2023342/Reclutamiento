@@ -4,6 +4,7 @@ import { z } from 'zod'
 export const createEmpresaSchema = z.object({
   nombre_empresa: z.string().trim().min(1, 'El nombre de la empresa es requerido').max(150),
   detalle_empresa: z.string().trim().max(5000).nullish(),
+  fecha_aniversario: z.string().nullish(),
   activo: z.boolean().nullish(),
 })
 
@@ -11,6 +12,7 @@ export const createEmpresaSchema = z.object({
 export const updateEmpresaSchema = z.object({
   nombre_empresa: z.string().trim().min(1, 'El nombre de la empresa es requerido').max(150).nullish(),
   detalle_empresa: z.string().trim().max(5000).nullish(),
+  fecha_aniversario: z.string().nullish(),
   activo: z.boolean().nullish(),
 })
 

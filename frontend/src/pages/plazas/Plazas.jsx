@@ -23,7 +23,7 @@ function StatusFilter({ value, onChange }) {
         onChange={(event) => onChange(event.target.value)}
         className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
       >
-        <option value="">Todas</option>
+        <option value="">Estado</option>
         <option value="true">Activas</option>
         <option value="false">Inactivas</option>
       </select>
@@ -44,7 +44,7 @@ function MonedaFilter({ value, onChange }) {
         onChange={(event) => onChange(event.target.value)}
         className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
       >
-        <option value="">Todas</option>
+        <option value="">Monedas</option>
         <option value="QUETZAL">Quetzales</option>
         <option value="DOLAR">Dólares</option>
       </select>

@@ -24,7 +24,6 @@ class PlazaService {
     if (q) {
       where.OR = [
         { nombre: { contains: q } },
-        { descripcion: { contains: q } },
       ]
     }
 

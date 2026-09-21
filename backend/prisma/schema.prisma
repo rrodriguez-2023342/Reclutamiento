@@ -150,6 +150,7 @@ model Usuario {
   patrono             Patrono?     @relation(fields: [patrono_id], references: [id], onDelete: SetNull)
   rol                 Role         @relation(fields: [rol_id], references: [id])
   postulantes         Postulante[]
+  postulantes_rechazados Postulante[] @relation("RechazadoPor")
 
   @@map("usuarios")
 }
@@ -161,6 +162,8 @@ model Postulante {
   fecha_registro               DateTime             @map("fecha_registro") @db.Date
   motivo_rechazo               String?              @map("motivo_rechazo") @db.Text
   fecha_rechazo                DateTime?            @map("fecha_rechazo") @db.Date
+  rechazado_por                Int?                 @map("rechazado_por")
+  rechazado_por_usuario        Usuario?             @relation("RechazadoPor", fields: [rechazado_por], references: [id])
   nombre_completo              String               @map("nombre_completo") @db.VarChar(150)
   direccion                    String               @map("direccion") @db.Text
   lugar_nacimiento             String               @map("lugar_nacimiento") @db.VarChar(100)

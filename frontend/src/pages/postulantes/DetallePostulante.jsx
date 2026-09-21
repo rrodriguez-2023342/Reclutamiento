@@ -912,6 +912,14 @@ function DetallePostulante() {
                     Motivo de rechazo
                     {p.fecha_rechazo ? ` — ${date(p.fecha_rechazo)}` : ""}
                   </p>
+                  {p.rechazado_por_usuario && (
+                    <p className="mt-1 text-sm text-[#5b6e8b]">
+                      Rechazado por:{" "}
+                      <span className="font-semibold text-[#071b3b]">
+                        {p.rechazado_por_usuario.nombre}
+                      </span>
+                    </p>
+                  )}
                   <p className="mt-1 text-sm text-[#071b3b]">
                     {p.motivo_rechazo}
                   </p>

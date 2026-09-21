@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -7,6 +7,7 @@ import {
   Pencil,
   Plus,
   Search,
+  X,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
@@ -16,7 +17,7 @@ import { getPlazas } from "../../services/plazas.service.js";
 const PAGE_SIZE = 6;
 
 const STATUS_OPTIONS = [
-  { value: "", label: "Todos" },
+  { value: "", label: "Estado" },
   { value: "POSTULANTE", label: "Postulante" },
   { value: "RECLUTAMIENTO", label: "En Reclutamiento" },
   { value: "CONTRATADO", label: "Contratado" },
@@ -64,6 +65,91 @@ function SelectField({ ariaLabel, value, onChange, children }) {
         aria-hidden="true"
         className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#65758f]"
       />
+    </div>
+  );
+}
+
+function SearchableSelect({ placeholder, value, options, onChange }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const ref = useRef(null);
+  const inputRef = useRef(null);
+
+  const selected = options.find((o) => String(o.value) === String(value));
+  const displayValue = selected ? selected.label : "";
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filtered = options.filter((o) =>
+    o.label.toLowerCase().includes(query.toLowerCase()),
+  );
+
+  const handleSelect = (val) => {
+    onChange(val === value ? "" : val);
+    setQuery("");
+    setOpen(false);
+  };
+
+  return (
+    <div ref={ref} className="relative">
+      <div
+        onClick={() => {
+          setOpen(true);
+          setTimeout(() => inputRef.current?.focus(), 0);
+        }}
+        className="flex h-14 cursor-pointer items-center rounded-2xl border border-[#dce3ee] bg-white px-4 text-base font-semibold text-[#071b3b] transition focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15"
+      >
+        <input
+          ref={inputRef}
+          value={open ? query : displayValue}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => setOpen(true)}
+          placeholder={placeholder}
+          className="h-full w-full bg-transparent outline-none placeholder:text-[#91a0b7]"
+          readOnly={!open && !!displayValue}
+        />
+        {displayValue && !open && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onChange("");
+            }}
+            className="ml-1 cursor-pointer p-1 text-[#65758f] hover:text-[#071b3b]"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+        <ChevronDown className="ml-1 h-5 w-5 shrink-0 text-[#65758f]" />
+      </div>
+      {open && (
+        <ul className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-xl border border-[#dce3ee] bg-white py-1 shadow-lg">
+          {filtered.length === 0 && (
+            <li className="px-4 py-3 text-sm text-[#91a0b7]">
+              Sin resultados
+            </li>
+          )}
+          {filtered.map((o) => (
+            <li
+              key={o.value}
+              onClick={() => handleSelect(o.value)}
+              className={`cursor-pointer px-4 py-3 text-base transition hover:bg-[#f0f4fa] ${
+                String(o.value) === String(value)
+                  ? "font-semibold text-[#3162e9] bg-[#f0f4fa]"
+                  : "text-[#071b3b]"
+              }`}
+            >
+              {o.label}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -208,18 +294,15 @@ function Postulantes() {
               </option>
             ))}
           </SelectField>
-          <SelectField
-            ariaLabel="Filtrar por plaza"
+          <SearchableSelect
+            placeholder="Plazas"
             value={plazaId}
+            options={[
+              { value: "", label: "Plazas" },
+              ...plazas.map((plaza) => ({ value: plaza.id, label: plaza.nombre })),
+            ]}
             onChange={updatePlaza}
-          >
-            <option value="">Todas</option>
-            {plazas.map((plaza) => (
-              <option key={plaza.id} value={plaza.id}>
-                {plaza.nombre}
-              </option>
-            ))}
-          </SelectField>
+          />
           <button
             type="button"
             onClick={() => navigate("/postulantes/nuevo")}

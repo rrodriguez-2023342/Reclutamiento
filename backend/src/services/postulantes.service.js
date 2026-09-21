@@ -43,6 +43,7 @@ const INCLUDE_COMPLETO = {
   capacitaciones: true,
   experienciaLaboral: true,
   referenciasPersonales: true,
+  rechazado_por_usuario: { select: { id: true, nombre: true, correo: true } },
   documentos: {
     select: {
       id: true,
@@ -256,12 +257,14 @@ class PostulanteService {
       data.fecha_registro = new Date();
       data.motivo_rechazo = null;
       data.fecha_rechazo = null;
+      data.rechazado_por = null;
     }
 
-    // Si se rechaza, guardar motivo y fecha
+    // Si se rechaza, guardar motivo, fecha y quién rechazó
     if (nuevoEstado === "RECHAZADO") {
       data.motivo_rechazo = extras.motivo_rechazo || null;
       data.fecha_rechazo = new Date();
+      data.rechazado_por = extras.quien_rechazo || null;
     }
 
     // Si se contrata, asignar empresa y patrono al usuario

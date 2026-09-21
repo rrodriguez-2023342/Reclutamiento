@@ -152,6 +152,13 @@ model Usuario {
   empresa             Empresa?     @relation(fields: [empresa_id], references: [id], onDelete: SetNull)
   patrono_id          Int?         @map("patrono_id")
   patrono             Patrono?     @relation(fields: [patrono_id], references: [id], onDelete: SetNull)
+  fecha_nacimiento    DateTime?    @map("fecha_nacimiento") @db.Date
+  sexo                Sexo?        @map("sexo")
+  dpi                 String?      @map("dpi") @db.VarChar(20)
+  dpi_extendido_en    String?      @map("dpi_extendido_en") @db.VarChar(100)
+  direccion           String?      @map("direccion") @db.Text
+  sueldo              Decimal?     @map("sueldo") @db.Decimal(10, 2)
+  bonos               Decimal?     @map("bonos") @db.Decimal(10, 2)
   rol                 Role         @relation(fields: [rol_id], references: [id])
   postulantes         Postulante[]
   postulantes_rechazados Postulante[] @relation("RechazadoPor")

@@ -17,6 +17,39 @@ function formatDate(value) {
         : new Intl.DateTimeFormat("es-GT", { dateStyle: "long" }).format(date);
 }
 
+function calcularEdad(fechaNacimiento) {
+    if (!fechaNacimiento) return "—";
+    const nacimiento = new Date(fechaNacimiento);
+    if (Number.isNaN(nacimiento.getTime())) return "—";
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+        edad--;
+    }
+    return `${edad} años`;
+}
+
+function traducirEnum(valor) {
+    if (!valor) return "—";
+    const traducciones = {
+        MASCULINO: "Masculino",
+        FEMENINO: "Femenino",
+    };
+    return traducciones[valor] || valor;
+}
+
+function isEmpty(valor) {
+    return valor === null || valor === undefined || valor === "";
+}
+
+function formatCurrency(value) {
+    if (value === null || value === undefined || value === "") return "—";
+    const num = Number(value);
+    if (Number.isNaN(num)) return "—";
+    return num.toLocaleString("es-GT", { style: "currency", currency: "GTQ" });
+}
+
 function initialsFromName(name = "") {
     return (
         name
@@ -211,7 +244,7 @@ function DetalleUsuario() {
                                     })
                                 }
                                 className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-bold text-[#071b3b] transition hover:bg-[#f0f4fa]"
-                            >   
+                            >
                                 <Power className="h-5 w-5" />
                                 {usuario.activo ? "Desactivar" : "Activar"}
                             </button>
@@ -284,12 +317,122 @@ function DetalleUsuario() {
                                     {formatDate(usuario.creado_en)}
                                 </p>
                             </div>
+                        </div>
+                    </section>
+
+                    <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                        <h2 className="text-lg font-bold text-[#071b3b]">
+                            Datos personales
+                        </h2>
+                        <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Fecha de nacimiento
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(usuario.fecha_nacimiento) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {formatDate(usuario.fecha_nacimiento)}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">Edad</p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(usuario.fecha_nacimiento) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {calcularEdad(usuario.fecha_nacimiento)}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">Sexo</p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(usuario.sexo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {traducirEnum(usuario.sexo)}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">DPI</p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(usuario.dpi) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {usuario.dpi || "—"}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Extendido en
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(usuario.dpi_extendido_en) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {usuario.dpi_extendido_en || "—"}
+                                </p>
+                            </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
                                 <p className="text-sm font-semibold text-[#5b6e8b]">
-                                    Debe cambiar contraseña
+                                    Dirección
                                 </p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
-                                    {usuario.mustChangePassword ? "Sí" : "No"}
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(usuario.direccion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {usuario.direccion || "—"}
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                        <h2 className="text-lg font-bold text-[#071b3b]">
+                            Empresa y patrono
+                        </h2>
+                        <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Empresa
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(usuario.empresa) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {usuario.empresa?.nombre_empresa || "Sin empresa"}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Patrono
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(usuario.patrono) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {usuario.patrono?.razon_social || "Sin patrono"}
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                        <h2 className="text-lg font-bold text-[#071b3b]">
+                            Información económica
+                        </h2>
+                        <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Sueldo
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(usuario.sueldo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {formatCurrency(usuario.sueldo)}
+                                </p>
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Bonos
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(usuario.bonos) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {formatCurrency(usuario.bonos)}
                                 </p>
                             </div>
                         </div>

@@ -33,7 +33,11 @@ class UsuarioService {
     const [data, total] = await prisma.$transaction([
       prisma.usuario.findMany({
         where,
-        include: { rol: { select: { id: true, nombre: true } } },
+        include: {
+          rol: { select: { id: true, nombre: true } },
+          empresa: { select: { id: true, nombre_empresa: true } },
+          patrono: { select: { id: true, razon_social: true } },
+        },
         orderBy: [{ creado_en: "desc" }, { id: "desc" }],
         skip: (page - 1) * limit,
         take: limit,
@@ -59,7 +63,11 @@ class UsuarioService {
   async obtenerPorId(id) {
     const usuario = await prisma.usuario.findUnique({
       where: { id },
-      include: { rol: { select: { id: true, nombre: true } } },
+      include: {
+        rol: { select: { id: true, nombre: true } },
+        empresa: { select: { id: true, nombre_empresa: true } },
+        patrono: { select: { id: true, razon_social: true } },
+      },
     });
 
     if (!usuario) return null;
@@ -109,8 +117,21 @@ class UsuarioService {
         rol_id: data.rol_id,
         activo,
         mustChangePassword,
+        empresa_id: data.empresa_id || null,
+        patrono_id: data.patrono_id || null,
+        fecha_nacimiento: data.fecha_nacimiento ? new Date(data.fecha_nacimiento) : null,
+        sexo: data.sexo || null,
+        dpi: data.dpi || null,
+        dpi_extendido_en: data.dpi_extendido_en || null,
+        direccion: data.direccion || null,
+        sueldo: data.sueldo || null,
+        bonos: data.bonos || null,
       },
-      include: { rol: { select: { id: true, nombre: true } } },
+      include: {
+        rol: { select: { id: true, nombre: true } },
+        empresa: { select: { id: true, nombre_empresa: true } },
+        patrono: { select: { id: true, razon_social: true } },
+      },
     });
 
     // Enviar correo con contraseña temporal si se genero una
@@ -162,10 +183,25 @@ class UsuarioService {
     }
 
     // Si se proporciona una nueva contraseña, se hashea antes de actualizar
+    const updateData = { ...data };
+    if (updateData.fecha_nacimiento) {
+      updateData.fecha_nacimiento = new Date(updateData.fecha_nacimiento);
+    }
+    if (updateData.empresa_id === undefined || updateData.empresa_id === null) {
+      updateData.empresa_id = null;
+    }
+    if (updateData.patrono_id === undefined || updateData.patrono_id === null) {
+      updateData.patrono_id = null;
+    }
+
     const actualizado = await prisma.usuario.update({
       where: { id },
-      data,
-      include: { rol: { select: { id: true, nombre: true } } },
+      data: updateData,
+      include: {
+        rol: { select: { id: true, nombre: true } },
+        empresa: { select: { id: true, nombre_empresa: true } },
+        patrono: { select: { id: true, razon_social: true } },
+      },
     });
 
     // Excluir campos sensibles antes de devolver los datos

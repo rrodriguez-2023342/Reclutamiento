@@ -13,6 +13,8 @@ import {
     getRoles,
     getUsuarioById,
     updateUsuario,
+    getEmpresas,
+    getPatronos,
 } from "../../services/usuarios.service.js";
 import {
     defaultUsuarioValues,
@@ -23,6 +25,8 @@ function EditarUsuario() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [roles, setRoles] = useState([]);
+    const [empresas, setEmpresas] = useState([]);
+    const [patronos, setPatronos] = useState([]);
     const [serverError, setServerError] = useState("");
     const [loadingUser, setLoadingUser] = useState(true);
 
@@ -39,12 +43,26 @@ function EditarUsuario() {
     });
 
     const selectedRole = watch("rol_id") ?? 2;
+    const selectedEmpresa = watch("empresa_id") ?? "";
+    const selectedPatrono = watch("patrono_id") ?? "";
 
     useEffect(() => {
         let active = true;
-        getRoles()
-            .then((data) => active && setRoles(data || []))
-            .catch(() => active && setRoles([]));
+        Promise.all([getRoles(), getEmpresas(), getPatronos()])
+            .then(([r, e, p]) => {
+                if (active) {
+                    setRoles(r || []);
+                    setEmpresas(e || []);
+                    setPatronos(p || []);
+                }
+            })
+            .catch(() => {
+                if (active) {
+                    setRoles([]);
+                    setEmpresas([]);
+                    setPatronos([]);
+                }
+            });
         return () => {
             active = false;
         };
@@ -62,6 +80,17 @@ function EditarUsuario() {
                         correo: data.correo || "",
                         rol_id: data.rol?.id ?? 2,
                         activo: data.activo ?? true,
+                        empresa_id: data.empresa?.id ?? null,
+                        patrono_id: data.patrono?.id ?? null,
+                        fecha_nacimiento: data.fecha_nacimiento
+                            ? data.fecha_nacimiento.split("T")[0]
+                            : "",
+                        sexo: data.sexo || "",
+                        dpi: data.dpi || "",
+                        dpi_extendido_en: data.dpi_extendido_en || "",
+                        direccion: data.direccion || "",
+                        sueldo: data.sueldo ?? "",
+                        bonos: data.bonos ?? "",
                     });
                 }
             })
@@ -83,7 +112,20 @@ function EditarUsuario() {
     const onSubmit = async (values) => {
         try {
             setServerError("");
-            await updateUsuario(id, { ...values, rol_id: Number(values.rol_id) });
+            const payload = {
+                ...values,
+                rol_id: Number(values.rol_id),
+                empresa_id: values.empresa_id || null,
+                patrono_id: values.patrono_id || null,
+                fecha_nacimiento: values.fecha_nacimiento || null,
+                sexo: values.sexo || null,
+                dpi: values.dpi || null,
+                dpi_extendido_en: values.dpi_extendido_en || null,
+                direccion: values.direccion || null,
+                sueldo: values.sueldo || null,
+                bonos: values.bonos || null,
+            };
+            await updateUsuario(id, payload);
             navigate("/colaboradores", {
                 state: { mensaje: "Colaborador actualizado correctamente" },
             });
@@ -174,6 +216,114 @@ function EditarUsuario() {
                                     )}
                                 </Select>
                             </Field>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field label="Empresa" error={errors.empresa_id?.message}>
+                                    <Select
+                                        registration={{
+                                            ...register("empresa_id", { valueAsNumber: true }),
+                                            value: selectedEmpresa,
+                                            onChange: (event) =>
+                                                setValue("empresa_id", event.target.value ? Number(event.target.value) : null, {
+                                                    shouldValidate: true,
+                                                }),
+                                        }}
+                                    >
+                                        <option value="">Sin empresa</option>
+                                        {empresas.map((empresa) => (
+                                            <option key={empresa.id} value={empresa.id}>
+                                                {empresa.nombre_empresa}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                </Field>
+
+                                <Field label="Patrono" error={errors.patrono_id?.message}>
+                                    <Select
+                                        registration={{
+                                            ...register("patrono_id", { valueAsNumber: true }),
+                                            value: selectedPatrono,
+                                            onChange: (event) =>
+                                                setValue("patrono_id", event.target.value ? Number(event.target.value) : null, {
+                                                    shouldValidate: true,
+                                                }),
+                                        }}
+                                    >
+                                        <option value="">Sin patrono</option>
+                                        {patronos.map((patrono) => (
+                                            <option key={patrono.id} value={patrono.id}>
+                                                {patrono.razon_social}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                </Field>
+                            </div>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field
+                                    label="Fecha de nacimiento"
+                                    error={errors.fecha_nacimiento?.message}
+                                >
+                                    <Input
+                                        registration={register("fecha_nacimiento")}
+                                        type="date"
+                                    />
+                                </Field>
+
+                                <Field label="Sexo" error={errors.sexo?.message}>
+                                    <Select registration={register("sexo")}>
+                                        <option value="">Seleccionar...</option>
+                                        <option value="MASCULINO">Masculino</option>
+                                        <option value="FEMENINO">Femenino</option>
+                                    </Select>
+                                </Field>
+                            </div>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field label="DPI" error={errors.dpi?.message}>
+                                    <Input
+                                        registration={register("dpi")}
+                                        placeholder="Número de DPI"
+                                    />
+                                </Field>
+
+                                <Field
+                                    label="Extendido en"
+                                    error={errors.dpi_extendido_en?.message}
+                                >
+                                    <Input
+                                        registration={register("dpi_extendido_en")}
+                                        placeholder="Ej. Guatemala"
+                                    />
+                                </Field>
+                            </div>
+
+                            <Field label="Dirección" error={errors.direccion?.message}>
+                                <Input
+                                    registration={register("direccion")}
+                                    placeholder="Dirección completa"
+                                />
+                            </Field>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field label="Sueldo" error={errors.sueldo?.message}>
+                                    <Input
+                                        registration={register("sueldo")}
+                                        type="number"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                    />
+                                </Field>
+
+                                <Field label="Bonos" error={errors.bonos?.message}>
+                                    <Input
+                                        registration={register("bonos")}
+                                        type="number"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                    />
+                                </Field>
+                            </div>
 
                             <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">
                                 <input

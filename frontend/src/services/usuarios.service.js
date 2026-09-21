@@ -47,3 +47,15 @@ export const getRoles = async () => {
     const { data } = await api.get('/roles')
     return data.data
 }
+
+// Obtener todas las empresas (para selects)
+export const getEmpresas = async () => {
+    const { data } = await api.get('/empresas', { params: { limit: 100 } })
+    return data.data?.data || []
+}
+
+// Obtener todos los patronos (para selects)
+export const getPatronos = async () => {
+    const { data } = await api.get('/patronos', { params: { limit: 100 } })
+    return data.data?.data || []
+}

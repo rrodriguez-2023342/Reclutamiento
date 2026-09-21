@@ -6,6 +6,15 @@ export const usuarioSchema = z.object({
     correo: z.string().trim().min(1, 'El correo es requerido').email('Correo inválido'),
     rol_id: z.coerce.number({ error: 'Seleccione un rol válido' }).int('Seleccione un rol válido').positive('Seleccione un rol válido'),
     activo: z.boolean().default(true),
+    empresa_id: z.coerce.number().int().positive().nullish(),
+    patrono_id: z.coerce.number().int().positive().nullish(),
+    fecha_nacimiento: z.string().nullish(),
+    sexo: z.enum(['MASCULINO', 'FEMENINO']).nullish(),
+    dpi: z.string().trim().max(20).nullish(),
+    dpi_extendido_en: z.string().trim().max(100).nullish(),
+    direccion: z.string().trim().nullish(),
+    sueldo: z.coerce.number().positive().nullish(),
+    bonos: z.coerce.number().positive().nullish(),
 })
 
 // Valores iniciales del formulario
@@ -14,4 +23,13 @@ export const defaultUsuarioValues = {
     correo: '',
     rol_id: 2,
     activo: true,
+    empresa_id: null,
+    patrono_id: null,
+    fecha_nacimiento: '',
+    sexo: '',
+    dpi: '',
+    dpi_extendido_en: '',
+    direccion: '',
+    sueldo: '',
+    bonos: '',
 }

@@ -19,6 +19,15 @@ export const createUsuarioSchema = z.object({
     .max(100)
     .optional(),
   activo: z.boolean().nullish(),
+  empresa_id: z.coerce.number().int().positive().nullish(),
+  patrono_id: z.coerce.number().int().positive().nullish(),
+  fecha_nacimiento: z.string().nullish(),
+  sexo: z.enum(["MASCULINO", "FEMENINO"]).nullish(),
+  dpi: z.string().trim().max(20).nullish(),
+  dpi_extendido_en: z.string().trim().max(100).nullish(),
+  direccion: z.string().trim().nullish(),
+  sueldo: z.coerce.number().positive().nullish(),
+  bonos: z.coerce.number().positive().nullish(),
 });
 
 // Esquema para validar los datos utilizados para actualizar un usuario
@@ -36,6 +45,15 @@ export const updateUsuarioSchema = z.object({
     .positive("Seleccione un rol válido")
     .optional(),
   activo: z.boolean().optional(),
+  empresa_id: z.coerce.number().int().positive().nullish(),
+  patrono_id: z.coerce.number().int().positive().nullish(),
+  fecha_nacimiento: z.string().nullish(),
+  sexo: z.enum(["MASCULINO", "FEMENINO"]).nullish(),
+  dpi: z.string().trim().max(20).nullish(),
+  dpi_extendido_en: z.string().trim().max(100).nullish(),
+  direccion: z.string().trim().nullish(),
+  sueldo: z.coerce.number().positive().nullish(),
+  bonos: z.coerce.number().positive().nullish(),
 });
 
 // Esquema para validar los parametros utilizados al listar los usuarios

@@ -137,7 +137,7 @@ function Usuarios() {
                 if (active) {
                     setError(
                         requestError.response?.data?.message ||
-                            "No fue posible cargar los usuarios.",
+                            "No fue posible cargar los colaboradores.",
                     );
                 }
             })
@@ -168,7 +168,7 @@ function Usuarios() {
         } catch (requestError) {
             setError(
                 requestError.response?.data?.message ||
-                    "No fue posible cambiar el estado del usuario.",
+                    "No fue posible cambiar el estado del colaborador.",
             );
             setModalAction(null);
         } finally {
@@ -182,7 +182,9 @@ function Usuarios() {
             setActionLoading(true);
             await resetPasswordUsuario(modalAction.user.id);
             setModalAction(null);
-            setSuccessMessage("Se envió contraseña temporal al correo del usuario");
+            setSuccessMessage(
+                "Se envió contraseña temporal al correo del colaborador",
+            );
             setRefreshKey((current) => current + 1);
         } catch (requestError) {
             setError(
@@ -205,7 +207,7 @@ function Usuarios() {
     };
 
     return (
-        <DashboardLayout title="Gestión de Usuarios">
+        <DashboardLayout title="Gestión de Colaboradores">
             {successMessage && (
                 <div
                     role="status"
@@ -249,7 +251,7 @@ function Usuarios() {
                             }}
                             className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
                         >
-                            <option value="">Todos</option>
+                            <option value="">Roles</option>
                             {roles.map((role) => (
                                 <option key={role.id} value={role.id}>
                                     {role.nombre}
@@ -269,7 +271,7 @@ function Usuarios() {
                             }}
                             className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
                         >
-                            <option value="">Todos</option>
+                            <option value="">Estado</option>
                             <option value="true">Activos</option>
                             <option value="false">Inactivos</option>
                         </select>
@@ -278,11 +280,11 @@ function Usuarios() {
 
                     <button
                         type="button"
-                        onClick={() => navigate("/usuarios/nuevo")}
+                        onClick={() => navigate("/colaboradores/nuevo")}
                         className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-6 font-bold text-white shadow-[0_7px_16px_rgba(49,98,233,0.18)] transition hover:bg-[#183fca]"
                     >
                         <Plus className="h-5 w-5" />
-                        Nuevo Usuario
+                        Nuevo Colaborador
                     </button>
                 </div>
             </section>
@@ -319,7 +321,7 @@ function Usuarios() {
                                         colSpan="6"
                                         className="px-6 py-12 text-center text-[#65758f]"
                                     >
-                                        Cargando usuarios...
+                                        Cargando colaboradores...
                                     </td>
                                 </tr>
                             )}
@@ -330,7 +332,7 @@ function Usuarios() {
                                         colSpan="6"
                                         className="px-6 py-12 text-center text-[#65758f]"
                                     >
-                                        No hay usuarios que coincidan con la búsqueda.
+                                        No hay colaboradores que coincidan con la búsqueda.
                                     </td>
                                 </tr>
                             )}
@@ -363,7 +365,9 @@ function Usuarios() {
                                             <div className="flex justify-end gap-2">
                                                 <button
                                                     type="button"
-                                                    onClick={() => navigate(`/usuarios/${usuario.id}`)}
+                                                    onClick={() =>
+                                                        navigate(`/colaboradores/${usuario.id}`)
+                                                    }
                                                     className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-[#dce3ee] bg-white text-[#071b3b] transition hover:bg-[#f0f4fa]"
                                                     aria-label={`Ver detalle de ${usuario.nombre}`}
                                                 >
@@ -372,7 +376,7 @@ function Usuarios() {
                                                 <button
                                                     type="button"
                                                     onClick={() =>
-                                                        navigate(`/usuarios/${usuario.id}/editar`)
+                                                        navigate(`/colaboradores/${usuario.id}/editar`)
                                                     }
                                                     className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-[#dce3ee] bg-white text-[#071b3b] transition hover:bg-[#f0f4fa]"
                                                     aria-label={`Editar ${usuario.nombre}`}
@@ -386,8 +390,8 @@ function Usuarios() {
                                                             type: usuario.activo ? "desactivar" : "activar",
                                                             user: usuario,
                                                             title: usuario.activo
-                                                                ? "Desactivar usuario"
-                                                                : "Activar usuario",
+                                                                ? "Desactivar colaborador"
+                                                                : "Activar colaborador",
                                                             description: usuario.activo
                                                                 ? `¿Deseas desactivar a ${usuario.nombre}?`
                                                                 : `¿Deseas activar a ${usuario.nombre}?`,
@@ -435,7 +439,7 @@ function Usuarios() {
             <footer className="mt-7 flex flex-col gap-4 px-2 py-2 text-[#5b6e8b] sm:flex-row sm:items-center sm:justify-between">
                 <p>
                     Mostrando {firstItem} a {lastItem} de{" "}
-                    {result.total.toLocaleString("es-GT")} usuarios
+                    {result.total.toLocaleString("es-GT")} colaboradores
                 </p>
                 <div className="flex items-center gap-2">
                     <button

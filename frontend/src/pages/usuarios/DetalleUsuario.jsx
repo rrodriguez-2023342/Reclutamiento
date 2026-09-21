@@ -81,12 +81,12 @@ function DetalleUsuario() {
                 if (active) {
                     setError(
                         requestError.response?.data?.message ||
-                            "No fue posible cargar el usuario.",
+                            "No fue posible cargar el colaborador.",
                     );
                 }
             })
             .finally(() => active && setLoading(false));
-        
+
         return () => {
             active = false;
         };
@@ -97,8 +97,8 @@ function DetalleUsuario() {
         try {
             setActionLoading(true);
             const msg = usuario.activo
-                ? "Usuario desactivado correctamente"
-                : "Usuario activado correctamente";
+                ? "Colaborador desactivado correctamente"
+                : "Colaborador activado correctamente";
             if (usuario.activo) {
                 await desactivarUsuario(usuario.id);
             } else {
@@ -106,11 +106,11 @@ function DetalleUsuario() {
             }
             setSuccessMessage(msg);
             setModalAction(null);
-            navigate("/usuarios", { state: { mensaje: msg } });
+            navigate("/colaboradores", { state: { mensaje: msg } });
         } catch (requestError) {
             setError(
                 requestError.response?.data?.message ||
-                    "No fue posible cambiar el estado del usuario.",
+                    "No fue posible cambiar el estado del colaborador.",
             );
             setModalAction(null);
         } finally {
@@ -124,10 +124,12 @@ function DetalleUsuario() {
             setActionLoading(true);
             await resetPasswordUsuario(usuario.id);
             setModalAction(null);
-            setSuccessMessage("Se envió contraseña temporal al correo del usuario");
-            navigate("/usuarios", {
+            setSuccessMessage(
+                "Se envió contraseña temporal al correo del colaborador",
+            );
+            navigate("/colaboradores", {
                 state: {
-                mensaje: "Se envió contraseña temporal al correo del usuario",
+                    mensaje: "Se envió contraseña temporal al correo del colaborador",
                 },
             });
         } catch (requestError) {
@@ -151,10 +153,10 @@ function DetalleUsuario() {
     };
 
     return (
-        <DashboardLayout title="Detalle de Usuario">
+        <DashboardLayout title="Detalle de Colaborador">
             {loading && (
                 <div className="rounded-[26px] bg-white p-12 text-center text-[#5b6e8b] shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
-                    Cargando usuario...
+                    Cargando colaborador...
                 </div>
             )}
 
@@ -166,10 +168,10 @@ function DetalleUsuario() {
                     {error}
                     <button
                         type="button"
-                        onClick={() => navigate("/usuarios")}
+                        onClick={() => navigate("/colaboradores")}
                         className="ml-3 cursor-pointer underline"
                     >
-                        Volver a usuarios
+                        Volver a colaboradores
                     </button>
                 </div>
             )}
@@ -179,17 +181,17 @@ function DetalleUsuario() {
                     <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
                         <button
                             type="button"
-                            onClick={() => navigate("/usuarios")}
+                            onClick={() => navigate("/colaboradores")}
                             className="flex h-11 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa]"
                         >
                             <ArrowLeft className="h-5 w-5" />
-                            Volver a usuarios
+                            Volver a colaboradores
                         </button>
 
                         <div className="flex flex-wrap gap-3">
                             <button
                                 type="button"
-                                onClick={() => navigate(`/usuarios/${usuario.id}/editar`)}
+                                onClick={() => navigate(`/colaboradores/${usuario.id}/editar`)}
                                 className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
                             >
                                 <Pencil className="h-5 w-5" />
@@ -201,15 +203,15 @@ function DetalleUsuario() {
                                     setModalAction({
                                         type: usuario.activo ? "desactivar" : "activar",
                                         title: usuario.activo
-                                            ? "Desactivar usuario"
-                                            : "Activar usuario",
-                                            description: usuario.activo
+                                            ? "Desactivar colaborador"
+                                            : "Activar colaborador",
+                                        description: usuario.activo
                                             ? `¿Deseas desactivar a ${usuario.nombre}?`
                                             : `¿Deseas activar a ${usuario.nombre}?`,
                                     })
                                 }
                                 className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-bold text-[#071b3b] transition hover:bg-[#f0f4fa]"
-                            >
+                            >   
                                 <Power className="h-5 w-5" />
                                 {usuario.activo ? "Desactivar" : "Activar"}
                             </button>
@@ -241,7 +243,7 @@ function DetalleUsuario() {
                                         {usuario.nombre}
                                     </h1>
                                     <p className="mt-2 text-[#5b6e8b]">
-                                        Información general del usuario
+                                        Información general del colaborador
                                     </p>
                                 </div>
                             </div>
@@ -252,7 +254,7 @@ function DetalleUsuario() {
                                 {usuario.activo ? "Activo" : "Inactivo"}
                             </span>
                         </div>
-                                
+
                         <div className="mt-7 grid gap-5 sm:grid-cols-2">
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
                                 <p className="text-sm font-semibold text-[#5b6e8b]">Correo</p>

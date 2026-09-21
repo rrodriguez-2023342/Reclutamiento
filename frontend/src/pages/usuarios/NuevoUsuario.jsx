@@ -46,32 +46,32 @@ function NuevoUsuario() {
         try {
             setServerError("");
             await createUsuario(values);
-            navigate("/usuarios", {
-                state: { mensaje: "Usuario creado correctamente" },
+            navigate("/colaboradores", {
+                state: { mensaje: "Colaborador creado correctamente" },
             });
         } catch (requestError) {
             setServerError(
                 requestError.response?.data?.message ||
-                    "No fue posible crear el usuario.",
+                    "No fue posible crear el colaborador.",
             );
         }
     };
 
     return (
-        <DashboardLayout title="Nuevo Usuario">
+        <DashboardLayout title="Nuevo Colaborador">
             <div className="mx-auto max-w-3xl">
                 <div className="mb-6 flex items-center gap-4">
                     <button
                         type="button"
-                        onClick={() => navigate("/usuarios")}
-                        aria-label="Volver a usuarios"
+                        onClick={() => navigate("/colaboradores")}
+                        aria-label="Volver a colaboradores"
                         className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border border-[#dce3ee] bg-white text-[#071b3b] transition hover:bg-[#f0f4fa]"
                     >
                         <ArrowLeft className="h-5 w-5" />
                     </button>
                     <div>
                         <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
-                            Nuevo Usuario
+                            Nuevo Colaborador
                         </h1>
                         <p className="mt-1 text-[#5b6e8b]">
                             Registra a un nuevo miembro del equipo.
@@ -117,7 +117,7 @@ function NuevoUsuario() {
                                     onChange: (event) =>
                                         setValue("rol_id", Number(event.target.value), {
                                             shouldValidate: true,
-                                    }),
+                                        }),
                                 }}
                             >
                                 {roles.length === 0 ? (
@@ -131,21 +131,21 @@ function NuevoUsuario() {
                                 )}
                             </Select>
                         </Field>
-                        
+
                         <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">
                             <input
                                 type="checkbox"
                                 {...register("activo")}
                                 className="h-5 w-5 cursor-pointer accent-[#3162e9]"
                             />
-                            <span className="font-semibold">Usuario activo</span>
+                            <span className="font-semibold">Colaborador activo</span>
                         </label>
                     </div>
-                        
+
                     <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                         <button
                             type="button"
-                            onClick={() => navigate("/usuarios")}
+                            onClick={() => navigate("/colaboradores")}
                             className="h-14 cursor-pointer rounded-2xl border border-[#dce3ee] px-6 font-bold text-[#5b6e8b] transition hover:bg-[#f0f4fa]"
                         >
                             Cancelar

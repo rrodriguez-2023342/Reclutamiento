@@ -69,7 +69,7 @@ function EditarUsuario() {
                 if (active) {
                     setServerError(
                         requestError.response?.data?.message ||
-                        "No fue posible cargar el usuario.",
+                            "No fue posible cargar el colaborador.",
                     );
                 }
             })
@@ -84,42 +84,42 @@ function EditarUsuario() {
         try {
             setServerError("");
             await updateUsuario(id, { ...values, rol_id: Number(values.rol_id) });
-            navigate("/usuarios", {
-                state: { mensaje: "Usuario actualizado correctamente" },
+            navigate("/colaboradores", {
+                state: { mensaje: "Colaborador actualizado correctamente" },
             });
         } catch (requestError) {
             setServerError(
                 requestError.response?.data?.message ||
-                    "No fue posible actualizar el usuario.",
+                    "No fue posible actualizar el colaborador.",
             );
         }
     };
 
     return (
-        <DashboardLayout title="Editar Usuario">
+        <DashboardLayout title="Editar Colaborador">
             <div className="mx-auto max-w-3xl">
                 <div className="mb-6 flex items-center gap-4">
                     <button
                         type="button"
-                        onClick={() => navigate("/usuarios")}
-                        aria-label="Volver a usuarios"
+                        onClick={() => navigate("/colaboradores")}
+                        aria-label="Volver a colaboradores"
                         className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border border-[#dce3ee] bg-white text-[#071b3b] transition hover:bg-[#f0f4fa]"
                     >
                         <ArrowLeft className="h-5 w-5" />
                     </button>
                     <div>
                         <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
-                            Editar Usuario
+                            Editar Colaborador
                         </h1>
                         <p className="mt-1 text-[#5b6e8b]">
-                            Actualiza la información del usuario.
+                            Actualiza la información del colaborador.
                         </p>
                     </div>
                 </div>
 
                 {loadingUser ? (
                     <div className="rounded-[26px] bg-white p-10 text-center text-[#5b6e8b] shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
-                        Cargando usuario...
+                        Cargando colaborador...
                     </div>
                 ) : (
                     <form
@@ -159,8 +159,8 @@ function EditarUsuario() {
                                         value: selectedRole,
                                         onChange: (event) =>
                                             setValue("rol_id", Number(event.target.value), {
-                                            shouldValidate: true,
-                                        }),
+                                                shouldValidate: true,
+                                            }),
                                     }}
                                 >
                                     {roles.length === 0 ? (
@@ -170,25 +170,25 @@ function EditarUsuario() {
                                             <option key={role.id} value={role.id}>
                                                 {role.nombre}
                                             </option>
-                                            ))
-                                        )}
+                                        ))
+                                    )}
                                 </Select>
                             </Field>
-                            
+
                             <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">
                                 <input
                                     type="checkbox"
                                     {...register("activo")}
                                     className="h-5 w-5 cursor-pointer accent-[#3162e9]"
                                 />
-                                <span className="font-semibold">Usuario activo</span>
+                                <span className="font-semibold">Colaborador activo</span>
                             </label>
                         </div>
-                            
+
                         <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                             <button
                                 type="button"
-                                onClick={() => navigate("/usuarios")}
+                                onClick={() => navigate("/colaboradores")}
                                 className="h-14 cursor-pointer rounded-2xl border border-[#dce3ee] px-6 font-bold text-[#5b6e8b] transition hover:bg-[#f0f4fa]"
                             >
                                 Cancelar

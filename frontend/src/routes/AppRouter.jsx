@@ -167,7 +167,7 @@ function AppRouter() {
         }
       />
       <Route
-        path="/usuarios"
+        path="/colaboradores"
         element={
           <ProtectedRoute>
             <AdminRoute>
@@ -179,7 +179,7 @@ function AppRouter() {
         }
       />
       <Route
-        path="/usuarios/nuevo"
+        path="/colaboradores/nuevo"
         element={
           <ProtectedRoute>
             <AdminRoute>
@@ -191,7 +191,7 @@ function AppRouter() {
         }
       />
       <Route
-        path="/usuarios/:id"
+        path="/colaboradores/:id"
         element={
           <ProtectedRoute>
             <AdminRoute>
@@ -203,7 +203,7 @@ function AppRouter() {
         }
       />
       <Route
-        path="/usuarios/:id/editar"
+        path="/colaboradores/:id/editar"
         element={
           <ProtectedRoute>
             <AdminRoute>

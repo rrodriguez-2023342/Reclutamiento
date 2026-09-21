@@ -19,7 +19,7 @@ const navigation = [
   { label: "Plazas activas", icon: BriefcaseBusiness, to: "/plazas" },
   { label: "Empresas", icon: Building2, to: "/empresas" },
   { label: "Patronos", icon: UserRound, to: "/patronos" },
-  { label: "Usuarios", icon: Shield, to: "/usuarios" },
+  { label: "Colaboradores", icon: Shield, to: "/colaboradores" },
   { label: "Informes y docs", icon: FileText, to: "/informes" },
   { label: "Configuración", icon: Settings, to: "/configuracion" },
 ];
@@ -29,7 +29,7 @@ function Sidebar({ isOpen, onClose, onOpenProfile }) {
   const visibleNavigation =
     user?.rol === "Administrador"
       ? navigation
-      : navigation.filter((item) => item.to !== "/usuarios");
+      : navigation.filter((item) => item.to !== "/colaboradores");
 
   return (
     <aside

@@ -89,6 +89,7 @@ export const updatePostulanteEstado = async (req, res) => {
     patrono_id: data.patrono_id,
     motivo_rechazo: data.motivo_rechazo,
     quien_rechazo: req.userId,
+    quien_contrato: req.userId,
   })
   res.json({ status: 'ok', data: postulante })
 }

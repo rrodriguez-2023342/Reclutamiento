@@ -44,6 +44,7 @@ const INCLUDE_COMPLETO = {
   experienciaLaboral: true,
   referenciasPersonales: true,
   rechazado_por_usuario: { select: { id: true, nombre: true, correo: true } },
+  contratado_por_usuario: { select: { id: true, nombre: true } },
   documentos: {
     select: {
       id: true,
@@ -108,6 +109,7 @@ class PostulanteService {
             },
           },
           plaza: { select: { id: true, nombre: true } },
+          contratado_por_usuario: { select: { id: true, nombre: true } },
         },
         orderBy: [{ fecha_registro: "desc" }, { id: "desc" }],
         skip: (page - 1) * limit,
@@ -267,8 +269,10 @@ class PostulanteService {
       data.rechazado_por = extras.quien_rechazo || null;
     }
 
-    // Si se contrata, asignar empresa y patrono al usuario
+    // Si se contrata, guardar fecha y quién contrató, y asignar empresa y patrono al usuario
     if (nuevoEstado === "CONTRATADO") {
+      data.fecha_contratacion = new Date();
+      data.contratado_por = extras.quien_contrato || null;
       const usuarioData = {};
       if (extras.empresa_id) usuarioData.empresa_id = extras.empresa_id;
       if (extras.patrono_id) usuarioData.patrono_id = extras.patrono_id;

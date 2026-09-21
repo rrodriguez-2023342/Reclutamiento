@@ -801,6 +801,22 @@ function DetallePostulante() {
       const resultado = await updateEstadoPostulante(id, payload);
       setAction(null);
       setMotivoRechazo("");
+      if (action.estado === "CONTRATADO") {
+        navigate("/colaboradores/nuevo", {
+          state: {
+            postulante: {
+              nombre: postulante.nombre_completo,
+              correo: postulante.correo,
+              dpi: postulante.dpi,
+              dpi_extendido_en: postulante.dpi_extendido_en,
+              direccion: postulante.direccion,
+              fecha_nacimiento: postulante.fecha_nacimiento,
+              sueldo: postulante.salario_aspira,
+            },
+          },
+        });
+        return;
+      }
       setSuccess("Estado actualizado correctamente");
       setAvisoCorreo(resultado?.correoEnviado === false);
       await load();
@@ -923,6 +939,22 @@ function DetallePostulante() {
                   <p className="mt-1 text-sm text-[#071b3b]">
                     {p.motivo_rechazo}
                   </p>
+                </div>
+              )}
+              {p.estado === "CONTRATADO" && (
+                <div className="mt-3 rounded-xl border border-green-200 bg-green-50 p-4">
+                  <p className="text-sm font-semibold text-[#087947]">
+                    Contratado el{" "}
+                    {p.fecha_contratacion ? date(p.fecha_contratacion) : "—"}
+                  </p>
+                  {p.contratado_por_usuario && (
+                    <p className="mt-1 text-sm text-[#5b6e8b]">
+                      Contratado por:{" "}
+                      <span className="font-semibold text-[#071b3b]">
+                        {p.contratado_por_usuario.nombre}
+                      </span>
+                    </p>
+                  )}
                 </div>
               )}
             </div>

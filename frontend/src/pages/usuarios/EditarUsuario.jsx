@@ -224,9 +224,15 @@ function EditarUsuario() {
                                             ...register("empresa_id", { valueAsNumber: true }),
                                             value: selectedEmpresa,
                                             onChange: (event) =>
-                                                setValue("empresa_id", event.target.value ? Number(event.target.value) : null, {
-                                                    shouldValidate: true,
-                                                }),
+                                                setValue(
+                                                    "empresa_id",
+                                                    event.target.value
+                                                        ? Number(event.target.value)
+                                                        : null,
+                                                    {
+                                                        shouldValidate: true,
+                                                    },
+                                                ),
                                         }}
                                     >
                                         <option value="">Sin empresa</option>
@@ -244,9 +250,15 @@ function EditarUsuario() {
                                             ...register("patrono_id", { valueAsNumber: true }),
                                             value: selectedPatrono,
                                             onChange: (event) =>
-                                                setValue("patrono_id", event.target.value ? Number(event.target.value) : null, {
-                                                    shouldValidate: true,
-                                                }),
+                                                setValue(
+                                                    "patrono_id",
+                                                    event.target.value
+                                                        ? Number(event.target.value)
+                                                        : null,
+                                                    {
+                                                        shouldValidate: true,
+                                                    },
+                                                ),
                                         }}
                                     >
                                         <option value="">Sin patrono</option>

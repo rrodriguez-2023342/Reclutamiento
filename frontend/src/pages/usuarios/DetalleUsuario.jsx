@@ -381,16 +381,14 @@ function DetalleUsuario() {
                             </div>
                         </div>
                     </section>
-
+                        
                     <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
                         <h2 className="text-lg font-bold text-[#071b3b]">
                             Empresa y patrono
                         </h2>
                         <div className="mt-5 grid gap-5 sm:grid-cols-2">
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">
-                                    Empresa
-                                </p>
+                                <p className="text-sm font-semibold text-[#5b6e8b]">Empresa</p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(usuario.empresa) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                 >
@@ -398,9 +396,7 @@ function DetalleUsuario() {
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">
-                                    Patrono
-                                </p>
+                                <p className="text-sm font-semibold text-[#5b6e8b]">Patrono</p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(usuario.patrono) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                 >
@@ -416,9 +412,7 @@ function DetalleUsuario() {
                         </h2>
                         <div className="mt-5 grid gap-5 sm:grid-cols-2">
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">
-                                    Sueldo
-                                </p>
+                                <p className="text-sm font-semibold text-[#5b6e8b]">Sueldo</p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(usuario.sueldo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                 >
@@ -426,9 +420,7 @@ function DetalleUsuario() {
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">
-                                    Bonos
-                                </p>
+                                <p className="text-sm font-semibold text-[#5b6e8b]">Bonos</p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(usuario.bonos) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                 >
@@ -441,10 +433,10 @@ function DetalleUsuario() {
             )}
 
             <Modal
-                action={modalAction}
-                loading={actionLoading}
-                onClose={() => setModalAction(null)}
-                onConfirm={handleActionConfirm}
+              action={modalAction}
+              loading={actionLoading}
+              onClose={() => setModalAction(null)}
+              onConfirm={handleActionConfirm}
             />
         </DashboardLayout>
     );

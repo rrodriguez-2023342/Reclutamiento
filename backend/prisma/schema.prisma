@@ -162,6 +162,7 @@ model Usuario {
   rol                 Role         @relation(fields: [rol_id], references: [id])
   postulantes         Postulante[]
   postulantes_rechazados Postulante[] @relation("RechazadoPor")
+  postulantes_contratados Postulante[] @relation("ContratadoPor")
 
   @@map("usuarios")
 }
@@ -175,6 +176,9 @@ model Postulante {
   fecha_rechazo                DateTime?            @map("fecha_rechazo") @db.Date
   rechazado_por                Int?                 @map("rechazado_por")
   rechazado_por_usuario        Usuario?             @relation("RechazadoPor", fields: [rechazado_por], references: [id])
+  fecha_contratacion           DateTime?            @map("fecha_contratacion") @db.Date
+  contratado_por               Int?                 @map("contratado_por")
+  contratado_por_usuario       Usuario?             @relation("ContratadoPor", fields: [contratado_por], references: [id])
   nombre_completo              String               @map("nombre_completo") @db.VarChar(150)
   direccion                    String               @map("direccion") @db.Text
   lugar_nacimiento             String               @map("lugar_nacimiento") @db.VarChar(100)

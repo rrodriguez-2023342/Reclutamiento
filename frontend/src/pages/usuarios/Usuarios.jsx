@@ -112,6 +112,7 @@ function Usuarios() {
         getRoles()
             .then((data) => active && setRoles(data || []))
             .catch(() => active && setRoles([]));
+
         return () => {
             active = false;
         };

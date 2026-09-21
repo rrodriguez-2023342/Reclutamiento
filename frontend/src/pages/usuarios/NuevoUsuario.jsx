@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
     Field,
     Input,
@@ -22,6 +22,7 @@ import {
 
 function NuevoUsuario() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [roles, setRoles] = useState([]);
     const [empresas, setEmpresas] = useState([]);
     const [patronos, setPatronos] = useState([]);
@@ -31,6 +32,7 @@ function NuevoUsuario() {
         handleSubmit,
         setValue,
         watch,
+        reset,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(usuarioSchema),
@@ -58,10 +60,29 @@ function NuevoUsuario() {
                     setPatronos([]);
                 }
             });
+
         return () => {
             active = false;
         };
     }, []);
+
+    useEffect(() => {
+        const postulante = location.state?.postulante;
+        if (postulante) {
+            reset({
+                ...defaultUsuarioValues,
+                nombre: postulante.nombre || "",
+                correo: postulante.correo || "",
+                dpi: postulante.dpi || "",
+                dpi_extendido_en: postulante.dpi_extendido_en || "",
+                direccion: postulante.direccion || "",
+                fecha_nacimiento: postulante.fecha_nacimiento
+                    ? postulante.fecha_nacimiento.split("T")[0]
+                    : "",
+                sueldo: postulante.sueldo ?? "",
+            });
+        }
+    }, [location.state, reset]);
 
     const onSubmit = async (values) => {
         try {
@@ -172,9 +193,13 @@ function NuevoUsuario() {
                                         ...register("empresa_id", { valueAsNumber: true }),
                                         value: selectedEmpresa,
                                         onChange: (event) =>
-                                            setValue("empresa_id", event.target.value ? Number(event.target.value) : null, {
-                                                shouldValidate: true,
-                                            }),
+                                            setValue(
+                                                "empresa_id",
+                                                event.target.value ? Number(event.target.value) : null,
+                                                {
+                                                    shouldValidate: true,
+                                                },
+                                            ),
                                     }}
                                 >
                                     <option value="">Sin empresa</option>
@@ -192,9 +217,13 @@ function NuevoUsuario() {
                                         ...register("patrono_id", { valueAsNumber: true }),
                                         value: selectedPatrono,
                                         onChange: (event) =>
-                                            setValue("patrono_id", event.target.value ? Number(event.target.value) : null, {
-                                                shouldValidate: true,
-                                            }),
+                                            setValue(
+                                                "patrono_id",
+                                                event.target.value ? Number(event.target.value) : null,
+                                                {
+                                                    shouldValidate: true,
+                                                },
+                                            ),
                                     }}
                                 >
                                     <option value="">Sin patrono</option>

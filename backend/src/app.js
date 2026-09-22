@@ -10,6 +10,7 @@ import empresaRoutes from './routes/empresa.routes.js'
 import patronoRoutes from './routes/patrono.routes.js'
 import dashboardRoutes from './routes/dashboard.route.js'
 import documentosRoutes from './routes/documento.routes.js'
+import historialSueldoRoutes from './routes/historial-sueldo.routes.js'
 
 const app = express()
 
@@ -33,6 +34,7 @@ app.use('/api/empresas', empresaRoutes)
 app.use('/api/patronos', patronoRoutes)
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/postulantes', documentosRoutes)
+app.use('/api/historial-sueldo', historialSueldoRoutes)
 
 // MANEJO DE ERRORES
 app.use((req, res) => {

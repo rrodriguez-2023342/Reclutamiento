@@ -45,6 +45,14 @@ function EditarUsuario() {
     const selectedRole = watch("rol_id") ?? 2;
     const selectedEmpresa = watch("empresa_id") ?? "";
     const selectedPatrono = watch("patrono_id") ?? "";
+    const currentSueldo = watch("sueldo");
+    const currentBonos = watch("bonos");
+    const [originalSueldo, setOriginalSueldo] = useState(null);
+    const [originalBonos, setOriginalBonos] = useState(null);
+    const hasSalaryChange =
+        (originalSueldo !== null || originalBonos !== null) &&
+        (Number(currentSueldo || 0) !== Number(originalSueldo || 0) ||
+            Number(currentBonos || 0) !== Number(originalBonos || 0));
 
     useEffect(() => {
         let active = true;
@@ -92,6 +100,8 @@ function EditarUsuario() {
                         sueldo: data.sueldo ?? "",
                         bonos: data.bonos ?? "",
                     });
+                    setOriginalSueldo(data.sueldo ?? null);
+                    setOriginalBonos(data.bonos ?? null);
                 }
             })
             .catch((requestError) => {
@@ -124,6 +134,9 @@ function EditarUsuario() {
                 direccion: values.direccion || null,
                 sueldo: values.sueldo || null,
                 bonos: values.bonos || null,
+                motivo_cambio_sueldo: hasSalaryChange
+                    ? values.motivo_cambio_sueldo || null
+                    : null,
             };
             await updateUsuario(id, payload);
             navigate("/colaboradores", {
@@ -336,6 +349,22 @@ function EditarUsuario() {
                                     />
                                 </Field>
                             </div>
+
+                            {hasSalaryChange && (
+                                <Field
+                                    label="Motivo del cambio de sueldo *"
+                                    error={errors.motivo_cambio_sueldo?.message}
+                                >
+                                    <textarea
+                                        {...register("motivo_cambio_sueldo", {
+                                            required: "El motivo es requerido cuando cambia el sueldo o bonos",
+                                        })}
+                                        rows={3}
+                                        className="w-full rounded-xl border border-[#dce3ee] bg-white px-4 py-3 text-[#071b3b] transition placeholder:text-[#9ba8c2] focus:border-[#3162e9] focus:outline-none"
+                                        placeholder="Explique el motivo del cambio de sueldo..."
+                                    />
+                                </Field>
+                            )}
 
                             <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">
                                 <input

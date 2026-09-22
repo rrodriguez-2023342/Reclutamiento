@@ -163,6 +163,8 @@ model Usuario {
   postulantes         Postulante[]
   postulantes_rechazados Postulante[] @relation("RechazadoPor")
   postulantes_contratados Postulante[] @relation("ContratadoPor")
+  historial_sueldo        HistorialSueldo[]
+  historial_sueldo_cambios HistorialSueldo[] @relation("HistorialSueldoCambiadoPor")
 
   @@map("usuarios")
 }
@@ -336,4 +338,20 @@ model DocumentoPostulante {
 
   @@unique([postulante_id, tipo])
   @@map("documentos_postulante")
+}
+
+model HistorialSueldo {
+  id                Int      @id @default(autoincrement())
+  usuario_id        Int      @map("usuario_id")
+  usuario           Usuario  @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  cambiado_por_id   Int?     @map("cambiado_por_id")
+  cambiado_por      Usuario? @relation("HistorialSueldoCambiadoPor", fields: [cambiado_por_id], references: [id], onDelete: SetNull)
+  sueldo_anterior   Decimal? @map("sueldo_anterior") @db.Decimal(10, 2)
+  sueldo_nuevo      Decimal? @map("sueldo_nuevo") @db.Decimal(10, 2)
+  bonos_anterior    Decimal? @map("bonos_anterior") @db.Decimal(10, 2)
+  bonos_nuevo       Decimal? @map("bonos_nuevo") @db.Decimal(10, 2)
+  motivo            String   @map("motivo") @db.Text
+  fecha_cambio      DateTime @default(now()) @map("fecha_cambio") @db.Timestamp
+
+  @@map("historial_sueldo")
 }

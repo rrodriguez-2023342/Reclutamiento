@@ -15,6 +15,7 @@ export const usuarioSchema = z.object({
     direccion: z.string().trim().nullish(),
     sueldo: z.coerce.number().positive().nullish(),
     bonos: z.coerce.number().positive().nullish(),
+    motivo_cambio_sueldo: z.string().trim().nullish(),
 })
 
 // Valores iniciales del formulario
@@ -32,4 +33,5 @@ export const defaultUsuarioValues = {
     direccion: '',
     sueldo: '',
     bonos: '',
+    motivo_cambio_sueldo: '',
 }

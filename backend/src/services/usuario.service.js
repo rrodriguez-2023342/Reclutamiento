@@ -2,6 +2,7 @@ import prisma from "../config/prisma.js";
 import { hashPassword } from "../utils/password.utils.js";
 import crypto from "crypto";
 import { sendTemporalPasswordEmail } from "../config/email.js";
+import { historialSueldoService } from "./historial-sueldo.service.js";
 
 // Funcion para crear un error con mensaje y status
 function crearError(mensaje, status) {
@@ -153,7 +154,29 @@ class UsuarioService {
     // Excluir campos sensibles antes de devolver los datos
     const { password, resetToken, resetTokenExpiry, ...resto } = creado;
     // Devolver el usuario creado junto con la informacion de si se envio el correo
-    return { ...resto, correoEnviado: temporalPassword !== null };
+    const resultado = { ...resto, correoEnviado: temporalPassword !== null };
+
+    // Registrar historial de sueldo si se asigno uno
+    if (data.sueldo || data.bonos) {
+      try {
+        await historialSueldoService.registrar({
+          usuario_id: creado.id,
+          sueldo_anterior: null,
+          sueldo_nuevo: data.sueldo || null,
+          bonos_anterior: null,
+          bonos_nuevo: data.bonos || null,
+          motivo: "Asignación inicial de sueldo",
+          cambiado_por_id: adminId,
+        });
+      } catch (errorHistorial) {
+        console.error(
+          "No fue posible registrar historial de sueldo:",
+          errorHistorial.message,
+        );
+      }
+    }
+
+    return resultado;
   }
 
   // Actualizar un usuario existente, verificando duplicados y existencia de rol
@@ -182,17 +205,33 @@ class UsuarioService {
       }
     }
 
-    // Si se proporciona una nueva contraseña, se hashea antes de actualizar
-    const updateData = { ...data };
-    if (updateData.fecha_nacimiento) {
-      updateData.fecha_nacimiento = new Date(updateData.fecha_nacimiento);
+    // Extraer campos que no van directos a Prisma update
+    const {
+      rol_id,
+      motivo_cambio_sueldo,
+      empresa_id,
+      patrono_id,
+      fecha_nacimiento,
+      ...restFields
+    } = data;
+
+    const updateData = {
+      ...restFields,
+      rol: { connect: { id: rol_id } },
+      empresa: empresa_id ? { connect: { id: empresa_id } } : { disconnect: true },
+      patrono: patrono_id ? { connect: { id: patrono_id } } : { disconnect: true },
+    };
+    if (fecha_nacimiento) {
+      updateData.fecha_nacimiento = new Date(fecha_nacimiento);
     }
-    if (updateData.empresa_id === undefined || updateData.empresa_id === null) {
-      updateData.empresa_id = null;
-    }
-    if (updateData.patrono_id === undefined || updateData.patrono_id === null) {
-      updateData.patrono_id = null;
-    }
+
+    // Detectar cambios en sueldo o bonos para registrar historial
+    const sueldoCambio =
+      data.sueldo !== undefined &&
+      Number(data.sueldo) !== Number(usuario.sueldo || 0);
+    const bonosCambio =
+      data.bonos !== undefined &&
+      Number(data.bonos) !== Number(usuario.bonos || 0);
 
     const actualizado = await prisma.usuario.update({
       where: { id },
@@ -206,6 +245,27 @@ class UsuarioService {
 
     // Excluir campos sensibles antes de devolver los datos
     const { password, resetToken, resetTokenExpiry, ...resto } = actualizado;
+
+    // Registrar historial si cambiaron sueldo o bonos
+    if (sueldoCambio || bonosCambio) {
+      try {
+        await historialSueldoService.registrar({
+          usuario_id: id,
+          sueldo_anterior: sueldoCambio ? usuario.sueldo : null,
+          sueldo_nuevo: sueldoCambio ? actualizado.sueldo : null,
+          bonos_anterior: bonosCambio ? usuario.bonos : null,
+          bonos_nuevo: bonosCambio ? actualizado.bonos : null,
+          motivo: motivo_cambio_sueldo || "Actualización de sueldo",
+          cambiado_por_id: adminId,
+        });
+      } catch (errorHistorial) {
+        console.error(
+          "No fue posible registrar historial de sueldo:",
+          errorHistorial.message,
+        );
+      }
+    }
+
     // Devolver el usuario actualizado
     return resto;
   }

@@ -95,13 +95,15 @@ model Plaza {
 }
 
 model Empresa {
-  id              Int           @id @default(autoincrement())
-  nombre_empresa  String        @unique @map("nombre_empresa") @db.VarChar(150)
-  detalle_empresa String?       @map("detalle_empresa") @db.Text
-  fecha_aniversario DateTime?  @map("fecha_aniversario") @db.Date
-  activo          Boolean       @default(true) @map("activa")
-  creado_en       DateTime      @default(now()) @map("creado_en") @db.Timestamp
-  usuarios        Usuario[]
+  id                        Int               @id @default(autoincrement())
+  nombre_empresa            String            @unique @map("nombre_empresa") @db.VarChar(150)
+  detalle_empresa           String?           @map("detalle_empresa") @db.Text
+  fecha_aniversario         DateTime?         @map("fecha_aniversario") @db.Date
+  activo                    Boolean           @default(true) @map("activa")
+  creado_en                 DateTime          @default(now()) @map("creado_en") @db.Timestamp
+  usuarios                  Usuario[]
+  historial_empresa_anterior HistorialEmpresa[] @relation("EmpresaAnterior")
+  historial_empresa_nuevo    HistorialEmpresa[] @relation("EmpresaNuevo")
 
   @@map("empresas")
 }
@@ -165,6 +167,8 @@ model Usuario {
   postulantes_contratados Postulante[] @relation("ContratadoPor")
   historial_sueldo        HistorialSueldo[]
   historial_sueldo_cambios HistorialSueldo[] @relation("HistorialSueldoCambiadoPor")
+  historial_empresa         HistorialEmpresa[]
+  historial_empresa_cambios HistorialEmpresa[] @relation("HistorialEmpresaCambiadoPor")
 
   @@map("usuarios")
 }
@@ -354,4 +358,20 @@ model HistorialSueldo {
   fecha_cambio      DateTime @default(now()) @map("fecha_cambio") @db.Timestamp
 
   @@map("historial_sueldo")
+}
+
+model HistorialEmpresa {
+  id                    Int      @id @default(autoincrement())
+  usuario_id            Int      @map("usuario_id")
+  usuario               Usuario  @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  empresa_anterior_id   Int?     @map("empresa_anterior_id")
+  empresa_anterior      Empresa? @relation("EmpresaAnterior", fields: [empresa_anterior_id], references: [id], onDelete: SetNull)
+  empresa_nuevo_id      Int?     @map("empresa_nuevo_id")
+  empresa_nuevo         Empresa? @relation("EmpresaNuevo", fields: [empresa_nuevo_id], references: [id], onDelete: SetNull)
+  motivo                String   @map("motivo") @db.Text
+  cambiado_por_id       Int?     @map("cambiado_por_id")
+  cambiado_por          Usuario? @relation("HistorialEmpresaCambiadoPor", fields: [cambiado_por_id], references: [id], onDelete: SetNull)
+  fecha_cambio          DateTime @default(now()) @map("fecha_cambio") @db.Timestamp
+
+  @@map("historial_empresa")
 }

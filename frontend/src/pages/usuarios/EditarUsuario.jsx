@@ -47,12 +47,17 @@ function EditarUsuario() {
     const selectedPatrono = watch("patrono_id") ?? "";
     const currentSueldo = watch("sueldo");
     const currentBonos = watch("bonos");
+    const currentEmpresa = watch("empresa_id");
     const [originalSueldo, setOriginalSueldo] = useState(null);
     const [originalBonos, setOriginalBonos] = useState(null);
+    const [originalEmpresa, setOriginalEmpresa] = useState(null);
     const hasSalaryChange =
         (originalSueldo !== null || originalBonos !== null) &&
         (Number(currentSueldo || 0) !== Number(originalSueldo || 0) ||
             Number(currentBonos || 0) !== Number(originalBonos || 0));
+    const hasEmpresaChange =
+        originalEmpresa !== null &&
+        Number(currentEmpresa || 0) !== Number(originalEmpresa || 0);
 
     useEffect(() => {
         let active = true;
@@ -71,6 +76,7 @@ function EditarUsuario() {
                     setPatronos([]);
                 }
             });
+
         return () => {
             active = false;
         };
@@ -102,6 +108,7 @@ function EditarUsuario() {
                     });
                     setOriginalSueldo(data.sueldo ?? null);
                     setOriginalBonos(data.bonos ?? null);
+                    setOriginalEmpresa(data.empresa?.id ?? null);
                 }
             })
             .catch((requestError) => {
@@ -136,6 +143,9 @@ function EditarUsuario() {
                 bonos: values.bonos || null,
                 motivo_cambio_sueldo: hasSalaryChange
                     ? values.motivo_cambio_sueldo || null
+                    : null,
+                motivo_cambio_empresa: hasEmpresaChange
+                    ? values.motivo_cambio_empresa || null
                     : null,
             };
             await updateUsuario(id, payload);
@@ -284,6 +294,23 @@ function EditarUsuario() {
                                 </Field>
                             </div>
 
+                            {hasEmpresaChange && (
+                                <Field
+                                    label="Motivo del cambio de empresa *"
+                                    error={errors.motivo_cambio_empresa?.message}
+                                >
+                                    <textarea
+                                        {...register("motivo_cambio_empresa", {
+                                            required:
+                                                "El motivo es requerido cuando cambia la empresa",
+                                        })}
+                                        rows={3}
+                                        className="w-full rounded-xl border border-[#dce3ee] bg-white px-4 py-3 text-[#071b3b] transition placeholder:text-[#9ba8c2] focus:border-[#3162e9] focus:outline-none"
+                                        placeholder="Explique el motivo del cambio de empresa..."
+                                    />
+                                </Field>
+                            )}
+
                             <div className="grid gap-5 sm:grid-cols-2">
                                 <Field
                                     label="Fecha de nacimiento"
@@ -357,7 +384,8 @@ function EditarUsuario() {
                                 >
                                     <textarea
                                         {...register("motivo_cambio_sueldo", {
-                                            required: "El motivo es requerido cuando cambia el sueldo o bonos",
+                                            required:
+                                                "El motivo es requerido cuando cambia el sueldo o bonos",
                                         })}
                                         rows={3}
                                         className="w-full rounded-xl border border-[#dce3ee] bg-white px-4 py-3 text-[#071b3b] transition placeholder:text-[#9ba8c2] focus:border-[#3162e9] focus:outline-none"

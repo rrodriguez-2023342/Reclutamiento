@@ -3,6 +3,7 @@ import { hashPassword } from "../utils/password.utils.js";
 import crypto from "crypto";
 import { sendTemporalPasswordEmail } from "../config/email.js";
 import { historialSueldoService } from "./historial-sueldo.service.js";
+import { historialEmpresaService } from "./historial-empresa.service.js";
 
 // Funcion para crear un error con mensaje y status
 function crearError(mensaje, status) {
@@ -209,6 +210,7 @@ class UsuarioService {
     const {
       rol_id,
       motivo_cambio_sueldo,
+      motivo_cambio_empresa,
       empresa_id,
       patrono_id,
       fecha_nacimiento,
@@ -232,6 +234,11 @@ class UsuarioService {
     const bonosCambio =
       data.bonos !== undefined &&
       Number(data.bonos) !== Number(usuario.bonos || 0);
+
+    // Detectar cambio de empresa
+    const empresaAnteriorId = usuario.empresa_id;
+    const empresaNuevoId = empresa_id ?? null;
+    const empresaCambio = empresaAnteriorId !== empresaNuevoId;
 
     const actualizado = await prisma.usuario.update({
       where: { id },
@@ -261,6 +268,24 @@ class UsuarioService {
       } catch (errorHistorial) {
         console.error(
           "No fue posible registrar historial de sueldo:",
+          errorHistorial.message,
+        );
+      }
+    }
+
+    // Registrar historial si cambió empresa
+    if (empresaCambio) {
+      try {
+        await historialEmpresaService.registrar({
+          usuario_id: id,
+          empresa_anterior_id: empresaAnteriorId,
+          empresa_nuevo_id: empresaNuevoId,
+          motivo: motivo_cambio_empresa || "Cambio de empresa",
+          cambiado_por_id: adminId,
+        });
+      } catch (errorHistorial) {
+        console.error(
+          "No fue posible registrar historial de empresa:",
           errorHistorial.message,
         );
       }

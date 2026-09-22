@@ -11,6 +11,7 @@ import patronoRoutes from './routes/patrono.routes.js'
 import dashboardRoutes from './routes/dashboard.route.js'
 import documentosRoutes from './routes/documento.routes.js'
 import historialSueldoRoutes from './routes/historial-sueldo.routes.js'
+import historialEmpresaRoutes from './routes/historial-empresa.routes.js'
 
 const app = express()
 
@@ -35,6 +36,7 @@ app.use('/api/patronos', patronoRoutes)
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/postulantes', documentosRoutes)
 app.use('/api/historial-sueldo', historialSueldoRoutes)
+app.use('/api/historial-empresa', historialEmpresaRoutes)
 
 // MANEJO DE ERRORES
 app.use((req, res) => {

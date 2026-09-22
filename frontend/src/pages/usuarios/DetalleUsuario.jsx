@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, CalendarDays, Clock, Eye, Key, Pencil, Power } from "lucide-react";
+import {
+    ArrowLeft,
+    CalendarDays,
+    Clock,
+    Eye,
+    Key,
+    Pencil,
+    Power,
+} from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
@@ -9,6 +17,7 @@ import {
     resetPasswordUsuario,
 } from "../../services/usuarios.service.js";
 import { getHistorialSueldo } from "../../services/historial-sueldo.service.js";
+import { getHistorialEmpresa } from "../../services/historial-empresa.service.js";
 
 function formatDate(value) {
     if (!value) return "—";
@@ -107,6 +116,7 @@ function DetalleUsuario() {
     const [actionLoading, setActionLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const [showHistorial, setShowHistorial] = useState(false);
+    const [showHistorialEmpresa, setShowHistorialEmpresa] = useState(false);
 
     useEffect(() => {
         let active = true;
@@ -321,7 +331,7 @@ function DetalleUsuario() {
                             </div>
                         </div>
                     </section>
-
+                        
                     <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
                         <h2 className="text-lg font-bold text-[#071b3b]">
                             Datos personales
@@ -383,11 +393,21 @@ function DetalleUsuario() {
                             </div>
                         </div>
                     </section>
-                        
+
                     <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
-                        <h2 className="text-lg font-bold text-[#071b3b]">
-                            Empresa y patrono
-                        </h2>
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-lg font-bold text-[#071b3b]">
+                                Empresa y patrono
+                            </h2>
+                            <button
+                                type="button"
+                                onClick={() => setShowHistorialEmpresa(true)}
+                                className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#3162e9] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#183fca]"
+                            >
+                                <Clock className="h-4 w-4" />
+                                Ver historial
+                            </button>
+                        </div>
                         <div className="mt-5 grid gap-5 sm:grid-cols-2">
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
                                 <p className="text-sm font-semibold text-[#5b6e8b]">Empresa</p>
@@ -457,6 +477,13 @@ function DetalleUsuario() {
                     onClose={() => setShowHistorial(false)}
                 />
             )}
+
+            {showHistorialEmpresa && (
+                <HistorialEmpresaModal
+                    usuarioId={usuario?.id}
+                    onClose={() => setShowHistorialEmpresa(false)}
+                />
+            )}
         </DashboardLayout>
     );
 }
@@ -482,6 +509,7 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
                 if (active) setData([]);
             })
             .finally(() => active && setLoading(false));
+
         return () => {
             active = false;
         };
@@ -519,12 +547,24 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
                             <thead>
                                 <tr className="text-base font-semibold text-[#5b6e8b]">
                                     <th className="border-b border-[#dfe5ee] px-4 py-3">Fecha</th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">Sueldo anterior</th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">Sueldo nuevo</th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">Bonos anterior</th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">Bonos nuevo</th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">Motivo</th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">Cambiado por</th>
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                        Sueldo anterior
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                        Sueldo nuevo
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                        Bonos anterior
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                        Bonos nuevo
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                        Motivo
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                        Cambiado por
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -544,6 +584,132 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
                                         </td>
                                         <td className="border-b border-[#dfe5ee] px-4 py-3 font-semibold">
                                             {formatCurrency(item.bonos_nuevo)}
+                                        </td>
+                                        <td className="border-b border-[#dfe5ee] px-4 py-3">
+                                            {item.motivo}
+                                        </td>
+                                        <td className="border-b border-[#dfe5ee] px-4 py-3">
+                                            {item.cambiado_por?.nombre || "—"}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-3 border-t border-[#dce3ee] px-6 py-4">
+                        <button
+                            type="button"
+                            disabled={page <= 1}
+                            onClick={() => setPage((p) => p - 1)}
+                            className="cursor-pointer rounded-xl border border-[#dce3ee] px-4 py-2 text-sm font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa] disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            Anterior
+                        </button>
+                        <span className="text-sm text-[#5b6e8b]">
+                            Página {page} de {totalPages}
+                        </span>
+                        <button
+                            type="button"
+                            disabled={page >= totalPages}
+                            onClick={() => setPage((p) => p + 1)}
+                            className="cursor-pointer rounded-xl border border-[#dce3ee] px-4 py-2 text-sm font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa] disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            Siguiente
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+function HistorialEmpresaModal({ usuarioId, onClose }) {
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+    useEffect(() => {
+        if (!usuarioId) return;
+        let active = true;
+        setLoading(true);
+        getHistorialEmpresa(usuarioId, { page, limit: 10 })
+            .then((result) => {
+                if (active) {
+                    setData(result?.data || []);
+                    setTotalPages(result?.totalPages || 1);
+                }
+            })
+            .catch(() => {
+                if (active) setData([]);
+            })
+            .finally(() => active && setLoading(false));
+
+            return () => {
+                active = false;
+            };
+    }, [usuarioId, page]);
+
+    return (
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4"
+            role="dialog"
+            aria-modal="true"
+        >
+            <div className="w-full max-w-3xl max-h-[80vh] overflow-hidden rounded-[26px] bg-white shadow-2xl flex flex-col">
+                <div className="flex items-center justify-between border-b border-[#dce3ee] px-6 py-4">
+                    <h2 className="text-xl font-bold text-[#071b3b]">
+                        Historial de cambios de empresa
+                    </h2>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="cursor-pointer text-[#5b6e8b] transition hover:text-[#071b3b]"
+                    >
+                        ✕
+                    </button>
+                </div>
+
+                <div className="overflow-auto flex-1 p-6">
+                    {loading ? (
+                        <p className="text-center text-[#5b6e8b]">Cargando historial...</p>
+                    ) : data.length === 0 ? (
+                        <p className="text-center text-[#5b6e8b]">
+                            No hay registros de cambios de empresa.
+                        </p>
+                    ) : (
+                        <table className="w-full border-separate border-spacing-0 text-left text-sm">
+                            <thead>
+                                <tr className="text-base font-semibold text-[#5b6e8b]">
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">Fecha</th>
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                        Empresa anterior
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                        Empresa nueva
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                        Motivo
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                        Cambiado por
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data.map((item) => (
+                                    <tr key={item.id} className="text-[#071b3b]">
+                                        <td className="border-b border-[#dfe5ee] px-4 py-3 whitespace-nowrap">
+                                            {formatDate(item.fecha_cambio)}
+                                        </td>
+                                        <td className="border-b border-[#dfe5ee] px-4 py-3">
+                                            {item.empresa_anterior?.nombre_empresa || "Sin empresa"}
+                                        </td>
+                                        <td className="border-b border-[#dfe5ee] px-4 py-3 font-semibold">
+                                            {item.empresa_nuevo?.nombre_empresa || "Sin empresa"}
                                         </td>
                                         <td className="border-b border-[#dfe5ee] px-4 py-3">
                                             {item.motivo}

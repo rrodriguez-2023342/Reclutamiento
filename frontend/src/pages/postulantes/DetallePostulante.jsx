@@ -618,8 +618,15 @@ function DocumentosSection({ p, onReload }) {
       const docs = await getDocumentos(p.id);
       setDocumentos(docs);
       onReload?.();
-    } catch {
-      alert("No fue posible subir el documento.");
+    } catch (error) {
+      if (error.response?.status === 413) {
+        alert(
+          error.response.data?.message ||
+            "El archivo excede el límite máximo de 2MB",
+        );
+      } else {
+        alert("No fue posible subir el documento.");
+      }
     } finally {
       setSubiendo(null);
     }

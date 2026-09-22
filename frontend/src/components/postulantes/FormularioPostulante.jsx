@@ -400,7 +400,11 @@ function FormularioPostulante({ postulanteId }) {
           try {
             await subirDocumento(postulanteIdFinal, tipo, archivo);
           } catch (docError) {
-            console.error(`Error subiendo ${tipo}:`, docError);
+            if (docError.response?.status === 413) {
+              alert(`${tipo}: ${docError.response.data?.message || 'El archivo excede el límite máximo de 2MB'}`);
+            } else {
+              console.error(`Error subiendo ${tipo}:`, docError);
+            }
           }
         }
       }

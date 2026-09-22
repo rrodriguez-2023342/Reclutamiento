@@ -1,4 +1,5 @@
 import express from 'express'
+import multer from 'multer'
 import helmet from 'helmet'
 import cors from 'cors'
 import roleRoutes from './routes/role.routes.js'
@@ -37,6 +38,23 @@ app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/postulantes', documentosRoutes)
 app.use('/api/historial-sueldo', historialSueldoRoutes)
 app.use('/api/historial-empresa', historialEmpresaRoutes)
+
+// Middleware para errores de Multer (archivo muy grande)
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(413).json({
+        status: 'error',
+        message: 'El archivo excede el límite máximo de 2MB',
+      });
+    }
+    return res.status(400).json({
+      status: 'error',
+      message: err.message,
+    });
+  }
+  next(err);
+});
 
 // MANEJO DE ERRORES
 app.use((req, res) => {

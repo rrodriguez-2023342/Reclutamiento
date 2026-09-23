@@ -3,6 +3,7 @@ import {
   ArrowLeft,
   Check,
   CircleAlert,
+  Clock,
   Download,
   Pencil,
   Trash2,
@@ -16,6 +17,7 @@ import {
   getPostulanteById,
   updateEstadoPostulante,
 } from "../../services/postulantes.service.js";
+import { getHistorialRechazo } from "../../services/historial-rechazo.service.js";
 import {
   getDocumentos,
   descargarDocumento,
@@ -757,6 +759,7 @@ function DetallePostulante() {
   const [section, setSection] = useState(0);
   const [fotoUrl, setFotoUrl] = useState(null);
   const [motivoRechazo, setMotivoRechazo] = useState("");
+  const [showHistorialRechazo, setShowHistorialRechazo] = useState(false);
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -830,6 +833,7 @@ function DetallePostulante() {
     } catch (requestError) {
       setAction(null);
       setMotivoRechazo("");
+      setObservacionesReactivacion("");
       setError(
         requestError.response?.data?.message ||
           "No fue posible actualizar el estado.",
@@ -880,6 +884,14 @@ function DetallePostulante() {
         motivo={motivoRechazo}
         setMotivo={setMotivoRechazo}
       />
+
+      {showHistorialRechazo && (
+        <HistorialRechazoModal
+          postulanteId={postulante?.id}
+          onClose={() => setShowHistorialRechazo(false)}
+        />
+      )}
+
       {success && (
         <div
           role="status"
@@ -932,9 +944,9 @@ function DetallePostulante() {
               {p.estado === "RECHAZADO" && p.motivo_rechazo && (
                 <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-4">
                   <p className="text-sm font-semibold text-[#df353c]">
-                    Motivo de rechazo
-                    {p.fecha_rechazo ? ` — ${date(p.fecha_rechazo)}` : ""}
-                  </p>
+                      Motivo de rechazo
+                      {p.fecha_rechazo ? ` — ${date(p.fecha_rechazo)}` : ""}
+                    </p>
                   {p.rechazado_por_usuario && (
                     <p className="mt-1 text-sm text-[#5b6e8b]">
                       Rechazado por:{" "}
@@ -982,6 +994,14 @@ function DetallePostulante() {
             >
               <Pencil className="h-4 w-4" />
               Editar
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowHistorialRechazo(true)}
+              className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#3162e9] px-4 py-3 font-bold text-white transition hover:bg-[#183fca]"
+            >
+              <Clock className="h-4 w-4" />
+              Ver historial
             </button>
             {actions.map((item) => (
               <button
@@ -1033,3 +1053,120 @@ function DetallePostulante() {
 }
 
 export default DetallePostulante;
+
+function HistorialRechazoModal({ postulanteId, onClose }) {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    if (!postulanteId) return;
+    let active = true;
+    setLoading(true);
+    getHistorialRechazo(postulanteId, { page, limit: 10 })
+      .then((result) => {
+        if (active) {
+          setData(result?.data || []);
+          setTotalPages(result?.totalPages || 1);
+        }
+      })
+      .catch(() => {
+        if (active) setData([]);
+      })
+      .finally(() => active && setLoading(false));
+    return () => {
+      active = false;
+    };
+  }, [postulanteId, page]);
+
+  function formatDate(value) {
+    if (!value) return "—";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime())
+      ? "—"
+      : new Intl.DateTimeFormat("es-GT", { dateStyle: "medium" }).format(date);
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className="w-full max-w-3xl max-h-[80vh] overflow-hidden rounded-[26px] bg-white shadow-2xl flex flex-col">
+        <div className="flex items-center justify-between border-b border-[#dce3ee] px-6 py-4">
+          <h2 className="text-xl font-bold text-[#071b3b]">
+            Historial de rechazos
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="cursor-pointer text-[#5b6e8b] transition hover:text-[#071b3b]"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="overflow-auto flex-1 p-6">
+          {loading ? (
+            <p className="text-center text-[#5b6e8b]">Cargando historial...</p>
+          ) : data.length === 0 ? (
+            <p className="text-center text-[#5b6e8b]">
+              No hay registros de rechazos.
+            </p>
+          ) : (
+            <table className="w-full border-separate border-spacing-0 text-left text-sm">
+              <thead>
+                <tr className="text-base font-semibold text-[#5b6e8b]">
+                  <th className="border-b border-[#dfe5ee] px-4 py-3">Fecha Rechazo</th>
+                  <th className="border-b border-[#dfe5ee] px-4 py-3">Motivo</th>
+                  <th className="border-b border-[#dfe5ee] px-4 py-3">Rechazado por</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((item) => (
+                  <tr key={item.id} className="text-[#071b3b]">
+                    <td className="border-b border-[#dfe5ee] px-4 py-3 whitespace-nowrap">
+                      {formatDate(item.fecha_rechazo)}
+                    </td>
+                    <td className="border-b border-[#dfe5ee] px-4 py-3 max-w-[200px] truncate">
+                      {item.motivo}
+                    </td>
+                    <td className="border-b border-[#dfe5ee] px-4 py-3">
+                      {item.rechazado_por_usuario?.nombre || "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-3 border-t border-[#dce3ee] px-6 py-4">
+            <button
+              type="button"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => p - 1)}
+              className="cursor-pointer rounded-xl border border-[#dce3ee] px-4 py-2 text-sm font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              Anterior
+            </button>
+            <span className="text-sm text-[#5b6e8b]">
+              Página {page} de {totalPages}
+            </span>
+            <button
+              type="button"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => p + 1)}
+              className="cursor-pointer rounded-xl border border-[#dce3ee] px-4 py-2 text-sm font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              Siguiente
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

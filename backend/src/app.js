@@ -13,6 +13,7 @@ import dashboardRoutes from './routes/dashboard.route.js'
 import documentosRoutes from './routes/documento.routes.js'
 import historialSueldoRoutes from './routes/historial-sueldo.routes.js'
 import historialEmpresaRoutes from './routes/historial-empresa.routes.js'
+import historialRechazoRoutes from './routes/historial-rechazo.routes.js'
 
 const app = express()
 
@@ -38,6 +39,7 @@ app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/postulantes', documentosRoutes)
 app.use('/api/historial-sueldo', historialSueldoRoutes)
 app.use('/api/historial-empresa', historialEmpresaRoutes)
+app.use('/api/historial-rechazo', historialRechazoRoutes)
 
 // Middleware para errores de Multer (archivo muy grande)
 app.use((err, req, res, next) => {

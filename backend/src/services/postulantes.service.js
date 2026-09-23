@@ -1,5 +1,6 @@
 import prisma from "../config/prisma.js";
 import { sendEstadoPostulanteEmail } from "../config/email.js";
+import { historialRechazoService } from "./historial-rechazo.service.js";
 
 // Constantes de estado y transiciones válidas para el flujo de postulantes
 const ETIQUETAS_ESTADO = {
@@ -253,20 +254,22 @@ class PostulanteService {
       );
     }
 
-    // Guarda el nuevo estado y, si es una re-aplicación, actualiza la fecha de registro
+    // Guarda el nuevo estado
     const data = { estado: nuevoEstado };
-    if (postulante.estado === "RECHAZADO" && nuevoEstado === "POSTULANTE") {
-      data.fecha_registro = new Date();
-      data.motivo_rechazo = null;
-      data.fecha_rechazo = null;
-      data.rechazado_por = null;
-    }
 
     // Si se rechaza, guardar motivo, fecha y quién rechazó
     if (nuevoEstado === "RECHAZADO") {
       data.motivo_rechazo = extras.motivo_rechazo || null;
       data.fecha_rechazo = new Date();
       data.rechazado_por = extras.quien_rechazo || null;
+    }
+
+    // Si se reactiva (RECHAZADO -> POSTULANTE), actualizar historial de rechazo
+    // NO limpiar campos de rechazo en postulante (mantener último rechazo visible)
+    // NO resetear fecha_registro
+    const esReactivacion = postulante.estado === "RECHAZADO" && nuevoEstado === "POSTULANTE";
+    if (esReactivacion) {
+      data.fecha_registro = postulante.fecha_registro;
     }
 
     // Si se contrata, guardar fecha y quién contrató, y asignar empresa y patrono al usuario
@@ -295,6 +298,19 @@ class PostulanteService {
         correo: true,
       },
     });
+
+    // Registrar en historial de rechazo (después de actualizar postulante para tener el ID)
+    try {
+      if (nuevoEstado === "RECHAZADO") {
+        await historialRechazoService.registrarRechazo({
+          postulante_id: id,
+          motivo: extras.motivo_rechazo || "Sin motivo",
+          rechazado_por: extras.quien_rechazo || null,
+        });
+      }
+    } catch (errorHistorial) {
+      console.error("No fue posible registrar historial de rechazo:", errorHistorial.message);
+    }
 
     // El correo es un aviso complementario: si falla el envío NO se revierte el cambio de estado
     let correoEnviado = false;

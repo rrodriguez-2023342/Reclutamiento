@@ -172,6 +172,7 @@ model Usuario {
   historial_sueldo_cambios HistorialSueldo[] @relation("HistorialSueldoCambiadoPor")
   historial_empresa         HistorialEmpresa[]
   historial_empresa_cambios HistorialEmpresa[] @relation("HistorialEmpresaCambiadoPor")
+  historial_rechazos        HistorialRechazo[] @relation("RechazadoPor")
 
   @@map("usuarios")
 }
@@ -247,6 +248,7 @@ model Postulante {
   experienciaLaboral           ExperienciaLaboral[]
   referenciasPersonales        ReferenciaPersonal[]
   documentos                   DocumentoPostulante[]
+  historial_rechazos           HistorialRechazo[]
 
   @@map("postulantes")
 }
@@ -377,4 +379,16 @@ model HistorialEmpresa {
   fecha_cambio          DateTime @default(now()) @map("fecha_cambio") @db.Timestamp
 
   @@map("historial_empresa")
+}
+
+model HistorialRechazo {
+  id                 Int       @id @default(autoincrement())
+  postulante_id      Int       @map("postulante_id")
+  postulante         Postulante @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
+  motivo             String    @map("motivo") @db.Text
+  rechazado_por      Int       @map("rechazado_por")
+  rechazado_por_usuario Usuario  @relation("RechazadoPor", fields: [rechazado_por], references: [id])
+  fecha_rechazo      DateTime  @default(now()) @map("fecha_rechazo") @db.Timestamp
+
+  @@map("historial_rechazo")
 }

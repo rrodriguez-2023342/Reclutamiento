@@ -98,6 +98,9 @@ model Empresa {
   id                        Int               @id @default(autoincrement())
   nombre_empresa            String            @unique @map("nombre_empresa") @db.VarChar(150)
   detalle_empresa           String?           @map("detalle_empresa") @db.Text
+  direccion                 String?           @map("direccion") @db.Text
+  telefono                  String?           @map("telefono") @db.VarChar(20)
+  correo                    String?           @map("correo") @db.VarChar(100)
   fecha_aniversario         DateTime?         @map("fecha_aniversario") @db.Date
   activo                    Boolean           @default(true) @map("activa")
   creado_en                 DateTime          @default(now()) @map("creado_en") @db.Timestamp

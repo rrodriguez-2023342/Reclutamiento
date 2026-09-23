@@ -261,7 +261,7 @@ function DetallePatrono() {
                                 <p
                                     className={`text-sm font-semibold ${isEmpty(patrono.nit) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
                                 >
-                                    NIT
+                                    NIT del Representante
                                 </p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(patrono.nit) ? "text-[#df353c]" : "text-[#071b3b]"}`}
@@ -297,7 +297,7 @@ function DetallePatrono() {
                                 <p
                                     className={`text-sm font-semibold ${isEmpty(patrono.fecha_vencimiento_dpi) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
                                 >
-                                    Vencimiento DPI
+                                    Vencimiento DPI del Representante
                                 </p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(patrono.fecha_vencimiento_dpi) ? "text-[#df353c]" : "text-[#071b3b]"}`}
@@ -309,7 +309,7 @@ function DetallePatrono() {
                                 <p
                                     className={`text-sm font-semibold ${isEmpty(patrono.fecha_nacimiento) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
                                 >
-                                    Fecha de Nacimiento
+                                    Fecha de Nacimiento del Representante
                                 </p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(patrono.fecha_nacimiento) ? "text-[#df353c]" : "text-[#071b3b]"}`}
@@ -318,7 +318,9 @@ function DetallePatrono() {
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">Edad</p>
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Edad del Representante
+                                </p>
                                 <p className="mt-2 text-lg font-bold text-[#071b3b]">
                                     {calcularEdad(patrono.fecha_nacimiento)}
                                 </p>
@@ -327,7 +329,7 @@ function DetallePatrono() {
                                 <p
                                     className={`text-sm font-semibold ${isEmpty(patrono.sexo) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
                                 >
-                                    Sexo
+                                    Sexo del Representante
                                 </p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(patrono.sexo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
@@ -339,7 +341,7 @@ function DetallePatrono() {
                                 <p
                                     className={`text-sm font-semibold ${isEmpty(patrono.estado_civil) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
                                 >
-                                    Estado Civil
+                                    Estado Civil del Representante
                                 </p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(patrono.estado_civil) ? "text-[#df353c]" : "text-[#071b3b]"}`}
@@ -351,7 +353,7 @@ function DetallePatrono() {
                                 <p
                                     className={`text-sm font-semibold ${isEmpty(patrono.profesion) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
                                 >
-                                    Profesión
+                                    Profesión del Representante
                                 </p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(patrono.profesion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
@@ -375,7 +377,7 @@ function DetallePatrono() {
                                 <p
                                     className={`text-sm font-semibold ${isEmpty(patrono.direccion) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
                                 >
-                                    Dirección
+                                    Dirección del Representante
                                 </p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(patrono.direccion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
@@ -387,7 +389,7 @@ function DetallePatrono() {
                                 <p
                                     className={`text-sm font-semibold ${isEmpty(patrono.telefono) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
                                 >
-                                    Teléfono
+                                    Teléfono del Representante
                                 </p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(patrono.telefono) ? "text-[#df353c]" : "text-[#071b3b]"}`}
@@ -399,7 +401,7 @@ function DetallePatrono() {
                                 <p
                                     className={`text-sm font-semibold ${isEmpty(patrono.correo) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
                                 >
-                                    Correo electrónico
+                                    Correo electrónico del Representante
                                 </p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(patrono.correo) ? "text-[#df353c]" : "text-[#071b3b]"}`}

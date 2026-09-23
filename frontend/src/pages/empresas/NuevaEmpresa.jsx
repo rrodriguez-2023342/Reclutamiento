@@ -33,6 +33,9 @@ function NuevaEmpresa() {
             const payload = {
                 ...values,
                 detalle_empresa: values.detalle_empresa || null,
+                direccion: values.direccion || null,
+                telefono: values.telefono || null,
+                correo: values.correo || null,
                 fecha_aniversario: values.fecha_aniversario || null,
             };
             await createEmpresa(payload);
@@ -104,6 +107,28 @@ function NuevaEmpresa() {
                             />
                         </Field>
 
+                        <Field label="Dirección" error={errors.direccion?.message}>
+                            <Textarea
+                                registration={register("direccion")}
+                                placeholder="Dirección completa de la empresa"
+                            />
+                        </Field>
+
+                        <Field label="Teléfono" error={errors.telefono?.message}>
+                            <Input
+                                registration={register("telefono")}
+                                placeholder="Ej. +502 1234 5678"
+                            />
+                        </Field>
+
+                        <Field label="Correo" error={errors.correo?.message}>
+                            <Input
+                                type="email"
+                                registration={register("correo")}
+                                placeholder="ejemplo@empresa.com"
+                            />
+                        </Field>
+
                         <Field
                             label="Fecha de aniversario"
                             error={errors.fecha_aniversario?.message}
@@ -123,7 +148,7 @@ function NuevaEmpresa() {
                             <span className="font-semibold">Empresa activa</span>
                         </label>
                     </div>
-                    
+
                     <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                         <button
                             type="button"

@@ -44,6 +44,9 @@ function EditarEmpresa() {
                         ...defaultEmpresaValues,
                         nombre_empresa: data.nombre_empresa || "",
                         detalle_empresa: data.detalle_empresa || "",
+                        direccion: data.direccion || "",
+                        telefono: data.telefono || "",
+                        correo: data.correo || "",
                         fecha_aniversario: data.fecha_aniversario
                             ? data.fecha_aniversario.split("T")[0]
                             : "",
@@ -72,6 +75,9 @@ function EditarEmpresa() {
             const payload = {
                 ...values,
                 detalle_empresa: values.detalle_empresa || null,
+                direccion: values.direccion || null,
+                telefono: values.telefono || null,
+                correo: values.correo || null,
                 fecha_aniversario: values.fecha_aniversario || null,
             };
             await updateEmpresa(id, payload);
@@ -148,6 +154,28 @@ function EditarEmpresa() {
                                 />
                             </Field>
 
+                            <Field label="Dirección" error={errors.direccion?.message}>
+                                <Textarea
+                                    registration={register("direccion")}
+                                    placeholder="Dirección completa de la empresa"
+                                />
+                            </Field>
+
+                            <Field label="Teléfono" error={errors.telefono?.message}>
+                                <Input
+                                    registration={register("telefono")}
+                                    placeholder="Ej. +502 1234 5678"
+                                />
+                            </Field>
+
+                            <Field label="Correo" error={errors.correo?.message}>
+                                <Input
+                                    type="email"
+                                    registration={register("correo")}
+                                    placeholder="ejemplo@empresa.com"
+                                />
+                            </Field>
+
                             <Field
                                 label="Fecha de aniversario"
                                 error={errors.fecha_aniversario?.message}
@@ -186,10 +214,10 @@ function EditarEmpresa() {
                             </button>
                         </div>
                     </form>
-                )}  
+                )}
             </div>
         </DashboardLayout>
     );
-}   
+}
 
 export default EditarEmpresa;

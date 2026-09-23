@@ -61,7 +61,7 @@ function Modal({ action, loading, onClose, onConfirm }) {
                         disabled={loading}
                         className="rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                            {loading ? "Procesando..." : "Confirmar"}
+                        {loading ? "Procesando..." : "Confirmar"}
                     </button>
                 </div>
             </div>
@@ -236,6 +236,46 @@ function DetalleEmpresa() {
                                     {empresa.detalle_empresa || "\u2014"}
                                 </p>
                             </div>
+
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(empresa.direccion) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
+                                    Dirección
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(empresa.direccion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {empresa.direccion || "\u2014"}
+                                </p>
+                            </div>
+
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(empresa.telefono) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
+                                    Teléfono
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(empresa.telefono) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {empresa.telefono || "\u2014"}
+                                </p>
+                            </div>
+
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(empresa.correo) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                >
+                                    Correo
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(empresa.correo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {empresa.correo || "\u2014"}
+                                </p>
+                            </div>
+
                             <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
                                 <p
                                     className={`text-sm font-semibold ${isEmpty(empresa.fecha_aniversario) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}

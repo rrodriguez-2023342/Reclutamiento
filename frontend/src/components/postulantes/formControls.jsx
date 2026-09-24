@@ -1,5 +1,6 @@
 import { ChevronDown, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { Controller } from "react-hook-form";
 
 export function Field({ label, error, children, className = "" }) {
   return (
@@ -14,6 +15,69 @@ export function Field({ label, error, children, className = "" }) {
         </span>
       )}
     </label>
+  );
+}
+
+export function RadioGroup({ control, name, options, className = "", disabled = false, required = false }) {
+  return (
+    <div className={className} role="radiogroup" aria-required={required}>
+      {options.map((opt) => (
+        <Controller
+          key={opt.value}
+          name={name}
+          control={control}
+          rules={{ required: required ? "Este campo es requerido" : false }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <label className="flex items-center gap-2 text-sm text-[#5b6e8b] cursor-pointer">
+              <input
+                type="radio"
+                name={name}
+                value={opt.value}
+                checked={value === opt.value}
+                onChange={(e) => {
+                  const booleanValue = e.target.value === 'true';
+                  onChange({ target: { ...e.target, value: booleanValue } });
+                  onBlur?.(e);
+                }}
+                onBlur={onBlur}
+                disabled={disabled}
+                className="h-4 w-4 accent-[#3162e9] cursor-pointer"
+              />
+              <span>{opt.label}</span>
+            </label>
+          )}
+        />
+      ))}
+    </div>
+  );
+}
+
+export function Radio({ control, name, value, label, className = "", disabled = false, required = false }) {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      rules={{ required: required ? "Este campo es requerido" : false }}
+      render={({ field: { onChange, onBlur, value } }) => (
+        <label className={`flex items-center gap-2 text-sm text-[#5b6e8b] cursor-pointer ${className}`}>
+          <input
+            type="radio"
+            name={name}
+            value={value}
+            checked={value === value}
+            onChange={(e) => {
+              const booleanValue = e.target.value === 'true';
+              onChange({ target: { ...e.target, value: booleanValue } });
+              onBlur?.(e);
+            }}
+            onBlur={onBlur}
+            disabled={disabled}
+            className="h-4 w-4 accent-[#3162e9] cursor-pointer"
+          />
+          <span>{label}</span>
+        </label>
+      )}
+    />
   );
 }
 

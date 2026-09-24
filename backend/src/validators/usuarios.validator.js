@@ -56,6 +56,10 @@ export const updateUsuarioSchema = z.object({
   bonos: z.coerce.number().positive().nullish(),
   motivo_cambio_sueldo: z.string().trim().nullish(),
   motivo_cambio_empresa: z.string().trim().nullish(),
+  tiene_seguro_gastos_medicos: z.boolean().nullish(),
+  empresa_seguro_gastos_medicos: z.string().trim().max(100).nullish(),
+  tiene_seguro_vida: z.boolean().nullish(),
+  empresa_seguro_vida: z.string().trim().max(100).nullish(),
 });
 
 // Esquema para validar los parametros utilizados al listar los usuarios

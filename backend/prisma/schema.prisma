@@ -164,6 +164,10 @@ model Usuario {
   direccion           String?      @map("direccion") @db.Text
   sueldo              Decimal?     @map("sueldo") @db.Decimal(10, 2)
   bonos               Decimal?     @map("bonos") @db.Decimal(10, 2)
+  tiene_seguro_gastos_medicos      Boolean   @default(false) @map("tiene_seguro_gastos_medicos")
+  empresa_seguro_gastos_medicos    String?   @map("empresa_seguro_gastos_medicos") @db.VarChar(100)
+  tiene_seguro_vida                Boolean   @default(false) @map("tiene_seguro_vida")
+  empresa_seguro_vida              String?   @map("empresa_seguro_vida") @db.VarChar(100)
   rol                 Role         @relation(fields: [rol_id], references: [id])
   postulantes         Postulante[]
   postulantes_rechazados Postulante[] @relation("RechazadoPor")

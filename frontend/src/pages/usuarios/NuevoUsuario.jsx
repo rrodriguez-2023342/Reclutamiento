@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -7,6 +7,7 @@ import {
     Field,
     Input,
     Select,
+    RadioGroup,
 } from "../../components/postulantes/formControls.jsx";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
@@ -33,6 +34,7 @@ function NuevoUsuario() {
         setValue,
         watch,
         reset,
+        control,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(usuarioSchema),
@@ -42,6 +44,8 @@ function NuevoUsuario() {
     const selectedRole = watch("rol_id") ?? 2;
     const selectedEmpresa = watch("empresa_id") ?? "";
     const selectedPatrono = watch("patrono_id") ?? "";
+    const tieneSeguroGastos = watch("tiene_seguro_gastos_medicos");
+    const tieneSeguroVida = watch("tiene_seguro_vida");
 
     useEffect(() => {
         let active = true;
@@ -98,6 +102,15 @@ function NuevoUsuario() {
                 direccion: values.direccion || null,
                 sueldo: values.sueldo || null,
                 bonos: values.bonos || null,
+                tiene_seguro_gastos_medicos:
+                    values.tiene_seguro_gastos_medicos || false,
+                empresa_seguro_gastos_medicos: values.tiene_seguro_gastos_medicos
+                    ? values.empresa_seguro_gastos_medicos || null
+                    : null,
+                tiene_seguro_vida: values.tiene_seguro_vida || false,
+                empresa_seguro_vida: values.tiene_seguro_vida
+                    ? values.empresa_seguro_vida || null
+                    : null,
             };
             await createUsuario(payload);
             navigate("/colaboradores", {
@@ -304,6 +317,82 @@ function NuevoUsuario() {
                                 />
                             </Field>
                         </div>
+
+                        <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                            <div className="flex items-center gap-3">
+                                <Shield className="h-6 w-6 text-[#3162e9]" />
+                                <h2 className="text-lg font-bold text-[#071b3b]">Seguros</h2>
+                            </div>
+
+                            <div className="mt-6 space-y-6">
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-base font-semibold text-[#071b3b]">
+                                            Seguro de Gastos Médicos
+                                        </h3>
+                                        <RadioGroup
+                                            control={control}
+                                            name="tiene_seguro_gastos_medicos"
+                                            options={[
+                                                { value: true, label: "Sí" },
+                                                { value: false, label: "No" },
+                                            ]}
+                                            className="flex items-center gap-4"
+                                        />
+                                    </div>
+                                    {tieneSeguroGastos && (
+                                        <Field
+                                            label="Empresa aseguradora *"
+                                            error={errors.empresa_seguro_gastos_medicos?.message}
+                                        >
+                                            <Input
+                                                registration={register(
+                                                    "empresa_seguro_gastos_medicos",
+                                                    {
+                                                        required: tieneSeguroGastos
+                                                            ? "La empresa aseguradora es requerida"
+                                                            : false,
+                                                    },
+                                                )}
+                                                placeholder="Nombre de la empresa aseguradora"
+                                            />
+                                        </Field>
+                                    )}
+                                </div>
+
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-base font-semibold text-[#071b3b]">
+                                            Seguro de Vida
+                                        </h3>
+                                        <RadioGroup
+                                            control={control}
+                                            name="tiene_seguro_vida"
+                                            options={[
+                                                { value: true, label: "Sí" },
+                                                { value: false, label: "No" },
+                                            ]}
+                                            className="flex items-center gap-4"
+                                        />
+                                    </div>
+                                    {tieneSeguroVida && (
+                                        <Field
+                                            label="Empresa aseguradora *"
+                                            error={errors.empresa_seguro_vida?.message}
+                                        >
+                                            <Input
+                                                registration={register("empresa_seguro_vida", {
+                                                    required: tieneSeguroVida
+                                                        ? "La empresa aseguradora es requerida"
+                                                        : false,
+                                                })}
+                                                placeholder="Nombre de la empresa aseguradora"
+                                            />
+                                        </Field>
+                                    )}
+                                </div>
+                            </div>
+                        </section>
 
                         <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">
                             <input

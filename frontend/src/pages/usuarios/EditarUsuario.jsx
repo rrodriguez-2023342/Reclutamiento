@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -7,6 +7,7 @@ import {
     Field,
     Input,
     Select,
+    RadioGroup,
 } from "../../components/postulantes/formControls.jsx";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
@@ -36,6 +37,7 @@ function EditarUsuario() {
         reset,
         setValue,
         watch,
+        control,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(usuarioSchema),
@@ -48,6 +50,8 @@ function EditarUsuario() {
     const currentSueldo = watch("sueldo");
     const currentBonos = watch("bonos");
     const currentEmpresa = watch("empresa_id");
+    const tieneSeguroGastos = watch("tiene_seguro_gastos_medicos");
+    const tieneSeguroVida = watch("tiene_seguro_vida");
     const [originalSueldo, setOriginalSueldo] = useState(null);
     const [originalBonos, setOriginalBonos] = useState(null);
     const [originalEmpresa, setOriginalEmpresa] = useState(null);
@@ -105,6 +109,12 @@ function EditarUsuario() {
                         direccion: data.direccion || "",
                         sueldo: data.sueldo ?? "",
                         bonos: data.bonos ?? "",
+                        tiene_seguro_gastos_medicos:
+                            data.tiene_seguro_gastos_medicos ?? false,
+                        empresa_seguro_gastos_medicos:
+                            data.empresa_seguro_gastos_medicos || "",
+                        tiene_seguro_vida: data.tiene_seguro_vida ?? false,
+                        empresa_seguro_vida: data.empresa_seguro_vida || "",
                     });
                     setOriginalSueldo(data.sueldo ?? null);
                     setOriginalBonos(data.bonos ?? null);
@@ -146,6 +156,15 @@ function EditarUsuario() {
                     : null,
                 motivo_cambio_empresa: hasEmpresaChange
                     ? values.motivo_cambio_empresa || null
+                    : null,
+                tiene_seguro_gastos_medicos:
+                    values.tiene_seguro_gastos_medicos || false,
+                empresa_seguro_gastos_medicos: values.tiene_seguro_gastos_medicos
+                    ? values.empresa_seguro_gastos_medicos || null
+                    : null,
+                tiene_seguro_vida: values.tiene_seguro_vida || false,
+                empresa_seguro_vida: values.tiene_seguro_vida
+                    ? values.empresa_seguro_vida || null
                     : null,
             };
             await updateUsuario(id, payload);
@@ -380,22 +399,81 @@ function EditarUsuario() {
                                 </Field>
                             </div>
 
-                            {hasSalaryChange && (
-                                <Field
-                                    label="Motivo del cambio de sueldo base *"
-                                    error={errors.motivo_cambio_sueldo?.message}
-                                >
-                                    <textarea
-                                        {...register("motivo_cambio_sueldo", {
-                                            required:
-                                                "El motivo es requerido cuando cambia el sueldo base o bonificación decreto ley",
-                                        })}
-                                        rows={3}
-                                        className="w-full rounded-xl border border-[#dce3ee] bg-white px-4 py-3 text-[#071b3b] transition placeholder:text-[#9ba8c2] focus:border-[#3162e9] focus:outline-none"
-                                        placeholder="Explique el motivo del cambio de sueldo base..."
-                                    />
-                                </Field>
-                            )}
+                            <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                                <div className="flex items-center gap-3">
+                                    <Shield className="h-6 w-6 text-[#3162e9]" />
+                                    <h2 className="text-lg font-bold text-[#071b3b]">Seguros</h2>
+                                </div>
+
+                                <div className="mt-6 space-y-6">
+                                    <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="text-base font-semibold text-[#071b3b]">
+                                                Seguro de Gastos Médicos
+                                            </h3>
+                                            <RadioGroup
+                                                control={control}
+                                                name="tiene_seguro_gastos_medicos"
+                                                options={[
+                                                    { value: true, label: "Sí" },
+                                                    { value: false, label: "No" },
+                                                ]}
+                                                className="flex items-center gap-4"
+                                            />
+                                        </div>
+                                        {tieneSeguroGastos && (
+                                            <Field
+                                                label="Empresa aseguradora *"
+                                                error={errors.empresa_seguro_gastos_medicos?.message}
+                                            >
+                                                <Input
+                                                    registration={register(
+                                                        "empresa_seguro_gastos_medicos",
+                                                        {
+                                                            required: tieneSeguroGastos
+                                                                ? "La empresa aseguradora es requerida"
+                                                                : false,
+                                                        },
+                                                    )}
+                                                    placeholder="Nombre de la empresa aseguradora"
+                                                />
+                                            </Field>
+                                        )}
+                                    </div>
+
+                                    <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="text-base font-semibold text-[#071b3b]">
+                                                Seguro de Vida
+                                            </h3>
+                                            <RadioGroup
+                                                control={control}
+                                                name="tiene_seguro_vida"
+                                                options={[
+                                                    { value: true, label: "Sí" },
+                                                    { value: false, label: "No" },
+                                                ]}
+                                                className="flex items-center gap-4"
+                                            />
+                                        </div>
+                                        {tieneSeguroVida && (
+                                            <Field
+                                                label="Empresa aseguradora *"
+                                                error={errors.empresa_seguro_vida?.message}
+                                            >
+                                                <Input
+                                                    registration={register("empresa_seguro_vida", {
+                                                        required: tieneSeguroVida
+                                                            ? "La empresa aseguradora es requerida"
+                                                            : false,
+                                                    })}
+                                                    placeholder="Nombre de la empresa aseguradora"
+                                                />
+                                            </Field>
+                                        )}
+                                    </div>
+                                </div>
+                            </section>
 
                             <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">
                                 <input

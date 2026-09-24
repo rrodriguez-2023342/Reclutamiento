@@ -7,6 +7,7 @@ import {
     Key,
     Pencil,
     Power,
+    Shield,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
@@ -465,6 +466,51 @@ function DetalleUsuario() {
                             </div>
                         </div>
                     </section>
+
+                    <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                        <div className="flex items-center gap-3">
+                            <Shield className="h-6 w-6 text-[#3162e9]" />
+                            <h2 className="text-lg font-bold text-[#071b3b]">Seguros</h2>
+                        </div>
+                        <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Seguro de Gastos Médicos
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${!usuario.tiene_seguro_gastos_medicos ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {usuario.tiene_seguro_gastos_medicos ? "Sí" : "No"}
+                                </p>
+                                {usuario.tiene_seguro_gastos_medicos && (
+                                    <p className="mt-2 text-sm text-[#5b6e8b]">
+                                        Empresa:{" "}
+                                        <span className="font-semibold text-[#071b3b]">
+                                            {usuario.empresa_seguro_gastos_medicos || "—"}
+                                        </span>
+                                    </p>
+                                )}
+                            </div>
+                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Seguro de Vida
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${!usuario.tiene_seguro_vida ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                >
+                                    {usuario.tiene_seguro_vida ? "Sí" : "No"}
+                                </p>
+                                {usuario.tiene_seguro_vida && (
+                                    <p className="mt-2 text-sm text-[#5b6e8b]">
+                                        Empresa:{" "}
+                                        <span className="font-semibold text-[#071b3b]">
+                                            {usuario.empresa_seguro_vida || "—"}
+                                        </span>
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    </section>
                 </div>
             )}
 
@@ -687,21 +733,21 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
                     ) : (
                         <table className="w-full border-separate border-spacing-0 text-left text-sm">
                             <thead>
-                                <tr className="text-base font-semibold text-[#5b6e8b]">
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">Fecha</th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
-                                        Empresa anterior
-                                    </th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
-                                        Empresa nueva
-                                    </th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
-                                        Motivo
-                                    </th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
-                                        Cambiado por
-                                    </th>
-                                </tr>
+                                    <tr className="text-base font-semibold text-[#5b6e8b]">
+                                        <th className="border-b border-[#dfe5ee] px-4 py-3">Fecha</th>
+                                        <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                            Empresa anterior
+                                        </th>
+                                        <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                            Empresa nueva
+                                        </th>
+                                        <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                            Motivo
+                                        </th>
+                                        <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                            Cambiado por
+                                        </th>
+                                    </tr>
                             </thead>
                             <tbody>
                                 {data.map((item) => (

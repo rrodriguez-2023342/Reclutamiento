@@ -358,7 +358,7 @@ function EditarUsuario() {
                             </Field>
 
                             <div className="grid gap-5 sm:grid-cols-2">
-                                <Field label="Sueldo" error={errors.sueldo?.message}>
+                                <Field label="Sueldo Base" error={errors.sueldo?.message}>
                                     <Input
                                         registration={register("sueldo")}
                                         type="number"
@@ -367,7 +367,10 @@ function EditarUsuario() {
                                     />
                                 </Field>
 
-                                <Field label="Bonos" error={errors.bonos?.message}>
+                                <Field
+                                    label="Bonificación decreto ley"
+                                    error={errors.bonos?.message}
+                                >
                                     <Input
                                         registration={register("bonos")}
                                         type="number"
@@ -379,17 +382,17 @@ function EditarUsuario() {
 
                             {hasSalaryChange && (
                                 <Field
-                                    label="Motivo del cambio de sueldo *"
+                                    label="Motivo del cambio de sueldo base *"
                                     error={errors.motivo_cambio_sueldo?.message}
                                 >
                                     <textarea
                                         {...register("motivo_cambio_sueldo", {
                                             required:
-                                                "El motivo es requerido cuando cambia el sueldo o bonos",
+                                                "El motivo es requerido cuando cambia el sueldo base o bonificación decreto ley",
                                         })}
                                         rows={3}
                                         className="w-full rounded-xl border border-[#dce3ee] bg-white px-4 py-3 text-[#071b3b] transition placeholder:text-[#9ba8c2] focus:border-[#3162e9] focus:outline-none"
-                                        placeholder="Explique el motivo del cambio de sueldo..."
+                                        placeholder="Explique el motivo del cambio de sueldo base..."
                                     />
                                 </Field>
                             )}

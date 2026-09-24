@@ -331,7 +331,7 @@ function DetalleUsuario() {
                             </div>
                         </div>
                     </section>
-                        
+
                     <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
                         <h2 className="text-lg font-bold text-[#071b3b]">
                             Datos personales
@@ -444,7 +444,9 @@ function DetalleUsuario() {
                         </div>
                         <div className="mt-5 grid gap-5 sm:grid-cols-2">
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">Sueldo</p>
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Sueldo Base
+                                </p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(usuario.sueldo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                 >
@@ -452,7 +454,9 @@ function DetalleUsuario() {
                                 </p>
                             </div>
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">Bonos</p>
+                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                                    Bonificación decreto ley
+                                </p>
                                 <p
                                     className={`mt-2 text-lg font-bold ${isEmpty(usuario.bonos) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                 >
@@ -521,10 +525,10 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
             role="dialog"
             aria-modal="true"
         >
-            <div className="w-full max-w-3xl max-h-[80vh] overflow-hidden rounded-[26px] bg-white shadow-2xl flex flex-col">
+            <div className="w-full max-w-5xl max-h-[80vh] overflow-hidden rounded-[26px] bg-white shadow-2xl flex flex-col">
                 <div className="flex items-center justify-between border-b border-[#dce3ee] px-6 py-4">
                     <h2 className="text-xl font-bold text-[#071b3b]">
-                        Historial de sueldo y bonos
+                        Historial de sueldo base y bonificación decreto ley
                     </h2>
                     <button
                         type="button"
@@ -540,7 +544,7 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
                         <p className="text-center text-[#5b6e8b]">Cargando historial...</p>
                     ) : data.length === 0 ? (
                         <p className="text-center text-[#5b6e8b]">
-                            No hay registros de cambios de sueldo.
+                            No hay registros de cambios de sueldo base.
                         </p>
                     ) : (
                         <table className="w-full border-separate border-spacing-0 text-left text-sm">
@@ -548,16 +552,16 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
                                 <tr className="text-base font-semibold text-[#5b6e8b]">
                                     <th className="border-b border-[#dfe5ee] px-4 py-3">Fecha</th>
                                     <th className="border-b border-[#dfe5ee] px-4 py-3">
-                                        Sueldo anterior
+                                        Sueldo base anterior
                                     </th>
                                     <th className="border-b border-[#dfe5ee] px-4 py-3">
-                                        Sueldo nuevo
+                                        Sueldo base nuevo
                                     </th>
                                     <th className="border-b border-[#dfe5ee] px-4 py-3">
-                                        Bonos anterior
+                                        Bonificación anterior
                                     </th>
                                     <th className="border-b border-[#dfe5ee] px-4 py-3">
-                                        Bonos nuevo
+                                        Bonificación nuevo
                                     </th>
                                     <th className="border-b border-[#dfe5ee] px-4 py-3">
                                         Motivo
@@ -648,9 +652,9 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
             })
             .finally(() => active && setLoading(false));
 
-            return () => {
-                active = false;
-            };
+        return () => {
+            active = false;
+        };
     }, [usuarioId, page]);
 
     return (
@@ -659,7 +663,7 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
             role="dialog"
             aria-modal="true"
         >
-            <div className="w-full max-w-3xl max-h-[80vh] overflow-hidden rounded-[26px] bg-white shadow-2xl flex flex-col">
+            <div className="w-full max-w-5xl max-h-[80vh] overflow-hidden rounded-[26px] bg-white shadow-2xl flex flex-col">
                 <div className="flex items-center justify-between border-b border-[#dce3ee] px-6 py-4">
                     <h2 className="text-xl font-bold text-[#071b3b]">
                         Historial de cambios de empresa

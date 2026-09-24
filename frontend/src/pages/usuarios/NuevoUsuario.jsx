@@ -283,7 +283,7 @@ function NuevoUsuario() {
                         </Field>
 
                         <div className="grid gap-5 sm:grid-cols-2">
-                            <Field label="Sueldo" error={errors.sueldo?.message}>
+                            <Field label="Sueldo Base" error={errors.sueldo?.message}>
                                 <Input
                                     registration={register("sueldo")}
                                     type="number"
@@ -292,7 +292,10 @@ function NuevoUsuario() {
                                 />
                             </Field>
 
-                            <Field label="Bonos" error={errors.bonos?.message}>
+                            <Field
+                                label="Bonificación decreto ley"
+                                error={errors.bonos?.message}
+                            >
                                 <Input
                                     registration={register("bonos")}
                                     type="number"

@@ -1,0 +1,172 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeft, Save } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import {
+    Field,
+    Input,
+    Textarea,
+    Select,
+} from "../../components/postulantes/formControls.jsx";
+import DashboardLayout from "../../layouts/DashboardLayout.jsx";
+import { createPuesto, getDepartamentosForSelect } from "../../services/puestos.service.js";
+import {
+    defaultPuestoValues,
+    puestoSchema,
+} from "../../validators/puestos.validator.js";
+
+function NuevaPuesto() {
+    const navigate = useNavigate();
+    const [serverError, setServerError] = useState("");
+    const [departamentos, setDepartamentos] = useState([]);
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        resolver: zodResolver(puestoSchema),
+        defaultValues: defaultPuestoValues,
+    });
+
+    useEffect(() => {
+        getDepartamentosForSelect().then(setDepartamentos).catch(() => setDepartamentos([]));
+    }, []);
+
+    const onSubmit = async (values) => {
+        try {
+            setServerError("");
+            const payload = {
+                ...values,
+                descripcion: values.descripcion || null,
+                departamento_id: values.departamento_id,
+            };
+            await createPuesto(payload);
+            navigate("/empresas/puestos", {
+                state: { mensaje: "Puesto creado correctamente" },
+            });
+        } catch (requestError) {
+            setServerError(
+                requestError.response?.data?.message ||
+                    "No fue posible crear el puesto.",
+            );
+        }
+    };
+
+    return (
+        <DashboardLayout title="Nuevo Puesto">
+            <div className="mx-auto max-w-3xl">
+                <div className="mb-6 flex items-center gap-4">
+                    <button
+                        type="button"
+                        onClick={() => navigate("/empresas/puestos")}
+                        aria-label="Volver a puestos"
+                        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border border-[#dce3ee] bg-white text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                    >
+                        <ArrowLeft className="h-5 w-5" />
+                    </button>
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
+                            Nuevo Puesto
+                        </h1>
+                        <p className="mt-1 text-[#5b6e8b]">
+                            Registra un nuevo puesto en el sistema.
+                        </p>
+                    </div>
+                </div>
+
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8"
+                    noValidate
+                >
+                    {serverError && (
+                        <div
+                            role="alert"
+                            className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 font-semibold text-red-600"
+                        >
+                            {serverError}
+                        </div>
+                    )}
+
+                    <div className="grid gap-5">
+                        <Field
+                            label="Nombre *"
+                            error={errors.nombre?.message}
+                        >
+                            <Input
+                                registration={register("nombre")}
+                                placeholder="Ej. Desarrollador Senior"
+                            />
+                        </Field>
+
+                        <Field
+                            label="Descripción"
+                            error={errors.descripcion?.message}
+                        >
+                            <Textarea
+                                registration={register("descripcion")}
+                                placeholder="Descripción del puesto..."
+                            />
+                        </Field>
+
+                        <Field label="Departamento *" error={errors.departamento_id?.message}>
+                            <Select
+                                registration={{
+                                    ...register("departamento_id", { valueAsNumber: true }),
+                                    onChange: (event) =>
+                                        setValue(
+                                            "departamento_id",
+                                            event.target.value
+                                                ? Number(event.target.value)
+                                                : null,
+                                            {
+                                                shouldValidate: true,
+                                            },
+                                        ),
+                                }}
+                            >
+                                <option value="">Seleccionar departamento</option>
+                                {departamentos.map((departamento) => (
+                                    <option key={departamento.id} value={departamento.id}>
+                                        {departamento.nombre}
+                                    </option>
+                                ))}
+                            </Select>
+                        </Field>
+
+                        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">
+                            <input
+                                type="checkbox"
+                                {...register("activo")}
+                                className="h-5 w-5 cursor-pointer accent-[#3162e9]"
+                            />
+                            <span className="font-semibold">Puesto activo</span>
+                        </label>
+                    </div>
+
+                    <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                        <button
+                            type="button"
+                            onClick={() => navigate("/empresas/puestos")}
+                            className="h-14 cursor-pointer rounded-2xl border border-[#dce3ee] px-6 font-bold text-[#5b6e8b] transition hover:bg-[#f0f4fa]"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-7 font-bold text-white transition hover:bg-[#183fca] disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            <Save className="h-5 w-5" />
+                            {isSubmitting ? "Guardando..." : "Guardar"}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </DashboardLayout>
+    );
+}
+
+export default NuevaPuesto;

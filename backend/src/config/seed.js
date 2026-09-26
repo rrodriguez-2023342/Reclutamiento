@@ -43,3 +43,4 @@ export const seedDefaultAdmin = async () => {
 
   console.log(`Admin por defecto asegurado: ${adminEmail}`)
 }
+

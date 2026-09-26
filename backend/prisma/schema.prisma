@@ -107,8 +107,47 @@ model Empresa {
   usuarios                  Usuario[]
   historial_empresa_anterior HistorialEmpresa[] @relation("EmpresaAnterior")
   historial_empresa_nuevo    HistorialEmpresa[] @relation("EmpresaNuevo")
+  divisiones                Division[]
 
   @@map("empresas")
+}
+
+model Division {
+  id              Int          @id @default(autoincrement())
+  nombre          String       @map("nombre") @db.VarChar(150)
+  descripcion     String?      @map("descripcion") @db.Text
+  empresa_id      Int          @map("empresa_id")
+  empresa         Empresa      @relation(fields: [empresa_id], references: [id], onDelete: Cascade)
+  activo          Boolean      @default(true) @map("activa")
+  creado_en       DateTime     @default(now()) @map("creado_en") @db.Timestamp
+  departamentos   Departamento[]
+
+  @@map("divisiones")
+}
+
+model Departamento {
+  id               Int          @id @default(autoincrement())
+  nombre           String       @map("nombre") @db.VarChar(150)
+  descripcion      String?      @map("descripcion") @db.Text
+  division_id      Int          @map("division_id")
+  division         Division     @relation(fields: [division_id], references: [id], onDelete: Cascade)
+  activo           Boolean      @default(true) @map("activa")
+  creado_en        DateTime     @default(now()) @map("creado_en") @db.Timestamp
+  puestos          Puesto[]
+
+  @@map("departamentos")
+}
+
+model Puesto {
+  id               Int          @id @default(autoincrement())
+  nombre           String       @map("nombre") @db.VarChar(150)
+  descripcion      String?      @map("descripcion") @db.Text
+  departamento_id  Int          @map("departamento_id")
+  departamento     Departamento @relation(fields: [departamento_id], references: [id], onDelete: Cascade)
+  activo           Boolean      @default(true) @map("activa")
+  creado_en        DateTime     @default(now()) @map("creado_en") @db.Timestamp
+
+  @@map("puestos")
 }
 
 model Patrono {

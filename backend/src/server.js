@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 4000
 fs.mkdirSync('uploads', { recursive: true })
 fs.mkdirSync('uploads/postulantes', { recursive: true })
 
-// Ejecuta los seeds para inicializar la base de datos con datos por defecto
+// Ejecuta solo los seeds necesarios para la app: roles y usuario administrador.
 try {
   await seedRoles() // Asegura que existan los roles por defecto
   await seedDefaultAdmin() // Asegura que exista el usuario administrador por defecto

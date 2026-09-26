@@ -21,6 +21,18 @@ import Empresas from "../pages/empresas/Empresas.jsx";
 import NuevaEmpresa from "../pages/empresas/NuevaEmpresa.jsx";
 import DetalleEmpresa from "../pages/empresas/DetalleEmpresa.jsx";
 import EditarEmpresa from "../pages/empresas/EditarEmpresa.jsx";
+import Divisiones from "../pages/empresas/Divisiones.jsx";
+import NuevaDivision from "../pages/empresas/NuevaDivision.jsx";
+import DetalleDivision from "../pages/empresas/DetalleDivision.jsx";
+import EditarDivision from "../pages/empresas/EditarDivision.jsx";
+import Departamentos from "../pages/empresas/Departamentos.jsx";
+import NuevaDepartamento from "../pages/empresas/NuevaDepartamento.jsx";
+import DetalleDepartamento from "../pages/empresas/DetalleDepartamento.jsx";
+import EditarDepartamento from "../pages/empresas/EditarDepartamento.jsx";
+import Puestos from "../pages/empresas/Puestos.jsx";
+import NuevaPuesto from "../pages/empresas/NuevaPuesto.jsx";
+import DetallePuesto from "../pages/empresas/DetallePuesto.jsx";
+import EditarPuesto from "../pages/empresas/EditarPuesto.jsx";
 import Patronos from "../pages/patronos/Patronos.jsx";
 import NuevoPatrono from "../pages/patronos/NuevoPatrono.jsx";
 import DetallePatrono from "../pages/patronos/DetallePatrono.jsx";
@@ -250,6 +262,126 @@ function AppRouter() {
           <ProtectedRoute>
             <ProtectedWithPasswordCheck>
               <EditarEmpresa />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/divisiones"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Divisiones />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/divisiones/nueva"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <NuevaDivision />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/divisiones/:id"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <DetalleDivision />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/divisiones/:id/editar"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <EditarDivision />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/departamentos"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Departamentos />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/departamentos/nueva"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <NuevaDepartamento />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/departamentos/:id"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <DetalleDepartamento />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/departamentos/:id/editar"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <EditarDepartamento />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/puestos"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Puestos />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/puestos/nueva"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <NuevaPuesto />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/puestos/:id"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <DetallePuesto />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/puestos/:id/editar"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <EditarPuesto />
             </ProtectedWithPasswordCheck>
           </ProtectedRoute>
         }

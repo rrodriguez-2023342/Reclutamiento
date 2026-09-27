@@ -39,6 +39,7 @@ class UsuarioService {
           rol: { select: { id: true, nombre: true } },
           empresa: { select: { id: true, nombre_empresa: true } },
           patrono: { select: { id: true, razon_social: true } },
+          puesto: { select: { id: true, nombre: true, descripcion: true } },
         },
         orderBy: [{ creado_en: "desc" }, { id: "desc" }],
         skip: (page - 1) * limit,
@@ -69,6 +70,7 @@ class UsuarioService {
         rol: { select: { id: true, nombre: true } },
         empresa: { select: { id: true, nombre_empresa: true } },
         patrono: { select: { id: true, razon_social: true } },
+        puesto: { select: { id: true, nombre: true, descripcion: true } },
       },
     });
 
@@ -121,6 +123,7 @@ class UsuarioService {
         mustChangePassword,
         empresa_id: data.empresa_id || null,
         patrono_id: data.patrono_id || null,
+        puesto_id: data.puesto_id || null,
         fecha_nacimiento: data.fecha_nacimiento ? new Date(data.fecha_nacimiento) : null,
         sexo: data.sexo || null,
         dpi: data.dpi || null,
@@ -133,6 +136,7 @@ class UsuarioService {
         rol: { select: { id: true, nombre: true } },
         empresa: { select: { id: true, nombre_empresa: true } },
         patrono: { select: { id: true, razon_social: true } },
+        puesto: { select: { id: true, nombre: true } },
       },
     });
 
@@ -206,13 +210,13 @@ class UsuarioService {
       }
     }
 
-    // Extraer campos que no van directos a Prisma update
     const {
       rol_id,
       motivo_cambio_sueldo,
       motivo_cambio_empresa,
       empresa_id,
       patrono_id,
+      puesto_id,
       fecha_nacimiento,
       ...restFields
     } = data;
@@ -222,6 +226,7 @@ class UsuarioService {
       rol: { connect: { id: rol_id } },
       empresa: empresa_id ? { connect: { id: empresa_id } } : { disconnect: true },
       patrono: patrono_id ? { connect: { id: patrono_id } } : { disconnect: true },
+      puesto: puesto_id ? { connect: { id: puesto_id } } : { disconnect: true },
     };
     if (fecha_nacimiento) {
       updateData.fecha_nacimiento = new Date(fecha_nacimiento);
@@ -247,6 +252,7 @@ class UsuarioService {
         rol: { select: { id: true, nombre: true } },
         empresa: { select: { id: true, nombre_empresa: true } },
         patrono: { select: { id: true, razon_social: true } },
+        puesto: { select: { id: true, nombre: true } },
       },
     });
 

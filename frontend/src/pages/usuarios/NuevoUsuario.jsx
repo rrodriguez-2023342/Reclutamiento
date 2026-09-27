@@ -15,6 +15,7 @@ import {
     getRoles,
     getEmpresas,
     getPatronos,
+    getPuestos,
 } from "../../services/usuarios.service.js";
 import {
     defaultUsuarioValues,
@@ -27,6 +28,7 @@ function NuevoUsuario() {
     const [roles, setRoles] = useState([]);
     const [empresas, setEmpresas] = useState([]);
     const [patronos, setPatronos] = useState([]);
+    const [puestos, setPuestos] = useState([]);
     const [serverError, setServerError] = useState("");
     const {
         register,
@@ -44,17 +46,19 @@ function NuevoUsuario() {
     const selectedRole = watch("rol_id") ?? 2;
     const selectedEmpresa = watch("empresa_id") ?? "";
     const selectedPatrono = watch("patrono_id") ?? "";
+    const selectedPuesto = watch("puesto_id") ?? "";
     const tieneSeguroGastos = watch("tiene_seguro_gastos_medicos");
     const tieneSeguroVida = watch("tiene_seguro_vida");
 
     useEffect(() => {
         let active = true;
-        Promise.all([getRoles(), getEmpresas(), getPatronos()])
-            .then(([r, e, p]) => {
+        Promise.all([getRoles(), getEmpresas(), getPatronos(), getPuestos()])
+            .then(([r, e, p, pst]) => {
                 if (active) {
                     setRoles(r || []);
                     setEmpresas(e || []);
                     setPatronos(p || []);
+                    setPuestos(pst || []);
                 }
             })
             .catch(() => {
@@ -95,6 +99,7 @@ function NuevoUsuario() {
                 ...values,
                 empresa_id: values.empresa_id || null,
                 patrono_id: values.patrono_id || null,
+                puesto_id: values.puesto_id || null,
                 fecha_nacimiento: values.fecha_nacimiento || null,
                 sexo: values.sexo || null,
                 dpi: values.dpi || null,
@@ -250,6 +255,32 @@ function NuevoUsuario() {
                         </div>
 
                         <div className="grid gap-5 sm:grid-cols-2">
+                            <Field label="Puesto" error={errors.puesto_id?.message}>
+                                <Select
+                                    registration={{
+                                        ...register("puesto_id", { valueAsNumber: true }),
+                                        value: selectedPuesto,
+                                        onChange: (event) =>
+                                            setValue(
+                                                "puesto_id",
+                                                event.target.value ? Number(event.target.value) : null,
+                                                {
+                                                    shouldValidate: true,
+                                                },
+                                            ),
+                                    }}
+                                >
+                                    <option value="">Sin puesto</option>
+                                    {puestos.map((puesto) => (
+                                        <option key={puesto.id} value={puesto.id}>
+                                            {puesto.nombre}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </Field>
+                        </div>
+
+                        <div className="grid gap-5 sm:grid-cols-2">
                             <Field
                                 label="Fecha de nacimiento"
                                 error={errors.fecha_nacimiento?.message}
@@ -334,7 +365,7 @@ function NuevoUsuario() {
                                             control={control}
                                             name="tiene_seguro_gastos_medicos"
                                             options={[
-                                                { value: true, label: "Sí" },
+                                                { value: true, label: "Si" },
                                                 { value: false, label: "No" },
                                             ]}
                                             className="flex items-center gap-4"
@@ -346,12 +377,10 @@ function NuevoUsuario() {
                                             error={errors.empresa_seguro_gastos_medicos?.message}
                                         >
                                             <Input
-                                                registration={register(
-                                                    "empresa_seguro_gastos_medicos",
-                                                    {
-                                                        required: tieneSeguroGastos
-                                                            ? "La empresa aseguradora es requerida"
-                                                            : false,
+                                                registration={register("empresa_seguro_gastos_medicos", {
+                                                    required: tieneSeguroGastos
+                                                        ? "La empresa aseguradora es requerida"
+                                                        : false,
                                                     },
                                                 )}
                                                 placeholder="Nombre de la empresa aseguradora"
@@ -369,7 +398,7 @@ function NuevoUsuario() {
                                             control={control}
                                             name="tiene_seguro_vida"
                                             options={[
-                                                { value: true, label: "Sí" },
+                                                { value: true, label: "Si" },
                                                 { value: false, label: "No" },
                                             ]}
                                             className="flex items-center gap-4"

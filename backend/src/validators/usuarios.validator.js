@@ -21,6 +21,7 @@ export const createUsuarioSchema = z.object({
   activo: z.boolean().nullish(),
   empresa_id: z.coerce.number().int().positive().nullish(),
   patrono_id: z.coerce.number().int().positive().nullish(),
+  puesto_id: z.coerce.number().int().positive().nullish(),
   fecha_nacimiento: z.string().nullish(),
   sexo: z.enum(["MASCULINO", "FEMENINO"]).nullish(),
   dpi: z.string().trim().max(20).nullish(),
@@ -28,6 +29,8 @@ export const createUsuarioSchema = z.object({
   direccion: z.string().trim().nullish(),
   sueldo: z.coerce.number().positive().nullish(),
   bonos: z.coerce.number().positive().nullish(),
+  motivo_cambio_sueldo: z.string().trim().nullish(),
+  motivo_cambio_empresa: z.string().trim().nullish(),
 });
 
 // Esquema para validar los datos utilizados para actualizar un usuario
@@ -47,6 +50,7 @@ export const updateUsuarioSchema = z.object({
   activo: z.boolean().optional(),
   empresa_id: z.coerce.number().int().positive().nullish(),
   patrono_id: z.coerce.number().int().positive().nullish(),
+  puesto_id: z.coerce.number().int().positive().nullish(),
   fecha_nacimiento: z.string().nullish(),
   sexo: z.enum(["MASCULINO", "FEMENINO"]).nullish(),
   dpi: z.string().trim().max(20).nullish(),

@@ -10,13 +10,7 @@ import {
     RadioGroup,
 } from "../../components/postulantes/formControls.jsx";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
-import {
-    getRoles,
-    getUsuarioById,
-    updateUsuario,
-    getEmpresas,
-    getPatronos,
-} from "../../services/usuarios.service.js";
+import { getRoles, getUsuarioById, updateUsuario, getEmpresas, getPatronos, getPuestos } from "../../services/usuarios.service.js";
 import {
     defaultUsuarioValues,
     usuarioSchema,
@@ -28,6 +22,7 @@ function EditarUsuario() {
     const [roles, setRoles] = useState([]);
     const [empresas, setEmpresas] = useState([]);
     const [patronos, setPatronos] = useState([]);
+    const [puestos, setPuestos] = useState([]);
     const [serverError, setServerError] = useState("");
     const [loadingUser, setLoadingUser] = useState(true);
 
@@ -47,14 +42,17 @@ function EditarUsuario() {
     const selectedRole = watch("rol_id") ?? 2;
     const selectedEmpresa = watch("empresa_id") ?? "";
     const selectedPatrono = watch("patrono_id") ?? "";
+    const selectedPuesto = watch("puesto_id") ?? "";
     const currentSueldo = watch("sueldo");
     const currentBonos = watch("bonos");
     const currentEmpresa = watch("empresa_id");
     const tieneSeguroGastos = watch("tiene_seguro_gastos_medicos");
     const tieneSeguroVida = watch("tiene_seguro_vida");
+    const currentPuesto = watch("puesto_id");
     const [originalSueldo, setOriginalSueldo] = useState(null);
     const [originalBonos, setOriginalBonos] = useState(null);
     const [originalEmpresa, setOriginalEmpresa] = useState(null);
+    const [originalPuesto, setOriginalPuesto] = useState(null);
     const hasSalaryChange =
         (originalSueldo !== null || originalBonos !== null) &&
         (Number(currentSueldo || 0) !== Number(originalSueldo || 0) ||
@@ -62,15 +60,19 @@ function EditarUsuario() {
     const hasEmpresaChange =
         originalEmpresa !== null &&
         Number(currentEmpresa || 0) !== Number(originalEmpresa || 0);
+    const hasPuestoChange =
+        originalPuesto !== null &&
+        Number(currentPuesto || 0) !== Number(originalPuesto || 0);
 
     useEffect(() => {
         let active = true;
-        Promise.all([getRoles(), getEmpresas(), getPatronos()])
-            .then(([r, e, p]) => {
+        Promise.all([getRoles(), getEmpresas(), getPatronos(), getPuestos()])
+            .then(([r, e, p, pst]) => {
                 if (active) {
                     setRoles(r || []);
                     setEmpresas(e || []);
                     setPatronos(p || []);
+                    setPuestos(pst || []);
                 }
             })
             .catch(() => {
@@ -92,7 +94,7 @@ function EditarUsuario() {
         getUsuarioById(id)
             .then((data) => {
                 if (active) {
-                    reset({
+reset({
                         ...defaultUsuarioValues,
                         nombre: data.nombre || "",
                         correo: data.correo || "",
@@ -100,6 +102,7 @@ function EditarUsuario() {
                         activo: data.activo ?? true,
                         empresa_id: data.empresa?.id ?? null,
                         patrono_id: data.patrono?.id ?? null,
+                        puesto_id: data.puesto?.id ?? null,
                         fecha_nacimiento: data.fecha_nacimiento
                             ? data.fecha_nacimiento.split("T")[0]
                             : "",
@@ -109,16 +112,15 @@ function EditarUsuario() {
                         direccion: data.direccion || "",
                         sueldo: data.sueldo ?? "",
                         bonos: data.bonos ?? "",
-                        tiene_seguro_gastos_medicos:
-                            data.tiene_seguro_gastos_medicos ?? false,
-                        empresa_seguro_gastos_medicos:
-                            data.empresa_seguro_gastos_medicos || "",
+                        tiene_seguro_gastos_medicos: data.tiene_seguro_gastos_medicos ?? false,
+                        empresa_seguro_gastos_medicos: data.empresa_seguro_gastos_medicos || "",
                         tiene_seguro_vida: data.tiene_seguro_vida ?? false,
                         empresa_seguro_vida: data.empresa_seguro_vida || "",
                     });
                     setOriginalSueldo(data.sueldo ?? null);
                     setOriginalBonos(data.bonos ?? null);
                     setOriginalEmpresa(data.empresa?.id ?? null);
+                    setOriginalPuesto(data.puesto?.id ?? null);
                 }
             })
             .catch((requestError) => {
@@ -144,6 +146,7 @@ function EditarUsuario() {
                 rol_id: Number(values.rol_id),
                 empresa_id: values.empresa_id || null,
                 patrono_id: values.patrono_id || null,
+                puesto_id: values.puesto_id || null,
                 fecha_nacimiento: values.fecha_nacimiento || null,
                 sexo: values.sexo || null,
                 dpi: values.dpi || null,
@@ -312,6 +315,32 @@ function EditarUsuario() {
                                     </Select>
                                 </Field>
                             </div>
+
+                        <div className="grid gap-5 sm:grid-cols-2">
+                            <Field label="Puesto" error={errors.puesto_id?.message}>
+                                <Select
+                                    registration={{
+                                        ...register("puesto_id", { valueAsNumber: true }),
+                                        value: selectedPuesto,
+                                        onChange: (event) =>
+                                            setValue(
+                                                "puesto_id",
+                                                event.target.value ? Number(event.target.value) : null,
+                                                {
+                                                    shouldValidate: true,
+                                                },
+                                            ),
+                                    }}
+                                >
+                                    <option value="">Sin puesto</option>
+                                    {puestos.map((puesto) => (
+                                        <option key={puesto.id} value={puesto.id}>
+                                            {puesto.nombre}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </Field>
+                        </div>
 
                             {hasEmpresaChange && (
                                 <Field

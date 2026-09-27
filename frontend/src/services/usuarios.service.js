@@ -59,3 +59,8 @@ export const getPatronos = async () => {
     const { data } = await api.get('/patronos', { params: { limit: 100 } })
     return data.data?.data || []
 }
+
+export const getPuestos = async () => {
+  const { data } = await api.get('/empresas/puestos', { params: { limit: 100, activo: true } })
+  return data.data?.data || data.data || []
+}

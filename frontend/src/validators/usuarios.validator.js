@@ -17,10 +17,7 @@ export const usuarioSchema = z.object({
     bonos: z.coerce.number().positive().nullish(),
     motivo_cambio_sueldo: z.string().trim().nullish(),
     motivo_cambio_empresa: z.string().trim().nullish(),
-    tiene_seguro_gastos_medicos: z.boolean().nullish(),
-    empresa_seguro_gastos_medicos: z.string().trim().max(100).nullish(),
-    tiene_seguro_vida: z.boolean().nullish(),
-    empresa_seguro_vida: z.string().trim().max(100).nullish(),
+    puesto_id: z.coerce.number().int().positive().nullish(),
 })
 
 // Valores iniciales del formulario
@@ -44,4 +41,5 @@ export const defaultUsuarioValues = {
     empresa_seguro_gastos_medicos: '',
     tiene_seguro_vida: false,
     empresa_seguro_vida: '',
+    puesto_id: null,
 }

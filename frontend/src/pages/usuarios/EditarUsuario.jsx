@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Save, Shield } from "lucide-react";
+import { ArrowLeft, Download, Save, Shield, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,7 +10,15 @@ import {
     RadioGroup,
 } from "../../components/postulantes/formControls.jsx";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
-import { getRoles, getUsuarioById, updateUsuario, getEmpresas, getPatronos, getPuestos } from "../../services/usuarios.service.js";
+import { useAuth } from "../../hooks/useAuth.js";
+import {
+    getRoles,
+    getUsuarioById,
+    updateUsuario,
+    getEmpresas,
+    getPatronos,
+    getPuestos,
+} from "../../services/usuarios.service.js";
 import {
     defaultUsuarioValues,
     usuarioSchema,
@@ -19,12 +27,15 @@ import {
 function EditarUsuario() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user: authUser } = useAuth();
     const [roles, setRoles] = useState([]);
     const [empresas, setEmpresas] = useState([]);
     const [patronos, setPatronos] = useState([]);
     const [puestos, setPuestos] = useState([]);
     const [serverError, setServerError] = useState("");
     const [loadingUser, setLoadingUser] = useState(true);
+    const [pdfModalOpen, setPdfModalOpen] = useState(false);
+    const [pdfNotes, setPdfNotes] = useState("");
 
     const {
         register,
@@ -49,6 +60,14 @@ function EditarUsuario() {
     const tieneSeguroGastos = watch("tiene_seguro_gastos_medicos");
     const tieneSeguroVida = watch("tiene_seguro_vida");
     const currentPuesto = watch("puesto_id");
+    const puestoSeleccionado =
+        puestos.find((puesto) => puesto.id === Number(selectedPuesto)) || null;
+    const empresaSeleccionada =
+        empresas.find((empresa) => empresa.id === Number(selectedEmpresa))
+        ?.nombre_empresa || "";
+    const patronoSeleccionado =
+        patronos.find((patrono) => patrono.id === Number(selectedPatrono))
+            ?.razon_social || "";
     const [originalSueldo, setOriginalSueldo] = useState(null);
     const [originalBonos, setOriginalBonos] = useState(null);
     const [originalEmpresa, setOriginalEmpresa] = useState(null);
@@ -94,7 +113,7 @@ function EditarUsuario() {
         getUsuarioById(id)
             .then((data) => {
                 if (active) {
-reset({
+                    reset({
                         ...defaultUsuarioValues,
                         nombre: data.nombre || "",
                         correo: data.correo || "",
@@ -112,8 +131,10 @@ reset({
                         direccion: data.direccion || "",
                         sueldo: data.sueldo ?? "",
                         bonos: data.bonos ?? "",
-                        tiene_seguro_gastos_medicos: data.tiene_seguro_gastos_medicos ?? false,
-                        empresa_seguro_gastos_medicos: data.empresa_seguro_gastos_medicos || "",
+                        tiene_seguro_gastos_medicos:
+                            data.tiene_seguro_gastos_medicos ?? false,
+                        empresa_seguro_gastos_medicos:
+                            data.empresa_seguro_gastos_medicos || "",
                         tiene_seguro_vida: data.tiene_seguro_vida ?? false,
                         empresa_seguro_vida: data.empresa_seguro_vida || "",
                     });
@@ -137,6 +158,303 @@ reset({
             active = false;
         };
     }, [id, reset]);
+
+    const buildPdfHtml = () => {
+        const nombre = watch("nombre") || "Sin nombre";
+        const puesto = puestoSeleccionado?.nombre || "Sin puesto";
+        const departamento =
+          puestoSeleccionado?.departamento?.nombre || "Sin departamento";
+        const sueldo = watch("sueldo") || "0.00";
+        const bonos = watch("bonos") || "0.00";
+        const dpi = watch("dpi") || "Sin DPI";
+        const total = Number(sueldo || 0) + Number(bonos || 0);
+        const documentTitle =
+            [empresaSeleccionada, patronoSeleccionado].filter(Boolean).join(" / ") ||
+            "Documento del colaborador";
+        const generatedBy =
+            authUser?.nombre || authUser?.correo || "Usuario del sistema";
+        const createdAt = new Date().toLocaleString("es-GT", {
+            dateStyle: "medium",
+            timeStyle: "short",
+        });
+        const notes = pdfNotes.trim() || "Sin notas adicionales";
+
+        return `<!doctype html>
+        <html lang="es">
+            <head>
+                <meta charset="UTF-8" />
+                <title>${documentTitle}</title>
+                <style>
+                    :root {
+                        --navy: #0a1f44;
+                        --navy-light: #14315e;
+                        --accent: #2e5eea;
+                        --accent-soft: #eef2fd;
+                        --ink: #101828;
+                        --muted: #667085;
+                        --line: #e4e8f0;
+                        --bg: #eef1f6;
+                        --paper: #ffffff;
+                    }
+                    * { box-sizing: border-box; }
+                    body {
+                        margin: 0;
+                        padding: 40px 24px;
+                        background: var(--bg);
+                        font-family: 'Helvetica Neue', Arial, sans-serif;
+                        color: var(--ink);
+                        -webkit-font-smoothing: antialiased;
+                    }
+                    .page {
+                        max-width: 880px;
+                        margin: 0 auto;
+                        background: var(--paper);
+                        border-radius: 18px;
+                        overflow: hidden;
+                        box-shadow: 0 20px 45px rgba(10, 31, 68, 0.12);
+                    }
+                    .header {
+                        position: relative;
+                        background: linear-gradient(120deg, var(--navy) 0%, var(--navy-light) 55%, var(--accent) 130%);
+                        color: #fff;
+                        padding: 36px 40px 30px;
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
+                        color-adjust: exact;
+                    }
+                    .header::after {
+                        content: "";
+                        position: absolute;
+                        inset: 0;
+                        background: radial-gradient(circle at 88% 20%, rgba(255,255,255,0.12), transparent 55%);
+                        pointer-events: none;
+                    }
+                    .eyebrow {
+                        font-size: 11px;
+                        font-weight: 700;
+                        letter-spacing: 0.16em;
+                        text-transform: uppercase;
+                        color: rgba(255,255,255,0.65);
+                        margin: 0 0 6px;
+                    }
+                    .header h1 {
+                        margin: 0;
+                        font-size: 26px;
+                        font-weight: 700;
+                        letter-spacing: -0.02em;
+                        line-height: 1.25;
+                        max-width: 640px;
+                    }
+                    .header .doc-id {
+                        position: absolute;
+                        top: 36px;
+                        right: 40px;
+                        text-align: right;
+                        font-size: 11px;
+                        color: rgba(255,255,255,0.7);
+                        letter-spacing: 0.04em;
+                    }
+                    .content { padding: 34px 40px 40px; }
+                    .section-title {
+                        font-size: 12px;
+                        font-weight: 700;
+                        letter-spacing: 0.1em;
+                        text-transform: uppercase;
+                        color: var(--accent);
+                        margin: 0 0 14px;
+                    }
+                    .meta {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 14px 16px;
+                    }
+                    .item {
+                        background: #fbfcfe;
+                        border: 1px solid var(--line);
+                        border-left: 3px solid var(--accent);
+                        border-radius: 10px;
+                        padding: 14px 16px;
+                    }
+                    .span-2 { grid-column: 1 / -1; }
+                    .label {
+                        display: block;
+                        font-size: 11px;
+                        font-weight: 600;
+                        text-transform: uppercase;
+                        letter-spacing: 0.06em;
+                        color: var(--muted);
+                        margin-bottom: 5px;
+                    }
+                    .value {
+                        font-size: 16px;
+                        font-weight: 700;
+                        color: var(--ink);
+                    }
+                    .comp {
+                        display: grid;
+                        grid-template-columns: repeat(3, minmax(0, 1fr));
+                        gap: 14px 16px;
+                        margin-top: 22px;
+                    }
+                    .cell {
+                        background: #fbfcfe;
+                        border: 1px solid var(--line);
+                        border-left: 3px solid var(--accent);
+                        border-radius: 10px;
+                        padding: 14px 16px;
+                    }
+                    .notes-block { margin-top: 22px; }
+                    .notes {
+                        border: 1px solid var(--line);
+                        border-radius: 12px;
+                        background: #fbfcfe;
+                        padding: 18px 20px;
+                        min-height: 130px;
+                        white-space: pre-wrap;
+                        line-height: 1.65;
+                        font-size: 13.5px;
+                        color: var(--ink);
+                    }
+                    .signatures {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 28px;
+                        margin-top: 110px;
+                    }
+                    .signature-box {
+                        border-top: 1.5px solid var(--navy);
+                        padding-top: 12px;
+                        min-height: 70px;
+                    }
+                    .signature-box span {
+                        display: inline-block;
+                        font-size: 11px;
+                        letter-spacing: 0.06em;
+                        text-transform: uppercase;
+                        color: var(--muted);
+                        font-weight: 600;
+                    }
+                    .footer {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        gap: 12px;
+                        margin-top: 36px;
+                        padding-top: 16px;
+                        border-top: 1px solid var(--line);
+                        font-size: 11px;
+                        color: var(--muted);
+                    }
+                    .footer strong { color: var(--ink); }
+                    @media print {
+                        body {
+                            background: white;
+                            padding: 0;
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
+                            color-adjust: exact;
+                        }
+                        .page {
+                            box-shadow: none;
+                            border-radius: 0;
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
+                            color-adjust: exact;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="page">
+                    <div class="header">
+                        <p class="eyebrow">Ficha del colaborador</p>
+                        <h1>${documentTitle}</h1>
+                        <div class="doc-id">
+                            Generado: ${createdAt}
+                        </div>
+                    </div>
+
+                    <div class="content">
+                        <p class="section-title">Datos generales</p>
+                        <div class="meta">
+                            <div class="item span-2">
+                                <span class="label">Nombre</span>
+                                <div class="value">${nombre}</div>
+                            </div>
+                            <div class="item">
+                                <span class="label">Puesto</span>
+                                <div class="value">${puesto}</div>
+                            </div>
+                            <div class="item">
+                                <span class="label">Departamento</span>
+                                <div class="value">${departamento}</div>
+                            </div>
+                            <div class="item span-2">
+                                <span class="label">DPI</span>
+                                <div class="value">${dpi}</div>
+                            </div>
+                        </div>
+
+                        <div class="comp">
+                            <div class="cell">
+                                <span class="label">Sueldo base</span>
+                                <div class="value">Q ${Number(sueldo || 0).toFixed(2)}</div>
+                            </div>
+                            <div class="cell">
+                                <span class="label">Bonificación</span>
+                                <div class="value">Q ${Number(bonos || 0).toFixed(2)}</div>
+                            </div>
+                            <div class="cell">
+                                <span class="label">Total</span>
+                                <div class="value">Q ${Number(total || 0).toFixed(2)}</div>
+                            </div>
+                        </div>
+
+                        <div class="notes-block">
+                            <p class="section-title">Notas</p>
+                            <div class="notes">${notes}</div>
+                        </div>
+
+                        <div class="signatures">
+                            <div class="signature-box">
+                                <span>Firma del colaborador</span>
+                            </div>
+                            <div class="signature-box">
+                                <span>Firma del responsable</span>
+                            </div>
+                        </div>
+
+                        <div class="footer">
+                            <span>Fecha de creación: <strong>${createdAt}</strong></span>
+                            <span>Generado por: <strong>${generatedBy}</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </body>
+        </html>`;
+    };
+
+        const handleOpenPdfModal = () => setPdfModalOpen(true);
+
+        const handleDownloadPdf = () => {
+        const printWindow = window.open("", "_blank", "width=1200,height=1000");
+
+        if (!printWindow) {
+            setServerError("El navegador bloqueó la ventana de impresión.");
+            return;
+        }
+
+        printWindow.document.write(buildPdfHtml());
+        printWindow.document.close();
+
+        setTimeout(() => {
+            printWindow.focus();
+            printWindow.print();
+        }, 250);
+
+        setPdfNotes("");
+        setPdfModalOpen(false);
+    };
 
     const onSubmit = async (values) => {
         try {
@@ -316,31 +634,33 @@ reset({
                                 </Field>
                             </div>
 
-                        <div className="grid gap-5 sm:grid-cols-2">
-                            <Field label="Puesto" error={errors.puesto_id?.message}>
-                                <Select
-                                    registration={{
-                                        ...register("puesto_id", { valueAsNumber: true }),
-                                        value: selectedPuesto,
-                                        onChange: (event) =>
-                                            setValue(
-                                                "puesto_id",
-                                                event.target.value ? Number(event.target.value) : null,
-                                                {
-                                                    shouldValidate: true,
-                                                },
-                                            ),
-                                    }}
-                                >
-                                    <option value="">Sin puesto</option>
-                                    {puestos.map((puesto) => (
-                                        <option key={puesto.id} value={puesto.id}>
-                                            {puesto.nombre}
-                                        </option>
-                                    ))}
-                                </Select>
-                            </Field>
-                        </div>
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field label="Puesto" error={errors.puesto_id?.message}>
+                                    <Select
+                                        registration={{
+                                            ...register("puesto_id", { valueAsNumber: true }),
+                                            value: selectedPuesto,
+                                            onChange: (event) =>
+                                                setValue(
+                                                    "puesto_id",
+                                                    event.target.value
+                                                        ? Number(event.target.value)
+                                                        : null,
+                                                    {
+                                                        shouldValidate: true,
+                                                    },
+                                                ),
+                                        }}
+                                    >
+                                        <option value="">Sin puesto</option>
+                                        {puestos.map((puesto) => (
+                                            <option key={puesto.id} value={puesto.id}>
+                                                {puesto.nombre}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                </Field>
+                            </div>
 
                             {hasEmpresaChange && (
                                 <Field
@@ -523,6 +843,14 @@ reset({
                                 Cancelar
                             </button>
                             <button
+                                type="button"
+                                onClick={handleOpenPdfModal}
+                                className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-[#3162e9] bg-white px-6 font-bold text-[#3162e9] transition hover:bg-[#edf3ff]"
+                            >
+                                <Download className="h-5 w-5" />
+                                Descargar PDF
+                            </button>
+                            <button
                                 type="submit"
                                 disabled={isSubmitting}
                                 className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-7 font-bold text-white transition hover:bg-[#183fca] disabled:cursor-not-allowed disabled:opacity-60"
@@ -532,6 +860,62 @@ reset({
                             </button>
                         </div>
                     </form>
+                )}
+
+                {pdfModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4">
+                        <div className="w-full max-w-lg rounded-[26px] bg-white p-6 shadow-2xl">
+                            <div className="flex items-center justify-between gap-4">
+                                <div>
+                                    <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#5b6e8b]">
+                                        Documento
+                                    </p>
+                                    <h3 className="text-2xl font-bold text-[#071b3b]">
+                                        Agregar notas
+                                    </h3>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setPdfModalOpen(false)}
+                                    className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-[#dce3ee] bg-white text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                                    aria-label="Cerrar nota"
+                                >
+                                    <X className="h-5 w-5" />
+                                </button>
+                            </div>
+
+                            <div className="mt-6">
+                                <label className="mb-2 block text-sm font-semibold text-[#071b3b]">
+                                    Notas del documento
+                                </label>
+                                <textarea
+                                    value={pdfNotes}
+                                    onChange={(event) => setPdfNotes(event.target.value)}
+                                    rows={7}
+                                    className="w-full rounded-2xl border border-[#dce3ee] bg-[#f8faff] px-4 py-3 text-[#071b3b] outline-none transition focus:border-[#3162e9]"
+                                    placeholder="Escribe aquí las observaciones, comentarios o información adicional que quieres incluir en el PDF..."
+                                />
+                            </div>
+
+                            <div className="mt-6 flex justify-end gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setPdfModalOpen(false)}
+                                    className="h-12 cursor-pointer rounded-2xl border border-[#dce3ee] px-5 font-bold text-[#5b6e8b] transition hover:bg-[#f0f4fa]"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleDownloadPdf}
+                                    className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-6 font-bold text-white transition hover:bg-[#183fca]"
+                                >
+                                    <Download className="h-5 w-5" />
+                                    Descargar PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 )}
             </div>
         </DashboardLayout>

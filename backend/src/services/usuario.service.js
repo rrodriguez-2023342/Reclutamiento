@@ -131,6 +131,14 @@ class UsuarioService {
         direccion: data.direccion || null,
         sueldo: data.sueldo || null,
         bonos: data.bonos || null,
+        tiene_seguro_gastos_medicos: data.tiene_seguro_gastos_medicos ?? false,
+        empresa_seguro_gastos_medicos: data.tiene_seguro_gastos_medicos
+          ? data.empresa_seguro_gastos_medicos ?? null
+          : null,
+        tiene_seguro_vida: data.tiene_seguro_vida ?? false,
+        empresa_seguro_vida: data.tiene_seguro_vida
+          ? data.empresa_seguro_vida ?? null
+          : null,
       },
       include: {
         rol: { select: { id: true, nombre: true } },

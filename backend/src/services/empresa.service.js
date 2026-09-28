@@ -13,6 +13,23 @@ function convertirAFechaAniversario(fechaStr) {
   return new Date(2000, fecha.getMonth(), fecha.getDate())
 }
 
+function normalizarDatosEmpresa(data) {
+  const resultado = { ...data }
+
+  for (const campo of ['detalle_empresa', 'direccion', 'telefono', 'correo']) {
+    if (resultado[campo] === undefined) continue
+    resultado[campo] = resultado[campo] === '' ? null : resultado[campo]
+  }
+
+  if (resultado.fecha_aniversario !== undefined) {
+    resultado.fecha_aniversario = resultado.fecha_aniversario
+      ? convertirAFechaAniversario(resultado.fecha_aniversario)
+      : null
+  }
+
+  return resultado
+}
+
 // Servicio para manejar las operaciones relacionadas con empresas
 class EmpresaService {
   // Listar empresas con paginacion y filtros opcionales
@@ -58,12 +75,25 @@ class EmpresaService {
 
     const activo = data.activo !== undefined ? data.activo : true
 
+    const datosNormalizados = normalizarDatosEmpresa({
+      ...data,
+      detalle_empresa: data.detalle_empresa ?? null,
+      direccion: data.direccion ?? null,
+      telefono: data.telefono ?? null,
+      correo: data.correo ?? null,
+      fecha_aniversario: data.fecha_aniversario ?? null,
+      activo,
+    })
+
     return prisma.empresa.create({
       data: {
-        nombre_empresa: data.nombre_empresa,
-        detalle_empresa: data.detalle_empresa || null,
-        fecha_aniversario: data.fecha_aniversario ? convertirAFechaAniversario(data.fecha_aniversario) : null,
-        activo,
+        nombre_empresa: datosNormalizados.nombre_empresa,
+        detalle_empresa: datosNormalizados.detalle_empresa,
+        direccion: datosNormalizados.direccion,
+        telefono: datosNormalizados.telefono,
+        correo: datosNormalizados.correo,
+        fecha_aniversario: datosNormalizados.fecha_aniversario,
+        activo: datosNormalizados.activo,
       },
     })
   }
@@ -84,13 +114,11 @@ class EmpresaService {
       }
     }
 
-    if (data.fecha_aniversario) {
-      data.fecha_aniversario = convertirAFechaAniversario(data.fecha_aniversario);
-    }
+    const datosActualizacion = normalizarDatosEmpresa(data)
 
     return prisma.empresa.update({
       where: { id },
-      data,
+      data: datosActualizacion,
     })
   }
 

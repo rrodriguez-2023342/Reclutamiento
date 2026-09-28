@@ -142,7 +142,7 @@ class AuthService {
     try {
       await sendPasswordResetEmail(user.correo, user.nombre, resetToken)
     } catch (emailErr) {
-      console.error('Error enviando email de reset:', emailErr)
+      console.error('Error enviando email de reset:', emailErr?.response?.data || emailErr?.message || emailErr)
     }
 
     return { success: true, message: 'Si el correo existe, recibirás un enlace' }
@@ -204,7 +204,7 @@ class AuthService {
     try {
       await sendTemporalPasswordEmail(user.correo, user.nombre, temporalPassword)
     } catch (emailErr) {
-      console.error('Error enviando email de contraseña temporal:', emailErr)
+      console.error('Error enviando email de contraseña temporal:', emailErr?.response?.data || emailErr?.message || emailErr)
     }
 
     return { success: true, temporalPassword }

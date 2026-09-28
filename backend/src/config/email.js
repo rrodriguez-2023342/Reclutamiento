@@ -1,25 +1,56 @@
-import { BrevoClient } from "@getbrevo/brevo";
+import nodemailer from 'nodemailer'
 
-// Configuracion de Brevo para enviar correos
-const client = new BrevoClient({
-  apiKey: process.env.BREVO_API_KEY,
-});
+const createTransporter = () => {
+  const host = process.env.SMTP_HOST
+  const port = Number(process.env.SMTP_PORT || 587)
+  const user = process.env.SMTP_USER
+  const pass = process.env.SMTP_PASS
+  const from = process.env.SMTP_FROM || process.env.BREVO_SENDER_EMAIL || 'no-reply@localhost'
 
-// Funcion para obtener el remitente del correo
-const getSender = () => ({
-  name: process.env.BREVO_SENDER_NAME || "Sistema Reclutamiento",
-  email: process.env.BREVO_SENDER_EMAIL || "no-reply@reclutamiento.com",
-});
+  if (!host || !user || !pass) {
+    throw new Error('Faltan variables SMTP_HOST, SMTP_USER o SMTP_PASS en el .env')
+  }
 
-// Envia un correo electronico utilizando Brevo
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465,
+    auth: {
+      user,
+      pass,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  })
+}
+
+const getFrom = () => ({
+  name: process.env.SMTP_FROM_NAME || 'Sistema Reclutamiento',
+  address: process.env.SMTP_FROM || process.env.BREVO_SENDER_EMAIL || 'no-reply@localhost',
+})
+
+const getMailErrorMessage = (error) => {
+  if (error?.response?.data) return JSON.stringify(error.response.data)
+  if (error?.message) return error.message
+  return 'Error desconocido al enviar el correo'
+}
+
 const sendEmail = async ({ to, subject, html }) => {
-  await client.transactionalEmails.sendTransacEmail({
-    sender: getSender(),
-    to: [{ email: to }],
-    subject,
-    htmlContent: html,
-  });
-};
+  const transporter = createTransporter()
+
+  try {
+    await transporter.sendMail({
+      from: getFrom(),
+      to,
+      subject,
+      html,
+    })
+  } catch (error) {
+    console.error('SMTP error:', getMailErrorMessage(error))
+    throw error
+  }
+}
 
 // Envía email de reset de contraseña
 export const sendPasswordResetEmail = async (to, nombre, resetToken) => {

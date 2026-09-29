@@ -63,7 +63,7 @@ function Modal({ action, loading, onClose, onConfirm }) {
 
 function DetalleDivision() {
     const { id } = useParams();
-    console.log('DEBUG DetalleDivision - useParams id:', id, typeof id);
+    console.log("DEBUG DetalleDivision - useParams id:", id, typeof id);
     const navigate = useNavigate();
     const [division, setDivision] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -140,7 +140,9 @@ function DetalleDivision() {
             <DashboardLayout title="Detalle de Division">
                 <section className="rounded-[26px] bg-white p-10 text-center shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
                     <h2 className="text-xl font-bold text-red-600">Error</h2>
-                    <p className="mt-2 text-[#5b6e8b]">{error || "Division no encontrada"}</p>
+                    <p className="mt-2 text-[#5b6e8b]">
+                        {error || "Division no encontrada"}
+                    </p>
                     <button
                         type="button"
                         onClick={() => navigate("/empresas/divisiones")}
@@ -158,7 +160,9 @@ function DetalleDivision() {
             <DashboardLayout title="Detalle de Division">
                 <section className="rounded-[26px] bg-white p-10 text-center shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
                     <h2 className="text-xl font-bold text-red-600">Error</h2>
-                    <p className="mt-2 text-[#5b6e8b]">{error || "Division no encontrada"}</p>
+                    <p className="mt-2 text-[#5b6e8b]">
+                        {error || "Division no encontrada"}
+                    </p>
                     <button
                         type="button"
                         onClick={() => navigate("/empresas/divisiones")}
@@ -211,7 +215,9 @@ function DetalleDivision() {
                             <div className="flex flex-wrap gap-3">
                                 <button
                                     type="button"
-                                    onClick={() => navigate(`/empresas/divisiones/${division.id}/editar`)}
+                                    onClick={() =>
+                                        navigate(`/empresas/divisiones/${division.id}/editar`)
+                                    }
                                     className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
                                 >
                                     <Pencil className="h-5 w-5" />
@@ -275,10 +281,14 @@ function DetalleDivision() {
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
-                                    <p className={`text-sm font-semibold ${isEmpty(division.descripcion) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}>
+                                    <p
+                                        className={`text-sm font-semibold ${isEmpty(division.descripcion) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                    >
                                         Descripcion
                                     </p>
-                                    <p className={`mt-2 text-lg font-bold ${isEmpty(division.descripcion) ? "text-[#df353c]" : "text-[#071b3b]"}`}>
+                                    <p
+                                        className={`mt-2 text-lg font-bold ${isEmpty(division.descripcion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                    >
                                         {division.descripcion || "\u2014"}
                                     </p>
                                 </div>
@@ -304,6 +314,7 @@ function DetalleDivision() {
                     </div>
                 )}
             </DashboardLayout>
+
             <Modal
                 action={modalAction}
                 loading={actionLoading}

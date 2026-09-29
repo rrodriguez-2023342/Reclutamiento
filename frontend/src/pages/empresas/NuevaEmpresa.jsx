@@ -133,10 +133,7 @@ function NuevaEmpresa() {
                             label="Fecha de aniversario"
                             error={errors.fecha_aniversario?.message}
                         >
-                            <Input
-                                type="date"
-                                registration={register("fecha_aniversario")}
-                            />
+                            <Input type="date" registration={register("fecha_aniversario")} />
                         </Field>
 
                         <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">

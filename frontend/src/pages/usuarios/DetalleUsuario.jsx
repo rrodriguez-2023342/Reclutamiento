@@ -413,7 +413,9 @@ function DetalleUsuario() {
                             </div>
                             <div className="mt-5 grid gap-5 sm:grid-cols-2">
                                 <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Empresa</p>
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                        Empresa
+                                    </p>
                                     <p
                                         className={`mt-2 text-lg font-bold ${isEmpty(usuario.empresa) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                     >
@@ -421,7 +423,9 @@ function DetalleUsuario() {
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Patrono</p>
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                        Patrono
+                                    </p>
                                     <p
                                         className={`mt-2 text-lg font-bold ${isEmpty(usuario.patrono) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                     >
@@ -529,7 +533,9 @@ function DetalleUsuario() {
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Descripción</p>
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                        Descripción
+                                    </p>
                                     <p
                                         className={`mt-2 text-lg font-bold ${isEmpty(usuario.puesto?.descripcion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                     >
@@ -761,21 +767,21 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
                     ) : (
                         <table className="w-full border-separate border-spacing-0 text-left text-sm">
                             <thead>
-                                    <tr className="text-base font-semibold text-[#5b6e8b]">
-                                        <th className="border-b border-[#dfe5ee] px-4 py-3">Fecha</th>
-                                        <th className="border-b border-[#dfe5ee] px-4 py-3">
-                                            Empresa anterior
-                                        </th>
-                                        <th className="border-b border-[#dfe5ee] px-4 py-3">
-                                            Empresa nueva
-                                        </th>
-                                        <th className="border-b border-[#dfe5ee] px-4 py-3">
-                                            Motivo
-                                        </th>
-                                        <th className="border-b border-[#dfe5ee] px-4 py-3">
-                                            Cambiado por
-                                        </th>
-                                    </tr>
+                                <tr className="text-base font-semibold text-[#5b6e8b]">
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">Fecha</th>
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                        Empresa anterior
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                        Empresa nueva
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                        Motivo
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                        Cambiado por
+                                    </th>
+                                </tr>
                             </thead>
                             <tbody>
                                 {data.map((item) => (

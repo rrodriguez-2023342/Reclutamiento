@@ -10,7 +10,10 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
-import { getPuestos, getDepartamentosForSelect } from "../../services/puestos.service.js";
+import {
+    getPuestos,
+    getDepartamentosForSelect,
+} from "../../services/puestos.service.js";
 
 const PAGE_SIZE = 6;
 
@@ -39,7 +42,9 @@ function SearchableSelect({ placeholder, value, options, onChange }) {
     const ref = useRef(null);
     const inputRef = useRef(null);
 
-    const selected = options.find((option) => String(option.value) === String(value));
+    const selected = options.find(
+        (option) => String(option.value) === String(value),
+    );
     const displayValue = selected ? selected.label : "";
 
     useEffect(() => {
@@ -138,7 +143,9 @@ function Puestos() {
     const [departamentos, setDepartamentos] = useState([]);
 
     useEffect(() => {
-        getDepartamentosForSelect().then(setDepartamentos).catch(() => setDepartamentos([]));
+        getDepartamentosForSelect()
+            .then(setDepartamentos)
+            .catch(() => setDepartamentos([]));
     }, []);
 
     useEffect(() => {
@@ -234,7 +241,11 @@ function Puestos() {
                             </div>
 
                             <div className="w-full max-w-[200px]">
-                                <SelectField ariaLabel="Estado de puestos" value={activo} onChange={setActivo}>
+                                <SelectField
+                                    ariaLabel="Estado de puestos"
+                                    value={activo}
+                                    onChange={setActivo}
+                                >
                                     <option value="">Estado</option>
                                     <option value="true">Activos</option>
                                     <option value="false">Inactivos</option>
@@ -260,9 +271,7 @@ function Puestos() {
                             Cargando puestos…
                         </div>
                     ) : error ? (
-                        <div className="p-12 text-center text-red-600">
-                            {error}
-                        </div>
+                        <div className="p-12 text-center text-red-600">{error}</div>
                     ) : result.data.length === 0 ? (
                         <div className="p-12 text-center text-[#5b6e8b]">
                             No se encontraron puestos.
@@ -308,7 +317,9 @@ function Puestos() {
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => navigate(`/empresas/puestos/${puesto.id}/editar`)}
+                                            onClick={() =>
+                                                navigate(`/empresas/puestos/${puesto.id}/editar`)
+                                            }
                                             className="flex h-10 cursor-pointer items-center gap-2 rounded-xl bg-[#3162e9] px-4 text-sm font-bold text-white transition hover:bg-[#183fca]"
                                         >
                                             Editar
@@ -343,11 +354,7 @@ function Puestos() {
                         </div>
                     )}
 
-                    {error && (
-                        <div className="p-4 text-center text-red-600">
-                            {error}
-                        </div>
-                    )}
+                    {error && <div className="p-4 text-center text-red-600">{error}</div>}
                 </div>
             </div>
         </DashboardLayout>

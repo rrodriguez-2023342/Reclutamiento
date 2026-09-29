@@ -16,6 +16,7 @@ import {
   Field,
   Input,
   PasswordInput,
+  SearchableSelect,
   Select,
   Textarea,
 } from "../../components/postulantes/formControls.jsx";
@@ -401,7 +402,9 @@ function FormularioPostulante({ postulanteId }) {
             await subirDocumento(postulanteIdFinal, tipo, archivo);
           } catch (docError) {
             if (docError.response?.status === 413) {
-              alert(`${tipo}: ${docError.response.data?.message || 'El archivo excede el límite máximo de 2MB'}`);
+              alert(
+                `${tipo}: ${docError.response.data?.message || "El archivo excede el límite máximo de 2MB"}`,
+              );
             } else {
               console.error(`Error subiendo ${tipo}:`, docError);
             }
@@ -671,16 +674,20 @@ function FormularioPostulante({ postulanteId }) {
                 label="Plaza a la que aplica *"
                 error={errors.plaza_id?.message}
               >
-                <Select
-                  registration={register("plaza_id", { valueAsNumber: true })}
-                >
-                  <option value="">Seleccione una plaza</option>
-                  {plazas.map((plaza) => (
-                    <option key={plaza.id} value={plaza.id}>
-                      {plaza.nombre}
-                    </option>
-                  ))}
-                </Select>
+                <SearchableSelect
+                  control={control}
+                  name="plaza_id"
+                  options={[
+                    { value: "", label: "Seleccione una plaza" },
+                    ...plazas.map((plaza) => ({
+                      value: plaza.id,
+                      label: plaza.nombre,
+                    })),
+                  ]}
+                  placeholder="Seleccione una plaza"
+                  valueAsNumber
+                  error={errors.plaza_id?.message}
+                />
               </Field>
               <Field label="Salario al que aspira">
                 <Input

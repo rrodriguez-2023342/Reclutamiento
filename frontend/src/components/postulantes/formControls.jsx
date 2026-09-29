@@ -1,5 +1,5 @@
-import { ChevronDown, Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { ChevronDown, Eye, EyeOff, Search, X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { Controller } from "react-hook-form";
 
 export function Field({ label, error, children, className = "" }) {
@@ -52,7 +52,7 @@ export function RadioGroup({ control, name, options, className = "", disabled = 
   );
 }
 
-export function Radio({ control, name, value, label, className = "", disabled = false, required = false }) {
+export function Radio({ control, name, value: radioValue, label, className = "", disabled = false, required = false }) {
   return (
     <Controller
       name={name}
@@ -63,8 +63,8 @@ export function Radio({ control, name, value, label, className = "", disabled = 
           <input
             type="radio"
             name={name}
-            value={value}
-            checked={value === value}
+            value={radioValue}
+            checked={value === radioValue}
             onChange={(e) => {
               const booleanValue = e.target.value === 'true';
               onChange({ target: { ...e.target, value: booleanValue } });
@@ -195,5 +195,168 @@ export function PasswordInput({
         </span>
       )}
     </>
+  );
+}
+
+function SearchableSelectInner({
+  options,
+  placeholder,
+  value,
+  onChange,
+  onBlur,
+  disabled,
+  error,
+  className,
+  valueAsNumber,
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const ref = useRef(null);
+  const inputRef = useRef(null);
+
+  const selected = options.find((o) => String(o.value) === String(value ?? ""));
+  const displayValue = selected ? selected.label : "";
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filtered = options.filter((o) =>
+    o.label.toLowerCase().includes(query.toLowerCase()),
+  );
+
+  const handleSelect = (val) => {
+    const finalValue = valueAsNumber && val !== "" ? Number(val) : val;
+    onChange(finalValue);
+    onBlur?.();
+    setQuery("");
+    setOpen(false);
+  };
+
+  const handleInputChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const handleFocus = () => {
+    if (!disabled) setOpen(true);
+  };
+
+  const handleClick = () => {
+    if (!disabled) {
+      setOpen(true);
+      setTimeout(() => inputRef.current?.focus(), 0);
+    }
+  };
+
+  const handleClear = (e) => {
+    e.stopPropagation();
+    onChange("");
+    onBlur?.();
+  };
+
+  return (
+    <div ref={ref} className={`relative ${className}`}>
+      <div
+        onClick={handleClick}
+        className={`flex h-14 cursor-pointer items-center rounded-2xl border border-[#dce3ee] bg-white px-4 text-base font-semibold text-[#071b3b] transition focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15 ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+      >
+        <input
+          ref={inputRef}
+          value={open ? query : displayValue}
+          onChange={handleInputChange}
+          onFocus={handleFocus}
+          placeholder={placeholder}
+          className="h-full w-full bg-transparent outline-none placeholder:text-[#91a0b7]"
+          readOnly={!open && !!displayValue}
+          disabled={disabled}
+          tabIndex={-1}
+        />
+        {displayValue && !open && !disabled && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="ml-1 cursor-pointer p-1 text-[#65758f] hover:text-[#071b3b]"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+        <ChevronDown className="ml-1 h-5 w-5 shrink-0 text-[#65758f]" />
+        {open && <Search className="ml-1 h-5 w-5 shrink-0 text-[#65758f]" />}
+      </div>
+      {open && !disabled && (
+        <ul className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-xl border border-[#dce3ee] bg-white py-1 shadow-lg">
+          {filtered.length === 0 && (
+            <li className="px-4 py-3 text-sm text-[#91a0b7]">
+              Sin resultados
+            </li>
+          )}
+          {filtered.map((o) => (
+            <li
+              key={o.value}
+              role="option"
+              aria-selected={String(o.value) === String(value ?? "")}
+            >
+              <button
+                type="button"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={(event) => {
+                  event.preventDefault();
+                  handleSelect(o.value);
+                }}
+                className={`w-full cursor-pointer px-4 py-3 text-left text-base transition hover:bg-[#f0f4fa] ${
+                  String(o.value) === String(value ?? "")
+                    ? "font-semibold text-[#3162e9] bg-[#f0f4fa]"
+                    : "text-[#071b3b]"
+                }`}
+              >
+                {o.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {error && (
+        <span className="mt-1 block text-xs font-semibold text-red-500">
+          {error}
+        </span>
+      )}
+    </div>
+  );
+}
+
+export function SearchableSelect({
+  control,
+  name,
+  options,
+  placeholder,
+  error,
+  disabled = false,
+  className = "",
+  rules,
+  valueAsNumber = false,
+}) {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      rules={rules}
+      render={({ field: { onChange, onBlur, value }, fieldState: { error: fieldError } }) => (
+        <SearchableSelectInner
+          options={options}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          onBlur={onBlur}
+          disabled={disabled}
+          error={error || fieldError?.message}
+          className={className}
+          valueAsNumber={valueAsNumber}
+        />
+      )}
+    />
   );
 }

@@ -10,7 +10,10 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
-import { getDivisiones, getEmpresasForSelect } from "../../services/divisiones.service.js";
+import {
+    getDivisiones,
+    getEmpresasForSelect,
+} from "../../services/divisiones.service.js";
 
 const PAGE_SIZE = 6;
 
@@ -39,7 +42,9 @@ function SearchableSelect({ placeholder, value, options, onChange }) {
     const ref = useRef(null);
     const inputRef = useRef(null);
 
-    const selected = options.find((option) => String(option.value) === String(value));
+    const selected = options.find(
+        (option) => String(option.value) === String(value),
+    );
     const displayValue = selected ? selected.label : "";
 
     useEffect(() => {
@@ -138,7 +143,9 @@ function Divisiones() {
     const [empresas, setEmpresas] = useState([]);
 
     useEffect(() => {
-        getEmpresasForSelect().then(setEmpresas).catch(() => setEmpresas([]));
+        getEmpresasForSelect()
+            .then(setEmpresas)
+            .catch(() => setEmpresas([]));
     }, []);
 
     useEffect(() => {
@@ -234,7 +241,11 @@ function Divisiones() {
                             </div>
 
                             <div className="w-full max-w-[200px]">
-                                <SelectField ariaLabel="Estado de divisiones" value={activo} onChange={setActivo}>
+                                <SelectField
+                                    ariaLabel="Estado de divisiones"
+                                    value={activo}
+                                    onChange={setActivo}
+                                >
                                     <option value="">Estado</option>
                                     <option value="true">Activas</option>
                                     <option value="false">Inactivas</option>
@@ -260,9 +271,7 @@ function Divisiones() {
                             Cargando divisiones…
                         </div>
                     ) : error ? (
-                        <div className="p-12 text-center text-red-600">
-                            {error}
-                        </div>
+                        <div className="p-12 text-center text-red-600">{error}</div>
                     ) : result.data.length === 0 ? (
                         <div className="p-12 text-center text-[#5b6e8b]">
                             No se encontraron divisiones.
@@ -301,14 +310,18 @@ function Divisiones() {
                                     <div className="mt-4 flex items-center justify-end gap-2">
                                         <button
                                             type="button"
-                                            onClick={() => navigate(`/empresas/divisiones/${division.id}`)}
+                                            onClick={() =>
+                                                navigate(`/empresas/divisiones/${division.id}`)
+                                            }
                                             className="flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-[#dce3ee] bg-white px-4 text-sm font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa]"
                                         >
                                             <span className="hidden sm:inline">Ver</span>
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => navigate(`/empresas/divisiones/${division.id}/editar`)}
+                                            onClick={() =>
+                                                navigate(`/empresas/divisiones/${division.id}/editar`)
+                                            }
                                             className="flex h-10 cursor-pointer items-center gap-2 rounded-xl bg-[#3162e9] px-4 text-sm font-bold text-white transition hover:bg-[#183fca]"
                                         >
                                             Editar
@@ -343,11 +356,7 @@ function Divisiones() {
                         </div>
                     )}
 
-                    {error && (
-                        <div className="p-4 text-center text-red-600">
-                            {error}
-                        </div>
-                    )}
+                    {error && <div className="p-4 text-center text-red-600">{error}</div>}
                 </div>
             </div>
         </DashboardLayout>

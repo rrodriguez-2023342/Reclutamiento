@@ -7,7 +7,7 @@ import {
     Field,
     Input,
     Textarea,
-    Select,
+    SearchableSelect,
 } from "../../components/postulantes/formControls.jsx";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
@@ -30,6 +30,7 @@ function EditarDivision() {
     const {
         register,
         handleSubmit,
+        control,
         reset,
         formState: { errors, isSubmitting },
     } = useForm({
@@ -38,7 +39,9 @@ function EditarDivision() {
     });
 
     useEffect(() => {
-        getEmpresasForSelect().then(setEmpresas).catch(() => setEmpresas([]));
+        getEmpresasForSelect()
+            .then(setEmpresas)
+            .catch(() => setEmpresas([]));
     }, []);
 
     useEffect(() => {
@@ -133,20 +136,14 @@ function EditarDivision() {
                         )}
 
                         <div className="grid gap-5">
-                            <Field
-                                label="Nombre *"
-                                error={errors.nombre?.message}
-                            >
+                            <Field label="Nombre *" error={errors.nombre?.message}>
                                 <Input
                                     registration={register("nombre")}
                                     placeholder="Ej. División de Tecnología"
                                 />
                             </Field>
 
-                            <Field
-                                label="Descripción"
-                                error={errors.descripcion?.message}
-                            >
+                            <Field label="Descripción" error={errors.descripcion?.message}>
                                 <Textarea
                                     registration={register("descripcion")}
                                     placeholder="Descripción de la división..."
@@ -154,28 +151,20 @@ function EditarDivision() {
                             </Field>
 
                             <Field label="Empresa *" error={errors.empresa_id?.message}>
-                                <Select
-                                    registration={{
-                                        ...register("empresa_id", { valueAsNumber: true }),
-                                        onChange: (event) =>
-                                            setValue(
-                                                "empresa_id",
-                                                event.target.value
-                                                    ? Number(event.target.value)
-                                                    : null,
-                                                {
-                                                    shouldValidate: true,
-                                                },
-                                            ),
-                                    }}
-                                >
-                                    <option value="">Seleccionar empresa</option>
-                                    {empresas.map((empresa) => (
-                                        <option key={empresa.id} value={empresa.id}>
-                                            {empresa.nombre_empresa}
-                                        </option>
-                                    ))}
-                                </Select>
+                                <SearchableSelect
+                                    control={control}
+                                    name="empresa_id"
+                                    options={[
+                                        { value: "", label: "Seleccionar empresa" },
+                                        ...empresas.map((empresa) => ({
+                                            value: empresa.id,
+                                            label: empresa.nombre_empresa,
+                                        })),
+                                    ]}
+                                    placeholder="Seleccionar empresa"
+                                    valueAsNumber
+                                    error={errors.empresa_id?.message}
+                                />
                             </Field>
 
                             <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">

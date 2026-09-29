@@ -27,7 +27,10 @@ function formatAniversario(value) {
     const date = new Date(value);
     return Number.isNaN(date.getTime())
         ? "\u2014"
-        : new Intl.DateTimeFormat("es-GT", { day: "numeric", month: "long" }).format(date);
+        : new Intl.DateTimeFormat("es-GT", {
+            day: "numeric",
+            month: "long",
+        }).format(date);
 }
 
 function isEmpty(valor) {

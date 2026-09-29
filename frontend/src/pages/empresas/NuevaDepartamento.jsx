@@ -7,10 +7,13 @@ import {
     Field,
     Input,
     Textarea,
-    Select,
+    SearchableSelect,
 } from "../../components/postulantes/formControls.jsx";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
-import { createDepartamento, getDivisionesForSelect } from "../../services/departamentos.service.js";
+import {
+    createDepartamento,
+    getDivisionesForSelect,
+} from "../../services/departamentos.service.js";
 import {
     defaultDepartamentoValues,
     departamentoSchema,
@@ -24,6 +27,7 @@ function NuevaDepartamento() {
     const {
         register,
         handleSubmit,
+        control,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(departamentoSchema),
@@ -31,7 +35,9 @@ function NuevaDepartamento() {
     });
 
     useEffect(() => {
-        getDivisionesForSelect().then(setDivisiones).catch(() => setDivisiones([]));
+        getDivisionesForSelect()
+            .then(setDivisiones)
+            .catch(() => setDivisiones([]));
     }, []);
 
     const onSubmit = async (values) => {
@@ -91,20 +97,14 @@ function NuevaDepartamento() {
                     )}
 
                     <div className="grid gap-5">
-                        <Field
-                            label="Nombre *"
-                            error={errors.nombre?.message}
-                        >
+                        <Field label="Nombre *" error={errors.nombre?.message}>
                             <Input
                                 registration={register("nombre")}
                                 placeholder="Ej. Departamento de Desarrollo"
                             />
                         </Field>
 
-                        <Field
-                            label="Descripción"
-                            error={errors.descripcion?.message}
-                        >
+                        <Field label="Descripción" error={errors.descripcion?.message}>
                             <Textarea
                                 registration={register("descripcion")}
                                 placeholder="Descripción del departamento..."
@@ -112,28 +112,20 @@ function NuevaDepartamento() {
                         </Field>
 
                         <Field label="División *" error={errors.division_id?.message}>
-                            <Select
-                                registration={{
-                                    ...register("division_id", { valueAsNumber: true }),
-                                    onChange: (event) =>
-                                        setValue(
-                                            "division_id",
-                                            event.target.value
-                                                ? Number(event.target.value)
-                                                : null,
-                                            {
-                                                shouldValidate: true,
-                                            },
-                                        ),
-                                }}
-                            >
-                                <option value="">Seleccionar división</option>
-                                {divisiones.map((division) => (
-                                    <option key={division.id} value={division.id}>
-                                        {division.nombre}
-                                    </option>
-                                ))}
-                            </Select>
+                            <SearchableSelect
+                                control={control}
+                                name="division_id"
+                                options={[
+                                    { value: "", label: "Seleccionar división" },
+                                    ...divisiones.map((division) => ({
+                                        value: division.id,
+                                        label: division.nombre,
+                                    })),
+                                ]}
+                                placeholder="Seleccionar división"
+                                valueAsNumber
+                                error={errors.division_id?.message}
+                            />
                         </Field>
 
                         <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">

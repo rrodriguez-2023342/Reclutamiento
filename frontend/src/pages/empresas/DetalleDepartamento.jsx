@@ -63,7 +63,7 @@ function Modal({ action, loading, onClose, onConfirm }) {
 
 function DetalleDepartamento() {
     const { id } = useParams();
-    console.log('DEBUG DetalleDepartamento - useParams id:', id, typeof id);
+    console.log("DEBUG DetalleDepartamento - useParams id:", id, typeof id);
     const navigate = useNavigate();
     const [departamento, setDepartamento] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -140,7 +140,9 @@ function DetalleDepartamento() {
             <DashboardLayout title="Detalle de Departamento">
                 <section className="rounded-[26px] bg-white p-10 text-center shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
                     <h2 className="text-xl font-bold text-red-600">Error</h2>
-                    <p className="mt-2 text-[#5b6e8b]">{error || "Departamento no encontrado"}</p>
+                    <p className="mt-2 text-[#5b6e8b]">
+                        {error || "Departamento no encontrado"}
+                    </p>
                     <button
                         type="button"
                         onClick={() => navigate("/empresas/departamentos")}
@@ -158,7 +160,9 @@ function DetalleDepartamento() {
             <DashboardLayout title="Detalle de Departamento">
                 <section className="rounded-[26px] bg-white p-10 text-center shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
                     <h2 className="text-xl font-bold text-red-600">Error</h2>
-                    <p className="mt-2 text-[#5b6e8b]">{error || "Departamento no encontrado"}</p>
+                    <p className="mt-2 text-[#5b6e8b]">
+                        {error || "Departamento no encontrado"}
+                    </p>
                     <button
                         type="button"
                         onClick={() => navigate("/empresas/departamentos")}
@@ -211,7 +215,11 @@ function DetalleDepartamento() {
                             <div className="flex flex-wrap gap-3">
                                 <button
                                     type="button"
-                                    onClick={() => navigate(`/empresas/departamentos/${departamento.id}/editar`)}
+                                    onClick={() =>
+                                        navigate(
+                                            `/empresas/departamentos/${departamento.id}/editar`,
+                                        )
+                                    }
                                     className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
                                 >
                                     <Pencil className="h-5 w-5" />
@@ -275,10 +283,14 @@ function DetalleDepartamento() {
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
-                                    <p className={`text-sm font-semibold ${isEmpty(departamento.descripcion) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}>
+                                    <p
+                                        className={`text-sm font-semibold ${isEmpty(departamento.descripcion) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                    >
                                         Descripcion
                                     </p>
-                                    <p className={`mt-2 text-lg font-bold ${isEmpty(departamento.descripcion) ? "text-[#df353c]" : "text-[#071b3b]"}`}>
+                                    <p
+                                        className={`mt-2 text-lg font-bold ${isEmpty(departamento.descripcion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                    >
                                         {departamento.descripcion || "\u2014"}
                                     </p>
                                 </div>
@@ -304,6 +316,7 @@ function DetalleDepartamento() {
                     </div>
                 )}
             </DashboardLayout>
+
             <Modal
                 action={modalAction}
                 loading={actionLoading}

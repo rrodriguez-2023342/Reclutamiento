@@ -6,8 +6,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
     Field,
     Input,
-    Select,
+    SearchableSelect,
     RadioGroup,
+    Select,
 } from "../../components/postulantes/formControls.jsx";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { useAuth } from "../../hooks/useAuth.js";
@@ -37,7 +38,6 @@ function NuevoUsuario() {
     const {
         register,
         handleSubmit,
-        setValue,
         watch,
         reset,
         control,
@@ -47,12 +47,11 @@ function NuevoUsuario() {
         defaultValues: defaultUsuarioValues,
     });
 
-    const selectedRole = watch("rol_id") ?? 2;
+    const tieneSeguroGastos = watch("tiene_seguro_gastos_medicos");
+    const tieneSeguroVida = watch("tiene_seguro_vida");
     const selectedEmpresa = watch("empresa_id") ?? "";
     const selectedPatrono = watch("patrono_id") ?? "";
     const selectedPuesto = watch("puesto_id") ?? "";
-    const tieneSeguroGastos = watch("tiene_seguro_gastos_medicos");
-    const tieneSeguroVida = watch("tiene_seguro_vida");
     const puestoSeleccionado =
         puestos.find((puesto) => puesto.id === Number(selectedPuesto)) || null;
     const empresaSeleccionada =
@@ -505,100 +504,70 @@ function NuevoUsuario() {
 
                         <Field label="Rol *" error={errors.rol_id?.message}>
                             <Select
-                                registration={{
-                                    ...register("rol_id", { valueAsNumber: true }),
-                                    value: selectedRole,
-                                    onChange: (event) =>
-                                        setValue("rol_id", Number(event.target.value), {
-                                            shouldValidate: true,
-                                        }),
-                                }}
+                                registration={register("rol_id")}
+                                error={errors.rol_id?.message}
                             >
-                                {roles.length === 0 ? (
-                                    <option value={2}>Usuario</option>
-                                ) : (
-                                    roles.map((role) => (
-                                        <option key={role.id} value={role.id}>
-                                            {role.nombre}
-                                        </option>
-                                    ))
-                                )}
+                                <option value="">Seleccionar rol</option>
+                                {roles.map((role) => (
+                                    <option key={role.id} value={role.id}>
+                                        {role.nombre}
+                                    </option>
+                                ))}
                             </Select>
                         </Field>
 
                         <div className="grid gap-5 sm:grid-cols-2">
                             <Field label="Empresa" error={errors.empresa_id?.message}>
-                                <Select
-                                    registration={{
-                                        ...register("empresa_id", { valueAsNumber: true }),
-                                        value: selectedEmpresa,
-                                        onChange: (event) =>
-                                            setValue(
-                                                "empresa_id",
-                                                event.target.value ? Number(event.target.value) : null,
-                                                {
-                                                    shouldValidate: true,
-                                                },
-                                            ),
-                                    }}
-                                >
-                                    <option value="">Sin empresa</option>
-                                    {empresas.map((empresa) => (
-                                        <option key={empresa.id} value={empresa.id}>
-                                            {empresa.nombre_empresa}
-                                        </option>
-                                    ))}
-                                </Select>
+                                <SearchableSelect
+                                    control={control}
+                                    name="empresa_id"
+                                    options={[
+                                        { value: "", label: "Sin empresa" },
+                                        ...empresas.map((empresa) => ({
+                                            value: empresa.id,
+                                            label: empresa.nombre_empresa,
+                                        })),
+                                    ]}
+                                    placeholder="Sin empresa"
+                                    valueAsNumber
+                                    error={errors.empresa_id?.message}
+                                />
                             </Field>
 
                             <Field label="Patrono" error={errors.patrono_id?.message}>
-                                <Select
-                                    registration={{
-                                        ...register("patrono_id", { valueAsNumber: true }),
-                                        value: selectedPatrono,
-                                        onChange: (event) =>
-                                            setValue(
-                                                "patrono_id",
-                                                event.target.value ? Number(event.target.value) : null,
-                                                {
-                                                    shouldValidate: true,
-                                                },
-                                            ),
-                                    }}
-                                >
-                                    <option value="">Sin patrono</option>
-                                    {patronos.map((patrono) => (
-                                        <option key={patrono.id} value={patrono.id}>
-                                            {patrono.razon_social}
-                                        </option>
-                                    ))}
-                                </Select>
+                                <SearchableSelect
+                                    control={control}
+                                    name="patrono_id"
+                                    options={[
+                                        { value: "", label: "Sin patrono" },
+                                        ...patronos.map((patrono) => ({
+                                            value: patrono.id,
+                                            label: patrono.razon_social,
+                                        })),
+                                    ]}
+                                    placeholder="Sin patrono"
+                                    valueAsNumber
+                                    error={errors.patrono_id?.message}
+                                />
                             </Field>
                         </div>
 
                         <div className="grid gap-5 sm:grid-cols-2">
                             <Field label="Puesto" error={errors.puesto_id?.message}>
-                                <Select
-                                    registration={{
-                                        ...register("puesto_id", { valueAsNumber: true }),
-                                        value: selectedPuesto,
-                                        onChange: (event) =>
-                                            setValue(
-                                                "puesto_id",
-                                                event.target.value ? Number(event.target.value) : null,
-                                                {
-                                                    shouldValidate: true,
-                                                },
-                                            ),
-                                    }}
-                                >
-                                    <option value="">Sin puesto</option>
-                                    {puestos.map((puesto) => (
-                                        <option key={puesto.id} value={puesto.id}>
-                                            {puesto.nombre}
-                                        </option>
-                                    ))}
-                                </Select>
+                                <SearchableSelect
+                                    control={control}
+                                    name="puesto_id"
+                                    options={[
+                                        { value: "", label: "Sin puesto" },
+                                        ...puestos.map((puesto) => ({
+                                            value: puesto.id,
+                                            label: puesto.nombre,
+                                        })),
+                                    ]}
+                                    placeholder="Sin puesto"
+                                    valueAsNumber
+                                    error={errors.puesto_id?.message}
+                                />
                             </Field>
                         </div>
 

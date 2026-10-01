@@ -29,15 +29,16 @@ export const seedDefaultAdmin = async () => {
 
   const hashed = await hashPassword(adminPassword)
 
-  await prisma.usuario.upsert({
+await prisma.usuario.upsert({
     where: { correo: adminEmail },
     update: { rol_id: adminRole.id, activo: true },
     create: {
       nombre: adminNombre,
       correo: adminEmail,
-      password: hashed, 
+      password: hashed,
       rol_id: adminRole.id,
       activo: true,
+      mustChangePassword: false,
     },
   })
 

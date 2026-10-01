@@ -125,6 +125,14 @@ class UsuarioService {
         patrono_id: data.patrono_id || null,
         puesto_id: data.puesto_id || null,
         fecha_nacimiento: data.fecha_nacimiento ? new Date(data.fecha_nacimiento) : null,
+        fecha_contratacion: data.fecha_contratacion ? new Date(data.fecha_contratacion) : null,
+        tipo_contrato: data.tipo_contrato || "INDEFINIDO",
+        fecha_fin_contrato:
+          data.tipo_contrato === "DEFINIDO" && data.fecha_fin_contrato
+            ? new Date(data.fecha_fin_contrato)
+            : null,
+        nit: data.nit || null,
+        numero_afiliacion_igss: data.numero_afiliacion_igss || null,
         sexo: data.sexo || null,
         dpi: data.dpi || null,
         dpi_extendido_en: data.dpi_extendido_en || null,
@@ -135,9 +143,18 @@ class UsuarioService {
         empresa_seguro_gastos_medicos: data.tiene_seguro_gastos_medicos
           ? data.empresa_seguro_gastos_medicos ?? null
           : null,
+        tipo_seguro_gastos_medicos: data.tiene_seguro_gastos_medicos
+          ? data.tipo_seguro_gastos_medicos ?? null
+          : null,
+        categoria_seguro_gastos_medicos: data.tiene_seguro_gastos_medicos
+          ? data.categoria_seguro_gastos_medicos ?? null
+          : null,
         tiene_seguro_vida: data.tiene_seguro_vida ?? false,
         empresa_seguro_vida: data.tiene_seguro_vida
           ? data.empresa_seguro_vida ?? null
+          : null,
+        categoria_seguro_vida: data.tiene_seguro_vida
+          ? data.categoria_seguro_vida ?? null
           : null,
       },
       include: {
@@ -236,8 +253,28 @@ class UsuarioService {
       patrono: patrono_id ? { connect: { id: patrono_id } } : { disconnect: true },
       puesto: puesto_id ? { connect: { id: puesto_id } } : { disconnect: true },
     };
+    if (data.tiene_seguro_gastos_medicos === false) {
+      updateData.empresa_seguro_gastos_medicos = null;
+      updateData.tipo_seguro_gastos_medicos = null;
+      updateData.categoria_seguro_gastos_medicos = null;
+    }
+    if (data.tiene_seguro_vida === false) {
+      updateData.empresa_seguro_vida = null;
+      updateData.categoria_seguro_vida = null;
+    }
     if (fecha_nacimiento) {
       updateData.fecha_nacimiento = new Date(fecha_nacimiento);
+    }
+    if (data.fecha_contratacion) {
+      updateData.fecha_contratacion = new Date(data.fecha_contratacion);
+    }
+    if (data.fecha_fin_contrato !== undefined) {
+      updateData.fecha_fin_contrato = data.fecha_fin_contrato
+        ? new Date(data.fecha_fin_contrato)
+        : null;
+    }
+    if (data.tipo_contrato === "INDEFINIDO") {
+      updateData.fecha_fin_contrato = null;
     }
 
     // Detectar cambios en sueldo o bonos para registrar historial

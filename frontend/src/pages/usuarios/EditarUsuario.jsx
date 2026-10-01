@@ -55,7 +55,8 @@ function EditarUsuario() {
     const currentEmpresa = watch("empresa_id");
     const tieneSeguroGastos = watch("tiene_seguro_gastos_medicos");
     const tieneSeguroVida = watch("tiene_seguro_vida");
-    const currentPuesto = watch("puesto_id");
+    const tipoSeguroGastos = watch("tipo_seguro_gastos_medicos");
+    const tipoContrato = watch("tipo_contrato");
     const selectedEmpresa = watch("empresa_id") ?? "";
     const selectedPatrono = watch("patrono_id") ?? "";
     const selectedPuesto = watch("puesto_id") ?? "";
@@ -70,7 +71,6 @@ function EditarUsuario() {
     const [originalSueldo, setOriginalSueldo] = useState(null);
     const [originalBonos, setOriginalBonos] = useState(null);
     const [originalEmpresa, setOriginalEmpresa] = useState(null);
-    const [originalPuesto, setOriginalPuesto] = useState(null);
     const hasSalaryChange =
         (originalSueldo !== null || originalBonos !== null) &&
         (Number(currentSueldo || 0) !== Number(originalSueldo || 0) ||
@@ -78,9 +78,6 @@ function EditarUsuario() {
     const hasEmpresaChange =
         originalEmpresa !== null &&
         Number(currentEmpresa || 0) !== Number(originalEmpresa || 0);
-    const hasPuestoChange =
-        originalPuesto !== null &&
-        Number(currentPuesto || 0) !== Number(originalPuesto || 0);
 
     useEffect(() => {
         let active = true;
@@ -124,6 +121,15 @@ function EditarUsuario() {
                         fecha_nacimiento: data.fecha_nacimiento
                             ? data.fecha_nacimiento.split("T")[0]
                             : "",
+                        fecha_contratacion: data.fecha_contratacion
+                            ? data.fecha_contratacion.split("T")[0]
+                            : "",
+                        tipo_contrato: data.tipo_contrato || "INDEFINIDO",
+                        fecha_fin_contrato: data.fecha_fin_contrato
+                            ? data.fecha_fin_contrato.split("T")[0]
+                            : "",
+                        nit: data.nit || "",
+                        numero_afiliacion_igss: data.numero_afiliacion_igss || "",
                         sexo: data.sexo || "",
                         dpi: data.dpi || "",
                         dpi_extendido_en: data.dpi_extendido_en || "",
@@ -134,13 +140,16 @@ function EditarUsuario() {
                             data.tiene_seguro_gastos_medicos ?? false,
                         empresa_seguro_gastos_medicos:
                             data.empresa_seguro_gastos_medicos || "",
+                        tipo_seguro_gastos_medicos: data.tipo_seguro_gastos_medicos || "",
+                        categoria_seguro_gastos_medicos:
+                            data.categoria_seguro_gastos_medicos || "",
                         tiene_seguro_vida: data.tiene_seguro_vida ?? false,
                         empresa_seguro_vida: data.empresa_seguro_vida || "",
+                        categoria_seguro_vida: data.categoria_seguro_vida || "",
                     });
                     setOriginalSueldo(data.sueldo ?? null);
                     setOriginalBonos(data.bonos ?? null);
                     setOriginalEmpresa(data.empresa?.id ?? null);
-                    setOriginalPuesto(data.puesto?.id ?? null);
                 }
             })
             .catch((requestError) => {
@@ -163,6 +172,15 @@ function EditarUsuario() {
         const puesto = puestoSeleccionado?.nombre || "Sin puesto";
         const departamento =
             puestoSeleccionado?.departamento?.nombre || "Sin departamento";
+        const fechaContratacion = watch("fecha_contratacion") || "Sin fecha";
+        const fechaFinContrato = watch("fecha_fin_contrato") || "";
+        const contratoPdf =
+            tipoContrato === "DEFINIDO"
+                ? `Tipo: Definido | Fecha de contratación: ${fechaContratacion} | Fecha de finalización: ${fechaFinContrato}`
+                : `Tipo: Indefinido | Fecha de contratación: ${fechaContratacion}`;
+        const nit = watch("nit") || "Sin NIT";
+        const numeroAfiliacionIgss =
+            watch("numero_afiliacion_igss") || "Sin número";
         const sueldo = watch("sueldo") || "0.00";
         const bonos = watch("bonos") || "0.00";
         const dpi = watch("dpi") || "Sin DPI";
@@ -345,6 +363,7 @@ function EditarUsuario() {
                             color: var(--muted);
                         }
                         .footer strong { color: var(--ink); }
+                        @page { size: A4; margin: 8mm; }
                         @media print {
                             body {
                                 background: white;
@@ -354,12 +373,36 @@ function EditarUsuario() {
                                 color-adjust: exact;
                             }
                             .page {
+                                width: 100%;
+                                height: 281mm;
+                                max-width: none;
                                 box-shadow: none;
                                 border-radius: 0;
                                 -webkit-print-color-adjust: exact;
                                 print-color-adjust: exact;
                                 color-adjust: exact;
                             }
+                            .header { padding: 18px 24px 16px; }
+                            .header h1 { font-size: 21px; }
+                            .content { padding: 16px 24px 18px; }
+                            .section-title { margin-bottom: 8px; }
+                            .meta, .comp { gap: 8px 10px; }
+                            .item, .cell { padding: 8px 10px; }
+                            .label { margin-bottom: 3px; font-size: 9px; }
+                            .value { font-size: 12px; }
+                            .comp { margin-top: 12px; }
+                            .notes-block { margin-top: 12px; }
+                            .notes {
+                                min-height: 0;
+                                max-height: 48px;
+                                overflow: hidden;
+                                padding: 8px 10px;
+                                font-size: 11px;
+                                line-height: 1.3;
+                            }
+                            .signatures { gap: 20px; margin-top: 28px; }
+                            .signature-box { min-height: 44px; padding-top: 8px; }
+                            .footer { margin-top: 14px; padding-top: 8px; }
                         }
                     </style>
                 </head>
@@ -389,8 +432,20 @@ function EditarUsuario() {
                                     <div class="value">${departamento}</div>
                                 </div>
                                 <div class="item span-2">
+                                    <span class="label">Contrato</span>
+                                    <div class="value">${contratoPdf}</div>
+                                </div>
+                                <div class="item span-2">
                                     <span class="label">DPI</span>
                                     <div class="value">${dpi}</div>
+                                </div>
+                                <div class="item">
+                                    <span class="label">NIT</span>
+                                    <div class="value">${nit}</div>
+                                </div>
+                                <div class="item">
+                                    <span class="label">No. afiliación IGSS</span>
+                                    <div class="value">${numeroAfiliacionIgss}</div>
                                 </div>
                             </div>
 
@@ -465,6 +520,13 @@ function EditarUsuario() {
                 patrono_id: values.patrono_id || null,
                 puesto_id: values.puesto_id || null,
                 fecha_nacimiento: values.fecha_nacimiento || null,
+                tipo_contrato: values.tipo_contrato || "INDEFINIDO",
+                fecha_fin_contrato:
+                    values.tipo_contrato === "DEFINIDO"
+                        ? values.fecha_fin_contrato || null
+                        : null,
+                nit: values.nit || null,
+                numero_afiliacion_igss: values.numero_afiliacion_igss || null,
                 sexo: values.sexo || null,
                 dpi: values.dpi || null,
                 dpi_extendido_en: values.dpi_extendido_en || null,
@@ -482,9 +544,18 @@ function EditarUsuario() {
                 empresa_seguro_gastos_medicos: values.tiene_seguro_gastos_medicos
                     ? values.empresa_seguro_gastos_medicos || null
                     : null,
+                tipo_seguro_gastos_medicos: values.tiene_seguro_gastos_medicos
+                    ? values.tipo_seguro_gastos_medicos || null
+                    : null,
+                categoria_seguro_gastos_medicos: values.tiene_seguro_gastos_medicos
+                    ? values.categoria_seguro_gastos_medicos || null
+                    : null,
                 tiene_seguro_vida: values.tiene_seguro_vida || false,
                 empresa_seguro_vida: values.tiene_seguro_vida
                     ? values.empresa_seguro_vida || null
+                    : null,
+                categoria_seguro_vida: values.tiene_seguro_vida
+                    ? values.categoria_seguro_vida || null
                     : null,
             };
             await updateUsuario(id, payload);
@@ -653,6 +724,41 @@ function EditarUsuario() {
                                     />
                                 </Field>
 
+                                <Field
+                                    label="Fecha de contratación *"
+                                    error={errors.fecha_contratacion?.message}
+                                >
+                                    <Input
+                                        registration={register("fecha_contratacion")}
+                                        type="date"
+                                    />
+                                </Field>
+                            </div>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field
+                                    label="Tipo de contrato *"
+                                    error={errors.tipo_contrato?.message}
+                                >
+                                    <Select registration={register("tipo_contrato")}>
+                                        <option value="INDEFINIDO">Indefinido</option>
+                                        <option value="DEFINIDO">Definido</option>
+                                    </Select>
+                                </Field>
+                                {tipoContrato === "DEFINIDO" && (
+                                    <Field
+                                        label="Fecha de finalización *"
+                                        error={errors.fecha_fin_contrato?.message}
+                                    >
+                                        <Input
+                                            registration={register("fecha_fin_contrato")}
+                                            type="date"
+                                        />
+                                    </Field>
+                                )}
+                            </div>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
                                 <Field label="Sexo" error={errors.sexo?.message}>
                                     <Select registration={register("sexo")}>
                                         <option value="">Seleccionar...</option>
@@ -677,6 +783,24 @@ function EditarUsuario() {
                                     <Input
                                         registration={register("dpi_extendido_en")}
                                         placeholder="Ej. Guatemala"
+                                    />
+                                </Field>
+                            </div>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field label="NIT" error={errors.nit?.message}>
+                                    <Input
+                                        registration={register("nit")}
+                                        placeholder="Número de NIT"
+                                    />
+                                </Field>
+                                <Field
+                                    label="No. de afiliación IGSS"
+                                    error={errors.numero_afiliacion_igss?.message}
+                                >
+                                    <Input
+                                        registration={register("numero_afiliacion_igss")}
+                                        placeholder="Número de afiliación IGSS"
                                     />
                                 </Field>
                             </div>
@@ -734,22 +858,52 @@ function EditarUsuario() {
                                             />
                                         </div>
                                         {tieneSeguroGastos && (
-                                            <Field
-                                                label="Empresa aseguradora *"
-                                                error={errors.empresa_seguro_gastos_medicos?.message}
-                                            >
-                                                <Input
-                                                    registration={register(
-                                                        "empresa_seguro_gastos_medicos",
-                                                        {
-                                                            required: tieneSeguroGastos
-                                                                ? "La empresa aseguradora es requerida"
-                                                                : false,
-                                                        },
-                                                    )}
-                                                    placeholder="Nombre de la empresa aseguradora"
-                                                />
-                                            </Field>
+                                            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                                                <Field
+                                                    label="Modalidad *"
+                                                    error={errors.tipo_seguro_gastos_medicos?.message}
+                                                >
+                                                    <Select
+                                                        registration={register(
+                                                            "tipo_seguro_gastos_medicos",
+                                                        )}
+                                                    >
+                                                        <option value="">Seleccionar...</option>
+                                                        <option value="INDIVIDUAL">Individual</option>
+                                                        <option value="FAMILIAR">Familiar</option>
+                                                    </Select>
+                                                </Field>
+                                                {tipoSeguroGastos && (
+                                                    <>
+                                                        <Field
+                                                            label="Empresa aseguradora *"
+                                                            error={
+                                                                errors.empresa_seguro_gastos_medicos?.message
+                                                            }
+                                                        >
+                                                            <Input
+                                                                registration={register(
+                                                                    "empresa_seguro_gastos_medicos",
+                                                                )}
+                                                                placeholder="Nombre de la empresa aseguradora"
+                                                            />
+                                                        </Field>
+                                                        <Field
+                                                            label="Categoría *"
+                                                            error={
+                                                                errors.categoria_seguro_gastos_medicos?.message
+                                                            }
+                                                        >
+                                                            <Input
+                                                                registration={register(
+                                                                    "categoria_seguro_gastos_medicos",
+                                                                )}
+                                                                placeholder="Categoría del seguro médico"
+                                                            />
+                                                        </Field>
+                                                    </>
+                                                )}
+                                            </div>
                                         )}
                                     </div>
 
@@ -769,19 +923,26 @@ function EditarUsuario() {
                                             />
                                         </div>
                                         {tieneSeguroVida && (
-                                            <Field
-                                                label="Empresa aseguradora *"
-                                                error={errors.empresa_seguro_vida?.message}
-                                            >
-                                                <Input
-                                                    registration={register("empresa_seguro_vida", {
-                                                        required: tieneSeguroVida
-                                                            ? "La empresa aseguradora es requerida"
-                                                            : false,
-                                                    })}
-                                                    placeholder="Nombre de la empresa aseguradora"
-                                                />
-                                            </Field>
+                                            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                                                <Field
+                                                    label="Empresa aseguradora *"
+                                                    error={errors.empresa_seguro_vida?.message}
+                                                >
+                                                    <Input
+                                                        registration={register("empresa_seguro_vida")}
+                                                        placeholder="Nombre de la empresa aseguradora"
+                                                    />
+                                                </Field>
+                                                <Field
+                                                    label="Categoría *"
+                                                    error={errors.categoria_seguro_vida?.message}
+                                                >
+                                                    <Input
+                                                        registration={register("categoria_seguro_vida")}
+                                                        placeholder="Categoría del seguro de vida"
+                                                    />
+                                                </Field>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
@@ -854,6 +1015,7 @@ function EditarUsuario() {
                                 <textarea
                                     value={pdfNotes}
                                     onChange={(event) => setPdfNotes(event.target.value)}
+                                    maxLength={160}
                                     rows={7}
                                     className="w-full rounded-2xl border border-[#dce3ee] bg-[#f8faff] px-4 py-3 text-[#071b3b] outline-none transition focus:border-[#3162e9]"
                                     placeholder="Escribe aquí las observaciones, comentarios o información adicional que quieres incluir en el PDF..."

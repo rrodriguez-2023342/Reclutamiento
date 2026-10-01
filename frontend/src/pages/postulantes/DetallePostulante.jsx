@@ -819,6 +819,7 @@ function DetallePostulante() {
               correo: postulante.correo,
               dpi: postulante.dpi,
               dpi_extendido_en: postulante.dpi_extendido_en,
+              nit: postulante.nit,
               direccion: postulante.direccion,
               fecha_nacimiento: postulante.fecha_nacimiento,
               sueldo: postulante.salario_aspira,
@@ -944,9 +945,9 @@ function DetallePostulante() {
               {p.estado === "RECHAZADO" && p.motivo_rechazo && (
                 <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-4">
                   <p className="text-sm font-semibold text-[#df353c]">
-                      Motivo de rechazo
-                      {p.fecha_rechazo ? ` — ${date(p.fecha_rechazo)}` : ""}
-                    </p>
+                    Motivo de rechazo
+                    {p.fecha_rechazo ? ` — ${date(p.fecha_rechazo)}` : ""}
+                  </p>
                   {p.rechazado_por_usuario && (
                     <p className="mt-1 text-sm text-[#5b6e8b]">
                       Rechazado por:{" "}
@@ -1119,9 +1120,15 @@ function HistorialRechazoModal({ postulanteId, onClose }) {
             <table className="w-full border-separate border-spacing-0 text-left text-sm">
               <thead>
                 <tr className="text-base font-semibold text-[#5b6e8b]">
-                  <th className="border-b border-[#dfe5ee] px-4 py-3">Fecha Rechazo</th>
-                  <th className="border-b border-[#dfe5ee] px-4 py-3">Motivo</th>
-                  <th className="border-b border-[#dfe5ee] px-4 py-3">Rechazado por</th>
+                  <th className="border-b border-[#dfe5ee] px-4 py-3">
+                    Fecha Rechazo
+                  </th>
+                  <th className="border-b border-[#dfe5ee] px-4 py-3">
+                    Motivo
+                  </th>
+                  <th className="border-b border-[#dfe5ee] px-4 py-3">
+                    Rechazado por
+                  </th>
                 </tr>
               </thead>
               <tbody>

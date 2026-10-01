@@ -6,7 +6,7 @@ class DashboardService {
   async obtenerResumen() {
     const [totalPostulantes, enProceso, totalPlazas, ultimasSolicitudes] = await prisma.$transaction([
       prisma.postulante.count(),
-      prisma.postulante.count({ where: { estado: 'RECLUTAMIENTO' } }),
+      prisma.postulante.count({ where: { estado: 'Reclutamiento' } }),
       prisma.plaza.count({ where: { activo: true } }),
       prisma.postulante.findMany({
         take: 4,

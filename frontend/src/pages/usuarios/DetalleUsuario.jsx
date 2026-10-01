@@ -359,6 +359,34 @@ function DetalleUsuario() {
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                        Fecha de contratación
+                                    </p>
+                                    <p
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.fecha_contratacion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                    >
+                                        {formatDate(usuario.fecha_contratacion)}
+                                    </p>
+                                </div>
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                        Tipo de contrato
+                                    </p>
+                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                        {usuario.tipo_contrato === "DEFINIDO"
+                                            ? "Definido"
+                                            : "Indefinido"}
+                                    </p>
+                                    {usuario.tipo_contrato === "DEFINIDO" && (
+                                        <p className="mt-2 text-sm text-[#5b6e8b]">
+                                            Finaliza:{" "}
+                                            <span className="font-semibold text-[#071b3b]">
+                                                {formatDate(usuario.fecha_fin_contrato)}
+                                            </span>
+                                        </p>
+                                    )}
+                                </div>
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
                                     <p className="text-sm font-semibold text-[#5b6e8b]">Sexo</p>
                                     <p
                                         className={`mt-2 text-lg font-bold ${isEmpty(usuario.sexo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
@@ -372,6 +400,24 @@ function DetalleUsuario() {
                                         className={`mt-2 text-lg font-bold ${isEmpty(usuario.dpi) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                     >
                                         {usuario.dpi || "—"}
+                                    </p>
+                                </div>
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">NIT</p>
+                                    <p
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.nit) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                    >
+                                        {usuario.nit || "—"}
+                                    </p>
+                                </div>
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                        No. de afiliación IGSS
+                                    </p>
+                                    <p
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.numero_afiliacion_igss) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                    >
+                                        {usuario.numero_afiliacion_igss || "—"}
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-[#f0f4fa] p-5">
@@ -489,12 +535,26 @@ function DetalleUsuario() {
                                         {usuario.tiene_seguro_gastos_medicos ? "Sí" : "No"}
                                     </p>
                                     {usuario.tiene_seguro_gastos_medicos && (
-                                        <p className="mt-2 text-sm text-[#5b6e8b]">
-                                            Empresa:{" "}
-                                            <span className="font-semibold text-[#071b3b]">
-                                                {usuario.empresa_seguro_gastos_medicos || "—"}
-                                            </span>
-                                        </p>
+                                        <>
+                                            <p className="mt-2 text-sm text-[#5b6e8b]">
+                                                Empresa:{" "}
+                                                <span className="font-semibold text-[#071b3b]">
+                                                    {usuario.empresa_seguro_gastos_medicos || "—"}
+                                                </span>
+                                            </p>
+                                            <p className="mt-2 text-sm text-[#5b6e8b]">
+                                                Modalidad:{" "}
+                                                <span className="font-semibold text-[#071b3b]">
+                                                    {usuario.tipo_seguro_gastos_medicos || "—"}
+                                                </span>
+                                            </p>
+                                            <p className="mt-2 text-sm text-[#5b6e8b]">
+                                                Categoría:{" "}
+                                                <span className="font-semibold text-[#071b3b]">
+                                                    {usuario.categoria_seguro_gastos_medicos || "—"}
+                                                </span>
+                                            </p>
+                                        </>
                                     )}
                                 </div>
                                 <div className="rounded-xl bg-[#f0f4fa] p-5">
@@ -507,12 +567,20 @@ function DetalleUsuario() {
                                         {usuario.tiene_seguro_vida ? "Sí" : "No"}
                                     </p>
                                     {usuario.tiene_seguro_vida && (
-                                        <p className="mt-2 text-sm text-[#5b6e8b]">
-                                            Empresa:{" "}
-                                            <span className="font-semibold text-[#071b3b]">
-                                                {usuario.empresa_seguro_vida || "—"}
-                                            </span>
-                                        </p>
+                                        <>
+                                            <p className="mt-2 text-sm text-[#5b6e8b]">
+                                                Empresa:{" "}
+                                                <span className="font-semibold text-[#071b3b]">
+                                                    {usuario.empresa_seguro_vida || "—"}
+                                                </span>
+                                            </p>
+                                            <p className="mt-2 text-sm text-[#5b6e8b]">
+                                                Categoría:{" "}
+                                                <span className="font-semibold text-[#071b3b]">
+                                                    {usuario.categoria_seguro_vida || "—"}
+                                                </span>
+                                            </p>
+                                        </>
                                     )}
                                 </div>
                             </div>

@@ -1,0 +1,1 @@
+ALTER TABLE `usuarios` ADD COLUMN `fecha_contratacion` DATE NULL;

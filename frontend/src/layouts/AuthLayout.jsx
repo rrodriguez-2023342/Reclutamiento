@@ -23,7 +23,7 @@ export function Brand() {
   return (
     <div className="flex items-center gap-3">
       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#3162e9] text-white"><BriefcaseBusiness className="h-7 w-7" strokeWidth={2.1} /></div>
-      <div><p className="text-[22px] font-extrabold leading-none tracking-[-0.045em]">RECLUTAMIENTO</p><p className="mt-1 text-sm text-[#687893]">Gestión de Candidatos</p></div>
+      <div><p className="text-[22px] font-extrabold leading-none tracking-[-0.045em]">GHCorp</p><p className="mt-1 text-sm text-[#687893]">Gestión de Candidatos</p></div>
     </div>
   )
 }

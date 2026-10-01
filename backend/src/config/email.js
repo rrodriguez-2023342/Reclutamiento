@@ -26,7 +26,7 @@ const createTransporter = () => {
 }
 
 const getFrom = () => ({
-  name: process.env.SMTP_FROM_NAME || 'Sistema Reclutamiento',
+  name: process.env.SMTP_FROM_NAME || 'Sistema GHCorp',
   address: process.env.SMTP_FROM || process.env.BREVO_SENDER_EMAIL || 'no-reply@localhost',
 })
 
@@ -66,7 +66,7 @@ export const sendPasswordResetEmail = async (to, nombre, resetToken) => {
       </p>
       <p>Este enlace expira en <strong>1 hora</strong>. Si no solicitaste esto, ignora este correo.</p>
       <hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e4e7;">
-      <p style="color: #6b6375; font-size: 12px;">Sistema de Reclutamiento</p>
+      <p style="color: #6b6375; font-size: 12px;">Sistema GHCorp</p>
     </div>
   `;
 
@@ -83,7 +83,7 @@ export const sendTemporalPasswordEmail = async (
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <h2 style="color: #1e3a8a;">Bienvenido al Sistema de Reclutamiento</h2>
+      <h2 style="color: #1e3a8a;">Bienvenido al Sistema GHCorp</h2>
       <p>Hola <strong>${nombre}</strong>,</p>
       <p>Se ha creado tu cuenta. Tu contraseña temporal es:</p>
       <div style="background: #f0fdf4; border: 1px solid #1e3a8a; padding: 16px; border-radius: 6px; text-align: center; margin: 20px 0;">
@@ -91,13 +91,13 @@ export const sendTemporalPasswordEmail = async (
       </div>
       <p>Inicia sesión en <a href="${loginUrl}">${loginUrl}</a> y se te pedirá que cambies tu contraseña.</p>
       <hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e4e7;">
-      <p style="color: #6b6375; font-size: 12px;">Sistema de Reclutamiento</p>
+      <p style="color: #6b6375; font-size: 12px;">Sistema GHCorp</p>
     </div>
   `;
 
   await sendEmail({
     to,
-    subject: "Tu cuenta en Sistema de Reclutamiento - Contraseña temporal",
+    subject: "Tu cuenta en Sistema GHCorp - Contraseña temporal",
     html,
   });
 };
@@ -151,7 +151,7 @@ export const sendEstadoPostulanteEmail = async (to, nombre, nuevoEstado) => {
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <h2 style="color: #1e3a8a;">Sistema de Reclutamiento</h2>
+      <h2 style="color: #1e3a8a;">Sistema GHCorp</h2>
       <p>Hola <strong>${nombre}</strong>,</p>
       <div style="background: ${contenido.fondo}; border: 1px solid ${contenido.borde}; padding: 16px; border-radius: 6px; margin: 20px 0;">
         <p style="margin: 0; font-size: 16px; font-weight: bold; color: ${contenido.color};">${contenido.titulo}</p>
@@ -159,7 +159,7 @@ export const sendEstadoPostulanteEmail = async (to, nombre, nuevoEstado) => {
       <p>${contenido.mensaje}</p>
       <hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e4e7;">
       <p style="color: #6b6375; font-size: 12px;">Este es un mensaje automático, por favor no respondas a este correo.</p>
-      <p style="color: #6b6375; font-size: 12px;">Sistema de Reclutamiento</p>
+      <p style="color: #6b6375; font-size: 12px;">Sistema GHCorp</p>
     </div>
   `;
 

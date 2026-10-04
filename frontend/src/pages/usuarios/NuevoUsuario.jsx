@@ -12,6 +12,7 @@ import {
 } from "../../components/postulantes/formControls.jsx";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import UsuarioPdf from "../../components/usuarios/UsuarioPdf.jsx";
+import CamposAltaUsuario from "../../components/usuarios/CamposAltaUsuario.jsx";
 import {
     createUsuario,
     getRoles,
@@ -60,6 +61,21 @@ function NuevoUsuario() {
         patronos.find((patrono) => patrono.id === Number(selectedPatrono))
             ?.razon_social || "";
 
+    const getHighestEducation = (historial = []) => {
+        const priority = {
+            PRIMARIA: 1,
+            BASICOS: 2,
+            DIVERSIFICADO: 3,
+            TECNICO: 4,
+            LICENCIATURA: 5,
+            MAESTRIA: 6,
+            OTRO: 0,
+        };
+        return [...historial].sort(
+            (a, b) => (priority[b.nivel] || 0) - (priority[a.nivel] || 0),
+        )[0]?.nivel || "";
+    };
+
     useEffect(() => {
         let active = true;
         Promise.all([getRoles(), getEmpresas(), getPatronos(), getPuestos()])
@@ -91,14 +107,33 @@ function NuevoUsuario() {
                 ...defaultUsuarioValues,
                 nombre: postulante.nombre || "",
                 correo: postulante.correo || "",
+                empresa_id: postulante.empresa_id || null,
+                patrono_id: postulante.patrono_id || null,
                 dpi: postulante.dpi || "",
                 dpi_extendido_en: postulante.dpi_extendido_en || "",
                 nit: postulante.nit || "",
                 direccion: postulante.direccion || "",
+                estado_civil: postulante.estado_civil || "",
+                telefono: postulante.telefono || "",
+                ultimo_grado_cursado: getHighestEducation(
+                    postulante.educacionHistorial,
+                ),
+                contacto_emergencia_nombre:
+                    postulante.datosFamiliares?.find(
+                        (familiar) => familiar.parentesco === "EMERGENCIA",
+                    )?.nombres_apellidos || "",
+                contacto_emergencia_telefono:
+                    postulante.datosFamiliares?.find(
+                        (familiar) => familiar.parentesco === "EMERGENCIA",
+                    )?.telefono || "",
                 fecha_nacimiento: postulante.fecha_nacimiento
                     ? postulante.fecha_nacimiento.split("T")[0]
                     : "",
+                fecha_contratacion: postulante.fecha_contratacion
+                    ? postulante.fecha_contratacion.split("T")[0]
+                    : "",
                 sueldo: postulante.sueldo ?? "",
+                moneda_sueldo: postulante.moneda_sueldo || "QUETZAL",
             });
         }
     }, [location.state, reset]);
@@ -112,6 +147,10 @@ function NuevoUsuario() {
                 patrono_id: values.patrono_id || null,
                 puesto_id: values.puesto_id || null,
                 fecha_nacimiento: values.fecha_nacimiento || null,
+                estado_civil: values.estado_civil || null,
+                nacionalidad: values.nacionalidad || null,
+                telefono: values.telefono || null,
+                ultimo_grado_cursado: values.ultimo_grado_cursado || null,
                 tipo_contrato: values.tipo_contrato || "INDEFINIDO",
                 fecha_fin_contrato:
                     values.tipo_contrato === "DEFINIDO"
@@ -125,6 +164,14 @@ function NuevoUsuario() {
                 direccion: values.direccion || null,
                 sueldo: values.sueldo || null,
                 bonos: values.bonos || null,
+                moneda_sueldo: values.moneda_sueldo || "QUETZAL",
+                banco: values.banco || null,
+                tipo_cuenta_bancaria: values.tipo_cuenta_bancaria || null,
+                numero_cuenta_bancaria: values.numero_cuenta_bancaria || null,
+                contacto_emergencia_nombre:
+                    values.contacto_emergencia_nombre || null,
+                contacto_emergencia_telefono:
+                    values.contacto_emergencia_telefono || null,
                 tiene_seguro_gastos_medicos:
                     values.tiene_seguro_gastos_medicos || false,
                 empresa_seguro_gastos_medicos: values.tiene_seguro_gastos_medicos
@@ -376,7 +423,9 @@ function NuevoUsuario() {
                             />
                         </Field>
 
-                        <div className="grid gap-5 sm:grid-cols-2">
+                        <CamposAltaUsuario register={register} errors={errors} />
+
+                        <div className="grid gap-5 sm:grid-cols-3">
                             <Field label="Sueldo Base" error={errors.sueldo?.message}>
                                 <Input
                                     registration={register("sueldo")}
@@ -396,6 +445,15 @@ function NuevoUsuario() {
                                     step="0.01"
                                     placeholder="0.00"
                                 />
+                            </Field>
+                            <Field
+                                label="Moneda del sueldo"
+                                error={errors.moneda_sueldo?.message}
+                            >
+                                <Select registration={register("moneda_sueldo")}>
+                                    <option value="QUETZAL">Quetzales (GTQ)</option>
+                                    <option value="DOLAR">Dólares (USD)</option>
+                                </Select>
                             </Field>
                         </div>
 

@@ -47,6 +47,18 @@ function traducirEnum(valor) {
     const traducciones = {
         MASCULINO: "Masculino",
         FEMENINO: "Femenino",
+        SOLTERO: "Soltero(a)",
+        CASADO: "Casado(a)",
+        UNIDO: "Unido(a)",
+        VIUDO: "Viudo(a)",
+        DIVORCIADO: "Divorciado(a)",
+        PRIMARIA: "Primaria",
+        BASICOS: "Básicos",
+        DIVERSIFICADO: "Diversificado",
+        TECNICO: "Técnico",
+        LICENCIATURA: "Licenciatura",
+        MAESTRIA: "Maestría",
+        OTRO: "Otro",
     };
     return traducciones[valor] || valor;
 }
@@ -55,11 +67,14 @@ function isEmpty(valor) {
     return valor === null || valor === undefined || valor === "";
 }
 
-function formatCurrency(value) {
+function formatCurrency(value, moneda = "QUETZAL") {
     if (value === null || value === undefined || value === "") return "—";
     const num = Number(value);
     if (Number.isNaN(num)) return "—";
-    return num.toLocaleString("es-GT", { style: "currency", currency: "GTQ" });
+    return num.toLocaleString("es-GT", {
+        style: "currency",
+        currency: moneda === "DOLAR" ? "USD" : "GTQ",
+    });
 }
 
 function initialsFromName(name = "") {
@@ -395,6 +410,30 @@ function DetalleUsuario() {
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">Estado civil</p>
+                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                        {traducirEnum(usuario.estado_civil)}
+                                    </p>
+                                </div>
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">Nacionalidad</p>
+                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                        {usuario.nacionalidad || "—"}
+                                    </p>
+                                </div>
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">Teléfono</p>
+                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                        {usuario.telefono || "—"}
+                                    </p>
+                                </div>
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">Último grado cursado</p>
+                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                        {traducirEnum(usuario.ultimo_grado_cursado)}
+                                    </p>
+                                </div>
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
                                     <p className="text-sm font-semibold text-[#5b6e8b]">DPI</p>
                                     <p
                                         className={`mt-2 text-lg font-bold ${isEmpty(usuario.dpi) ? "text-[#df353c]" : "text-[#071b3b]"}`}
@@ -442,6 +481,72 @@ function DetalleUsuario() {
                                 </div>
                             </div>
                         </section>
+
+                        <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                            <h2 className="text-lg font-bold text-[#071b3b]">
+                                Información bancaria
+                            </h2>
+                            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">Banco</p>
+                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">{usuario.banco || "—"}</p>
+                                </div>
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">Tipo de cuenta</p>
+                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">{usuario.tipo_cuenta_bancaria || "—"}</p>
+                                </div>
+                                <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">No. de cuenta bancaria</p>
+                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">{usuario.numero_cuenta_bancaria || "—"}</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                            <h2 className="text-lg font-bold text-[#071b3b]">
+                                Contacto de emergencia
+                            </h2>
+                            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">Nombre</p>
+                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">{usuario.contacto_emergencia_nombre || "—"}</p>
+                                </div>
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">Teléfono</p>
+                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">{usuario.contacto_emergencia_telefono || "—"}</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        {(usuario.fecha_baja || usuario.motivo_baja || usuario.notas_baja || usuario.reingreso_baja !== null) && (
+                            <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                                <h2 className="text-lg font-bold text-[#071b3b]">Datos de baja</h2>
+                                <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                                    <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                        <p className="text-sm font-semibold text-[#5b6e8b]">Fecha de baja</p>
+                                        <p className="mt-2 text-lg font-bold text-[#071b3b]">{formatDate(usuario.fecha_baja)}</p>
+                                    </div>
+                                    <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                        <p className="text-sm font-semibold text-[#5b6e8b]">Motivo</p>
+                                        <p className="mt-2 text-lg font-bold text-[#071b3b]">{usuario.motivo_baja || "—"}</p>
+                                    </div>
+                                    <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                        <p className="text-sm font-semibold text-[#5b6e8b]">¿Puede reingresar?</p>
+                                        <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                            {usuario.reingreso_baja == null
+                                                ? "—"
+                                                : usuario.reingreso_baja
+                                                  ? "Sí"
+                                                  : "No"}
+                                        </p>
+                                    </div>
+                                    <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
+                                        <p className="text-sm font-semibold text-[#5b6e8b]">Notas</p>
+                                        <p className="mt-2 whitespace-pre-wrap text-[#071b3b]">{usuario.notas_baja || "—"}</p>
+                                    </div>
+                                </div>
+                            </section>
+                        )}
 
                         <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
                             <div className="flex items-center justify-between">
@@ -503,7 +608,7 @@ function DetalleUsuario() {
                                     <p
                                         className={`mt-2 text-lg font-bold ${isEmpty(usuario.sueldo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                     >
-                                        {formatCurrency(usuario.sueldo)}
+                                        {formatCurrency(usuario.sueldo, usuario.moneda_sueldo)}
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-[#f0f4fa] p-5">
@@ -513,7 +618,7 @@ function DetalleUsuario() {
                                     <p
                                         className={`mt-2 text-lg font-bold ${isEmpty(usuario.bonos) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                     >
-                                        {formatCurrency(usuario.bonos)}
+                                        {formatCurrency(usuario.bonos, usuario.moneda_sueldo)}
                                     </p>
                                 </div>
                             </div>
@@ -598,6 +703,12 @@ function DetalleUsuario() {
                                         className={`mt-2 text-lg font-bold ${isEmpty(usuario.puesto) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                     >
                                         {usuario.puesto?.nombre || "Sin puesto"}
+                                    </p>
+                                </div>
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">Departamento</p>
+                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                        {usuario.puesto?.departamento?.nombre || "—"}
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-[#f0f4fa] p-5">

@@ -70,7 +70,14 @@ class UsuarioService {
         rol: { select: { id: true, nombre: true } },
         empresa: { select: { id: true, nombre_empresa: true } },
         patrono: { select: { id: true, razon_social: true } },
-        puesto: { select: { id: true, nombre: true, descripcion: true } },
+        puesto: {
+          select: {
+            id: true,
+            nombre: true,
+            descripcion: true,
+            departamento: { select: { nombre: true } },
+          },
+        },
       },
     });
 
@@ -125,6 +132,10 @@ class UsuarioService {
         patrono_id: data.patrono_id || null,
         puesto_id: data.puesto_id || null,
         fecha_nacimiento: data.fecha_nacimiento ? new Date(data.fecha_nacimiento) : null,
+        estado_civil: data.estado_civil || null,
+        nacionalidad: data.nacionalidad || null,
+        telefono: data.telefono || null,
+        ultimo_grado_cursado: data.ultimo_grado_cursado || null,
         fecha_contratacion: data.fecha_contratacion ? new Date(data.fecha_contratacion) : null,
         tipo_contrato: data.tipo_contrato || "INDEFINIDO",
         fecha_fin_contrato:
@@ -139,6 +150,12 @@ class UsuarioService {
         direccion: data.direccion || null,
         sueldo: data.sueldo || null,
         bonos: data.bonos || null,
+        moneda_sueldo: data.moneda_sueldo || "QUETZAL",
+        banco: data.banco || null,
+        tipo_cuenta_bancaria: data.tipo_cuenta_bancaria || null,
+        numero_cuenta_bancaria: data.numero_cuenta_bancaria || null,
+        contacto_emergencia_nombre: data.contacto_emergencia_nombre || null,
+        contacto_emergencia_telefono: data.contacto_emergencia_telefono || null,
         tiene_seguro_gastos_medicos: data.tiene_seguro_gastos_medicos ?? false,
         empresa_seguro_gastos_medicos: data.tiene_seguro_gastos_medicos
           ? data.empresa_seguro_gastos_medicos ?? null
@@ -344,6 +361,33 @@ class UsuarioService {
 
     // Devolver el usuario actualizado
     return resto;
+  }
+
+  async registrarBaja(id, data) {
+    const usuario = await prisma.usuario.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    if (!usuario) {
+      throw crearError("Usuario no encontrado", 404);
+    }
+
+    return prisma.usuario.update({
+      where: { id },
+      data: {
+        fecha_baja: new Date(`${data.fecha_baja}T00:00:00.000Z`),
+        motivo_baja: data.motivo_baja,
+        notas_baja: data.notas_baja || null,
+        reingreso_baja: data.reingreso_baja,
+      },
+      select: {
+        id: true,
+        fecha_baja: true,
+        motivo_baja: true,
+        notas_baja: true,
+        reingreso_baja: true,
+      },
+    });
   }
 
   // Desactivar un usuario, asegurando que no se pueda desactivar a si mismo y que exista y este activo

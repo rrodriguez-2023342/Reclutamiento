@@ -24,6 +24,11 @@ export const updateUsuario = async (id, usuario) => {
     return data.data
 }
 
+export const registrarBajaUsuario = async (id, baja) => {
+    const { data } = await api.post(`/usuarios/${id}/baja`, baja)
+    return data.data
+}
+
 // Desactivar un usuario
 export const desactivarUsuario = async (id) => {
     const { data } = await api.patch(`/usuarios/${id}/desactivar`)

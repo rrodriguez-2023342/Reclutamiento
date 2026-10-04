@@ -200,17 +200,31 @@ model Usuario {
   puesto_id           Int?         @map("puesto_id")
   puesto              Puesto?      @relation(fields: [puesto_id], references: [id], onDelete: SetNull)
   fecha_nacimiento    DateTime?    @map("fecha_nacimiento") @db.Date
+  estado_civil        EstadoCivil? @map("estado_civil")
   sexo                Sexo?        @map("sexo")
   dpi                 String?      @map("dpi") @db.VarChar(20)
   dpi_extendido_en    String?      @map("dpi_extendido_en") @db.VarChar(100)
   direccion           String?      @map("direccion") @db.Text
+  nacionalidad        String?      @map("nacionalidad") @db.VarChar(100)
+  telefono            String?      @map("telefono") @db.VarChar(20)
+  ultimo_grado_cursado NivelEducativo? @map("ultimo_grado_cursado")
   fecha_contratacion  DateTime?    @map("fecha_contratacion") @db.Date
   tipo_contrato       String       @default("INDEFINIDO") @map("tipo_contrato") @db.VarChar(20)
   fecha_fin_contrato  DateTime?    @map("fecha_fin_contrato") @db.Date
+  fecha_baja          DateTime?    @map("fecha_baja") @db.Date
+  motivo_baja         String?      @map("motivo_baja") @db.VarChar(100)
+  notas_baja          String?      @map("notas_baja") @db.Text
+  reingreso_baja      Boolean?     @map("reingreso_baja")
   nit                 String?      @map("nit") @db.VarChar(20)
   numero_afiliacion_igss String?    @map("numero_afiliacion_igss") @db.VarChar(30)
   sueldo              Decimal?     @map("sueldo") @db.Decimal(10, 2)
   bonos               Decimal?     @map("bonos") @db.Decimal(10, 2)
+  moneda_sueldo       TipoMoneda   @default(QUETZAL) @map("moneda_sueldo")
+  banco               String?      @map("banco") @db.VarChar(100)
+  tipo_cuenta_bancaria String?     @map("tipo_cuenta_bancaria") @db.VarChar(50)
+  numero_cuenta_bancaria String?   @map("numero_cuenta_bancaria") @db.VarChar(50)
+  contacto_emergencia_nombre String? @map("contacto_emergencia_nombre") @db.VarChar(150)
+  contacto_emergencia_telefono String? @map("contacto_emergencia_telefono") @db.VarChar(20)
   tiene_seguro_gastos_medicos      Boolean   @default(false) @map("tiene_seguro_gastos_medicos")
   empresa_seguro_gastos_medicos    String?   @map("empresa_seguro_gastos_medicos") @db.VarChar(100)
   tipo_seguro_gastos_medicos       String?   @map("tipo_seguro_gastos_medicos") @db.VarChar(20)

@@ -4,6 +4,7 @@ import {
   getUsuarioById,
   createUsuario,
   updateUsuario,
+  registrarBajaUsuario,
   desactivarUsuario,
   activarUsuario,
   resetPasswordUsuario,
@@ -19,6 +20,7 @@ router.get('/', listarUsuarios) // Obtiene la lista de usuarios
 router.get('/:id', getUsuarioById) // Obtiene la informacion de un usuario por su ID
 router.post('/', createUsuario) // Crea un nuevo usuario 
 router.put('/:id', updateUsuario) // Actualiza la informacion de un usuario por su ID
+router.post('/:id/baja', registrarBajaUsuario) // Guarda los datos de baja del usuario
 router.patch('/:id/desactivar', desactivarUsuario) // Desactiva un usuario mediante su ID
 router.patch('/:id/activar', activarUsuario) // Activa un usuario mediante su ID
 router.post('/:id/reset-password', resetPasswordUsuario) // Restable la contrasela de un usuario mediante su ID

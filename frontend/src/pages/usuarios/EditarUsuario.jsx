@@ -12,6 +12,7 @@ import {
 } from "../../components/postulantes/formControls.jsx";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import UsuarioPdf from "../../components/usuarios/UsuarioPdf.jsx";
+import CamposAltaUsuario from "../../components/usuarios/CamposAltaUsuario.jsx";
 import {
     getRoles,
     getUsuarioById,
@@ -34,6 +35,7 @@ function EditarUsuario() {
     const [puestos, setPuestos] = useState([]);
     const [serverError, setServerError] = useState("");
     const [loadingUser, setLoadingUser] = useState(true);
+    const [usuarioOriginal, setUsuarioOriginal] = useState(null);
 
     const {
         register,
@@ -107,6 +109,7 @@ function EditarUsuario() {
         getUsuarioById(id)
             .then((data) => {
                 if (active) {
+                    setUsuarioOriginal(data);
                     reset({
                         ...defaultUsuarioValues,
                         nombre: data.nombre || "",
@@ -119,6 +122,18 @@ function EditarUsuario() {
                         fecha_nacimiento: data.fecha_nacimiento
                             ? data.fecha_nacimiento.split("T")[0]
                             : "",
+                        estado_civil: data.estado_civil || "",
+                        nacionalidad: data.nacionalidad || "",
+                        telefono: data.telefono || "",
+                        ultimo_grado_cursado: data.ultimo_grado_cursado || "",
+                        moneda_sueldo: data.moneda_sueldo || "QUETZAL",
+                        banco: data.banco || "",
+                        tipo_cuenta_bancaria: data.tipo_cuenta_bancaria || "",
+                        numero_cuenta_bancaria: data.numero_cuenta_bancaria || "",
+                        contacto_emergencia_nombre:
+                            data.contacto_emergencia_nombre || "",
+                        contacto_emergencia_telefono:
+                            data.contacto_emergencia_telefono || "",
                         fecha_contratacion: data.fecha_contratacion
                             ? data.fecha_contratacion.split("T")[0]
                             : "",
@@ -175,6 +190,10 @@ function EditarUsuario() {
                 patrono_id: values.patrono_id || null,
                 puesto_id: values.puesto_id || null,
                 fecha_nacimiento: values.fecha_nacimiento || null,
+                estado_civil: values.estado_civil || null,
+                nacionalidad: values.nacionalidad || null,
+                telefono: values.telefono || null,
+                ultimo_grado_cursado: values.ultimo_grado_cursado || null,
                 tipo_contrato: values.tipo_contrato || "INDEFINIDO",
                 fecha_fin_contrato:
                     values.tipo_contrato === "DEFINIDO"
@@ -188,6 +207,14 @@ function EditarUsuario() {
                 direccion: values.direccion || null,
                 sueldo: values.sueldo || null,
                 bonos: values.bonos || null,
+                moneda_sueldo: values.moneda_sueldo || "QUETZAL",
+                banco: values.banco || null,
+                tipo_cuenta_bancaria: values.tipo_cuenta_bancaria || null,
+                numero_cuenta_bancaria: values.numero_cuenta_bancaria || null,
+                contacto_emergencia_nombre:
+                    values.contacto_emergencia_nombre || null,
+                contacto_emergencia_telefono:
+                    values.contacto_emergencia_telefono || null,
                 motivo_cambio_sueldo: hasSalaryChange
                     ? values.motivo_cambio_sueldo || null
                     : null,
@@ -467,7 +494,9 @@ function EditarUsuario() {
                                 />
                             </Field>
 
-                            <div className="grid gap-5 sm:grid-cols-2">
+                            <CamposAltaUsuario register={register} errors={errors} />
+
+                            <div className="grid gap-5 sm:grid-cols-3">
                                 <Field label="Sueldo Base" error={errors.sueldo?.message}>
                                     <Input
                                         registration={register("sueldo")}
@@ -487,6 +516,15 @@ function EditarUsuario() {
                                         step="0.01"
                                         placeholder="0.00"
                                     />
+                                </Field>
+                                <Field
+                                    label="Moneda del sueldo"
+                                    error={errors.moneda_sueldo?.message}
+                                >
+                                    <Select registration={register("moneda_sueldo")}>
+                                        <option value="QUETZAL">Quetzales (GTQ)</option>
+                                        <option value="DOLAR">Dólares (USD)</option>
+                                    </Select>
                                 </Field>
                             </div>
 
@@ -623,6 +661,11 @@ function EditarUsuario() {
                             </button>
                             <UsuarioPdf
                                 getUsuario={getValues}
+                                usuarioId={Number(id)}
+                                fechaBajaInicial={usuarioOriginal?.fecha_baja}
+                                motivoBajaInicial={usuarioOriginal?.motivo_baja}
+                                notasBajaInicial={usuarioOriginal?.notas_baja}
+                                reingresoBajaInicial={usuarioOriginal?.reingreso_baja}
                                 puesto={puestoSeleccionado}
                                 empresa={empresaSeleccionada}
                                 patrono={patronoSeleccionado}

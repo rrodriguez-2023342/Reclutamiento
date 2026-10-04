@@ -1,6 +1,7 @@
 import {
   createUsuarioSchema,
   updateUsuarioSchema,
+  registrarBajaUsuarioSchema,
   listarUsuariosQuerySchema,
 } from "../validators/usuarios.validator.js";
 import { usuarioService } from "../services/usuario.service.js";
@@ -91,6 +92,17 @@ export const updateUsuario = async (req, res) => {
   para realizar la actualizacion */
   const usuario = await usuarioService.actualizar(id, data, req.userId);
   res.json({ status: "ok", data: usuario });
+};
+
+export const registrarBajaUsuario = async (req, res) => {
+  const id = parsearId(req, res);
+  if (!id) return;
+
+  const data = validar(registrarBajaUsuarioSchema, req.body, res);
+  if (!data) return;
+
+  const baja = await usuarioService.registrarBaja(id, data);
+  res.json({ status: "ok", data: baja });
 };
 
 // Desactica un usuario mediante su ID

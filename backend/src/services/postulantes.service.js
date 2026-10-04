@@ -294,6 +294,7 @@ class PostulanteService {
         id: true,
         estado: true,
         fecha_registro: true,
+        fecha_contratacion: true,
         nombre_completo: true,
         correo: true,
       },

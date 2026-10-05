@@ -82,6 +82,8 @@ const text = (value) =>
   value === null || value === undefined || value === "" ? "—" : value;
 const boolean = (value) =>
   value === null || value === undefined ? "—" : value ? "Sí" : "No";
+const afiliacionDetalle = (valor, detalle) =>
+  valor === true && detalle ? `Sí (${detalle})` : boolean(valor);
 const date = (value) => {
   if (!value) return "—";
   const parsed = new Date(`${String(value).slice(0, 10)}T12:00:00`);
@@ -384,23 +386,67 @@ function SectionContent({ section, p, onReload }) {
             items={[
               [
                 "Afiliación gremial",
-                boolean(p.afiliacion_gremial),
+                afiliacionDetalle(
+                  p.afiliacion_gremial,
+                  p.afiliacion_gremial_especificar,
+                ),
                 p.afiliacion_gremial,
               ],
               [
-                "Afiliación religiosa",
-                boolean(p.afiliacion_religiosa),
-                p.afiliacion_religiosa,
-              ],
-              [
                 "Afiliación política",
-                boolean(p.afiliacion_politica),
+                afiliacionDetalle(
+                  p.afiliacion_politica,
+                  p.afiliacion_politica_especificar,
+                ),
                 p.afiliacion_politica,
               ],
               [
+                "Afiliación social",
+                afiliacionDetalle(
+                  p.afiliacion_sociales,
+                  p.afiliacion_sociales_especificar,
+                ),
+                p.afiliacion_sociales,
+              ],
+              [
+                "Afiliación religiosa",
+                afiliacionDetalle(
+                  p.afiliacion_religiosa,
+                  p.afiliacion_religiosa_especificar,
+                ),
+                p.afiliacion_religiosa,
+              ],
+              [
+                "Afiliación cívica",
+                afiliacionDetalle(
+                  p.afiliacion_civicos,
+                  p.afiliacion_civicos_especificar,
+                ),
+                p.afiliacion_civicos,
+              ],
+              [
+                "Afiliación sindical",
+                afiliacionDetalle(
+                  p.afiliacion_sindicales,
+                  p.afiliacion_sindicales_especificar,
+                ),
+                p.afiliacion_sindicales,
+              ],
+              [
                 "Afiliación deportiva",
-                boolean(p.afiliacion_deportiva),
+                afiliacionDetalle(
+                  p.afiliacion_deportiva,
+                  p.afiliacion_deportiva_especificar,
+                ),
                 p.afiliacion_deportiva,
+              ],
+              [
+                "Otras afiliaciones",
+                afiliacionDetalle(
+                  p.afiliacion_otros,
+                  p.afiliacion_otros_especificar,
+                ),
+                p.afiliacion_otros,
               ],
               [
                 "Practica deporte",
@@ -410,12 +456,18 @@ function SectionContent({ section, p, onReload }) {
               ["Deporte", text(p.deporte_cual), p.deporte_cual],
               [
                 "Enfermedad grave",
-                boolean(p.ha_estado_enfermo_gravedad),
+                afiliacionDetalle(
+                  p.ha_estado_enfermo_gravedad,
+                  p.ha_estado_enfermo_gravedad_especificar,
+                ),
                 p.ha_estado_enfermo_gravedad,
               ],
               [
                 "Toma medicamento",
-                boolean(p.toma_medicamento),
+                afiliacionDetalle(
+                  p.toma_medicamento,
+                  p.toma_medicamento_especificar,
+                ),
                 p.toma_medicamento,
               ],
               ["Fuma o bebe", boolean(p.fuma_o_bebe), p.fuma_o_bebe],
@@ -426,7 +478,10 @@ function SectionContent({ section, p, onReload }) {
               ],
               [
                 "Impedimento físico",
-                boolean(p.impedimento_fisico),
+                afiliacionDetalle(
+                  p.impedimento_fisico,
+                  p.impedimento_fisico_especificar,
+                ),
                 p.impedimento_fisico,
               ],
               [

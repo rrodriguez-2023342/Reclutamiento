@@ -109,18 +109,33 @@ export const createPostulanteSchema = z.object({
 
   // Afiliaciones
   afiliacion_gremial: booleanoOpcional(),
-  afiliacion_religiosa: booleanoOpcional(),
+  afiliacion_gremial_especificar: textoOpcional(255),
   afiliacion_politica: booleanoOpcional(),
+  afiliacion_politica_especificar: textoOpcional(255),
+  afiliacion_sociales: booleanoOpcional(),
+  afiliacion_sociales_especificar: textoOpcional(255),
+  afiliacion_religiosa: booleanoOpcional(),
+  afiliacion_religiosa_especificar: textoOpcional(255),
+  afiliacion_civicos: booleanoOpcional(),
+  afiliacion_civicos_especificar: textoOpcional(255),
+  afiliacion_sindicales: booleanoOpcional(),
+  afiliacion_sindicales_especificar: textoOpcional(255),
   afiliacion_deportiva: booleanoOpcional(),
+  afiliacion_deportiva_especificar: textoOpcional(255),
+  afiliacion_otros: booleanoOpcional(),
+  afiliacion_otros_especificar: textoOpcional(255),
 
   // Salud y hábitos
   practica_deporte: booleanoOpcional(),
   deporte_cual: textoOpcional(100),
   ha_estado_enfermo_gravedad: booleanoOpcional(),
+  ha_estado_enfermo_gravedad_especificar: textoOpcional(255),
   toma_medicamento: booleanoOpcional(),
+  toma_medicamento_especificar: textoOpcional(255),
   fuma_o_bebe: booleanoOpcional(),
   fuma_bebe_frecuencia: textoOpcional(100),
   impedimento_fisico: booleanoOpcional(),
+  impedimento_fisico_especificar: textoOpcional(255),
 
   // Situación socioeconómica
   personas_dependientes: enteroOpcional(0, 99),

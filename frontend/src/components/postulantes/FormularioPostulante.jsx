@@ -12,6 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
+  AffiliationField,
   BooleanField,
   Field,
   Input,
@@ -165,16 +166,31 @@ function normalizarPostulante(p) {
     debilidad_2: aTexto(p.debilidad_2),
     debilidad_3: aTexto(p.debilidad_3),
     afiliacion_gremial: p.afiliacion_gremial ?? null,
-    afiliacion_religiosa: p.afiliacion_religiosa ?? null,
+    afiliacion_gremial_especificar: aTexto(p.afiliacion_gremial_especificar),
     afiliacion_politica: p.afiliacion_politica ?? null,
+    afiliacion_politica_especificar: aTexto(p.afiliacion_politica_especificar),
+    afiliacion_sociales: p.afiliacion_sociales ?? null,
+    afiliacion_sociales_especificar: aTexto(p.afiliacion_sociales_especificar),
+    afiliacion_religiosa: p.afiliacion_religiosa ?? null,
+    afiliacion_religiosa_especificar: aTexto(p.afiliacion_religiosa_especificar),
+    afiliacion_civicos: p.afiliacion_civicos ?? null,
+    afiliacion_civicos_especificar: aTexto(p.afiliacion_civicos_especificar),
+    afiliacion_sindicales: p.afiliacion_sindicales ?? null,
+    afiliacion_sindicales_especificar: aTexto(p.afiliacion_sindicales_especificar),
     afiliacion_deportiva: p.afiliacion_deportiva ?? null,
+    afiliacion_deportiva_especificar: aTexto(p.afiliacion_deportiva_especificar),
+    afiliacion_otros: p.afiliacion_otros ?? null,
+    afiliacion_otros_especificar: aTexto(p.afiliacion_otros_especificar),
     practica_deporte: p.practica_deporte ?? null,
     deporte_cual: aTexto(p.deporte_cual),
     ha_estado_enfermo_gravedad: p.ha_estado_enfermo_gravedad ?? null,
+    ha_estado_enfermo_gravedad_especificar: aTexto(p.ha_estado_enfermo_gravedad_especificar),
     toma_medicamento: p.toma_medicamento ?? null,
+    toma_medicamento_especificar: aTexto(p.toma_medicamento_especificar),
     fuma_o_bebe: p.fuma_o_bebe ?? null,
     fuma_bebe_frecuencia: aTexto(p.fuma_bebe_frecuencia),
     impedimento_fisico: p.impedimento_fisico ?? null,
+    impedimento_fisico_especificar: aTexto(p.impedimento_fisico_especificar),
     personas_dependientes: aNumero(p.personas_dependientes),
     total_efectivo_hogar: aNumero(p.total_efectivo_hogar),
     vivienda_tipo: aEnum(p.vivienda_tipo),
@@ -340,6 +356,19 @@ function FormularioPostulante({ postulanteId }) {
       label={label}
       value={values[name]}
       onChange={(value) => setValue(name, value, { shouldDirty: true })}
+    />
+  );
+  const affiliation = (name, label) => (
+    <AffiliationField
+      label={label}
+      value={values[name]}
+      especificarRegistration={register(`${name}_especificar`)}
+      onChange={(value) => {
+        setValue(name, value, { shouldDirty: true });
+        if (value !== true) {
+          setValue(`${name}_especificar`, "", { shouldDirty: true });
+        }
+      }}
     />
   );
   const stepFields = {
@@ -754,11 +783,15 @@ function FormularioPostulante({ postulanteId }) {
               title="Sección 3: Salud, hábitos y economía"
               description="Esta información es opcional; complete solo lo que corresponda."
             />
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {boolean("afiliacion_gremial", "Afiliación gremial")}
-              {boolean("afiliacion_religiosa", "Afiliación religiosa")}
-              {boolean("afiliacion_politica", "Afiliación política")}
-              {boolean("afiliacion_deportiva", "Afiliación deportiva")}
+            <div className="grid gap-6 md:grid-cols-2">
+              {affiliation("afiliacion_gremial", "Afiliación gremial")}
+              {affiliation("afiliacion_politica", "Afiliación política")}
+              {affiliation("afiliacion_sociales", "Afiliación social")}
+              {affiliation("afiliacion_religiosa", "Afiliación religiosa")}
+              {affiliation("afiliacion_civicos", "Afiliación cívica")}
+              {affiliation("afiliacion_sindicales", "Afiliación sindical")}
+              {affiliation("afiliacion_deportiva", "Afiliación deportiva")}
+              {affiliation("afiliacion_otros", "Otras afiliaciones")}
             </div>
             <div className="mt-7 grid gap-6 md:grid-cols-3">
               {boolean("practica_deporte", "¿Practica deporte?")}
@@ -767,24 +800,24 @@ function FormularioPostulante({ postulanteId }) {
                   <Input registration={register("deporte_cual")} />
                 </Field>
               )}
-              {boolean(
+              {affiliation(
                 "ha_estado_enfermo_gravedad",
                 "¿Ha estado enfermo de gravedad?",
               )}
-              {boolean("toma_medicamento", "¿Toma algún medicamento?")}
+              {affiliation("toma_medicamento", "¿Toma algún medicamento?")}
               {boolean("fuma_o_bebe", "¿Fuma o bebe?")}
               {values.fuma_o_bebe === true && (
                 <Field label="Frecuencia">
                   <Input registration={register("fuma_bebe_frecuencia")} />
                 </Field>
               )}
-              {boolean(
+              {affiliation(
                 "impedimento_fisico",
                 "¿Tiene algún impedimento físico?",
               )}
             </div>
             <div className="mt-7 grid gap-5 md:grid-cols-3">
-              <Field label="Personas dependientes">
+              <Field label="Número de personas que dependen de usted">
                 <Input
                   type="number"
                   min="0"

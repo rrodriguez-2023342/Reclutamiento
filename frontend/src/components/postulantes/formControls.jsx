@@ -164,6 +164,27 @@ export function BooleanField({ label, value, onChange }) {
   );
 }
 
+export function AffiliationField({
+  label,
+  value,
+  onChange,
+  especificarRegistration,
+}) {
+  return (
+    <div>
+      <BooleanField label={label} value={value} onChange={onChange} />
+      {value === true && (
+        <Field label="Especifique" className="mt-3">
+          <Input
+            registration={especificarRegistration}
+            maxLength={255}
+          />
+        </Field>
+      )}
+    </div>
+  );
+}
+
 export function PasswordInput({
   registration,
   error,

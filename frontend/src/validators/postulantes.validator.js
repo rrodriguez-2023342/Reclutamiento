@@ -95,6 +95,7 @@ const experienciaSchema = z.object({
     emptyToNull,
     z.enum(["RENUNCIA", "DESPIDO", "REORGANIZACION", "OTRO"]).nullable(),
   ),
+  motivo_retiro_otro: optionalText(255),
 });
 const referenciaSchema = z.object({
   nombre: z.string().trim().min(1, "El nombre es requerido").max(150),

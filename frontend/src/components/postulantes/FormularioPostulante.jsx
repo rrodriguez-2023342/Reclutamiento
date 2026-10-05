@@ -105,6 +105,7 @@ const emptyExperience = {
   salario_final: undefined,
   tareas_realizadas: "",
   motivo_retiro: undefined,
+  motivo_retiro_otro: "",
 };
 const emptyReference = { nombre: "", telefono: "", direccion: "" };
 
@@ -251,7 +252,8 @@ function normalizarPostulante(p) {
       salario_inicial: aNumero(i.salario_inicial),
       salario_final: aNumero(i.salario_final),
       tareas_realizadas: aTexto(i.tareas_realizadas),
-      motivo_retiro: aEnum(i.motivo_retiro),
+        motivo_retiro: aEnum(i.motivo_retiro),
+        motivo_retiro_otro: aTexto(i.motivo_retiro_otro),
     })),
     referenciasPersonales: lista(p.referenciasPersonales).map((i) => ({
       nombre: aTexto(i.nombre),
@@ -1122,6 +1124,20 @@ function FormularioPostulante({ postulanteId }) {
                         <option value="OTRO">Otro</option>
                       </Select>
                     </Field>
+                    {values.experienciaLaboral?.[index]?.motivo_retiro ===
+                      "OTRO" && (
+                      <Field label="Especifique motivo *">
+                        <Input
+                          registration={register(
+                            `experienciaLaboral.${index}.motivo_retiro_otro`,
+                          )}
+                          error={
+                            errors.experienciaLaboral?.[index]
+                              ?.motivo_retiro_otro?.message
+                          }
+                        />
+                      </Field>
+                    )}
                     <Field label="Dirección" className="md:col-span-2">
                       <Input
                         registration={register(

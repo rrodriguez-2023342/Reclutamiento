@@ -411,6 +411,7 @@ model ExperienciaLaboral {
   salario_final     Decimal?      @map("salario_final") @db.Decimal(10, 2)
   tareas_realizadas String?       @map("tareas_realizadas") @db.Text
   motivo_retiro     MotivoRetiro? @map("motivo_retiro")
+  motivo_retiro_otro String?       @map("motivo_retiro_otro") @db.VarChar(255)
   postulante        Postulante    @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
 
   @@map("experiencia_laboral")

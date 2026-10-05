@@ -423,6 +423,7 @@ function SectionContent({ section, p, onReload }) {
               "Retiro",
               "Salario final",
               "Motivo",
+              "Motivo otro",
             ]}
             rows={(p.experienciaLaboral || []).map((item) => [
               item.empresa,
@@ -431,6 +432,9 @@ function SectionContent({ section, p, onReload }) {
               date(item.fecha_retiro),
               decimal(item.salario_final),
               etiquetasMotivoRetiro[item.motivo_retiro] || "—",
+              item.motivo_retiro === "OTRO"
+                ? text(item.motivo_retiro_otro)
+                : "—",
             ])}
           />
         </div>

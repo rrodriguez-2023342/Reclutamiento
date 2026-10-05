@@ -80,6 +80,7 @@ const experienciaLaboralSchema = z.object({
   salario_final: montoOpcional(),
   tareas_realizadas: textoLibreOpcional(),
   motivo_retiro: z.enum(MOTIVOS_RETIRO, { error: 'Motivo de retiro inválido' }).nullish(),
+  motivo_retiro_otro: textoOpcional(255),
 })
 
 const referenciasPersonalesSchema = z.object({

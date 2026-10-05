@@ -59,6 +59,7 @@ const educacionSchema = z.object({
   establecimiento: optionalText(150),
   ano_inicial: optionalNumber(1900, 2100),
   ano_final: optionalNumber(1900, 2100),
+  estado: z.enum(["COMPLETA", "INCOMPLETA"]).default("COMPLETA"),
 });
 
 // Schema para validacion de idiomas

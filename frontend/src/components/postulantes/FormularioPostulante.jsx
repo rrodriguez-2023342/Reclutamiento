@@ -80,6 +80,7 @@ const emptyFamily = {
 };
 const emptyEducation = {
   nivel: "PRIMARIA",
+  estado: "COMPLETA",
   establecimiento: "",
   ano_inicial: undefined,
   ano_final: undefined,
@@ -214,6 +215,7 @@ function normalizarPostulante(p) {
     })),
     educacionHistorial: lista(p.educacionHistorial).map((i) => ({
       nivel: i.nivel ?? "PRIMARIA",
+      estado: i.estado ?? "COMPLETA",
       establecimiento: aTexto(i.establecimiento),
       ano_inicial: aNumero(i.ano_inicial),
       ano_final: aNumero(i.ano_final),
@@ -1386,6 +1388,14 @@ function DynamicEducation({
                         {label}
                       </option>
                     ))}
+                  </Select>
+                </Field>
+                <Field label="Estado *">
+                  <Select
+                    registration={register(`educacionHistorial.${index}.estado`)}
+                  >
+                    <option value="COMPLETA">Completa</option>
+                    <option value="INCOMPLETA">Incompleta</option>
                   </Select>
                 </Field>
                 <Field label="Establecimiento">

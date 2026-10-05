@@ -305,9 +305,16 @@ function SectionContent({ section, p, onReload }) {
             </h3>
             <MiniTable
               name="Educación"
-              headers={["Nivel", "Establecimiento", "Año inicial", "Año final"]}
+              headers={[
+                "Nivel",
+                "Estado",
+                "Establecimiento",
+                "Año inicial",
+                "Año final",
+              ]}
               rows={(p.educacionHistorial || []).map((item) => [
                 etiquetasNivelEducativo[item.nivel] || item.nivel,
+                item.estado === "INCOMPLETA" ? "Incompleta" : "Completa",
                 text(item.establecimiento),
                 text(item.ano_inicial),
                 text(item.ano_final),

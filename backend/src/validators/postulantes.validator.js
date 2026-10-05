@@ -50,6 +50,7 @@ const educacionHistorialSchema = z.object({
   establecimiento: textoOpcional(150),
   ano_inicial: z.coerce.number({ error: 'Año inválido' }).int().min(1900).max(2100).nullish(),
   ano_final: z.coerce.number({ error: 'Año inválido' }).int().min(1900).max(2100).nullish(),
+  estado: z.enum(['COMPLETA', 'INCOMPLETA'], { error: 'Estado inválido' }).default('COMPLETA'),
 })
 
 const idiomasSchema = z.object({

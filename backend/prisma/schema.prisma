@@ -59,6 +59,11 @@ enum NivelEducativo {
   OTRO          @map("Otro")
 }
 
+enum EstadoEducativo {
+  COMPLETA    @map("Completa")
+  INCOMPLETA  @map("Incompleta")
+}
+
 enum MotivoRetiro {
   RENUNCIA       @map("Renuncia")
   DESPIDO        @map("Despido")
@@ -348,13 +353,14 @@ model DatosFamiliares {
 }
 
 model EducacionHistorial {
-  id              Int            @id @default(autoincrement())
-  postulante_id   Int            @map("postulante_id")
-  nivel           NivelEducativo @map("nivel")
-  establecimiento String?        @map("establecimiento") @db.VarChar(150)
-  ano_inicial     Int?           @map("ano_inicial")
-  ano_final       Int?           @map("ano_final")
-  postulante      Postulante     @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
+  id              Int             @id @default(autoincrement())
+  postulante_id   Int             @map("postulante_id")
+  nivel           NivelEducativo  @map("nivel")
+  establecimiento String?         @map("establecimiento") @db.VarChar(150)
+  ano_inicial     Int?            @map("ano_inicial")
+  ano_final       Int?            @map("ano_final")
+  estado          EstadoEducativo @default(COMPLETA) @map("estado")
+  postulante      Postulante      @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
 
   @@map("educacion_historial")
 }

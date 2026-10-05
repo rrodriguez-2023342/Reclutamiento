@@ -354,6 +354,58 @@ function SectionContent({ section, p, onReload }) {
               ])}
             />
           </div>
+          <div>
+            <h3 className="mb-3 font-bold text-[#071b3b]">Estudios actuales</h3>
+            <Details
+              items={[
+                [
+                  "¿Estudia en la actualidad?",
+                  boolean(p.estudia_actualidad),
+                  p.estudia_actualidad,
+                ],
+                ["¿Qué estudia?", text(p.estudia_que), p.estudia_que],
+                [
+                  "Establecimiento",
+                  text(p.estudia_establecimiento),
+                  p.estudia_establecimiento,
+                ],
+                ["Horario", text(p.estudia_horario), p.estudia_horario],
+              ]}
+            />
+          </div>
+          <div>
+            <h3 className="mb-3 font-bold text-[#071b3b]">
+              Conocimientos técnicos
+            </h3>
+            <Details
+              items={[
+                [
+                  "¿Posee conocimientos técnicos?",
+                  boolean(p.posee_conocimientos_tecnicos),
+                  p.posee_conocimientos_tecnicos,
+                ],
+                [
+                  "Especifique",
+                  text(p.conocimientos_tecnicos_especificar),
+                  p.conocimientos_tecnicos_especificar,
+                ],
+              ]}
+            />
+          </div>
+          <div>
+            <h3 className="mb-3 font-bold text-[#071b3b]">
+              Equipo o maquinaria
+            </h3>
+            <Details
+              items={[
+                [
+                  "Equipo o maquinaria que sabe operar",
+                  text(p.equipo_maquinaria),
+                  p.equipo_maquinaria,
+                ],
+              ]}
+            />
+          </div>
         </div>
       </>
     );

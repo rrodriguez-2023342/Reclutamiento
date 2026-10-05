@@ -146,12 +146,14 @@ class PostulanteService {
       capacitaciones = [],
       experienciaLaboral = [],
       referenciasPersonales = [],
+      plaza_id,
       ...generales
     } = data;
 
     const creado = await prisma.postulante.create({
       data: {
         ...generales,
+        ...(plaza_id && { plaza: { connect: { id: plaza_id } } }),
         usuario_id: usuarioId,
         estado: "POSTULANTE",
         fecha_registro: new Date(),
@@ -197,13 +199,20 @@ class PostulanteService {
       capacitaciones,
       experienciaLaboral,
       referenciasPersonales,
+      plaza_id,
       ...generales
     } = data;
 
     await prisma.$transaction(async (tx) => {
       // Campos generales del postulante
-      if (Object.keys(generales).length > 0) {
-        await tx.postulante.update({ where: { id }, data: generales });
+      if (Object.keys(generales).length > 0 || plaza_id !== undefined) {
+        const dataUpdate = {
+          ...generales,
+          ...(plaza_id !== undefined && {
+            plaza: plaza_id ? { connect: { id: plaza_id } } : { disconnect: true },
+          }),
+        };
+        await tx.postulante.update({ where: { id }, data: dataUpdate });
       }
 
       // Cada sección enviada sustituye por completo la existente

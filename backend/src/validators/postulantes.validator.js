@@ -138,6 +138,19 @@ export const createPostulanteSchema = z.object({
   impedimento_fisico: booleanoOpcional(),
   impedimento_fisico_especificar: textoOpcional(255),
 
+  // Estudios actuales
+  estudia_actualidad: booleanoOpcional(),
+  estudia_que: textoOpcional(150),
+  estudia_establecimiento: textoOpcional(150),
+  estudia_horario: textoOpcional(100),
+
+  // Conocimientos técnicos
+  posee_conocimientos_tecnicos: booleanoOpcional(),
+  conocimientos_tecnicos_especificar: textoOpcional(500),
+
+  // Equipo o maquinaria
+  equipo_maquinaria: textoLibreOpcional(),
+
   // Situación socioeconómica
   personas_dependientes: enteroOpcional(0, 99),
   total_efectivo_hogar: montoOpcional(),

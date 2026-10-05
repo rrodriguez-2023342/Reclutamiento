@@ -192,6 +192,13 @@ function normalizarPostulante(p) {
     fuma_bebe_frecuencia: aTexto(p.fuma_bebe_frecuencia),
     impedimento_fisico: p.impedimento_fisico ?? null,
     impedimento_fisico_especificar: aTexto(p.impedimento_fisico_especificar),
+    estudia_actualidad: p.estudia_actualidad ?? null,
+    estudia_que: aTexto(p.estudia_que),
+    estudia_establecimiento: aTexto(p.estudia_establecimiento),
+    estudia_horario: aTexto(p.estudia_horario),
+    posee_conocimientos_tecnicos: p.posee_conocimientos_tecnicos ?? null,
+    conocimientos_tecnicos_especificar: aTexto(p.conocimientos_tecnicos_especificar),
+    equipo_maquinaria: aTexto(p.equipo_maquinaria),
     personas_dependientes: aNumero(p.personas_dependientes),
     total_efectivo_hogar: aNumero(p.total_efectivo_hogar),
     vivienda_tipo: aEnum(p.vivienda_tipo),
@@ -1531,6 +1538,70 @@ function DynamicEducation({
             </ItemRepetible>
           ))}
         </div>
+      </div>
+      <div>
+        <SectionHeader title="Estudios actuales" />
+        <div className="space-y-4">
+          <div className="max-w-md">
+            <BooleanField
+              label="¿Estudia en la actualidad?"
+              value={values.estudia_actualidad}
+              onChange={(value) =>
+                setValue("estudia_actualidad", value, { shouldDirty: true })
+              }
+            />
+          </div>
+          {values.estudia_actualidad === true && (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Field label="¿Qué estudia? *">
+                <Input registration={register("estudia_que")} />
+              </Field>
+              <Field label="Establecimiento *">
+                <Input registration={register("estudia_establecimiento")} />
+              </Field>
+              <Field label="Horario *">
+                <Input
+                  registration={register("estudia_horario")}
+                  placeholder="Ej: L-V 18:00-22:00"
+                />
+              </Field>
+            </div>
+          )}
+        </div>
+      </div>
+      <div>
+        <SectionHeader title="Conocimientos técnicos adicionales" />
+        <div className="space-y-4">
+          <div className="max-w-md">
+            <BooleanField
+              label="¿Posee otro tipo de conocimientos técnicos?"
+              value={values.posee_conocimientos_tecnicos}
+              onChange={(value) =>
+                setValue("posee_conocimientos_tecnicos", value, {
+                  shouldDirty: true,
+                })
+              }
+            />
+          </div>
+          {values.posee_conocimientos_tecnicos === true && (
+            <Field label="Especifique *">
+              <Textarea
+                registration={register("conocimientos_tecnicos_especificar")}
+                rows={3}
+              />
+            </Field>
+          )}
+        </div>
+      </div>
+      <div>
+        <SectionHeader title="Equipo o maquinaria que sabe operar" />
+        <Field label="Especifique">
+          <Textarea
+            registration={register("equipo_maquinaria")}
+            rows={3}
+            placeholder="Ej: Montacargas, torno CNC, Excel avanzado…"
+          />
+        </Field>
       </div>
     </div>
   );

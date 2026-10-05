@@ -170,7 +170,12 @@ export const createPostulanteSchema = z.object({
   debilidad_3: textoOpcional(255),
 
   // Secciones anidadas
-  datosFamiliares: z.array(datosFamiliaresSchema).default([]),
+  datosFamiliares: z
+    .array(datosFamiliaresSchema)
+    .refine((arr) => arr.some((f) => f.parentesco === 'EMERGENCIA'), {
+      message: 'Debe agregar al menos un contacto de emergencia (parentesco: Emergencia)',
+    })
+    .default([]),
   educacionHistorial: z.array(educacionHistorialSchema).default([]),
   idiomas: z.array(idiomasSchema).default([]),
   capacitaciones: z.array(capacitacionesSchema).default([]),

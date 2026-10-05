@@ -396,6 +396,15 @@ function FormularioPostulante({ postulanteId }) {
     try {
       const valid = await trigger(stepFields[step]);
       if (!valid) {
+        if (step === 4) {
+          const resultado = postulanteSchema.shape.datosFamiliares.safeParse(
+            getValues("datosFamiliares"),
+          );
+          if (!resultado.success && resultado.error.issues.length > 0) {
+            setServerError(resultado.error.issues[0].message);
+            return;
+          }
+        }
         setServerError("Complete los campos requeridos antes de continuar.");
         return;
       }
@@ -982,6 +991,11 @@ function FormularioPostulante({ postulanteId }) {
               <AddButton onClick={() => family.append(emptyFamily)}>
                 Agregar familiar
               </AddButton>
+              {errors.datosFamiliares?._errors?.length > 0 && (
+                <p className="mt-2 text-sm font-semibold text-red-500">
+                  {errors.datosFamiliares._errors[0]}
+                </p>
+              )}
             </div>
           </section>
         )}

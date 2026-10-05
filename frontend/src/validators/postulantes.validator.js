@@ -196,7 +196,13 @@ export const postulanteSchema = z.object({
   deudas_institucion: optionalText(150),
   detenido_policia: optionalBoolean,
   procesado_legalmente: optionalBoolean,
-  datosFamiliares: z.array(familiarSchema).default([]),
+  datosFamiliares: z
+    .array(familiarSchema)
+    .refine((arr) => arr.some((f) => f.parentesco === "EMERGENCIA"), {
+      message:
+        "Debe agregar al menos un contacto de emergencia (parentesco: Emergencia)",
+    })
+    .default([]),
   educacionHistorial: z.array(educacionSchema).default([]),
   idiomas: z.array(idiomaSchema).default([]),
   capacitaciones: z.array(capacitacionSchema).default([]),

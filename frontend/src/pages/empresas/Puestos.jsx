@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import {
     ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    Eye,
+    Pencil,
     Plus,
     Search,
     X,
@@ -14,6 +18,14 @@ import {
 } from "../../services/puestos.service.js";
 
 const PAGE_SIZE = 6;
+
+function formatDate(value) {
+    if (!value) return "—";
+    const date = new Date(`${String(value).slice(0, 10)}T12:00:00`);
+    return Number.isNaN(date.getTime())
+        ? "—"
+        : new Intl.DateTimeFormat("es-GT").format(date);
+}
 
 function SelectField({ ariaLabel, value, onChange, children }) {
     return (
@@ -202,6 +214,9 @@ function Puestos() {
         };
     }, [page, debouncedSearch, activo, divisionId, departamentoId]);
 
+    const firstItem = result.total === 0 ? 0 : (result.page - 1) * PAGE_SIZE + 1;
+    const lastItem = Math.min(result.page * PAGE_SIZE, result.total);
+
     return (
         <DashboardLayout title="Puestos">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
@@ -291,98 +306,159 @@ function Puestos() {
                         </div>
                     </div>
 
-                    {loading ? (
-                        <div className="p-12 text-center text-[#5b6e8b]">
-                            Cargando puestos…
-                        </div>
-                    ) : error ? (
-                        <div className="p-12 text-center text-red-600">{error}</div>
-                    ) : result.data.length === 0 ? (
-                        <div className="p-12 text-center text-[#5b6e8b]">
-                            No se encontraron puestos.
-                        </div>
-                    ) : (
-                        <div className="grid gap-4 p-4 sm:px-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                            {result.data.map((puesto) => (
-                                <article
-                                    key={puesto.id}
-                                    className="group relative rounded-[26px] border border-[#dce3ee] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] transition hover:border-[#3162e9] hover:shadow-[0_20px_40px_rgba(20,43,89,0.1)]"
-                                >
-                                    <div className="flex items-start justify-between">
-                                        <div className="flex-1 min-w-0">
-                                            <h3 className="truncate text-lg font-bold text-[#071b3b]">
+                    <div className="overflow-x-auto">
+                        <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left">
+                            <thead>
+                                <tr className="text-base font-semibold text-[#5b6e8b]">
+                                    <th className="border-b border-[#dfe5ee] px-7 py-5 font-semibold">
+                                        Nombre
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                        División
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                        Departamento
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                        Descripción
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                        Estado
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                        Creado
+                                    </th>
+                                    <th className="border-b border-[#dfe5ee] px-7 py-5 text-right font-semibold">
+                                        Acciones
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {loading && (
+                                    <tr>
+                                        <td
+                                            colSpan="7"
+                                            className="px-7 py-14 text-center text-[#5b6e8b]"
+                                        >
+                                            Cargando puestos…
+                                        </td>
+                                    </tr>
+                                )}
+                                {!loading && error && (
+                                    <tr>
+                                        <td
+                                            colSpan="7"
+                                            className="px-7 py-14 text-center text-[#df353c]"
+                                        >
+                                            {error}
+                                        </td>
+                                    </tr>
+                                )}
+                                {!loading && !error && result.data.length === 0 && (
+                                    <tr>
+                                        <td
+                                            colSpan="7"
+                                            className="px-7 py-14 text-center text-[#5b6e8b]"
+                                        >
+                                            No se encontraron puestos.
+                                        </td>
+                                    </tr>
+                                )}
+                                {!loading &&
+                                    !error &&
+                                    result.data.map((puesto) => (
+                                        <tr key={puesto.id} className="text-base">
+                                            <td className="border-b border-[#dfe5ee] px-7 py-6 font-bold text-[#071b3b]">
                                                 {puesto.nombre}
-                                            </h3>
-                                            <p className="mt-1 truncate text-sm text-[#5b6e8b]">
-                                                {puesto.departamento?.nombre || "Sin departamento"}
-                                            </p>
-                                            <p className="truncate text-sm text-[#5b6e8b]">
-                                                División: {puesto.division?.nombre || "Sin división"}
-                                            </p>
-                                            {puesto.descripcion && (
-                                                <p className="mt-2 truncate text-sm text-[#5b6e8b]">
-                                                    {puesto.descripcion}
-                                                </p>
-                                            )}
-                                        </div>
-                                        <span
-                                            className={`ml-3 flex-shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
-                                                puesto.activo
-                                                    ? "bg-[#c9f3dd] text-[#087947]"
-                                                    : "bg-[#f1f4f9] text-[#5b6e8b]"
-                                            }`}
-                                        >
-                                            {puesto.activo ? "Activo" : "Inactivo"}
-                                        </span>
-                                    </div>
-                                    <div className="mt-4 flex items-center justify-end gap-2">
-                                        <button
-                                            type="button"
-                                            onClick={() => navigate(`/empresas/puestos/${puesto.id}`)}
-                                            className="flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-[#dce3ee] bg-white px-4 text-sm font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa]"
-                                        >
-                                            <span className="hidden sm:inline">Ver</span>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                navigate(`/empresas/puestos/${puesto.id}/editar`)
-                                            }
-                                            className="flex h-10 cursor-pointer items-center gap-2 rounded-xl bg-[#3162e9] px-4 text-sm font-bold text-white transition hover:bg-[#183fca]"
-                                        >
-                                            Editar
-                                        </button>
-                                    </div>
-                                </article>
-                            ))}
-                        </div>
-                    )}
+                                            </td>
+                                            <td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">
+                                                {puesto.division?.nombre || "—"}
+                                            </td>
+                                            <td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">
+                                                {puesto.departamento?.nombre || "—"}
+                                            </td>
+                                            <td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">
+                                                <span className="block max-w-[280px] truncate">
+                                                    {puesto.descripcion || "—"}
+                                                </span>
+                                            </td>
+                                            <td className="border-b border-[#dfe5ee] px-5 py-6">
+                                                <span
+                                                    className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${puesto.activo ? "bg-[#c9f3dd] text-[#087947]" : "bg-[#f1f4f9] text-[#5b6e8b]"}`}
+                                                >
+                                                    {puesto.activo ? "Activo" : "Inactivo"}
+                                                </span>
+                                            </td>
+                                            <td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">
+                                                {formatDate(puesto.creado_en)}
+                                            </td>
+                                            <td className="border-b border-[#dfe5ee] px-7 py-6">
+                                                <div className="flex justify-end gap-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            navigate(`/empresas/puestos/${puesto.id}`)
+                                                        }
+                                                        aria-label={`Ver ${puesto.nombre}`}
+                                                        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
+                                                    >
+                                                        <Eye className="h-5 w-5" />
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            navigate(
+                                                                `/empresas/puestos/${puesto.id}/editar`,
+                                                            )
+                                                        }
+                                                        aria-label={`Editar ${puesto.nombre}`}
+                                                        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
+                                                    >
+                                                        <Pencil className="h-5 w-5" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                            </tbody>
+                        </table>
+                    </div>
 
-                    {result.totalPages > 1 && (
-                        <div className="flex items-center justify-center gap-2 border-t border-[#dce3ee] p-4">
+                    <footer className="flex flex-col gap-4 px-7 py-5 text-[#5b6e8b] sm:flex-row sm:items-center sm:justify-between">
+                        <p>
+                            Mostrando {firstItem} a {lastItem} de{" "}
+                            {result.total.toLocaleString("es-GT")} puestos
+                        </p>
+                        <div className="flex items-center gap-2">
                             <button
                                 type="button"
-                                disabled={page <= 1}
-                                onClick={() => setPage((p) => p - 1)}
-                                className="cursor-pointer rounded-xl border border-[#dce3ee] px-4 py-2 text-sm font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa] disabled:cursor-not-allowed disabled:opacity-60"
+                                disabled={loading || result.page <= 1}
+                                onClick={() =>
+                                    setPage((current) => Math.max(1, current - 1))
+                                }
+                                className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                             >
+                                <ChevronLeft className="h-4 w-4" />
                                 Anterior
                             </button>
-                            <span className="text-sm text-[#5b6e8b]">
-                                Página {result.page} de {result.totalPages}
+                            <span className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-[#3162e9] px-3 font-bold text-white">
+                                {result.page}
                             </span>
                             <button
                                 type="button"
-                                disabled={page >= result.totalPages}
-                                onClick={() => setPage((p) => p + 1)}
-                                className="cursor-pointer rounded-xl border border-[#dce3ee] px-4 py-2 text-sm font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa] disabled:cursor-not-allowed disabled:opacity-60"
+                                disabled={loading || result.page >= result.totalPages}
+                                onClick={() =>
+                                    setPage((current) =>
+                                        Math.min(result.totalPages, current + 1),
+                                    )
+                                }
+                                className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                             >
                                 Siguiente
+                                <ChevronRight className="h-4 w-4" />
                             </button>
                         </div>
-                    )}
-
-                    {error && <div className="p-4 text-center text-red-600">{error}</div>}
+                    </footer>
                 </div>
             </div>
         </DashboardLayout>

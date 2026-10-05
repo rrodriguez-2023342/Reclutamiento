@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import {
-    Building2,
     ChevronDown,
     ChevronLeft,
     ChevronRight,
+    Eye,
+    Pencil,
     Plus,
     Search,
 } from "lucide-react";
@@ -12,6 +13,14 @@ import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { getEmpresas } from "../../services/empresas.service.js";
 
 const PAGE_SIZE = 6;
+
+function formatDate(value) {
+    if (!value) return "—";
+    const date = new Date(`${String(value).slice(0, 10)}T12:00:00`);
+    return Number.isNaN(date.getTime())
+        ? "—"
+        : new Intl.DateTimeFormat("es-GT").format(date);
+}
 
 function Empresas() {
     const location = useLocation();
@@ -144,79 +153,158 @@ function Empresas() {
                 </div>
             </section>
 
-            <section className="mt-7 grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
-                {loading && (
-                    <p className="col-span-full py-16 text-center text-[#65758f]">
-                        Cargando empresas...
+            <section className="mt-7 overflow-hidden rounded-[26px] bg-white shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
+                <div className="overflow-x-auto">
+                    <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left">
+                        <thead>
+                            <tr className="text-base font-semibold text-[#5b6e8b]">
+                                <th className="border-b border-[#dfe5ee] px-7 py-5 font-semibold">
+                                    Nombre
+                                </th>
+                                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                    Detalle
+                                </th>
+                                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                    Teléfono
+                                </th>
+                                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                    Correo
+                                </th>
+                                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                    Estado
+                                </th>
+                                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                    Creado
+                                </th>
+                                <th className="border-b border-[#dfe5ee] px-7 py-5 text-right font-semibold">
+                                    Acciones
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loading && (
+                                <tr>
+                                    <td
+                                        colSpan="7"
+                                        className="px-7 py-14 text-center text-[#5b6e8b]"
+                                    >
+                                        Cargando empresas…
+                                    </td>
+                                </tr>
+                            )}
+                            {!loading && error && (
+                                <tr>
+                                    <td
+                                        colSpan="7"
+                                        className="px-7 py-14 text-center text-[#df353c]"
+                                    >
+                                        {error}
+                                    </td>
+                                </tr>
+                            )}
+                            {!loading && !error && result.data.length === 0 && (
+                                <tr>
+                                    <td
+                                        colSpan="7"
+                                        className="px-7 py-14 text-center text-[#5b6e8b]"
+                                    >
+                                        No hay empresas que coincidan con la búsqueda.
+                                    </td>
+                                </tr>
+                            )}
+                            {!loading &&
+                                !error &&
+                                result.data.map((empresa) => (
+                                    <tr key={empresa.id} className="text-base">
+                                        <td className="border-b border-[#dfe5ee] px-7 py-6 font-bold text-[#071b3b]">
+                                            {empresa.nombre_empresa}
+                                        </td>
+                                        <td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">
+                                            <span className="block max-w-[320px] truncate">
+                                                {empresa.detalle_empresa || "—"}
+                                            </span>
+                                        </td>
+                                        <td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">
+                                            {empresa.telefono || "—"}
+                                        </td>
+                                        <td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">
+                                            {empresa.correo || "—"}
+                                        </td>
+                                        <td className="border-b border-[#dfe5ee] px-5 py-6">
+                                            <span
+                                                className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${empresa.activo ? "bg-[#c9f3dd] text-[#087947]" : "bg-[#f1f4f9] text-[#5b6e8b]"}`}
+                                            >
+                                                {empresa.activo ? "Activa" : "Inactiva"}
+                                            </span>
+                                        </td>
+                                        <td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">
+                                            {formatDate(empresa.creado_en)}
+                                        </td>
+                                        <td className="border-b border-[#dfe5ee] px-7 py-6">
+                                            <div className="flex justify-end gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        navigate(`/empresas/${empresa.id}`)
+                                                    }
+                                                    aria-label={`Ver ${empresa.nombre_empresa}`}
+                                                    className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
+                                                >
+                                                    <Eye className="h-5 w-5" />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        navigate(`/empresas/${empresa.id}/editar`)
+                                                    }
+                                                    aria-label={`Editar ${empresa.nombre_empresa}`}
+                                                    className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
+                                                >
+                                                    <Pencil className="h-5 w-5" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                        </tbody>
+                    </table>
+                </div>
+                <footer className="flex flex-col gap-4 px-7 py-5 text-[#5b6e8b] sm:flex-row sm:items-center sm:justify-between">
+                    <p>
+                        Mostrando {firstItem} a {lastItem} de{" "}
+                        {result.total.toLocaleString("es-GT")} empresas
                     </p>
-                )}
-                {!loading && !error && result.data.length === 0 && (
-                    <p className="col-span-full py-16 text-center text-[#65758f]">
-                        No hay empresas que coincidan con la búsqueda.
-                    </p>
-                )}
-                {!loading &&
-                    result.data.map((empresa) => (
+                    <div className="flex items-center gap-2">
                         <button
                             type="button"
-                            key={empresa.id}
-                            onClick={() => navigate(`/empresas/${empresa.id}`)}
-                            aria-label={`Ver información de ${empresa.nombre_empresa}`}
-                            className="group min-h-[306px] cursor-pointer rounded-[26px] bg-white p-7 text-left shadow-[0_10px_24px_rgba(20,43,89,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_30px_rgba(20,43,89,0.10)] focus:outline-none focus:ring-2 focus:ring-[#3162e9]"
+                            disabled={loading || result.page <= 1}
+                            onClick={() =>
+                                setPage((current) => Math.max(1, current - 1))
+                            }
+                            className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                         >
-                            <div className="flex items-start justify-between gap-4">
-                                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f0f4fa] text-[#2764ff]">
-                                    <Building2 className="h-7 w-7" strokeWidth={2} />
-                                </span>
-                                <span
-                                    className={`rounded-full px-3 py-1 text-sm font-semibold ${empresa.activo ? "bg-[#baf0d3] text-[#047a4e]" : "bg-[#f1f4f9] text-[#65758f]"}`}
-                                >
-                                    {empresa.activo ? "Activa" : "Inactiva"}
-                                </span>
-                            </div>
-                            <div className="mt-6">
-                                <h2 className="text-[22px] font-bold tracking-[-0.035em] text-[#071b3b]">
-                                    {empresa.nombre_empresa}
-                                </h2>
-                                <p className="mt-1 line-clamp-2 text-base text-[#65758f]">
-                                    {empresa.detalle_empresa || "Sin detalle"}
-                                </p>
-                            </div>
+                            <ChevronLeft className="h-4 w-4" />
+                            Anterior
                         </button>
-                    ))}
+                        <span className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-[#3162e9] px-3 font-bold text-white">
+                            {result.page}
+                        </span>
+                        <button
+                            type="button"
+                            disabled={loading || result.page >= result.totalPages}
+                            onClick={() =>
+                                setPage((current) =>
+                                    Math.min(result.totalPages, current + 1),
+                                )
+                            }
+                            className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
+                        >
+                            Siguiente
+                            <ChevronRight className="h-4 w-4" />
+                        </button>
+                    </div>
+                </footer>
             </section>
-
-            <footer className="mt-7 flex flex-col gap-4 px-2 py-2 text-[#5b6e8b] sm:flex-row sm:items-center sm:justify-between">
-                <p>
-                    Mostrando {firstItem} a {lastItem} de{" "}
-                    {result.total.toLocaleString("es-GT")} empresas
-                </p>
-                <div className="flex items-center gap-2">
-                    <button
-                        type="button"
-                        disabled={loading || result.page <= 1}
-                        onClick={() => setPage((current) => Math.max(1, current - 1))}
-                        className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
-                    >
-                        <ChevronLeft className="h-4 w-4" />
-                        Anterior
-                    </button>
-                    <span className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-[#3162e9] px-3 font-bold text-white">
-                        {result.page}
-                    </span>
-                    <button
-                        type="button"
-                        disabled={loading || result.page >= result.totalPages}
-                        onClick={() =>
-                            setPage((current) => Math.min(result.totalPages, current + 1))
-                        }
-                        className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
-                    >
-                        Siguiente
-                        <ChevronRight className="h-4 w-4" />
-                    </button>
-                </div>
-            </footer>
         </DashboardLayout>
     );
 }

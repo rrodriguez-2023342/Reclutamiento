@@ -13,6 +13,7 @@ import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
     createPuesto,
     getDepartamentosForSelect,
+    getDivisionesForSelect,
 } from "../../services/puestos.service.js";
 import {
     defaultPuestoValues,
@@ -23,6 +24,7 @@ function NuevaPuesto() {
     const navigate = useNavigate();
     const [serverError, setServerError] = useState("");
     const [departamentos, setDepartamentos] = useState([]);
+    const [divisiones, setDivisiones] = useState([]);
 
     const {
         register,
@@ -35,9 +37,15 @@ function NuevaPuesto() {
     });
 
     useEffect(() => {
-        getDepartamentosForSelect()
-            .then(setDepartamentos)
-            .catch(() => setDepartamentos([]));
+        Promise.all([getDivisionesForSelect(), getDepartamentosForSelect()])
+            .then(([divisionOptions, departmentOptions]) => {
+                setDivisiones(divisionOptions);
+                setDepartamentos(departmentOptions);
+            })
+            .catch(() => {
+                setDivisiones([]);
+                setDepartamentos([]);
+            });
     }, []);
 
     const onSubmit = async (values) => {
@@ -46,6 +54,7 @@ function NuevaPuesto() {
             const payload = {
                 ...values,
                 descripcion: values.descripcion || null,
+                division_id: values.division_id,
                 departamento_id: values.departamento_id,
             };
             await createPuesto(payload);
@@ -108,6 +117,26 @@ function NuevaPuesto() {
                             <Textarea
                                 registration={register("descripcion")}
                                 placeholder="Descripción del puesto..."
+                            />
+                        </Field>
+
+                        <Field
+                            label="División *"
+                            error={errors.division_id?.message}
+                        >
+                            <SearchableSelect
+                                control={control}
+                                name="division_id"
+                                options={[
+                                    { value: "", label: "Seleccionar división" },
+                                    ...divisiones.map((division) => ({
+                                        value: division.id,
+                                        label: division.nombre,
+                                    })),
+                                ]}
+                                placeholder="Seleccionar división"
+                                valueAsNumber
+                                error={errors.division_id?.message}
                             />
                         </Field>
 

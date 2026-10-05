@@ -7,15 +7,11 @@ function crearError(mensaje, status) {
 }
 
 class DivisionesService {
-  async listar({ page = 1, limit = 10, q, empresa_id, activo }) {
+  async listar({ page = 1, limit = 10, q, activo }) {
     const where = {};
 
     if (activo !== undefined) {
       where.activo = activo;
-    }
-
-    if (empresa_id) {
-      where.empresa_id = empresa_id;
     }
 
     if (q) {
@@ -25,10 +21,6 @@ class DivisionesService {
     const [data, total] = await prisma.$transaction([
       prisma.division.findMany({
         where,
-        include: {
-          empresa: { select: { id: true, nombre_empresa: true } },
-          _count: { select: { departamentos: true } },
-        },
         orderBy: { creado_en: "desc" },
         skip: (page - 1) * limit,
         take: limit,
@@ -42,37 +34,24 @@ class DivisionesService {
   async obtenerPorId(id) {
     const division = await prisma.division.findUnique({
       where: { id },
-      include: {
-        empresa: { select: { id: true, nombre_empresa: true } },
-        departamentos: { where: { activo: true }, select: { id: true, nombre: true } },
-      },
     });
     if (!division) return null;
     return division;
   }
 
   async crear(data) {
-    const empresa = await prisma.empresa.findUnique({ where: { id: data.empresa_id } });
-    if (!empresa) {
-      throw crearError("La empresa seleccionada no existe", 400);
-    }
-
     const existe = await prisma.division.findFirst({
-      where: { nombre: data.nombre, empresa_id: data.empresa_id },
+      where: { nombre: data.nombre },
     });
     if (existe) {
-      throw crearError("Ya existe una división con ese nombre en esta empresa", 409);
+      throw crearError("Ya existe una división con ese nombre", 409);
     }
 
     const division = await prisma.division.create({
       data: {
         nombre: data.nombre,
         descripcion: data.descripcion || null,
-        empresa_id: data.empresa_id,
         activo: data.activo ?? true,
-      },
-      include: {
-        empresa: { select: { id: true, nombre_empresa: true } },
       },
     });
 
@@ -87,10 +66,10 @@ class DivisionesService {
 
     if (data.nombre && data.nombre !== division.nombre) {
       const existe = await prisma.division.findFirst({
-        where: { nombre: data.nombre, empresa_id: division.empresa_id, id: { not: id } },
+        where: { nombre: data.nombre, id: { not: id } },
       });
       if (existe) {
-        throw crearError("Ya existe una división con ese nombre en esta empresa", 409);
+        throw crearError("Ya existe una división con ese nombre", 409);
       }
     }
 
@@ -99,11 +78,7 @@ class DivisionesService {
       data: {
         nombre: data.nombre,
         descripcion: data.descripcion,
-        empresa_id: data.empresa_id,
         activo: data.activo,
-      },
-      include: {
-        empresa: { select: { id: true, nombre_empresa: true } },
       },
     });
 
@@ -115,11 +90,11 @@ class DivisionesService {
     if (!division) throw crearError("División no encontrada", 404);
     if (!division.activo) throw crearError("La división ya está inactiva", 400);
 
-    const tieneDepartamentos = await prisma.departamento.count({
+    const tienePuestos = await prisma.puesto.count({
       where: { division_id: id, activo: true },
     });
-    if (tieneDepartamentos > 0) {
-      throw crearError("No se puede desactivar: tiene departamentos activos", 400);
+    if (tienePuestos > 0) {
+      throw crearError("No se puede desactivar: tiene puestos activos", 400);
     }
 
     const actualizada = await prisma.division.update({

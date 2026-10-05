@@ -77,7 +77,7 @@ function DetallePuesto() {
         try {
             const data = await getPuestoById(id);
             setPuesto(data);
-        } catch (e) {
+        } catch {
             setError("No fue posible recargar el puesto.");
         } finally {
             setLoading(false);
@@ -305,15 +305,7 @@ function DetallePuesto() {
                                         Division
                                     </p>
                                     <p className="mt-2 text-lg font-bold text-[#071b3b]">
-                                        {puesto.departamento?.division?.nombre || "Sin division"}
-                                    </p>
-                                </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
-                                        Empresa
-                                    </p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
-                                        {puesto.departamento?.division?.empresa?.nombre_empresa || "Sin empresa"}
+                                        {puesto.division?.nombre || "Sin division"}
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">

@@ -7,13 +7,11 @@ import {
     Field,
     Input,
     Textarea,
-    SearchableSelect,
 } from "../../components/postulantes/formControls.jsx";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
     getDivisionById,
     updateDivision,
-    getEmpresasForSelect,
 } from "../../services/divisiones.service.js";
 import {
     defaultDivisionValues,
@@ -25,24 +23,16 @@ function EditarDivision() {
     const navigate = useNavigate();
     const [serverError, setServerError] = useState("");
     const [loadingDivision, setLoadingDivision] = useState(true);
-    const [empresas, setEmpresas] = useState([]);
 
     const {
         register,
         handleSubmit,
-        control,
         reset,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(divisionSchema),
         defaultValues: defaultDivisionValues,
     });
-
-    useEffect(() => {
-        getEmpresasForSelect()
-            .then(setEmpresas)
-            .catch(() => setEmpresas([]));
-    }, []);
 
     useEffect(() => {
         let active = true;
@@ -54,7 +44,6 @@ function EditarDivision() {
                         ...defaultDivisionValues,
                         nombre: data.nombre || "",
                         descripcion: data.descripcion || "",
-                        empresa_id: data.empresa?.id ?? null,
                         activo: data.activo ?? true,
                     });
                 }
@@ -80,7 +69,6 @@ function EditarDivision() {
             const payload = {
                 ...values,
                 descripcion: values.descripcion || null,
-                empresa_id: values.empresa_id,
             };
             await updateDivision(id, payload);
             navigate("/empresas/divisiones", {
@@ -147,23 +135,6 @@ function EditarDivision() {
                                 <Textarea
                                     registration={register("descripcion")}
                                     placeholder="Descripción de la división..."
-                                />
-                            </Field>
-
-                            <Field label="Empresa *" error={errors.empresa_id?.message}>
-                                <SearchableSelect
-                                    control={control}
-                                    name="empresa_id"
-                                    options={[
-                                        { value: "", label: "Seleccionar empresa" },
-                                        ...empresas.map((empresa) => ({
-                                            value: empresa.id,
-                                            label: empresa.nombre_empresa,
-                                        })),
-                                    ]}
-                                    placeholder="Seleccionar empresa"
-                                    valueAsNumber
-                                    error={errors.empresa_id?.message}
                                 />
                             </Field>
 

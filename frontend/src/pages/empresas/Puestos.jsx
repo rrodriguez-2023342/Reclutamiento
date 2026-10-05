@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
-    Briefcase,
     ChevronDown,
-    ChevronLeft,
-    ChevronRight,
     Plus,
     Search,
     X,
@@ -13,6 +10,7 @@ import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
     getPuestos,
     getDepartamentosForSelect,
+    getDivisionesForSelect,
 } from "../../services/puestos.service.js";
 
 const PAGE_SIZE = 6;
@@ -127,6 +125,7 @@ function Puestos() {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [activo, setActivo] = useState("");
+    const [divisionId, setDivisionId] = useState("");
     const [departamentoId, setDepartamentoId] = useState("");
     const [page, setPage] = useState(1);
     const [result, setResult] = useState({
@@ -141,11 +140,18 @@ function Puestos() {
         location.state?.mensaje || "",
     );
     const [departamentos, setDepartamentos] = useState([]);
+    const [divisiones, setDivisiones] = useState([]);
 
     useEffect(() => {
-        getDepartamentosForSelect()
-            .then(setDepartamentos)
-            .catch(() => setDepartamentos([]));
+        Promise.all([getDivisionesForSelect(), getDepartamentosForSelect()])
+            .then(([divisionOptions, departmentOptions]) => {
+                setDivisiones(divisionOptions);
+                setDepartamentos(departmentOptions);
+            })
+            .catch(() => {
+                setDivisiones([]);
+                setDepartamentos([]);
+            });
     }, []);
 
     useEffect(() => {
@@ -170,6 +176,7 @@ function Puestos() {
             limit: PAGE_SIZE,
             ...(debouncedSearch && { q: debouncedSearch }),
             ...(activo !== "" && { activo: activo === "true" }),
+            ...(divisionId && { division_id: divisionId }),
             ...(departamentoId && { departamento_id: departamentoId }),
         })
             .then((data) => {
@@ -193,7 +200,7 @@ function Puestos() {
         return () => {
             active = false;
         };
-    }, [page, debouncedSearch, activo, departamentoId]);
+    }, [page, debouncedSearch, activo, divisionId, departamentoId]);
 
     return (
         <DashboardLayout title="Puestos">
@@ -204,7 +211,7 @@ function Puestos() {
                             Puestos
                         </h1>
                         <p className="mt-1 text-[#5b6e8b]">
-                            Administra los puestos de los departamentos.
+                            Asigna cada puesto a una división y un departamento.
                         </p>
                     </div>
                     <button
@@ -254,13 +261,31 @@ function Puestos() {
 
                             <div className="w-full max-w-[260px]">
                                 <SearchableSelect
+                                    placeholder="Divisiones"
+                                    value={divisionId}
+                                    options={divisiones.map((division) => ({
+                                        value: division.id,
+                                        label: division.nombre,
+                                    }))}
+                                    onChange={(value) => {
+                                        setDivisionId(value);
+                                        setPage(1);
+                                    }}
+                                />
+                            </div>
+
+                            <div className="w-full max-w-[260px]">
+                                <SearchableSelect
                                     placeholder="Departamentos"
                                     value={departamentoId}
                                     options={departamentos.map((departamento) => ({
                                         value: departamento.id,
                                         label: departamento.nombre,
                                     }))}
-                                    onChange={setDepartamentoId}
+                                    onChange={(value) => {
+                                        setDepartamentoId(value);
+                                        setPage(1);
+                                    }}
                                 />
                             </div>
                         </div>
@@ -290,6 +315,9 @@ function Puestos() {
                                             </h3>
                                             <p className="mt-1 truncate text-sm text-[#5b6e8b]">
                                                 {puesto.departamento?.nombre || "Sin departamento"}
+                                            </p>
+                                            <p className="truncate text-sm text-[#5b6e8b]">
+                                                División: {puesto.division?.nombre || "Sin división"}
                                             </p>
                                             {puesto.descripcion && (
                                                 <p className="mt-2 truncate text-sm text-[#5b6e8b]">

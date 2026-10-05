@@ -35,3 +35,8 @@ export const getDepartamentosForSelect = async () => {
   const { data } = await api.get("/empresas/departamentos", { params: { limit: 100, activo: true } });
   return data.data?.data || data.data || [];
 };
+
+export const getDivisionesForSelect = async () => {
+  const { data } = await api.get("/empresas/divisiones", { params: { limit: 100, activo: true } });
+  return data.data?.data || data.data || [];
+};

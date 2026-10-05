@@ -77,7 +77,7 @@ function DetalleDivision() {
         try {
             const data = await getDivisionById(id);
             setDivision(data);
-        } catch (e) {
+        } catch {
             setError("No fue posible recargar la division.");
         } finally {
             setLoading(false);
@@ -290,14 +290,6 @@ function DetalleDivision() {
                                         className={`mt-2 text-lg font-bold ${isEmpty(division.descripcion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                     >
                                         {division.descripcion || "\u2014"}
-                                    </p>
-                                </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
-                                        Empresa
-                                    </p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
-                                        {division.empresa?.nombre_empresa || "Sin empresa"}
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">

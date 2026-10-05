@@ -1,19 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import {
-    Building2,
     ChevronDown,
-    ChevronLeft,
-    ChevronRight,
     Plus,
     Search,
     X,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
-import {
-    getDepartamentos,
-    getDivisionesForSelect,
-} from "../../services/departamentos.service.js";
+import { getDepartamentos } from "../../services/departamentos.service.js";
 
 const PAGE_SIZE = 6;
 
@@ -36,7 +30,7 @@ function SelectField({ ariaLabel, value, onChange, children }) {
     );
 }
 
-function SearchableSelect({ placeholder, value, options, onChange }) {
+export function SearchableSelect({ placeholder, value, options, onChange }) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
     const ref = useRef(null);
@@ -127,7 +121,6 @@ function Departamentos() {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [activo, setActivo] = useState("");
-    const [divisionId, setDivisionId] = useState("");
     const [page, setPage] = useState(1);
     const [result, setResult] = useState({
         data: [],
@@ -140,13 +133,6 @@ function Departamentos() {
     const [successMessage, setSuccessMessage] = useState(
         location.state?.mensaje || "",
     );
-    const [divisiones, setDivisiones] = useState([]);
-
-    useEffect(() => {
-        getDivisionesForSelect()
-            .then(setDivisiones)
-            .catch(() => setDivisiones([]));
-    }, []);
 
     useEffect(() => {
         const timer = window.setTimeout(
@@ -170,7 +156,6 @@ function Departamentos() {
             limit: PAGE_SIZE,
             ...(debouncedSearch && { q: debouncedSearch }),
             ...(activo !== "" && { activo: activo === "true" }),
-            ...(divisionId && { division_id: divisionId }),
         })
             .then((data) => {
                 if (active) {
@@ -193,7 +178,7 @@ function Departamentos() {
         return () => {
             active = false;
         };
-    }, [page, debouncedSearch, activo, divisionId]);
+    }, [page, debouncedSearch, activo]);
 
     return (
         <DashboardLayout title="Departamentos">
@@ -204,7 +189,7 @@ function Departamentos() {
                             Departamentos
                         </h1>
                         <p className="mt-1 text-[#5b6e8b]">
-                            Administra los departamentos de las divisiones.
+                            Administra los departamentos disponibles para los puestos.
                         </p>
                     </div>
                     <button
@@ -252,17 +237,6 @@ function Departamentos() {
                                 </SelectField>
                             </div>
 
-                            <div className="w-full max-w-[260px]">
-                                <SearchableSelect
-                                    placeholder="Divisiones"
-                                    value={divisionId}
-                                    options={divisiones.map((division) => ({
-                                        value: division.id,
-                                        label: division.nombre,
-                                    }))}
-                                    onChange={setDivisionId}
-                                />
-                            </div>
                         </div>
                     </div>
 
@@ -288,9 +262,6 @@ function Departamentos() {
                                             <h3 className="truncate text-lg font-bold text-[#071b3b]">
                                                 {departamento.nombre}
                                             </h3>
-                                            <p className="mt-1 truncate text-sm text-[#5b6e8b]">
-                                                {departamento.division?.nombre || "Sin división"}
-                                            </p>
                                             {departamento.descripcion && (
                                                 <p className="mt-2 truncate text-sm text-[#5b6e8b]">
                                                     {departamento.descripcion}

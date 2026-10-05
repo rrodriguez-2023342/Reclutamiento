@@ -77,7 +77,7 @@ function DetalleDepartamento() {
         try {
             const data = await getDepartamentoById(id);
             setDepartamento(data);
-        } catch (e) {
+        } catch {
             setError("No fue posible recargar el departamento.");
         } finally {
             setLoading(false);
@@ -292,14 +292,6 @@ function DetalleDepartamento() {
                                         className={`mt-2 text-lg font-bold ${isEmpty(departamento.descripcion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                     >
                                         {departamento.descripcion || "\u2014"}
-                                    </p>
-                                </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
-                                        Division
-                                    </p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
-                                        {departamento.division?.nombre || "Sin division"}
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">

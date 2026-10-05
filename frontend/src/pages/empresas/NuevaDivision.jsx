@@ -1,19 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Save } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import {
     Field,
     Input,
     Textarea,
-    SearchableSelect,
 } from "../../components/postulantes/formControls.jsx";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
-import {
-    createDivision,
-    getEmpresasForSelect,
-} from "../../services/divisiones.service.js";
+import { createDivision } from "../../services/divisiones.service.js";
 import {
     defaultDivisionValues,
     divisionSchema,
@@ -22,23 +18,15 @@ import {
 function NuevaDivision() {
     const navigate = useNavigate();
     const [serverError, setServerError] = useState("");
-    const [empresas, setEmpresas] = useState([]);
 
     const {
         register,
         handleSubmit,
-        control,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(divisionSchema),
         defaultValues: defaultDivisionValues,
     });
-
-    useEffect(() => {
-        getEmpresasForSelect()
-            .then(setEmpresas)
-            .catch(() => setEmpresas([]));
-    }, []);
 
     const onSubmit = async (values) => {
         try {
@@ -46,7 +34,6 @@ function NuevaDivision() {
             const payload = {
                 ...values,
                 descripcion: values.descripcion || null,
-                empresa_id: values.empresa_id,
             };
             await createDivision(payload);
             navigate("/empresas/divisiones", {
@@ -108,23 +95,6 @@ function NuevaDivision() {
                             <Textarea
                                 registration={register("descripcion")}
                                 placeholder="Descripción de la división..."
-                            />
-                        </Field>
-
-                        <Field label="Empresa *" error={errors.empresa_id?.message}>
-                            <SearchableSelect
-                                control={control}
-                                name="empresa_id"
-                                options={[
-                                    { value: "", label: "Seleccionar empresa" },
-                                    ...empresas.map((empresa) => ({
-                                        value: empresa.id,
-                                        label: empresa.nombre_empresa,
-                                    })),
-                                ]}
-                                placeholder="Seleccionar empresa"
-                                valueAsNumber
-                                error={errors.empresa_id?.message}
                             />
                         </Field>
 

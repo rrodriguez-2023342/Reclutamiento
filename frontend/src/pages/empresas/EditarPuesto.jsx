@@ -14,6 +14,7 @@ import {
     getPuestoById,
     updatePuesto,
     getDepartamentosForSelect,
+    getDivisionesForSelect,
 } from "../../services/puestos.service.js";
 import {
     defaultPuestoValues,
@@ -26,6 +27,7 @@ function EditarPuesto() {
     const [serverError, setServerError] = useState("");
     const [loadingPuesto, setLoadingPuesto] = useState(true);
     const [departamentos, setDepartamentos] = useState([]);
+    const [divisiones, setDivisiones] = useState([]);
 
     const {
         register,
@@ -39,9 +41,15 @@ function EditarPuesto() {
     });
 
     useEffect(() => {
-        getDepartamentosForSelect()
-            .then(setDepartamentos)
-            .catch(() => setDepartamentos([]));
+        Promise.all([getDivisionesForSelect(), getDepartamentosForSelect()])
+            .then(([divisionOptions, departmentOptions]) => {
+                setDivisiones(divisionOptions);
+                setDepartamentos(departmentOptions);
+            })
+            .catch(() => {
+                setDivisiones([]);
+                setDepartamentos([]);
+            });
     }, []);
 
     useEffect(() => {
@@ -54,6 +62,7 @@ function EditarPuesto() {
                         ...defaultPuestoValues,
                         nombre: data.nombre || "",
                         descripcion: data.descripcion || "",
+                        division_id: data.division?.id ?? null,
                         departamento_id: data.departamento?.id ?? null,
                         activo: data.activo ?? true,
                     });
@@ -80,6 +89,7 @@ function EditarPuesto() {
             const payload = {
                 ...values,
                 descripcion: values.descripcion || null,
+                division_id: values.division_id,
                 departamento_id: values.departamento_id,
             };
             await updatePuesto(id, payload);
@@ -147,6 +157,26 @@ function EditarPuesto() {
                                 <Textarea
                                     registration={register("descripcion")}
                                     placeholder="Descripción del puesto..."
+                                />
+                            </Field>
+
+                            <Field
+                                label="División *"
+                                error={errors.division_id?.message}
+                            >
+                                <SearchableSelect
+                                    control={control}
+                                    name="division_id"
+                                    options={[
+                                        { value: "", label: "Seleccionar división" },
+                                        ...divisiones.map((division) => ({
+                                            value: division.id,
+                                            label: division.nombre,
+                                        })),
+                                    ]}
+                                    placeholder="Seleccionar división"
+                                    valueAsNumber
+                                    error={errors.division_id?.message}
                                 />
                             </Field>
 

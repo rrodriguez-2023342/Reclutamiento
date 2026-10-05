@@ -6,7 +6,7 @@ export const getDepartamentos = async (params = {}) => {
 };
 
 export const getDepartamentoById = async (id) => {
-  console.log('DEBUG getDepartamentoById - id:', id, typeof id);
+  console.log("DEBUG getDepartamentoById - id:", id, typeof id);
   const { data } = await api.get(`/empresas/departamentos/${id}`);
   return data.data;
 };
@@ -29,9 +29,4 @@ export const desactivarDepartamento = async (id) => {
 export const activarDepartamento = async (id) => {
   const { data } = await api.patch(`/empresas/departamentos/${id}/activar`);
   return data.data;
-};
-
-export const getDivisionesForSelect = async () => {
-  const { data } = await api.get("/empresas/divisiones", { params: { limit: 100, activo: true } });
-  return data.data?.data || data.data || [];
 };

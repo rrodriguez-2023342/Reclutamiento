@@ -7,8 +7,12 @@ function crearError(mensaje, status) {
 }
 
 class PuestosService {
-  async listar({ page = 1, limit = 10, q, departamento_id, activo }) {
+  async listar({ page = 1, limit = 10, q, division_id, departamento_id, activo }) {
     const where = {};
+
+    if (division_id) {
+      where.division_id = division_id;
+    }
 
     if (activo !== undefined) {
       where.activo = activo;
@@ -26,13 +30,8 @@ class PuestosService {
       prisma.puesto.findMany({
         where,
         include: {
-          departamento: {
-            select: {
-              id: true,
-              nombre: true,
-              division: { select: { id: true, nombre: true, empresa: { select: { id: true, nombre_empresa: true } } } },
-            },
-          },
+          division: { select: { id: true, nombre: true } },
+          departamento: { select: { id: true, nombre: true } },
         },
         orderBy: { creado_en: "desc" },
         skip: (page - 1) * limit,
@@ -48,13 +47,8 @@ class PuestosService {
     const puesto = await prisma.puesto.findUnique({
       where: { id },
       include: {
-        departamento: {
-          select: {
-            id: true,
-            nombre: true,
-            division: { select: { id: true, nombre: true, empresa: { select: { id: true, nombre_empresa: true } } } },
-          },
-        },
+        division: { select: { id: true, nombre: true } },
+        departamento: { select: { id: true, nombre: true } },
       },
     });
     if (!puesto) return null;
@@ -62,6 +56,11 @@ class PuestosService {
   }
 
   async crear(data) {
+    const division = await prisma.division.findUnique({ where: { id: data.division_id } });
+    if (!division) {
+      throw crearError("La división seleccionada no existe", 400);
+    }
+
     const departamento = await prisma.departamento.findUnique({ where: { id: data.departamento_id } });
     if (!departamento) {
       throw crearError("El departamento seleccionado no existe", 400);
@@ -78,17 +77,13 @@ class PuestosService {
       data: {
         nombre: data.nombre,
         descripcion: data.descripcion || null,
+        division_id: data.division_id,
         departamento_id: data.departamento_id,
         activo: data.activo ?? true,
       },
       include: {
-        departamento: {
-          select: {
-            id: true,
-            nombre: true,
-            division: { select: { id: true, nombre: true, empresa: { select: { id: true, nombre_empresa: true } } } },
-          },
-        },
+        division: { select: { id: true, nombre: true } },
+        departamento: { select: { id: true, nombre: true } },
       },
     });
 
@@ -99,6 +94,20 @@ class PuestosService {
     const puesto = await prisma.puesto.findUnique({ where: { id } });
     if (!puesto) {
       throw crearError("Puesto no encontrado", 404);
+    }
+
+    if (data.division_id !== undefined) {
+      const division = await prisma.division.findUnique({ where: { id: data.division_id } });
+      if (!division) {
+        throw crearError("La división seleccionada no existe", 400);
+      }
+    }
+
+    if (data.departamento_id !== undefined) {
+      const departamento = await prisma.departamento.findUnique({ where: { id: data.departamento_id } });
+      if (!departamento) {
+        throw crearError("El departamento seleccionado no existe", 400);
+      }
     }
 
     if (data.nombre && data.nombre !== puesto.nombre) {
@@ -115,17 +124,13 @@ class PuestosService {
       data: {
         nombre: data.nombre,
         descripcion: data.descripcion,
+        division_id: data.division_id,
         departamento_id: data.departamento_id,
         activo: data.activo,
       },
       include: {
-        departamento: {
-          select: {
-            id: true,
-            nombre: true,
-            division: { select: { id: true, nombre: true, empresa: { select: { id: true, nombre_empresa: true } } } },
-          },
-        },
+        division: { select: { id: true, nombre: true } },
+        departamento: { select: { id: true, nombre: true } },
       },
     });
 

@@ -1,19 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import {
-    Building2,
     ChevronDown,
-    ChevronLeft,
-    ChevronRight,
     Plus,
     Search,
     X,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
-import {
-    getDivisiones,
-    getEmpresasForSelect,
-} from "../../services/divisiones.service.js";
+import { getDivisiones } from "../../services/divisiones.service.js";
 
 const PAGE_SIZE = 6;
 
@@ -36,7 +30,7 @@ function SelectField({ ariaLabel, value, onChange, children }) {
     );
 }
 
-function SearchableSelect({ placeholder, value, options, onChange }) {
+export function SearchableSelect({ placeholder, value, options, onChange }) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
     const ref = useRef(null);
@@ -127,7 +121,6 @@ function Divisiones() {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [activo, setActivo] = useState("");
-    const [empresaId, setEmpresaId] = useState("");
     const [page, setPage] = useState(1);
     const [result, setResult] = useState({
         data: [],
@@ -140,13 +133,6 @@ function Divisiones() {
     const [successMessage, setSuccessMessage] = useState(
         location.state?.mensaje || "",
     );
-    const [empresas, setEmpresas] = useState([]);
-
-    useEffect(() => {
-        getEmpresasForSelect()
-            .then(setEmpresas)
-            .catch(() => setEmpresas([]));
-    }, []);
 
     useEffect(() => {
         const timer = window.setTimeout(
@@ -170,7 +156,6 @@ function Divisiones() {
             limit: PAGE_SIZE,
             ...(debouncedSearch && { q: debouncedSearch }),
             ...(activo !== "" && { activo: activo === "true" }),
-            ...(empresaId && { empresa_id: empresaId }),
         })
             .then((data) => {
                 if (active) {
@@ -193,7 +178,7 @@ function Divisiones() {
         return () => {
             active = false;
         };
-    }, [page, debouncedSearch, activo, empresaId]);
+    }, [page, debouncedSearch, activo]);
 
     return (
         <DashboardLayout title="Divisiones">
@@ -204,7 +189,7 @@ function Divisiones() {
                             Divisiones
                         </h1>
                         <p className="mt-1 text-[#5b6e8b]">
-                            Administra las divisiones de las empresas.
+                            Administra las divisiones disponibles para los puestos.
                         </p>
                     </div>
                     <button
@@ -252,17 +237,6 @@ function Divisiones() {
                                 </SelectField>
                             </div>
 
-                            <div className="w-full max-w-[260px]">
-                                <SearchableSelect
-                                    placeholder="Empresas"
-                                    value={empresaId}
-                                    options={empresas.map((empresa) => ({
-                                        value: empresa.id,
-                                        label: empresa.nombre_empresa,
-                                    }))}
-                                    onChange={setEmpresaId}
-                                />
-                            </div>
                         </div>
                     </div>
 
@@ -288,9 +262,6 @@ function Divisiones() {
                                             <h3 className="truncate text-lg font-bold text-[#071b3b]">
                                                 {division.nombre}
                                             </h3>
-                                            <p className="mt-1 truncate text-sm text-[#5b6e8b]">
-                                                {division.empresa?.nombre_empresa || "Sin empresa"}
-                                            </p>
                                             {division.descripcion && (
                                                 <p className="mt-2 truncate text-sm text-[#5b6e8b]">
                                                     {division.descripcion}

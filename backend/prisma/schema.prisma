@@ -107,7 +107,6 @@ model Empresa {
   usuarios                  Usuario[]
   historial_empresa_anterior HistorialEmpresa[] @relation("EmpresaAnterior")
   historial_empresa_nuevo    HistorialEmpresa[] @relation("EmpresaNuevo")
-  divisiones                Division[]
 
   @@map("empresas")
 }
@@ -116,11 +115,9 @@ model Division {
   id              Int          @id @default(autoincrement())
   nombre          String       @map("nombre") @db.VarChar(150)
   descripcion     String?      @map("descripcion") @db.Text
-  empresa_id      Int          @map("empresa_id")
-  empresa         Empresa      @relation(fields: [empresa_id], references: [id], onDelete: Cascade)
   activo          Boolean      @default(true) @map("activa")
-  creado_en       DateTime     @default(now()) @map("creado_en") @db.Timestamp
-  departamentos   Departamento[]
+  creado_en       DateTime     @default(now()) @map("creado_en") @db.Timestamp(0)
+  puestos         Puesto[]
 
   @@map("divisiones")
 }
@@ -129,8 +126,6 @@ model Departamento {
   id               Int          @id @default(autoincrement())
   nombre           String       @map("nombre") @db.VarChar(150)
   descripcion      String?      @map("descripcion") @db.Text
-  division_id      Int          @map("division_id")
-  division         Division     @relation(fields: [division_id], references: [id], onDelete: Cascade)
   activo           Boolean      @default(true) @map("activa")
   creado_en        DateTime     @default(now()) @map("creado_en") @db.Timestamp(0)
   puestos          Puesto[]
@@ -142,6 +137,8 @@ model Puesto {
   id               Int          @id @default(autoincrement())
   nombre           String       @map("nombre") @db.VarChar(150)
   descripcion      String?      @map("descripcion") @db.Text
+  division_id      Int          @map("division_id")
+  division         Division     @relation(fields: [division_id], references: [id], onDelete: Restrict)
   departamento_id  Int          @map("departamento_id")
   departamento     Departamento @relation(fields: [departamento_id], references: [id], onDelete: Cascade)
   activo           Boolean      @default(true) @map("activa")
@@ -288,10 +285,13 @@ model Postulante {
   practica_deporte             Boolean?             @map("practica_deporte")
   deporte_cual                 String?              @map("deporte_cual") @db.VarChar(100)
   ha_estado_enfermo_gravedad   Boolean?             @map("ha_estado_enfermo_gravedad")
+  ha_estado_enfermo_gravedad_especificar String?    @map("ha_estado_enfermo_gravedad_especificar") @db.VarChar(255)
   toma_medicamento             Boolean?             @map("toma_medicamento")
+  toma_medicamento_especificar String?              @map("toma_medicamento_especificar") @db.VarChar(255)
   fuma_o_bebe                  Boolean?             @map("fuma_o_bebe")
   fuma_bebe_frecuencia         String?              @map("fuma_bebe_frecuencia") @db.VarChar(100)
   impedimento_fisico           Boolean?             @map("impedimento_fisico")
+  impedimento_fisico_especificar String?            @map("impedimento_fisico_especificar") @db.VarChar(255)
   personas_dependientes        Int?                 @map("personas_dependientes")
   fortaleza_1                  String?              @map("fortaleza_1") @db.VarChar(255)
   fortaleza_2                  String?              @map("fortaleza_2") @db.VarChar(255)

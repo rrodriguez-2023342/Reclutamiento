@@ -129,10 +129,13 @@ export const createPostulanteSchema = z.object({
   practica_deporte: booleanoOpcional(),
   deporte_cual: textoOpcional(100),
   ha_estado_enfermo_gravedad: booleanoOpcional(),
+  ha_estado_enfermo_gravedad_especificar: textoOpcional(255),
   toma_medicamento: booleanoOpcional(),
+  toma_medicamento_especificar: textoOpcional(255),
   fuma_o_bebe: booleanoOpcional(),
   fuma_bebe_frecuencia: textoOpcional(100),
   impedimento_fisico: booleanoOpcional(),
+  impedimento_fisico_especificar: textoOpcional(255),
 
   // Situación socioeconómica
   personas_dependientes: enteroOpcional(0, 99),

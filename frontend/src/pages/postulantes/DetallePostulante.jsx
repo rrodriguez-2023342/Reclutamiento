@@ -456,12 +456,18 @@ function SectionContent({ section, p, onReload }) {
               ["Deporte", text(p.deporte_cual), p.deporte_cual],
               [
                 "Enfermedad grave",
-                boolean(p.ha_estado_enfermo_gravedad),
+                afiliacionDetalle(
+                  p.ha_estado_enfermo_gravedad,
+                  p.ha_estado_enfermo_gravedad_especificar,
+                ),
                 p.ha_estado_enfermo_gravedad,
               ],
               [
                 "Toma medicamento",
-                boolean(p.toma_medicamento),
+                afiliacionDetalle(
+                  p.toma_medicamento,
+                  p.toma_medicamento_especificar,
+                ),
                 p.toma_medicamento,
               ],
               ["Fuma o bebe", boolean(p.fuma_o_bebe), p.fuma_o_bebe],
@@ -472,7 +478,10 @@ function SectionContent({ section, p, onReload }) {
               ],
               [
                 "Impedimento físico",
-                boolean(p.impedimento_fisico),
+                afiliacionDetalle(
+                  p.impedimento_fisico,
+                  p.impedimento_fisico_especificar,
+                ),
                 p.impedimento_fisico,
               ],
               [

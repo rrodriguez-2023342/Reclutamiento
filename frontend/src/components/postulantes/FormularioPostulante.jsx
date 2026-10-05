@@ -184,10 +184,13 @@ function normalizarPostulante(p) {
     practica_deporte: p.practica_deporte ?? null,
     deporte_cual: aTexto(p.deporte_cual),
     ha_estado_enfermo_gravedad: p.ha_estado_enfermo_gravedad ?? null,
+    ha_estado_enfermo_gravedad_especificar: aTexto(p.ha_estado_enfermo_gravedad_especificar),
     toma_medicamento: p.toma_medicamento ?? null,
+    toma_medicamento_especificar: aTexto(p.toma_medicamento_especificar),
     fuma_o_bebe: p.fuma_o_bebe ?? null,
     fuma_bebe_frecuencia: aTexto(p.fuma_bebe_frecuencia),
     impedimento_fisico: p.impedimento_fisico ?? null,
+    impedimento_fisico_especificar: aTexto(p.impedimento_fisico_especificar),
     personas_dependientes: aNumero(p.personas_dependientes),
     total_efectivo_hogar: aNumero(p.total_efectivo_hogar),
     vivienda_tipo: aEnum(p.vivienda_tipo),
@@ -797,24 +800,24 @@ function FormularioPostulante({ postulanteId }) {
                   <Input registration={register("deporte_cual")} />
                 </Field>
               )}
-              {boolean(
+              {affiliation(
                 "ha_estado_enfermo_gravedad",
                 "¿Ha estado enfermo de gravedad?",
               )}
-              {boolean("toma_medicamento", "¿Toma algún medicamento?")}
+              {affiliation("toma_medicamento", "¿Toma algún medicamento?")}
               {boolean("fuma_o_bebe", "¿Fuma o bebe?")}
               {values.fuma_o_bebe === true && (
                 <Field label="Frecuencia">
                   <Input registration={register("fuma_bebe_frecuencia")} />
                 </Field>
               )}
-              {boolean(
+              {affiliation(
                 "impedimento_fisico",
                 "¿Tiene algún impedimento físico?",
               )}
             </div>
             <div className="mt-7 grid gap-5 md:grid-cols-3">
-              <Field label="Personas dependientes">
+              <Field label="Número de personas que dependen de usted">
                 <Input
                   type="number"
                   min="0"

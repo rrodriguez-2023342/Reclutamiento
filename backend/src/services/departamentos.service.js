@@ -7,15 +7,11 @@ function crearError(mensaje, status) {
 }
 
 class DepartamentosService {
-  async listar({ page = 1, limit = 10, q, division_id, activo }) {
+  async listar({ page = 1, limit = 10, q, activo }) {
     const where = {};
 
     if (activo !== undefined) {
       where.activo = activo;
-    }
-
-    if (division_id) {
-      where.division_id = division_id;
     }
 
     if (q) {
@@ -25,10 +21,6 @@ class DepartamentosService {
     const [data, total] = await prisma.$transaction([
       prisma.departamento.findMany({
         where,
-        include: {
-          division: { select: { id: true, nombre: true, empresa: { select: { id: true, nombre_empresa: true } } } },
-          _count: { select: { puestos: true } },
-        },
         orderBy: { creado_en: "desc" },
         skip: (page - 1) * limit,
         take: limit,
@@ -42,37 +34,24 @@ class DepartamentosService {
   async obtenerPorId(id) {
     const departamento = await prisma.departamento.findUnique({
       where: { id },
-      include: {
-        division: { select: { id: true, nombre: true, empresa: { select: { id: true, nombre_empresa: true } } } },
-        puestos: { where: { activo: true }, select: { id: true, nombre: true } },
-      },
     });
     if (!departamento) return null;
     return departamento;
   }
 
   async crear(data) {
-    const division = await prisma.division.findUnique({ where: { id: data.division_id } });
-    if (!division) {
-      throw crearError("La división seleccionada no existe", 400);
-    }
-
     const existe = await prisma.departamento.findFirst({
-      where: { nombre: data.nombre, division_id: data.division_id },
+      where: { nombre: data.nombre },
     });
     if (existe) {
-      throw crearError("Ya existe un departamento con ese nombre en esta división", 409);
+      throw crearError("Ya existe un departamento con ese nombre", 409);
     }
 
     const departamento = await prisma.departamento.create({
       data: {
         nombre: data.nombre,
         descripcion: data.descripcion || null,
-        division_id: data.division_id,
         activo: data.activo ?? true,
-      },
-      include: {
-        division: { select: { id: true, nombre: true, empresa: { select: { id: true, nombre_empresa: true } } } },
       },
     });
 
@@ -87,10 +66,10 @@ class DepartamentosService {
 
     if (data.nombre && data.nombre !== departamento.nombre) {
       const existe = await prisma.departamento.findFirst({
-        where: { nombre: data.nombre, division_id: departamento.division_id, id: { not: id } },
+        where: { nombre: data.nombre, id: { not: id } },
       });
       if (existe) {
-        throw crearError("Ya existe un departamento con ese nombre en esta división", 409);
+        throw crearError("Ya existe un departamento con ese nombre", 409);
       }
     }
 
@@ -99,11 +78,7 @@ class DepartamentosService {
       data: {
         nombre: data.nombre,
         descripcion: data.descripcion,
-        division_id: data.division_id,
         activo: data.activo,
-      },
-      include: {
-        division: { select: { id: true, nombre: true, empresa: { select: { id: true, nombre_empresa: true } } } },
       },
     });
 

@@ -109,9 +109,21 @@ export const createPostulanteSchema = z.object({
 
   // Afiliaciones
   afiliacion_gremial: booleanoOpcional(),
-  afiliacion_religiosa: booleanoOpcional(),
+  afiliacion_gremial_especificar: textoOpcional(255),
   afiliacion_politica: booleanoOpcional(),
+  afiliacion_politica_especificar: textoOpcional(255),
+  afiliacion_sociales: booleanoOpcional(),
+  afiliacion_sociales_especificar: textoOpcional(255),
+  afiliacion_religiosa: booleanoOpcional(),
+  afiliacion_religiosa_especificar: textoOpcional(255),
+  afiliacion_civicos: booleanoOpcional(),
+  afiliacion_civicos_especificar: textoOpcional(255),
+  afiliacion_sindicales: booleanoOpcional(),
+  afiliacion_sindicales_especificar: textoOpcional(255),
   afiliacion_deportiva: booleanoOpcional(),
+  afiliacion_deportiva_especificar: textoOpcional(255),
+  afiliacion_otros: booleanoOpcional(),
+  afiliacion_otros_especificar: textoOpcional(255),
 
   // Salud y hábitos
   practica_deporte: booleanoOpcional(),

@@ -88,7 +88,7 @@ model Plaza {
   salario_min Decimal?        @map("salario_min") @db.Decimal(12, 2)
   salario_max Decimal?        @map("salario_max") @db.Decimal(12, 2)
   activo      Boolean         @default(true) @map("activa")
-  creado_en   DateTime        @default(now()) @map("creado_en") @db.Timestamp
+  creado_en   DateTime        @default(now()) @map("creado_en") @db.Timestamp(0)
   postulantes Postulante[]
 
   @@map("plazas")
@@ -103,7 +103,7 @@ model Empresa {
   correo                    String?           @map("correo") @db.VarChar(100)
   fecha_aniversario         DateTime?         @map("fecha_aniversario") @db.Date
   activo                    Boolean           @default(true) @map("activa")
-  creado_en                 DateTime          @default(now()) @map("creado_en") @db.Timestamp
+  creado_en                 DateTime          @default(now()) @map("creado_en") @db.Timestamp(0)
   usuarios                  Usuario[]
   historial_empresa_anterior HistorialEmpresa[] @relation("EmpresaAnterior")
   historial_empresa_nuevo    HistorialEmpresa[] @relation("EmpresaNuevo")
@@ -132,7 +132,7 @@ model Departamento {
   division_id      Int          @map("division_id")
   division         Division     @relation(fields: [division_id], references: [id], onDelete: Cascade)
   activo           Boolean      @default(true) @map("activa")
-  creado_en        DateTime     @default(now()) @map("creado_en") @db.Timestamp
+  creado_en        DateTime     @default(now()) @map("creado_en") @db.Timestamp(0)
   puestos          Puesto[]
 
   @@map("departamentos")
@@ -145,7 +145,7 @@ model Puesto {
   departamento_id  Int          @map("departamento_id")
   departamento     Departamento @relation(fields: [departamento_id], references: [id], onDelete: Cascade)
   activo           Boolean      @default(true) @map("activa")
-  creado_en        DateTime     @default(now()) @map("creado_en") @db.Timestamp
+  creado_en        DateTime     @default(now()) @map("creado_en") @db.Timestamp(0)
   usuarios         Usuario[]
 
   @@map("puestos")
@@ -168,7 +168,7 @@ model Patrono {
   telefono              String?       @map("telefono") @db.VarChar(20)
   correo                String?       @map("correo") @db.VarChar(100)
   activo                Boolean       @default(true) @map("activa")
-  creado_en             DateTime      @default(now()) @map("creado_en") @db.Timestamp
+  creado_en             DateTime      @default(now()) @map("creado_en") @db.Timestamp(0)
   usuarios              Usuario[]
 
   @@map("patronos")
@@ -189,10 +189,10 @@ model Usuario {
   password            String       @map("password") @db.VarChar(255)
   rol_id              Int          @map("rol_id")
   activo              Boolean      @default(true) @map("activo")
-  creado_en           DateTime     @default(now()) @map("creado_en") @db.Timestamp
+  creado_en           DateTime     @default(now()) @map("creado_en") @db.Timestamp(0)
   mustChangePassword  Boolean      @default(false) @map("must_change_password")
   resetToken          String?      @unique @map("reset_token") @db.VarChar(255)
-  resetTokenExpiry    DateTime?    @map("reset_token_expiry") @db.Timestamp
+  resetTokenExpiry    DateTime?    @map("reset_token_expiry") @db.Timestamp(0)
   empresa_id          Int?         @map("empresa_id")
   empresa             Empresa?     @relation(fields: [empresa_id], references: [id], onDelete: SetNull)
   patrono_id          Int?         @map("patrono_id")
@@ -273,6 +273,18 @@ model Postulante {
   afiliacion_religiosa         Boolean?             @map("afiliacion_religiosa")
   afiliacion_politica          Boolean?             @map("afiliacion_politica")
   afiliacion_deportiva         Boolean?             @map("afiliacion_deportiva")
+  afiliacion_sociales          Boolean?             @map("afiliacion_sociales")
+  afiliacion_civicos           Boolean?             @map("afiliacion_civicos")
+  afiliacion_sindicales        Boolean?             @map("afiliacion_sindicales")
+  afiliacion_otros             Boolean?             @map("afiliacion_otros")
+  afiliacion_gremial_especificar    String?          @map("afiliacion_gremial_especificar")    @db.VarChar(255)
+  afiliacion_religiosa_especificar  String?          @map("afiliacion_religiosa_especificar")  @db.VarChar(255)
+  afiliacion_politica_especificar   String?          @map("afiliacion_politica_especificar")   @db.VarChar(255)
+  afiliacion_deportiva_especificar  String?          @map("afiliacion_deportiva_especificar")  @db.VarChar(255)
+  afiliacion_sociales_especificar   String?          @map("afiliacion_sociales_especificar")   @db.VarChar(255)
+  afiliacion_civicos_especificar    String?          @map("afiliacion_civicos_especificar")    @db.VarChar(255)
+  afiliacion_sindicales_especificar String?          @map("afiliacion_sindicales_especificar") @db.VarChar(255)
+  afiliacion_otros_especificar      String?          @map("afiliacion_otros_especificar")      @db.VarChar(255)
   practica_deporte             Boolean?             @map("practica_deporte")
   deporte_cual                 String?              @map("deporte_cual") @db.VarChar(100)
   ha_estado_enfermo_gravedad   Boolean?             @map("ha_estado_enfermo_gravedad")
@@ -410,7 +422,7 @@ model DocumentoPostulante {
   ruta           String         @map("ruta") @db.VarChar(500)
   mime_type      String         @map("mime_type") @db.VarChar(100)
   tamano_bytes   Int            @map("tamano_bytes")
-  fecha_subida   DateTime       @default(now()) @map("fecha_subida") @db.Timestamp
+  fecha_subida   DateTime       @default(now()) @map("fecha_subida") @db.Timestamp(0)
   postulante     Postulante     @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
 
   @@unique([postulante_id, tipo])
@@ -428,7 +440,7 @@ model HistorialSueldo {
   bonos_anterior    Decimal? @map("bonos_anterior") @db.Decimal(10, 2)
   bonos_nuevo       Decimal? @map("bonos_nuevo") @db.Decimal(10, 2)
   motivo            String   @map("motivo") @db.Text
-  fecha_cambio      DateTime @default(now()) @map("fecha_cambio") @db.Timestamp
+  fecha_cambio      DateTime @default(now()) @map("fecha_cambio") @db.Timestamp(0)
 
   @@map("historial_sueldo")
 }
@@ -444,7 +456,7 @@ model HistorialEmpresa {
   motivo                String   @map("motivo") @db.Text
   cambiado_por_id       Int?     @map("cambiado_por_id")
   cambiado_por          Usuario? @relation("HistorialEmpresaCambiadoPor", fields: [cambiado_por_id], references: [id], onDelete: SetNull)
-  fecha_cambio          DateTime @default(now()) @map("fecha_cambio") @db.Timestamp
+  fecha_cambio          DateTime @default(now()) @map("fecha_cambio") @db.Timestamp(0)
 
   @@map("historial_empresa")
 }
@@ -456,7 +468,7 @@ model HistorialRechazo {
   motivo             String    @map("motivo") @db.Text
   rechazado_por      Int       @map("rechazado_por")
   rechazado_por_usuario Usuario  @relation("RechazadoPor", fields: [rechazado_por], references: [id])
-  fecha_rechazo      DateTime  @default(now()) @map("fecha_rechazo") @db.Timestamp
+  fecha_rechazo      DateTime  @default(now()) @map("fecha_rechazo") @db.Timestamp(0)
 
   @@map("historial_rechazo")
 }

@@ -13,9 +13,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
     getPuestos,
+    getPuestosExport,
     getDepartamentosForSelect,
     getDivisionesForSelect,
 } from "../../services/puestos.service.js";
+import ExportarExcelButton from "../../components/ExportarExcelButton.jsx";
+import { exportarExcel } from "../../utils/excel.js";
+import { hojasPuesto } from "../../utils/exportaciones/generales.js";
 
 const PAGE_SIZE = 6;
 
@@ -217,6 +221,16 @@ function Puestos() {
     const firstItem = result.total === 0 ? 0 : (result.page - 1) * PAGE_SIZE + 1;
     const lastItem = Math.min(result.page * PAGE_SIZE, result.total);
 
+    const manejarExportar = async () => {
+        const datos = await getPuestosExport({
+            ...(debouncedSearch && { q: debouncedSearch }),
+            ...(activo !== "" && { activo: activo === "true" }),
+            ...(divisionId && { division_id: divisionId }),
+            ...(departamentoId && { departamento_id: departamentoId }),
+        });
+        exportarExcel({ filename: "puestos", hojas: hojasPuesto(datos) });
+    };
+
     return (
         <DashboardLayout title="Puestos">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
@@ -229,14 +243,17 @@ function Puestos() {
                             Asigna cada puesto a una división y un departamento.
                         </p>
                     </div>
-                    <button
-                        type="button"
-                        onClick={() => navigate("/empresas/puestos/nueva")}
-                        className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
-                    >
-                        <Plus className="h-5 w-5" />
-                        Nuevo Puesto
-                    </button>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={() => navigate("/empresas/puestos/nueva")}
+                            className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
+                        >
+                            <Plus className="h-5 w-5" />
+                            Nuevo Puesto
+                        </button>
+                        <ExportarExcelButton onExport={manejarExportar} compacto />
+                    </div>
                 </div>
 
                 {successMessage && (
@@ -407,9 +424,7 @@ function Puestos() {
                                                     <button
                                                         type="button"
                                                         onClick={() =>
-                                                            navigate(
-                                                                `/empresas/puestos/${puesto.id}/editar`,
-                                                            )
+                                                            navigate(`/empresas/puestos/${puesto.id}/editar`)
                                                         }
                                                         aria-label={`Editar ${puesto.nombre}`}
                                                         className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
@@ -433,9 +448,7 @@ function Puestos() {
                             <button
                                 type="button"
                                 disabled={loading || result.page <= 1}
-                                onClick={() =>
-                                    setPage((current) => Math.max(1, current - 1))
-                                }
+                                onClick={() => setPage((current) => Math.max(1, current - 1))}
                                 className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                             >
                                 <ChevronLeft className="h-4 w-4" />
@@ -448,9 +461,7 @@ function Puestos() {
                                 type="button"
                                 disabled={loading || result.page >= result.totalPages}
                                 onClick={() =>
-                                    setPage((current) =>
-                                        Math.min(result.totalPages, current + 1),
-                                    )
+                                    setPage((current) => Math.min(result.totalPages, current + 1))
                                 }
                                 className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                             >

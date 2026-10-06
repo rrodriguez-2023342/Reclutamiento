@@ -21,6 +21,13 @@ export const listarPuestos = async (req, res) => {
   res.json({ status: "ok", data: resultado });
 };
 
+export const exportarPuestos = async (req, res) => {
+  const query = validar(listarPuestosQuerySchema, req.query, res);
+  if (!query) return;
+  const data = await puestosService.exportar(query);
+  res.json({ status: "ok", data });
+};
+
 export const obtenerPuesto = async (req, res) => {
   console.log('DEBUG obtenerPuesto - req.params:', req.params);
   const id = parseInt(req.params.id);

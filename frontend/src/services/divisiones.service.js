@@ -5,6 +5,11 @@ export const getDivisiones = async (params = {}) => {
   return data.data;
 };
 
+export const getDivisionesExport = async (params = {}) => {
+  const { data } = await api.get("/empresas/divisiones/export", { params });
+  return data.data;
+};
+
 export const getDivisionById = async (id) => {
   console.log("DEBUG getDivisionById - id:", id, typeof id);
   const { data } = await api.get(`/empresas/divisiones/${id}`);

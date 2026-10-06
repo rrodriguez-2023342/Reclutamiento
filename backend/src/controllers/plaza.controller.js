@@ -41,6 +41,15 @@ export const listarPlazas = async (req, res) => {
   res.json({ status: "ok", data: plazas });
 };
 
+// Exportar todas las plazas filtradas
+export const exportarPlazas = async (req, res) => {
+  const query = validar(listarPlazasQuerySchema, req.query, res);
+  if (!query) return;
+
+  const plazas = await plazaService.exportar(query);
+  res.json({ status: "ok", data: plazas });
+};
+
 // Obtener una plaza por su id
 export const getPlazaById = async (req, res) => {
   const id = parsearId(req, res);

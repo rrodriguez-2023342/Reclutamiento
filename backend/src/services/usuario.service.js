@@ -14,7 +14,8 @@ function crearError(mensaje, status) {
 
 // Servicio para manejar operaciones relacionadas con usuarios
 class UsuarioService {
-  async listar({ page = 1, limit = 10, q, rol_id, activo }) {
+  // Construye el filtro where compartido entre listado y exportación
+  construirWhere({ q, rol_id, activo } = {}) {
     const where = {};
 
     if (activo !== undefined) {
@@ -30,6 +31,12 @@ class UsuarioService {
     if (q) {
       where.OR = [{ nombre: { contains: q } }, { correo: { contains: q } }];
     }
+
+    return where;
+  }
+
+  async listar({ page = 1, limit = 10, ...filtros }) {
+    const where = this.construirWhere(filtros);
 
     // Realizar la transaccion para obtener los usuarios y el conteo total
     const [data, total] = await prisma.$transaction([
@@ -60,6 +67,44 @@ class UsuarioService {
       page,
       totalPages: Math.ceil(total / limit) || 1,
     };
+  }
+
+  // Exporta TODOS los usuarios filtrados con sus relaciones e historiales (sin paginar)
+  async exportar(filtros) {
+    const data = await prisma.usuario.findMany({
+      where: this.construirWhere(filtros),
+      include: {
+        rol: { select: { id: true, nombre: true } },
+        empresa: { select: { id: true, nombre_empresa: true } },
+        patrono: { select: { id: true, razon_social: true } },
+        puesto: {
+          select: {
+            id: true,
+            nombre: true,
+            descripcion: true,
+            departamento: { select: { nombre: true } },
+          },
+        },
+        historial_sueldo: {
+          include: { cambiado_por: { select: { id: true, nombre: true } } },
+          orderBy: { fecha_cambio: "desc" },
+        },
+        historial_empresa: {
+          include: {
+            empresa_anterior: { select: { id: true, nombre_empresa: true } },
+            empresa_nuevo: { select: { id: true, nombre_empresa: true } },
+            cambiado_por: { select: { id: true, nombre: true } },
+          },
+          orderBy: { fecha_cambio: "desc" },
+        },
+      },
+      orderBy: [{ creado_en: "desc" }, { id: "desc" }],
+    });
+
+    // Excluir campos sensibles antes de devolver los datos
+    return data.map(
+      ({ password, resetToken, resetTokenExpiry, ...resto }) => resto,
+    );
   }
 
   // Obtener un usuario por su ID, excluyendo campos sensibles

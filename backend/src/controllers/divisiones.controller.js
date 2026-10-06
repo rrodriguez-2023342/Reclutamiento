@@ -21,6 +21,13 @@ export const listarDivisiones = async (req, res) => {
   res.json({ status: "ok", data: resultado });
 };
 
+export const exportarDivisiones = async (req, res) => {
+  const query = validar(listarDivisionesQuerySchema, req.query, res);
+  if (!query) return;
+  const data = await divisionesService.exportar(query);
+  res.json({ status: "ok", data });
+};
+
 export const obtenerDivision = async (req, res) => {
   console.log('DEBUG obtenerDivision - req.params:', req.params);
   const id = parseInt(req.params.id);

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import {
   listarPatronos,
+  exportarPatronos,
   getPatronoById,
   createPatrono,
   updatePatrono,
@@ -14,6 +15,7 @@ const router = Router()
 router.use(authenticate)
 
 router.get('/', listarPatronos) // Listar todos los patronos
+router.get('/export', exportarPatronos) // Exportar todos los patronos filtrados
 router.get('/:id', getPatronoById) // Obtener un patrono por su ID
 router.post('/', createPatrono) // Crear un nuevo patrono
 router.put('/:id', updatePatrono) // Actualizar un patrono existente

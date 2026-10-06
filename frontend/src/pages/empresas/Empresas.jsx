@@ -10,7 +10,13 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
-import { getEmpresas } from "../../services/empresas.service.js";
+import {
+    getEmpresas,
+    getEmpresasExport,
+} from "../../services/empresas.service.js";
+import ExportarExcelButton from "../../components/ExportarExcelButton.jsx";
+import { exportarExcel } from "../../utils/excel.js";
+import { hojasEmpresa } from "../../utils/exportaciones/generales.js";
 
 const PAGE_SIZE = 6;
 
@@ -90,6 +96,14 @@ function Empresas() {
     const firstItem = result.total === 0 ? 0 : (result.page - 1) * PAGE_SIZE + 1;
     const lastItem = Math.min(result.page * PAGE_SIZE, result.total);
 
+    const manejarExportar = async () => {
+        const datos = await getEmpresasExport({
+            ...(debouncedSearch && { q: debouncedSearch }),
+            ...(activo !== "" && { activo: activo === "true" }),
+        });
+        exportarExcel({ filename: "empresas", hojas: hojasEmpresa(datos) });
+    };
+
     return (
         <DashboardLayout title="Gestión de Empresas">
             {successMessage && (
@@ -111,7 +125,7 @@ function Empresas() {
             )}
 
             <section className="rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-6">
-                <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_auto]">
+                <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_auto_auto]">
                     <label className="flex h-14 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
                         <Search className="h-5 w-5 shrink-0" />
                         <input
@@ -150,6 +164,7 @@ function Empresas() {
                         <Plus className="h-5 w-5" />
                         Nueva Empresa
                     </button>
+                    <ExportarExcelButton onExport={manejarExportar} />
                 </div>
             </section>
 
@@ -244,9 +259,7 @@ function Empresas() {
                                             <div className="flex justify-end gap-2">
                                                 <button
                                                     type="button"
-                                                    onClick={() =>
-                                                        navigate(`/empresas/${empresa.id}`)
-                                                    }
+                                                    onClick={() => navigate(`/empresas/${empresa.id}`)}
                                                     aria-label={`Ver ${empresa.nombre_empresa}`}
                                                     className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
                                                 >
@@ -278,9 +291,7 @@ function Empresas() {
                         <button
                             type="button"
                             disabled={loading || result.page <= 1}
-                            onClick={() =>
-                                setPage((current) => Math.max(1, current - 1))
-                            }
+                            onClick={() => setPage((current) => Math.max(1, current - 1))}
                             className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                         >
                             <ChevronLeft className="h-4 w-4" />
@@ -293,9 +304,7 @@ function Empresas() {
                             type="button"
                             disabled={loading || result.page >= result.totalPages}
                             onClick={() =>
-                                setPage((current) =>
-                                    Math.min(result.totalPages, current + 1),
-                                )
+                                setPage((current) => Math.min(result.totalPages, current + 1))
                             }
                             className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                         >

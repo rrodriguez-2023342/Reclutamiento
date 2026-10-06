@@ -10,7 +10,10 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
-import { getPatronos } from "../../services/patronos.service.js";
+import { getPatronos, getPatronosExport } from "../../services/patronos.service.js";
+import ExportarExcelButton from "../../components/ExportarExcelButton.jsx";
+import { exportarExcel } from "../../utils/excel.js";
+import { hojasPatrono } from "../../utils/exportaciones/generales.js";
 
 const PAGE_SIZE = 6;
 
@@ -90,6 +93,14 @@ function Patronos() {
     const firstItem = result.total === 0 ? 0 : (result.page - 1) * PAGE_SIZE + 1;
     const lastItem = Math.min(result.page * PAGE_SIZE, result.total);
 
+    const manejarExportar = async () => {
+        const datos = await getPatronosExport({
+            ...(debouncedSearch && { q: debouncedSearch }),
+            ...(activo !== "" && { activo: activo === "true" }),
+        });
+        exportarExcel({ filename: "patronos", hojas: hojasPatrono(datos) });
+    };
+
     return (
         <DashboardLayout title="Gestión de Patronos">
             {successMessage && (
@@ -111,7 +122,7 @@ function Patronos() {
             )}
 
             <section className="rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-6">
-                <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_auto]">
+                <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_auto_auto]">
                     <label className="flex h-14 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
                         <Search className="h-5 w-5 shrink-0" />
                         <input
@@ -150,6 +161,7 @@ function Patronos() {
                         <Plus className="h-5 w-5" />
                         Nuevo Patrono
                     </button>
+                    <ExportarExcelButton onExport={manejarExportar} />
                 </div>
             </section>
 

@@ -6,6 +6,12 @@ export const getPatronos = async (params = {}) => {
     return data.data
 }
 
+// Exportar todos los patronos filtrados
+export const getPatronosExport = async (params = {}) => {
+    const { data } = await api.get('/patronos/export', { params })
+    return data.data
+}
+
 // Obtener un patrono por su ID
 export const getPatronoById = async (id) => {
     const { data } = await api.get(`/patronos/${id}`)

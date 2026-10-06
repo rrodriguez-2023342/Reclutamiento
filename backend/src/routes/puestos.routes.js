@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   listarPuestos,
+  exportarPuestos,
   obtenerPuesto,
   crearPuesto,
   actualizarPuesto,
@@ -15,6 +16,7 @@ const router = Router();
 router.use(authenticate, authorize(ADMIN_ROLE));
 
 router.get("/", listarPuestos);
+router.get("/export", exportarPuestos);
 router.get("/nueva", (req, res) => res.json({ status: "ok", data: { esNueva: true } }));
 router.get("/:id", obtenerPuesto);
 router.post("/", crearPuesto);

@@ -21,6 +21,13 @@ export const listarDepartamentos = async (req, res) => {
   res.json({ status: "ok", data: resultado });
 };
 
+export const exportarDepartamentos = async (req, res) => {
+  const query = validar(listarDepartamentosQuerySchema, req.query, res);
+  if (!query) return;
+  const data = await departamentosService.exportar(query);
+  res.json({ status: "ok", data });
+};
+
 export const obtenerDepartamento = async (req, res) => {
   console.log('DEBUG obtenerDepartamento - req.params:', req.params);
   const id = parseInt(req.params.id);

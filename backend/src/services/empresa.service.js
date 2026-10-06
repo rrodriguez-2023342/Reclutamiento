@@ -30,21 +30,28 @@ function normalizarDatosEmpresa(data) {
   return resultado
 }
 
+// Construye el filtro where compartido entre listado y exportación
+function construirWhere({ q, activo } = {}) {
+  const where = {}
+
+  if (activo !== undefined) {
+    where.activo = activo
+  }
+
+  if (q) {
+    where.OR = [
+      { nombre_empresa: { contains: q } },
+    ]
+  }
+
+  return where
+}
+
 // Servicio para manejar las operaciones relacionadas con empresas
 class EmpresaService {
   // Listar empresas con paginacion y filtros opcionales
-  async listar({ page = 1, limit = 10, q, activo }) {
-    const where = {}
-
-    if (activo !== undefined) {
-      where.activo = activo
-    }
-
-    if (q) {
-      where.OR = [
-        { nombre_empresa: { contains: q } },
-      ]
-    }
+  async listar({ page = 1, limit = 10, ...filtros }) {
+    const where = construirWhere(filtros)
 
     const [data, total] = await prisma.$transaction([
       prisma.empresa.findMany({
@@ -57,6 +64,14 @@ class EmpresaService {
     ])
 
     return { data, total, page, totalPages: Math.ceil(total / limit) || 1 }
+  }
+
+  // Exportar todas las empresas filtradas (sin paginar)
+  async exportar(filtros) {
+    return prisma.empresa.findMany({
+      where: construirWhere(filtros),
+      orderBy: { nombre_empresa: 'asc' },
+    })
   }
 
   // Obtener una empresa por su ID

@@ -11,7 +11,13 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
-import { getDivisiones } from "../../services/divisiones.service.js";
+import {
+    getDivisiones,
+    getDivisionesExport,
+} from "../../services/divisiones.service.js";
+import ExportarExcelButton from "../../components/ExportarExcelButton.jsx";
+import { exportarExcel } from "../../utils/excel.js";
+import { hojasDivision } from "../../utils/exportaciones/generales.js";
 
 const PAGE_SIZE = 6;
 
@@ -195,6 +201,14 @@ function Divisiones() {
     const firstItem = result.total === 0 ? 0 : (result.page - 1) * PAGE_SIZE + 1;
     const lastItem = Math.min(result.page * PAGE_SIZE, result.total);
 
+    const manejarExportar = async () => {
+        const datos = await getDivisionesExport({
+            ...(debouncedSearch && { q: debouncedSearch }),
+            ...(activo !== "" && { activo: activo === "true" }),
+        });
+        exportarExcel({ filename: "divisiones", hojas: hojasDivision(datos) });
+    };
+
     return (
         <DashboardLayout title="Divisiones">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
@@ -207,14 +221,17 @@ function Divisiones() {
                             Administra las divisiones disponibles para los puestos.
                         </p>
                     </div>
-                    <button
-                        type="button"
-                        onClick={() => navigate("/empresas/divisiones/nueva")}
-                        className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
-                    >
-                        <Plus className="h-5 w-5" />
-                        Nueva División
-                    </button>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={() => navigate("/empresas/divisiones/nueva")}
+                            className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
+                        >
+                            <Plus className="h-5 w-5" />
+                            Nueva División
+                        </button>
+                        <ExportarExcelButton onExport={manejarExportar} compacto />
+                    </div>
                 </div>
 
                 {successMessage && (
@@ -251,7 +268,6 @@ function Divisiones() {
                                     <option value="false">Inactivas</option>
                                 </SelectField>
                             </div>
-
                         </div>
                     </div>
 
@@ -334,9 +350,7 @@ function Divisiones() {
                                                     <button
                                                         type="button"
                                                         onClick={() =>
-                                                            navigate(
-                                                                `/empresas/divisiones/${division.id}`,
-                                                            )
+                                                            navigate(`/empresas/divisiones/${division.id}`)
                                                         }
                                                         aria-label={`Ver ${division.nombre}`}
                                                         className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
@@ -372,9 +386,7 @@ function Divisiones() {
                             <button
                                 type="button"
                                 disabled={loading || result.page <= 1}
-                                onClick={() =>
-                                    setPage((current) => Math.max(1, current - 1))
-                                }
+                                onClick={() => setPage((current) => Math.max(1, current - 1))}
                                 className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                             >
                                 <ChevronLeft className="h-4 w-4" />
@@ -387,9 +399,7 @@ function Divisiones() {
                                 type="button"
                                 disabled={loading || result.page >= result.totalPages}
                                 onClick={() =>
-                                    setPage((current) =>
-                                        Math.min(result.totalPages, current + 1),
-                                    )
+                                    setPage((current) => Math.min(result.totalPages, current + 1))
                                 }
                                 className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                             >

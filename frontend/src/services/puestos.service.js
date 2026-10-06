@@ -5,6 +5,11 @@ export const getPuestos = async (params = {}) => {
   return data.data;
 };
 
+export const getPuestosExport = async (params = {}) => {
+  const { data } = await api.get("/empresas/puestos/export", { params });
+  return data.data;
+};
+
 export const getPuestoById = async (id) => {
   console.log('DEBUG getPuestoById - id:', id, typeof id);
   const { data } = await api.get(`/empresas/puestos/${id}`);

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   listarDepartamentos,
+  exportarDepartamentos,
   obtenerDepartamento,
   crearDepartamento,
   actualizarDepartamento,
@@ -15,6 +16,7 @@ const router = Router();
 router.use(authenticate, authorize(ADMIN_ROLE));
 
 router.get("/", listarDepartamentos);
+router.get("/export", exportarDepartamentos);
 router.get("/nueva", (req, res) => res.json({ status: "ok", data: { esNueva: true } }));
 router.get("/:id", obtenerDepartamento);
 router.post("/", crearDepartamento);

@@ -31,6 +31,15 @@ export const listarPatronos = async (req, res) => {
   res.json({ status: 'ok', data: resultado })
 }
 
+// Exporta todos los patronos filtrados (sin paginar)
+export const exportarPatronos = async (req, res) => {
+  const query = validar(listarPatronosQuerySchema, req.query, res)
+  if (!query) return
+
+  const data = await patronoService.exportar(query)
+  res.json({ status: 'ok', data })
+}
+
 export const getPatronoById = async (req, res) => {
   const id = parsearId(req, res)
   if (!id) return

@@ -11,8 +11,14 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
-import { getPostulantes } from "../../services/postulantes.service.js";
+import {
+  getPostulantes,
+  getPostulantesExport,
+} from "../../services/postulantes.service.js";
 import { getPlazas } from "../../services/plazas.service.js";
+import ExportarExcelButton from "../../components/ExportarExcelButton.jsx";
+import { exportarExcel } from "../../utils/excel.js";
+import { hojasPostulante } from "../../utils/exportaciones/postulantes.js";
 
 const PAGE_SIZE = 6;
 
@@ -255,6 +261,15 @@ function Postulantes() {
     setLoading(true);
   };
 
+  const manejarExportar = async () => {
+    const datos = await getPostulantesExport({
+      ...(debouncedSearch && { q: debouncedSearch }),
+      ...(estado && { estado }),
+      ...(plazaId && { plaza_id: plazaId }),
+    });
+    exportarExcel({ filename: "postulantes", hojas: hojasPostulante(datos) });
+  };
+
   return (
     <DashboardLayout
       title="Gestión de Postulantes"
@@ -273,7 +288,7 @@ function Postulantes() {
         </div>
       )}
       <section className="rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-6">
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_192px_176px_232px]">
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_192px_176px_232px_auto]">
           <label className="flex h-14 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
             <Search className="h-5 w-5 shrink-0" />
             <input
@@ -311,6 +326,7 @@ function Postulantes() {
             <Plus className="h-5 w-5" />
             Nuevo Postulante
           </button>
+          <ExportarExcelButton onExport={manejarExportar} />
         </div>
       </section>
 

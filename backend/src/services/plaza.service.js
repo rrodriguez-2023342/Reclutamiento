@@ -7,33 +7,43 @@ function crearError(mensaje, status) {
   return error
 }
 
+// Construye el filtro where compartido entre listado y exportación
+function construirWhere({ q, activo, tipo_moneda } = {}) {
+  const where = {}
+
+  if (activo !== undefined) {
+    where.activo = activo
+  }
+
+  if (tipo_moneda) {
+    where.tipo_moneda = tipo_moneda
+  }
+
+  if (q) {
+    where.OR = [
+      { nombre: { contains: q } },
+    ]
+  }
+
+  return where
+}
+
 // Servicio para manejar las plazas
 class PlazaService {
   // Listar todas las plazas con filtros opcionales
-  async listar({ q, activo, tipo_moneda } = {}) {
-    const where = {}
-
-    if (activo !== undefined) {
-      where.activo = activo
-    }
-
-    if (tipo_moneda) {
-      where.tipo_moneda = tipo_moneda
-    }
-
-    if (q) {
-      where.OR = [
-        { nombre: { contains: q } },
-      ]
-    }
-
+  async listar(filtros = {}) {
     return prisma.plaza.findMany({
-      where,
+      where: construirWhere(filtros),
       orderBy: { nombre: 'asc' },
       include: {
         _count: { select: { postulantes: true } },
       },
     })
+  }
+
+  // Exportar todas las plazas filtradas con sus conteos
+  async exportar(filtros = {}) {
+    return this.listar(filtros)
   }
 
   // Obtener una plaza por su id

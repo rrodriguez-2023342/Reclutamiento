@@ -33,6 +33,15 @@ export const listarEmpresas = async (req, res) => {
   res.json({ status: 'ok', data: resultado })
 }
 
+// Exporta todas las empresas filtradas (sin paginar)
+export const exportarEmpresas = async (req, res) => {
+  const query = validar(listarEmpresasQuerySchema, req.query, res)
+  if (!query) return
+
+  const data = await empresaService.exportar(query)
+  res.json({ status: 'ok', data })
+}
+
 // Funcio para obtener una empresa por su ID
 export const getEmpresaById = async (req, res) => {
   const id = parsearId(req, res)

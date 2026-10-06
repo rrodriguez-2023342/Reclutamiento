@@ -6,6 +6,12 @@ export const getEmpresas = async (params = {}) => {
     return data.data
 }
 
+// Exportar todas las empresas filtradas
+export const getEmpresasExport = async (params = {}) => {
+    const { data } = await api.get('/empresas/export', { params })
+    return data.data
+}
+
 // Obtener una empresa por su ID
 export const getEmpresaById = async (id) => {
     const { data } = await api.get(`/empresas/${id}`)

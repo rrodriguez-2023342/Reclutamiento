@@ -75,27 +75,34 @@ function crearError(mensaje, status) {
   return error;
 }
 
+// Construye el filtro where compartido entre listado y exportación
+function construirWhere({ q, estado, plaza_id } = {}) {
+  const where = {};
+
+  if (estado) {
+    where.estado = estado;
+  }
+
+  if (q) {
+    where.OR = [
+      { nombre_completo: { contains: q } },
+      { dpi: { contains: q } },
+      { correo: { contains: q } },
+      { plaza: { nombre: { contains: q } } },
+    ];
+  }
+
+  if (plaza_id) {
+    where.plaza_id = plaza_id;
+  }
+
+  return where;
+}
+
 class PostulanteService {
   // Lista paginada con búsqueda (nombre, DPI, correo, plaza) y filtro por estado y plaza
-  async listar({ page = 1, limit = 10, q, estado, plaza_id }) {
-    const where = {};
-
-    if (estado) {
-      where.estado = estado;
-    }
-
-    if (q) {
-      where.OR = [
-        { nombre_completo: { contains: q } },
-        { dpi: { contains: q } },
-        { correo: { contains: q } },
-        { plaza: { nombre: { contains: q } } },
-      ];
-    }
-
-    if (plaza_id) {
-      where.plaza_id = plaza_id;
-    }
+  async listar({ page = 1, limit = 10, ...filtros }) {
+    const where = construirWhere(filtros);
 
     const [data, total] = await prisma.$transaction([
       prisma.postulante.findMany({
@@ -120,6 +127,15 @@ class PostulanteService {
     ]);
 
     return { data, total, page, totalPages: Math.ceil(total / limit) || 1 };
+  }
+
+  // Exporta TODOS los postulantes filtrados con sus secciones completas (sin paginar)
+  async exportar(filtros) {
+    return prisma.postulante.findMany({
+      where: construirWhere(filtros),
+      include: INCLUDE_COMPLETO,
+      orderBy: [{ fecha_registro: "desc" }, { id: "desc" }],
+    });
   }
 
   // Devuelve un postulante con todas sus secciones. null si no existe

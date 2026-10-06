@@ -6,17 +6,23 @@ function crearError(mensaje, status) {
   return error;
 }
 
+function construirWhere({ q, activo } = {}) {
+  const where = {};
+
+  if (activo !== undefined) {
+    where.activo = activo;
+  }
+
+  if (q) {
+    where.nombre = { contains: q };
+  }
+
+  return where;
+}
+
 class DepartamentosService {
-  async listar({ page = 1, limit = 10, q, activo }) {
-    const where = {};
-
-    if (activo !== undefined) {
-      where.activo = activo;
-    }
-
-    if (q) {
-      where.nombre = { contains: q };
-    }
+  async listar({ page = 1, limit = 10, ...filtros }) {
+    const where = construirWhere(filtros);
 
     const [data, total] = await prisma.$transaction([
       prisma.departamento.findMany({
@@ -29,6 +35,13 @@ class DepartamentosService {
     ]);
 
     return { data, total, page, totalPages: Math.ceil(total / limit) || 1 };
+  }
+
+  async exportar(filtros) {
+    return prisma.departamento.findMany({
+      where: construirWhere(filtros),
+      orderBy: { creado_en: "desc" },
+    });
   }
 
   async obtenerPorId(id) {

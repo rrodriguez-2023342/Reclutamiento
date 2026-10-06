@@ -47,6 +47,15 @@ export const listarUsuarios = async (req, res) => {
   res.json({ status: "ok", data: resultado });
 };
 
+// Exporta todos los usuarios filtrados con sus relaciones e historiales
+export const exportarUsuarios = async (req, res) => {
+  const query = validar(listarUsuariosQuerySchema, req.query, res);
+  if (!query) return;
+
+  const data = await usuarioService.exportar(query);
+  res.json({ status: "ok", data });
+};
+
 // Obtiene la informacion de un usario mediante su ID
 export const getUsuarioById = async (req, res) => {
   const id = parsearId(req, res);

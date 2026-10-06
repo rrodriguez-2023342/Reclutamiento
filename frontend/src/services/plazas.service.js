@@ -6,6 +6,12 @@ export const getPlazas = async (params) => {
   return data.data;
 };
 
+// Exportar todas las plazas filtradas
+export const getPlazasExport = async (params) => {
+  const { data } = await api.get("/plazas/export", { params });
+  return data.data;
+};
+
 // Obtener plaza por ID
 export const getPlazaById = async (id) => {
   const { data } = await api.get(`/plazas/${id}`);

@@ -6,6 +6,12 @@ export const getPostulantes = async (params) => {
   return data.data;
 };
 
+// Exportar todos los postulantes filtrados con todas sus secciones
+export const getPostulantesExport = async (params) => {
+  const { data } = await api.get("/postulantes/export", { params });
+  return data.data;
+};
+
 // Crear un nuevo postulante
 export const createPostulante = async (postulante) => {
   const { data } = await api.post("/postulantes", postulante);

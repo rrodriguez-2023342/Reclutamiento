@@ -6,25 +6,31 @@ function crearError(mensaje, status) {
   return error;
 }
 
+function construirWhere({ q, division_id, departamento_id, activo } = {}) {
+  const where = {};
+
+  if (division_id) {
+    where.division_id = division_id;
+  }
+
+  if (activo !== undefined) {
+    where.activo = activo;
+  }
+
+  if (departamento_id) {
+    where.departamento_id = departamento_id;
+  }
+
+  if (q) {
+    where.nombre = { contains: q };
+  }
+
+  return where;
+}
+
 class PuestosService {
-  async listar({ page = 1, limit = 10, q, division_id, departamento_id, activo }) {
-    const where = {};
-
-    if (division_id) {
-      where.division_id = division_id;
-    }
-
-    if (activo !== undefined) {
-      where.activo = activo;
-    }
-
-    if (departamento_id) {
-      where.departamento_id = departamento_id;
-    }
-
-    if (q) {
-      where.nombre = { contains: q };
-    }
+  async listar({ page = 1, limit = 10, ...filtros }) {
+    const where = construirWhere(filtros);
 
     const [data, total] = await prisma.$transaction([
       prisma.puesto.findMany({
@@ -41,6 +47,17 @@ class PuestosService {
     ]);
 
     return { data, total, page, totalPages: Math.ceil(total / limit) || 1 };
+  }
+
+  async exportar(filtros) {
+    return prisma.puesto.findMany({
+      where: construirWhere(filtros),
+      include: {
+        division: { select: { id: true, nombre: true } },
+        departamento: { select: { id: true, nombre: true } },
+      },
+      orderBy: { creado_en: "desc" },
+    });
   }
 
   async obtenerPorId(id) {

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import {
   listarUsuarios,
+  exportarUsuarios,
   getUsuarioById,
   createUsuario,
   updateUsuario,
@@ -17,6 +18,7 @@ const router = Router()
 router.use(authenticate, authorize(ADMIN_ROLE))
 
 router.get('/', listarUsuarios) // Obtiene la lista de usuarios
+router.get('/export', exportarUsuarios) // Exporta todos los usuarios filtrados con historiales
 router.get('/:id', getUsuarioById) // Obtiene la informacion de un usuario por su ID
 router.post('/', createUsuario) // Crea un nuevo usuario 
 router.put('/:id', updateUsuario) // Actualiza la informacion de un usuario por su ID

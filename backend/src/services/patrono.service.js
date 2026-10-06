@@ -7,23 +7,30 @@ function crearError(mensaje, status) {
   return error
 }
 
+// Construye el filtro where compartido entre listado y exportación
+function construirWhere({ q, activo } = {}) {
+  const where = {}
+
+  if (activo !== undefined) {
+    where.activo = activo
+  }
+
+  if (q) {
+    where.OR = [
+      { razon_social: { contains: q } },
+      { representante_legal: { contains: q } },
+      { nit: { contains: q } },
+    ]
+  }
+
+  return where
+}
+
 // Servicio para manejar las operaciones relacionadas con patronos
 class PatronoService {
   // Listar patronos con paginacion y filtros opcionales
-  async listar({ page = 1, limit = 10, q, activo }) {
-    const where = {}
-
-    if (activo !== undefined) {
-      where.activo = activo
-    }
-
-    if (q) {
-      where.OR = [
-        { razon_social: { contains: q } },
-        { representante_legal: { contains: q } },
-        { nit: { contains: q } },
-      ]
-    }
+  async listar({ page = 1, limit = 10, ...filtros }) {
+    const where = construirWhere(filtros)
 
     const [data, total] = await prisma.$transaction([
       prisma.patrono.findMany({
@@ -36,6 +43,14 @@ class PatronoService {
     ])
 
     return { data, total, page, totalPages: Math.ceil(total / limit) || 1 }
+  }
+
+  // Exportar todos los patronos filtrados (sin paginar)
+  async exportar(filtros) {
+    return prisma.patrono.findMany({
+      where: construirWhere(filtros),
+      orderBy: [{ creado_en: 'desc' }, { id: 'desc' }],
+    })
   }
 
   // Obtener un patrono por su ID

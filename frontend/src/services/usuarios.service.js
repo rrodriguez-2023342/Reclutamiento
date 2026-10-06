@@ -6,6 +6,12 @@ export const getUsuarios = async (params = {}) => {
     return data.data
 }
 
+// Exportar todos los usuarios filtrados con sus historiales
+export const getUsuariosExport = async (params = {}) => {
+    const { data } = await api.get('/usuarios/export', { params })
+    return data.data
+}
+
 // Obtener un usuario por ID
 export const getUsuarioById = async (id) => {
     const { data } = await api.get(`/usuarios/${id}`)

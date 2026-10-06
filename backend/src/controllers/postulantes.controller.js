@@ -42,6 +42,15 @@ export const listarPostulantes = async (req, res) => {
   res.json({ status: 'ok', data: resultado })
 }
 
+// Exporta todos los postulantes filtrados con todas sus secciones
+export const exportarPostulantes = async (req, res) => {
+  const query = validar(listarQuerySchema, req.query, res)
+  if (!query) return
+
+  const data = await postulanteService.exportar(query)
+  res.json({ status: 'ok', data })
+}
+
 export const getPostulanteById = async (req, res) => {
   const id = parsearId(req, res)
   if (!id) return

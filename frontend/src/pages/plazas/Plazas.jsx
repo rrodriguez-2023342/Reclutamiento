@@ -10,7 +10,10 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
-import { getPlazas } from "../../services/plazas.service.js";
+import { getPlazas, getPlazasExport } from "../../services/plazas.service.js";
+import ExportarExcelButton from "../../components/ExportarExcelButton.jsx";
+import { exportarExcel } from "../../utils/excel.js";
+import { hojasPlaza } from "../../utils/exportaciones/generales.js";
 
 const PAGE_SIZE = 6;
 
@@ -138,6 +141,15 @@ function Plazas() {
   const firstItem = plazas.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const lastItem = Math.min(page * PAGE_SIZE, plazas.length);
 
+  const manejarExportar = async () => {
+    const datos = await getPlazasExport({
+      ...(debouncedSearch && { q: debouncedSearch }),
+      ...(activa !== "" && { activo: activa === "true" }),
+      ...(tipoMoneda && { tipo_moneda: tipoMoneda }),
+    });
+    exportarExcel({ filename: "plazas", hojas: hojasPlaza(datos) });
+  };
+
   return (
     <DashboardLayout title="Plazas Activas">
       {successMessage && (
@@ -158,7 +170,7 @@ function Plazas() {
       )}
 
       <section className="rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-6">
-        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_220px_auto]">
+        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_220px_auto_auto]">
           <label className="flex h-14 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
             <Search className="h-5 w-5 shrink-0" />
             <input
@@ -193,6 +205,7 @@ function Plazas() {
             <Plus className="h-5 w-5" />
             Nueva Plaza
           </button>
+          <ExportarExcelButton onExport={manejarExportar} />
         </div>
       </section>
 

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   listarDivisiones,
+  exportarDivisiones,
   obtenerDivision,
   crearDivision,
   actualizarDivision,
@@ -15,6 +16,7 @@ const router = Router();
 router.use(authenticate, authorize(ADMIN_ROLE));
 
 router.get("/", listarDivisiones);
+router.get("/export", exportarDivisiones);
 router.get("/nueva", (req, res) => res.json({ status: "ok", data: { esNueva: true } }));
 router.get("/:id", obtenerDivision);
 router.post("/", crearDivision);

@@ -5,6 +5,11 @@ export const getDepartamentos = async (params = {}) => {
   return data.data;
 };
 
+export const getDepartamentosExport = async (params = {}) => {
+  const { data } = await api.get("/empresas/departamentos/export", { params });
+  return data.data;
+};
+
 export const getDepartamentoById = async (id) => {
   console.log("DEBUG getDepartamentoById - id:", id, typeof id);
   const { data } = await api.get(`/empresas/departamentos/${id}`);

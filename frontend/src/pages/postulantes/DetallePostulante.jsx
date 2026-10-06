@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
+import PostulantePdf from "../../components/postulantes/PostulantePdf.jsx";
 import {
   getPostulanteById,
   updateEstadoPostulante,
@@ -1310,6 +1311,11 @@ function DetallePostulante() {
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
+            <PostulantePdf
+              postulante={p}
+              fotoUrl={fotoUrl}
+              onError={setError}
+            />
             <button
               type="button"
               onClick={() => navigate("/postulantes")}

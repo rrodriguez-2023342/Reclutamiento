@@ -494,7 +494,13 @@ function EditarUsuario() {
                                 />
                             </Field>
 
-                            <CamposAltaUsuario register={register} errors={errors} />
+                            <CamposAltaUsuario
+                                register={register}
+                                errors={errors}
+                                valorTipoCuenta={
+                                    watch("tipo_cuenta_bancaria") || ""
+                                }
+                            />
 
                             <div className="grid gap-5 sm:grid-cols-3">
                                 <Field label="Sueldo Base" error={errors.sueldo?.message}>

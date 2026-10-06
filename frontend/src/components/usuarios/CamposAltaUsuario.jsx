@@ -4,7 +4,15 @@ import {
     Select,
 } from "../postulantes/formControls.jsx";
 
-function CamposAltaUsuario({ register, errors }) {
+const TIPOS_CUENTA = ["Ahorro", "Monetaria", "Tarjeta prepago", "Otro"];
+
+function CamposAltaUsuario({ register, errors, valorTipoCuenta = "" }) {
+    // Conserva como opción el valor libre guardado por datos antiguos
+    const tiposCuenta = TIPOS_CUENTA.includes(valorTipoCuenta)
+        ? TIPOS_CUENTA
+        : valorTipoCuenta
+          ? [valorTipoCuenta, ...TIPOS_CUENTA]
+          : TIPOS_CUENTA;
     return (
         <>
             <div className="grid gap-5 sm:grid-cols-2">
@@ -66,10 +74,14 @@ function CamposAltaUsuario({ register, errors }) {
                         label="Tipo de cuenta"
                         error={errors.tipo_cuenta_bancaria?.message}
                     >
-                        <Input
-                            registration={register("tipo_cuenta_bancaria")}
-                            placeholder="Ej. Monetaria o de ahorro"
-                        />
+                        <Select registration={register("tipo_cuenta_bancaria")}>
+                            <option value="">Seleccionar...</option>
+                            {tiposCuenta.map((tipo) => (
+                                <option key={tipo} value={tipo}>
+                                    {tipo}
+                                </option>
+                            ))}
+                        </Select>
                     </Field>
                     <Field
                         label="No. de cuenta bancaria"

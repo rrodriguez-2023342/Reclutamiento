@@ -100,6 +100,7 @@ export const createPostulanteSchema = z.object({
   telefono: telefonoSchema,
   correo: z.string().trim().email('Correo inválido').max(100),
   estado_civil: z.enum(ESTADOS_CIVILES, { error: 'Estado civil inválido' }),
+  sexo: z.enum(['MASCULINO', 'FEMENINO']).nullish(),
   dpi: dpiSchema,
   plaza_id: z.coerce.number({ error: 'Seleccione una plaza válida' }).int('Seleccione una plaza válida').positive('Seleccione una plaza válida'),
 
@@ -158,14 +159,59 @@ export const createPostulanteSchema = z.object({
   vivienda_tipo: z.enum(TIPOS_VIVIENDA, { error: 'Tipo de vivienda inválido' }).nullish(),
   vivienda_valor: montoOpcional(),
   vivienda_renta_monto: montoOpcional(),
+  vivienda_otra_especificar: textoOpcional(255),
+  vivienda_asegurada: booleanoOpcional(),
+  vivienda_seguro_monto: montoOpcional(),
+
+  // Otro inmueble
+  tiene_otro_inmueble: booleanoOpcional(),
+  otro_inmueble_especificar: textoOpcional(255),
+  otro_inmueble_monto: montoOpcional(),
   tiene_vehiculo: booleanoOpcional(),
+  tipo_vehiculo: textoOpcional(50),
+  vehiculo_marca: textoOpcional(100),
+  vehiculo_placa: textoOpcional(20),
   licencia_tipo: textoOpcional(50),
   licencia_numero: textoOpcional(50),
+  vehiculo_asegurado: booleanoOpcional(),
+  vehiculo_seguro_monto: montoOpcional(),
+
+  // Ingresos adicionales
+  ingresos_adicionales: booleanoOpcional(),
+  ingresos_adicionales_monto: montoOpcional(),
+  ingresos_adicionales_motivo: textoOpcional(255),
+
+  // Cuenta bancaria
+  tiene_cuenta_bancaria: booleanoOpcional(),
+  banco: textoOpcional(100),
+  tipo_cuenta_bancaria: textoOpcional(50),
+  numero_cuenta_bancaria: textoOpcional(50),
+
+  // Deudas pendientes
   deudas_pendientes: booleanoOpcional(),
   deudas_monto: montoOpcional(),
   deudas_institucion: textoOpcional(150),
+  deudas_motivo: textoOpcional(255),
+
+  // Hipotecas
+  tiene_hipotecas: booleanoOpcional(),
+  hipoteca_motivo: textoOpcional(255),
+  hipoteca_monto: montoOpcional(),
+  hipoteca_institucion: textoOpcional(150),
+
+  // Otras deudas por pagar
+  otras_deudas: booleanoOpcional(),
+  otra_deuda_motivo: textoOpcional(255),
+  otra_deuda_monto: montoOpcional(),
+  otra_deuda_institucion: textoOpcional(150),
+
+  // Antecedentes
   detenido_policia: booleanoOpcional(),
+  detenido_motivo: textoOpcional(255),
   procesado_legalmente: booleanoOpcional(),
+  procesado_motivo: textoOpcional(255),
+  conoce_detenido_entorno: booleanoOpcional(),
+  conoce_detenido_motivo: textoOpcional(255),
 
   // Aspiración laboral
   salario_aspira: montoOpcional(),
@@ -173,6 +219,9 @@ export const createPostulanteSchema = z.object({
   trabajar_extraordinario: booleanoOpcional(),
   trabajar_turnos_rotativos: booleanoOpcional(),
   medio_enterado: z.enum(MEDIOS_ENTERADO, { error: 'Medio enterado inválido' }).nullish(),
+  medio_enterado_especificar: textoOpcional(255),
+  tiene_parientes_empresa: booleanoOpcional(),
+  parientes_empresa_nombre: textoOpcional(255),
   porque_gustaria_trabajar: textoLibreOpcional(),
   porque_deberiamoss_contratar: textoLibreOpcional(),
 

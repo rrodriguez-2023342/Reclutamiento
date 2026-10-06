@@ -148,6 +148,7 @@ function normalizarPostulante(p) {
     telefono: aTexto(p.telefono),
     correo: aTexto(p.correo),
     estado_civil: aEnum(p.estado_civil),
+    sexo: aEnum(p.sexo),
     dpi: aTexto(p.dpi),
     dpi_extendido_en: aTexto(p.dpi_extendido_en),
     nit: aTexto(p.nit),
@@ -159,6 +160,9 @@ function normalizarPostulante(p) {
     trabajar_extraordinario: p.trabajar_extraordinario ?? null,
     trabajar_turnos_rotativos: p.trabajar_turnos_rotativos ?? null,
     medio_enterado: aEnum(p.medio_enterado),
+    medio_enterado_especificar: aTexto(p.medio_enterado_especificar),
+    tiene_parientes_empresa: p.tiene_parientes_empresa ?? null,
+    parientes_empresa_nombre: aTexto(p.parientes_empresa_nombre),
     porque_gustaria_trabajar: aTexto(p.porque_gustaria_trabajar),
     porque_deberiamoss_contratar: aTexto(p.porque_deberiamoss_contratar),
     fortaleza_1: aTexto(p.fortaleza_1),
@@ -205,14 +209,45 @@ function normalizarPostulante(p) {
     vivienda_tipo: aEnum(p.vivienda_tipo),
     vivienda_valor: aNumero(p.vivienda_valor),
     vivienda_renta_monto: aNumero(p.vivienda_renta_monto),
+    vivienda_otra_especificar: aTexto(p.vivienda_otra_especificar),
+    vivienda_asegurada: p.vivienda_asegurada ?? null,
+    vivienda_seguro_monto: aNumero(p.vivienda_seguro_monto),
+    tiene_otro_inmueble: p.tiene_otro_inmueble ?? null,
+    otro_inmueble_especificar: aTexto(p.otro_inmueble_especificar),
+    otro_inmueble_monto: aNumero(p.otro_inmueble_monto),
     tiene_vehiculo: p.tiene_vehiculo ?? null,
+    tipo_vehiculo: aTexto(p.tipo_vehiculo),
+    vehiculo_marca: aTexto(p.vehiculo_marca),
+    vehiculo_placa: aTexto(p.vehiculo_placa),
     licencia_tipo: aTexto(p.licencia_tipo),
     licencia_numero: aTexto(p.licencia_numero),
+    vehiculo_asegurado: p.vehiculo_asegurado ?? null,
+    vehiculo_seguro_monto: aNumero(p.vehiculo_seguro_monto),
+    ingresos_adicionales: p.ingresos_adicionales ?? null,
+    ingresos_adicionales_monto: aNumero(p.ingresos_adicionales_monto),
+    ingresos_adicionales_motivo: aTexto(p.ingresos_adicionales_motivo),
+    tiene_cuenta_bancaria: p.tiene_cuenta_bancaria ?? null,
+    banco: aTexto(p.banco),
+    tipo_cuenta_bancaria: aTexto(p.tipo_cuenta_bancaria),
+    numero_cuenta_bancaria: aTexto(p.numero_cuenta_bancaria),
     deudas_pendientes: p.deudas_pendientes ?? null,
     deudas_monto: aNumero(p.deudas_monto),
     deudas_institucion: aTexto(p.deudas_institucion),
+    deudas_motivo: aTexto(p.deudas_motivo),
+    tiene_hipotecas: p.tiene_hipotecas ?? null,
+    hipoteca_motivo: aTexto(p.hipoteca_motivo),
+    hipoteca_monto: aNumero(p.hipoteca_monto),
+    hipoteca_institucion: aTexto(p.hipoteca_institucion),
+    otras_deudas: p.otras_deudas ?? null,
+    otra_deuda_motivo: aTexto(p.otra_deuda_motivo),
+    otra_deuda_monto: aNumero(p.otra_deuda_monto),
+    otra_deuda_institucion: aTexto(p.otra_deuda_institucion),
     detenido_policia: p.detenido_policia ?? null,
+    detenido_motivo: aTexto(p.detenido_motivo),
     procesado_legalmente: p.procesado_legalmente ?? null,
+    procesado_motivo: aTexto(p.procesado_motivo),
+    conoce_detenido_entorno: p.conoce_detenido_entorno ?? null,
+    conoce_detenido_motivo: aTexto(p.conoce_detenido_motivo),
     datosFamiliares: lista(p.datosFamiliares).map((i) => ({
       parentesco: i.parentesco ?? "PADRE",
       nombres_apellidos: aTexto(i.nombres_apellidos),
@@ -367,6 +402,21 @@ function FormularioPostulante({ postulanteId }) {
       label={label}
       value={values[name]}
       onChange={(value) => setValue(name, value, { shouldDirty: true })}
+    />
+  );
+  // Booleano que limpia sus campos dependientes cuando la respuesta es "No"
+  const booleanLimpia = (name, label, limpiar = {}) => (
+    <BooleanField
+      label={label}
+      value={values[name]}
+      onChange={(value) => {
+        setValue(name, value, { shouldDirty: true });
+        if (value !== true) {
+          for (const [campo, vacio] of Object.entries(limpiar)) {
+            setValue(campo, vacio, { shouldDirty: true });
+          }
+        }
+      }}
     />
   );
   const affiliation = (name, label) => (
@@ -688,6 +738,13 @@ function FormularioPostulante({ postulanteId }) {
                   ))}
                 </Select>
               </Field>
+              <Field label="Género">
+                <Select registration={register("sexo")}>
+                  <option value="">Seleccione</option>
+                  <option value="MASCULINO">Masculino</option>
+                  <option value="FEMENINO">Femenino</option>
+                </Select>
+              </Field>
               <Field label="Número de DPI *" error={errors.dpi?.message}>
                 <Input
                   registration={register("dpi")}
@@ -755,13 +812,41 @@ function FormularioPostulante({ postulanteId }) {
                 />
               </Field>
               <Field label="Medio por el que se enteró">
-                <Select registration={register("medio_enterado")}>
+                <Select
+                  registration={register("medio_enterado")}
+                  onChange={(e) => {
+                    const medio = e.target.value;
+                    setValue("medio_enterado", medio || null, {
+                      shouldDirty: true,
+                    });
+                    setValue("medio_enterado_especificar", "", {
+                      shouldDirty: true,
+                    });
+                  }}
+                >
                   <option value="">Seleccione</option>
                   <option value="ANUNCIO">Anuncio</option>
                   <option value="REFERENCIA">Referencia</option>
                   <option value="OTRO">Otro</option>
                 </Select>
               </Field>
+              {values.medio_enterado && (
+                <Field label="Especifique">
+                  <Input
+                    registration={register("medio_enterado_especificar")}
+                  />
+                </Field>
+              )}
+              {booleanLimpia(
+                "tiene_parientes_empresa",
+                "¿Tiene parientes o amigos trabajando en la empresa?",
+                { parientes_empresa_nombre: "" },
+              )}
+              {values.tiene_parientes_empresa === true && (
+                <Field label="Nombre">
+                  <Input registration={register("parientes_empresa_nombre")} />
+                </Field>
+              )}
               <div className="md:col-span-2 grid gap-5 sm:grid-cols-2">
                 {boolean(
                   "trabajar_extraordinario",
@@ -846,7 +931,7 @@ function FormularioPostulante({ postulanteId }) {
                   })}
                 />
               </Field>
-              <Field label="Total efectivo del hogar">
+              <Field label="Total efectivo que aporta al hogar">
                 <Input
                   type="number"
                   min="0"
@@ -857,7 +942,20 @@ function FormularioPostulante({ postulanteId }) {
                 />
               </Field>
               <Field label="Tipo de vivienda">
-                <Select registration={register("vivienda_tipo")}>
+                <Select
+                  registration={register("vivienda_tipo")}
+                  onChange={(e) => {
+                    const tipo = e.target.value;
+                    setValue("vivienda_tipo", tipo, { shouldDirty: true });
+                    setValue("vivienda_valor", undefined, { shouldDirty: true });
+                    setValue("vivienda_renta_monto", undefined, {
+                      shouldDirty: true,
+                    });
+                    setValue("vivienda_otra_especificar", "", {
+                      shouldDirty: true,
+                    });
+                  }}
+                >
                   <option value="">Seleccione</option>
                   <option value="PROPIA">Propia</option>
                   <option value="ALQUILADA">Alquilada</option>
@@ -865,34 +963,200 @@ function FormularioPostulante({ postulanteId }) {
                   <option value="OTRA">Otra</option>
                 </Select>
               </Field>
-              <Field label="Valor de vivienda">
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  registration={register("vivienda_valor", {
-                    valueAsNumber: true,
-                  })}
-                />
-              </Field>
-              <Field label="Monto de renta">
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  registration={register("vivienda_renta_monto", {
-                    valueAsNumber: true,
-                  })}
-                />
-              </Field>
+              {values.vivienda_tipo === "PROPIA" && (
+                <Field label="Valor de vivienda">
+                  <Input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    registration={register("vivienda_valor", {
+                      valueAsNumber: true,
+                    })}
+                  />
+                </Field>
+              )}
+              {values.vivienda_tipo === "ALQUILADA" && (
+                <Field label="Monto de renta">
+                  <Input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    registration={register("vivienda_renta_monto", {
+                      valueAsNumber: true,
+                    })}
+                  />
+                </Field>
+              )}
+              {values.vivienda_tipo === "OTRA" && (
+                <Field label="Especifique el tipo de vivienda">
+                  <Input registration={register("vivienda_otra_especificar")} />
+                </Field>
+              )}
+              <BooleanField
+                label="¿Tiene asegurada su vivienda?"
+                value={values.vivienda_asegurada}
+                onChange={(value) => {
+                  setValue("vivienda_asegurada", value, {
+                    shouldDirty: true,
+                  });
+                  if (value !== true) {
+                    setValue("vivienda_seguro_monto", undefined, {
+                      shouldDirty: true,
+                    });
+                  }
+                }}
+              />
+              {values.vivienda_asegurada === true && (
+                <Field label="Monto del seguro">
+                  <Input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    registration={register("vivienda_seguro_monto", {
+                      valueAsNumber: true,
+                    })}
+                  />
+                </Field>
+              )}
+              {boolean("tiene_otro_inmueble", "¿Tiene otro inmueble?")}
+              {values.tiene_otro_inmueble === true && (
+                <>
+                  <Field label="Especifique el inmueble *">
+                    <Input
+                      registration={register("otro_inmueble_especificar")}
+                    />
+                  </Field>
+                  <Field label="Monto *">
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      registration={register("otro_inmueble_monto", {
+                        valueAsNumber: true,
+                      })}
+                    />
+                  </Field>
+                </>
+              )}
               {boolean("tiene_vehiculo", "¿Tiene vehículo?")}
               {values.tiene_vehiculo === true && (
                 <>
-                  <Field label="Tipo de licencia">
+                  <Field label="Tipo de vehículo *">
+                    <Select
+                      registration={register("tipo_vehiculo")}
+                    >
+                      <option value="">Seleccione</option>
+                      <option value="CARRO">Carro</option>
+                      <option value="MOTO">Moto</option>
+                      <option value="CAMION">Camión</option>
+                      <option value="PICKUP">Pickup</option>
+                      <option value="AUTOBUS">Autobús</option>
+                      <option value="OTRO">Otro</option>
+                    </Select>
+                  </Field>
+                  <Field label="Marca *">
+                    <Input registration={register("vehiculo_marca")} />
+                  </Field>
+                  <Field label="Placa *">
+                    <Input
+                      registration={register("vehiculo_placa")}
+                      placeholder="P-123ABC"
+                    />
+                  </Field>
+                  <Field label="Tipo de licencia *">
                     <Input registration={register("licencia_tipo")} />
                   </Field>
-                  <Field label="Número de licencia">
+                  <Field label="Número de licencia *">
                     <Input registration={register("licencia_numero")} />
+                  </Field>
+                  <BooleanField
+                    label="¿Tiene asegurado su vehículo?"
+                    value={values.vehiculo_asegurado}
+                    onChange={(value) => {
+                      setValue("vehiculo_asegurado", value, {
+                        shouldDirty: true,
+                      });
+                      if (value !== true) {
+                        setValue("vehiculo_seguro_monto", undefined, {
+                          shouldDirty: true,
+                        });
+                      }
+                    }}
+                  />
+                  {values.vehiculo_asegurado === true && (
+                    <Field label="Monto del seguro *">
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        registration={register("vehiculo_seguro_monto", {
+                          valueAsNumber: true,
+                        })}
+                      />
+                    </Field>
+                  )}
+                </>
+              )}
+              {booleanLimpia(
+                "ingresos_adicionales",
+                "¿Tiene ingresos adicionales al sueldo?",
+                {
+                  ingresos_adicionales_monto: undefined,
+                  ingresos_adicionales_motivo: "",
+                },
+              )}
+              {values.ingresos_adicionales === true && (
+                <>
+                  <Field label="Monto">
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      registration={register("ingresos_adicionales_monto", {
+                        valueAsNumber: true,
+                      })}
+                    />
+                  </Field>
+                  <Field label="Motivo">
+                    <Input
+                      registration={register("ingresos_adicionales_motivo")}
+                    />
+                  </Field>
+                </>
+              )}
+              {booleanLimpia(
+                "tiene_cuenta_bancaria",
+                "¿Tiene cuenta bancaria?",
+                {
+                  banco: "",
+                  tipo_cuenta_bancaria: "",
+                  numero_cuenta_bancaria: "",
+                },
+              )}
+              {values.tiene_cuenta_bancaria === true && (
+                <>
+                  <Field label="Tipo de cuenta">
+                    <Select
+                      registration={register("tipo_cuenta_bancaria")}
+                    >
+                      <option value="">Seleccione</option>
+                      <option value="Ahorro">Ahorro</option>
+                      <option value="Monetaria">Monetaria</option>
+                      <option value="Tarjeta prepago">Tarjeta prepago</option>
+                      <option value="Otro">Otro</option>
+                    </Select>
+                  </Field>
+                  <Field label="Banco">
+                    <Input
+                      registration={register("banco")}
+                      placeholder="Nombre del banco"
+                    />
+                  </Field>
+                  <Field label="No. de cuenta">
+                    <Input
+                      registration={register("numero_cuenta_bancaria")}
+                      placeholder="Número de cuenta"
+                    />
                   </Field>
                 </>
               )}
@@ -912,12 +1176,90 @@ function FormularioPostulante({ postulanteId }) {
                   <Field label="Institución">
                     <Input registration={register("deudas_institucion")} />
                   </Field>
+                  <Field label="Motivo">
+                    <Input registration={register("deudas_motivo")} />
+                  </Field>
                 </>
               )}
-              {boolean("detenido_policia", "¿Ha sido detenido por la policía?")}
-              {boolean(
+              {booleanLimpia("tiene_hipotecas", "¿Tiene hipotecas?", {
+                hipoteca_motivo: "",
+                hipoteca_monto: undefined,
+                hipoteca_institucion: "",
+              })}
+              {values.tiene_hipotecas === true && (
+                <>
+                  <Field label="Motivo">
+                    <Input registration={register("hipoteca_motivo")} />
+                  </Field>
+                  <Field label="Monto">
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      registration={register("hipoteca_monto", {
+                        valueAsNumber: true,
+                      })}
+                    />
+                  </Field>
+                  <Field label="Institución o persona">
+                    <Input registration={register("hipoteca_institucion")} />
+                  </Field>
+                </>
+              )}
+              {booleanLimpia("otras_deudas", "¿Tiene otras deudas por pagar?", {
+                otra_deuda_motivo: "",
+                otra_deuda_monto: undefined,
+                otra_deuda_institucion: "",
+              })}
+              {values.otras_deudas === true && (
+                <>
+                  <Field label="Motivo">
+                    <Input registration={register("otra_deuda_motivo")} />
+                  </Field>
+                  <Field label="Monto">
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      registration={register("otra_deuda_monto", {
+                        valueAsNumber: true,
+                      })}
+                    />
+                  </Field>
+                  <Field label="Institución o persona">
+                    <Input registration={register("otra_deuda_institucion")} />
+                  </Field>
+                </>
+              )}
+              {booleanLimpia(
+                "detenido_policia",
+                "¿Ha sido detenido por la policía?",
+                { detenido_motivo: "" },
+              )}
+              {values.detenido_policia === true && (
+                <Field label="Motivo">
+                  <Input registration={register("detenido_motivo")} />
+                </Field>
+              )}
+              {booleanLimpia(
                 "procesado_legalmente",
                 "¿Ha sido procesado legalmente?",
+                { procesado_motivo: "" },
+              )}
+              {values.procesado_legalmente === true && (
+                <Field label="Motivo">
+                  <Input registration={register("procesado_motivo")} />
+                </Field>
+              )}
+              {booleanLimpia(
+                "conoce_detenido_entorno",
+                "¿Conoce a alguna persona de su entorno que haya estado presa en algún momento?",
+                { conoce_detenido_motivo: "" },
+              )}
+              {values.conoce_detenido_entorno === true && (
+                <Field label="Motivo">
+                  <Input registration={register("conoce_detenido_motivo")} />
+                </Field>
               )}
             </div>
           </section>

@@ -6,6 +6,11 @@ export const etiquetasEstadoCivil = {
   VIUDO: "Viudo(a)",
   DIVORCIADO: "Divorciado(a)",
 };
+// Etiquetas para el sexo
+export const etiquetasSexo = {
+  MASCULINO: "Masculino",
+  FEMENINO: "Femenino",
+};
 // Etiquetas para el parentesco
 export const etiquetasParentesco = {
   PADRE: "Padre",

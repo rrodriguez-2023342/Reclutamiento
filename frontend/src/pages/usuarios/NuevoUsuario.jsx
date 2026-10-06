@@ -114,6 +114,7 @@ function NuevoUsuario() {
                 nit: postulante.nit || "",
                 direccion: postulante.direccion || "",
                 estado_civil: postulante.estado_civil || "",
+                sexo: postulante.sexo || "",
                 telefono: postulante.telefono || "",
                 ultimo_grado_cursado: getHighestEducation(
                     postulante.educacionHistorial,
@@ -134,6 +135,10 @@ function NuevoUsuario() {
                     : "",
                 sueldo: postulante.sueldo ?? "",
                 moneda_sueldo: postulante.moneda_sueldo || "QUETZAL",
+                banco: postulante.banco || "",
+                tipo_cuenta_bancaria: postulante.tipo_cuenta_bancaria || "",
+                numero_cuenta_bancaria:
+                    postulante.numero_cuenta_bancaria || "",
             });
         }
     }, [location.state, reset]);
@@ -423,7 +428,11 @@ function NuevoUsuario() {
                             />
                         </Field>
 
-                        <CamposAltaUsuario register={register} errors={errors} />
+                        <CamposAltaUsuario
+                            register={register}
+                            errors={errors}
+                            valorTipoCuenta={watch("tipo_cuenta_bancaria") || ""}
+                        />
 
                         <div className="grid gap-5 sm:grid-cols-3">
                             <Field label="Sueldo Base" error={errors.sueldo?.message}>

@@ -32,6 +32,7 @@ import {
   etiquetasMotivoRetiro,
   etiquetasNivelEducativo,
   etiquetasParentesco,
+  etiquetasSexo,
   etiquetasTipoDocumento,
   etiquetasVivienda,
   estilosEstadoPostulante,
@@ -256,6 +257,7 @@ function SectionContent({ section, p, onReload }) {
                 etiquetasEstadoCivil[p.estado_civil] || "—",
                 p.estado_civil,
               ],
+              ["Sexo", etiquetasSexo[p.sexo] || "—", p.sexo],
               ["Extendido en", text(p.dpi_extendido_en), p.dpi_extendido_en],
               [
                 "Perfil de Facebook",
@@ -565,15 +567,133 @@ function SectionContent({ section, p, onReload }) {
                 etiquetasVivienda[p.vivienda_tipo] || "—",
                 p.vivienda_tipo,
               ],
-              ["Valor vivienda", decimal(p.vivienda_valor), p.vivienda_valor],
+              ...(p.vivienda_tipo === "OTRA"
+                ? [
+                    [
+                      "Especificación vivienda",
+                      text(p.vivienda_otra_especificar),
+                      p.vivienda_otra_especificar,
+                    ],
+                  ]
+                : []),
+              ...(p.vivienda_tipo === "PROPIA"
+                ? [
+                    [
+                      "Valor vivienda",
+                      decimal(p.vivienda_valor),
+                      p.vivienda_valor,
+                    ],
+                  ]
+                : []),
+              ...(p.vivienda_tipo === "ALQUILADA"
+                ? [
+                    [
+                      "Renta vivienda",
+                      decimal(p.vivienda_renta_monto),
+                      p.vivienda_renta_monto,
+                    ],
+                  ]
+                : []),
               [
-                "Renta vivienda",
-                decimal(p.vivienda_renta_monto),
-                p.vivienda_renta_monto,
+                "¿Vivienda asegurada?",
+                boolean(p.vivienda_asegurada),
+                p.vivienda_asegurada,
               ],
+              ...(p.vivienda_asegurada === true
+                ? [
+                    [
+                      "Monto seguro vivienda",
+                      decimal(p.vivienda_seguro_monto),
+                      p.vivienda_seguro_monto,
+                    ],
+                  ]
+                : []),
+              [
+                "¿Tiene otro inmueble?",
+                boolean(p.tiene_otro_inmueble),
+                p.tiene_otro_inmueble,
+              ],
+              ...(p.tiene_otro_inmueble === true
+                ? [
+                    [
+                      "Especificación inmueble",
+                      text(p.otro_inmueble_especificar),
+                      p.otro_inmueble_especificar,
+                    ],
+                    [
+                      "Monto inmueble",
+                      decimal(p.otro_inmueble_monto),
+                      p.otro_inmueble_monto,
+                    ],
+                  ]
+                : []),
               ["Tiene vehículo", boolean(p.tiene_vehiculo), p.tiene_vehiculo],
-              ["Tipo licencia", text(p.licencia_tipo), p.licencia_tipo],
-              ["Número licencia", text(p.licencia_numero), p.licencia_numero],
+              ...(p.tiene_vehiculo === true
+                ? [
+                    ["Tipo de vehículo", text(p.tipo_vehiculo), p.tipo_vehiculo],
+                    ["Marca", text(p.vehiculo_marca), p.vehiculo_marca],
+                    ["Placa", text(p.vehiculo_placa), p.vehiculo_placa],
+                    ["Tipo licencia", text(p.licencia_tipo), p.licencia_tipo],
+                    [
+                      "Número licencia",
+                      text(p.licencia_numero),
+                      p.licencia_numero,
+                    ],
+                    [
+                      "¿Vehículo asegurado?",
+                      boolean(p.vehiculo_asegurado),
+                      p.vehiculo_asegurado,
+                    ],
+                    ...(p.vehiculo_asegurado === true
+                      ? [
+                          [
+                            "Monto seguro",
+                            decimal(p.vehiculo_seguro_monto),
+                            p.vehiculo_seguro_monto,
+                          ],
+                        ]
+                      : []),
+                  ]
+                : []),
+              [
+                "Ingresos adicionales",
+                boolean(p.ingresos_adicionales),
+                p.ingresos_adicionales,
+              ],
+              ...(p.ingresos_adicionales === true
+                ? [
+                    [
+                      "Monto ingresos adicionales",
+                      decimal(p.ingresos_adicionales_monto),
+                      p.ingresos_adicionales_monto,
+                    ],
+                    [
+                      "Motivo ingresos adicionales",
+                      text(p.ingresos_adicionales_motivo),
+                      p.ingresos_adicionales_motivo,
+                    ],
+                  ]
+                : []),
+              [
+                "Cuenta bancaria",
+                boolean(p.tiene_cuenta_bancaria),
+                p.tiene_cuenta_bancaria,
+              ],
+              ...(p.tiene_cuenta_bancaria === true
+                ? [
+                    [
+                      "Tipo de cuenta",
+                      text(p.tipo_cuenta_bancaria),
+                      p.tipo_cuenta_bancaria,
+                    ],
+                    ["Banco", text(p.banco), p.banco],
+                    [
+                      "No. de cuenta",
+                      text(p.numero_cuenta_bancaria),
+                      p.numero_cuenta_bancaria,
+                    ],
+                  ]
+                : []),
               [
                 "Deudas pendientes",
                 boolean(p.deudas_pendientes),
@@ -585,16 +705,73 @@ function SectionContent({ section, p, onReload }) {
                 text(p.deudas_institucion),
                 p.deudas_institucion,
               ],
+              ["Motivo deuda", text(p.deudas_motivo), p.deudas_motivo],
+              ["Hipotecas", boolean(p.tiene_hipotecas), p.tiene_hipotecas],
+              ...(p.tiene_hipotecas === true
+                ? [
+                    ["Motivo hipoteca", text(p.hipoteca_motivo), p.hipoteca_motivo],
+                    ["Monto hipoteca", decimal(p.hipoteca_monto), p.hipoteca_monto],
+                    [
+                      "Institución hipoteca",
+                      text(p.hipoteca_institucion),
+                      p.hipoteca_institucion,
+                    ],
+                  ]
+                : []),
+              ["Otras deudas", boolean(p.otras_deudas), p.otras_deudas],
+              ...(p.otras_deudas === true
+                ? [
+                    [
+                      "Motivo otra deuda",
+                      text(p.otra_deuda_motivo),
+                      p.otra_deuda_motivo,
+                    ],
+                    [
+                      "Monto otra deuda",
+                      decimal(p.otra_deuda_monto),
+                      p.otra_deuda_monto,
+                    ],
+                    [
+                      "Institución otra deuda",
+                      text(p.otra_deuda_institucion),
+                      p.otra_deuda_institucion,
+                    ],
+                  ]
+                : []),
               [
                 "Detenido por policía",
                 boolean(p.detenido_policia),
                 p.detenido_policia,
               ],
+              ...(p.detenido_policia === true
+                ? [
+                    ["Motivo detención", text(p.detenido_motivo), p.detenido_motivo],
+                  ]
+                : []),
               [
                 "Procesado legalmente",
                 boolean(p.procesado_legalmente),
                 p.procesado_legalmente,
               ],
+              ...(p.procesado_legalmente === true
+                ? [
+                    ["Motivo proceso", text(p.procesado_motivo), p.procesado_motivo],
+                  ]
+                : []),
+              [
+                "Conoce a alguien detenido/preso",
+                boolean(p.conoce_detenido_entorno),
+                p.conoce_detenido_entorno,
+              ],
+              ...(p.conoce_detenido_entorno === true
+                ? [
+                    [
+                      "Motivo entorno",
+                      text(p.conoce_detenido_motivo),
+                      p.conoce_detenido_motivo,
+                    ],
+                  ]
+                : []),
             ]}
           />
         </div>
@@ -629,6 +806,29 @@ function SectionContent({ section, p, onReload }) {
                 etiquetasMedioEnterado[p.medio_enterado] || "—",
                 p.medio_enterado,
               ],
+              ...(p.medio_enterado
+                ? [
+                    [
+                      "Especificación medio",
+                      text(p.medio_enterado_especificar),
+                      p.medio_enterado_especificar,
+                    ],
+                  ]
+                : []),
+              [
+                "Parientes/amigos en la empresa",
+                boolean(p.tiene_parientes_empresa),
+                p.tiene_parientes_empresa,
+              ],
+              ...(p.tiene_parientes_empresa === true
+                ? [
+                    [
+                      "Nombre pariente/amigo",
+                      text(p.parientes_empresa_nombre),
+                      p.parientes_empresa_nombre,
+                    ],
+                  ]
+                : []),
               [
                 "Por qué desea trabajar",
                 text(p.porque_gustaria_trabajar),
@@ -947,6 +1147,10 @@ function DetallePostulante() {
               fecha_contratacion: resultado.fecha_contratacion,
               empresa_id: postulante.usuario?.empresa?.id,
               patrono_id: postulante.usuario?.patrono?.id,
+              sexo: postulante.sexo,
+              banco: postulante.banco,
+              tipo_cuenta_bancaria: postulante.tipo_cuenta_bancaria,
+              numero_cuenta_bancaria: postulante.numero_cuenta_bancaria,
               educacionHistorial: postulante.educacionHistorial,
               datosFamiliares: postulante.datosFamiliares,
             },

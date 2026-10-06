@@ -115,12 +115,17 @@ export function Textarea({ registration, error, ...props }) {
   );
 }
 
-export function Select({ registration, error, children }) {
+export function Select({ registration, error, children, onChange, ...props }) {
   return (
     <>
       <div className="relative">
         <select
           {...registration}
+          {...props}
+          onChange={(event) => {
+            registration?.onChange?.(event);
+            onChange?.(event);
+          }}
           className="h-14 w-full appearance-none rounded-xl border border-[#dce3ee] bg-white px-4 pr-10 text-base text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
         >
           {children}

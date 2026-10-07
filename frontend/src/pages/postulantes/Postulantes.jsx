@@ -25,14 +25,12 @@ const PAGE_SIZE = 6;
 const STATUS_OPTIONS = [
   { value: "", label: "Estado" },
   { value: "POSTULANTE", label: "Postulante" },
-  { value: "RECLUTAMIENTO", label: "En Reclutamiento" },
   { value: "CONTRATADO", label: "Contratado" },
   { value: "RECHAZADO", label: "Rechazado" },
 ];
 
 const statusStyles = {
   POSTULANTE: "bg-[#fff0bd] text-[#a86b00]",
-  RECLUTAMIENTO: "bg-[#d9ebff] text-[#2765d9]",
   CONTRATADO: "bg-[#c9f3dd] text-[#087947]",
   RECHAZADO: "bg-[#ffe0e2] text-[#df353c]",
 };

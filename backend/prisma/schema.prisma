@@ -9,7 +9,6 @@ datasource db {
 
 enum EstadoPostulante {
   POSTULANTE      @map("Postulante")
-  RECLUTAMIENTO   @map("Reclutamiento")
   CONTRATADO      @map("Contratado")
   RECHAZADO       @map("Rechazado")
 }

@@ -5,15 +5,13 @@ import { historialRechazoService } from "./historial-rechazo.service.js";
 // Constantes de estado y transiciones válidas para el flujo de postulantes
 const ETIQUETAS_ESTADO = {
   POSTULANTE: "Postulante",
-  RECLUTAMIENTO: "En Reclutamiento",
   CONTRATADO: "Contratado",
   RECHAZADO: "Rechazado",
 };
 
 // Transiciones válidas: desde un estado, a qué estados puede pasar
 const TRANSICIONES_PERMITIDAS = {
-  POSTULANTE: ["RECLUTAMIENTO"],
-  RECLUTAMIENTO: ["CONTRATADO", "RECHAZADO"],
+  POSTULANTE: ["CONTRATADO", "RECHAZADO"],
   CONTRATADO: [],
   RECHAZADO: ["POSTULANTE"],
 };

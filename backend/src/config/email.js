@@ -104,15 +104,6 @@ export const sendTemporalPasswordEmail = async (
 
 // Contenido del correo según el nuevo estado del postulante
 const CONTENIDO_ESTADO = {
-  RECLUTAMIENTO: {
-    subject: "Tu postulación está en proceso de reclutamiento",
-    color: "#2765d9",
-    fondo: "#eef5ff",
-    borde: "#b9d8ff",
-    titulo: "Tu postulación está en proceso de reclutamiento",
-    mensaje:
-      "Nos complace informarte que tu postulación ha pasado a proceso de reclutamiento. Nuestro equipo evaluará tu información y te contactaremos para continuar con el siguiente paso del proceso de selección.",
-  },
   CONTRATADO: {
     subject: "¡Felicidades! Has sido contratado",
     color: "#087947",

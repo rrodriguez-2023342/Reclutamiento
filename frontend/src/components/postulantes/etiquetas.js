@@ -53,14 +53,12 @@ export const etiquetasMedioEnterado = {
 // Etiquetas para el estado del postulante
 export const etiquetasEstadoPostulante = {
   POSTULANTE: "Postulante",
-  RECLUTAMIENTO: "En Reclutamiento",
   CONTRATADO: "Contratado",
   RECHAZADO: "Rechazado",
 };
 // Etiquetas para el estilo del estado del postulante
 export const estilosEstadoPostulante = {
   POSTULANTE: "bg-[#fff0bd] text-[#a86b00]",
-  RECLUTAMIENTO: "bg-[#d9ebff] text-[#2765d9]",
   CONTRATADO: "bg-[#c9f3dd] text-[#087947]",
   RECHAZADO: "bg-[#ffe0e2] text-[#df353c]",
 };

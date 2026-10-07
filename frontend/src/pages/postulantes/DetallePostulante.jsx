@@ -54,13 +54,6 @@ const sections = [
 const transitions = {
   POSTULANTE: [
     {
-      estado: "RECLUTAMIENTO",
-      label: "Enviar a Reclutamiento",
-      description: "El postulante pasará a la etapa de reclutamiento.",
-    },
-  ],
-  RECLUTAMIENTO: [
-    {
       estado: "CONTRATADO",
       label: "Contratar",
       description: "El postulante quedará marcado como contratado.",

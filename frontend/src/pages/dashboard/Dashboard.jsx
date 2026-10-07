@@ -6,14 +6,12 @@ import { getDashboardSummary } from "../../services/dashboard.service.js";
 
 const statusStyles = {
   POSTULANTE: "bg-[#fff0bd] text-[#a86b00]",
-  RECLUTAMIENTO: "bg-[#d9ebff] text-[#2765d9]",
   CONTRATADO: "bg-[#c9f3dd] text-[#087947]",
   RECHAZADO: "bg-[#ffe0e2] text-[#df353c]",
 };
 
 const statusLabels = {
   POSTULANTE: "Postulante",
-  RECLUTAMIENTO: "En Reclutamiento",
   CONTRATADO: "Contratado",
   RECHAZADO: "Rechazado",
 };
@@ -65,7 +63,7 @@ function Dashboard() {
       value: summary?.plazasSolicitadas,
       icon: BriefcaseBusiness,
     },
-    { label: "En proceso", value: summary?.enProceso, icon: CircleDot },
+    { label: "Pendientes", value: summary?.pendientes, icon: CircleDot },
   ];
   const applications = summary?.ultimasSolicitudes || [];
 

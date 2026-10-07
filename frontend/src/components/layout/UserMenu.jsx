@@ -28,7 +28,7 @@ function UserMenu({ compact = false, onClick }) {
           {name}
         </p>
         <p
-          className={`mt-0.5 truncate text-sm ${compact ? "text-[#b5c5ee]" : "text-[#315cf5]"}`}
+          className={`mt-0.5 text-sm ${compact ? "text-[#b5c5ee]" : "text-[#315cf5]"}`}
         >
           {role}
         </p>

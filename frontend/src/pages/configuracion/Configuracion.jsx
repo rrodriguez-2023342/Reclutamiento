@@ -339,7 +339,7 @@ function Configuracion() {
                     role="dialog"
                     aria-modal="true"
                 >
-                    <div className="w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-[26px] bg-white p-6 shadow-2xl">
+                    <div className="w-full max-w-lg rounded-[26px] bg-white p-6 shadow-2xl">
                         <h2 className="text-xl font-bold text-[#071b3b]">
                             Asignar empresas
                         </h2>
@@ -368,7 +368,7 @@ function Configuracion() {
                             />
                         </label>
 
-                        <div className="mt-4 max-h-56 sm:max-h-72 overflow-y-auto rounded-2xl border border-[#dce3ee] p-2">
+                        <div className="mt-4 max-h-72 overflow-y-auto rounded-2xl border border-[#dce3ee] p-2">
                             {modalLoading && (
                                 <p className="px-3 py-4 text-[#5b6e8b]">
                                     Cargando empresas asignadas...

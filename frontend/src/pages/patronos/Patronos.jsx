@@ -122,8 +122,8 @@ function Patronos() {
             )}
 
             <section className="rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-6">
-                <div className="flex flex-wrap items-center gap-4">
-                    <label className="flex h-14 min-w-[220px] flex-1 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
+                <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_auto_auto]">
+                    <label className="flex h-14 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
                         <Search className="h-5 w-5 shrink-0" />
                         <input
                             value={search}
@@ -131,14 +131,12 @@ function Patronos() {
                                 setSearch(event.target.value);
                                 setPage(1);
                             }}
-                            placeholder="Buscar patrono..."
-                            title="Buscar por razón social, representante o NIT"
-                            aria-label="Buscar por razón social, representante o NIT"
-                            className="w-full min-w-0 bg-transparent text-base outline-none placeholder:text-[#91a0b7]"
+                            placeholder="Buscar por razón social, representante o NIT"
+                            className="w-full bg-transparent text-base outline-none placeholder:text-[#91a0b7]"
                         />
                     </label>
 
-                    <div className="relative min-w-0">
+                    <div className="relative">
                         <select
                             aria-label="Filtrar por estado"
                             value={activo}
@@ -158,7 +156,7 @@ function Patronos() {
                     <button
                         type="button"
                         onClick={() => navigate("/patronos/nuevo")}
-                        className="flex h-14 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-6 font-bold text-white shadow-[0_7px_16px_rgba(49,98,233,0.18)] transition hover:bg-[#183fca]"
+                        className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-6 font-bold text-white shadow-[0_7px_16px_rgba(49,98,233,0.18)] transition hover:bg-[#183fca]"
                     >
                         <Plus className="h-5 w-5" />
                         Nuevo Patrono
@@ -288,7 +286,7 @@ function Patronos() {
                         Mostrando {firstItem} a {lastItem} de{" "}
                         {result.total.toLocaleString("es-GT")} patronos
                     </p>
-                    <div className="flex flex-wrap items-center justify-center gap-2">
+                    <div className="flex items-center gap-2">
                         <button
                             type="button"
                             disabled={loading || result.page <= 1}
@@ -298,7 +296,7 @@ function Patronos() {
                             className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                         >
                             <ChevronLeft className="h-4 w-4" />
-                            <span className="hidden sm:inline">Anterior</span>
+                            Anterior
                         </button>
                         <span className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-[#3162e9] px-3 font-bold text-white">
                             {result.page}
@@ -313,7 +311,7 @@ function Patronos() {
                             }
                             className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                         >
-                            <span className="hidden sm:inline">Siguiente</span>
+                            Siguiente
                             <ChevronRight className="h-4 w-4" />
                         </button>
                     </div>

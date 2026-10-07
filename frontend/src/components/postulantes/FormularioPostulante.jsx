@@ -617,7 +617,7 @@ function FormularioPostulante({ postulanteId }) {
                 className="h-12 w-full rounded-xl border border-[#dce3ee] px-4 outline-none focus:border-[#3162e9]"
               />
             </label>
-            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <div className="mt-6 flex justify-end gap-3">
               <button
                 type="button"
                 onClick={() => {
@@ -625,14 +625,14 @@ function FormularioPostulante({ postulanteId }) {
                   setCancelPassword("");
                   setCancelError("");
                 }}
-                className="w-full rounded-xl border border-[#dce3ee] px-4 py-2 font-semibold text-[#071b3b] cursor-pointer sm:w-auto"
+                className="rounded-xl border border-[#dce3ee] px-4 py-2 font-semibold text-[#071b3b] cursor-pointer"
               >
                 Continuar formulario
               </button>
               <button
                 type="submit"
                 disabled={cancelando || !cancelPassword}
-                className="w-full rounded-xl bg-[#df353c] px-4 py-2 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                className="rounded-xl bg-[#df353c] px-4 py-2 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {cancelando ? "Validando..." : "Confirmar salida"}
               </button>
@@ -1576,7 +1576,7 @@ function FormularioPostulante({ postulanteId }) {
                 return (
                   <div
                     key={tipo}
-                    className="rounded-xl border border-[#dce3ee] bg-white p-4 sm:flex sm:flex-wrap sm:items-center sm:justify-between gap-4"
+                    className="rounded-xl border border-[#dce3ee] bg-white p-4 sm:flex sm:items-center sm:justify-between gap-4"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <span className="text-sm font-medium text-[#071b3b]">
@@ -1588,7 +1588,7 @@ function FormularioPostulante({ postulanteId }) {
                           : "PDF (máx. 5 MB)"}
                       </span>
                     </div>
-                    <div className="flex shrink-0 items-center gap-3">
+                    <div className="flex items-center gap-3">
                       {existente && !archivoNuevo && (
                         <span className="text-xs text-[#087947] font-medium truncate max-w-[200px]">
                           {existente.nombre_archivo}

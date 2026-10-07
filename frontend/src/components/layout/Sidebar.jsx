@@ -61,7 +61,7 @@ function Sidebar({ isOpen, onClose, onOpenProfile }) {
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-30 flex w-[min(330px,86vw)] flex-col bg-[#1e3a8a] px-5 py-6 text-white shadow-2xl transition-transform duration-300 lg:w-[330px] lg:shadow-none ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
+      className={`fixed inset-y-0 left-0 z-20 flex w-[min(330px,86vw)] flex-col bg-[#1e3a8a] px-5 py-6 text-white shadow-2xl transition-transform duration-300 lg:w-[330px] lg:shadow-none ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
     >
       <div className="flex items-center gap-4 px-3">
         <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#3162e9]">
@@ -82,7 +82,7 @@ function Sidebar({ isOpen, onClose, onOpenProfile }) {
           <X className="h-6 w-6" />
         </button>
       </div>
-      <nav className="mt-10 min-h-0 flex-1 space-y-2 overflow-y-auto lg:overflow-visible" aria-label="Navegación principal">
+      <nav className="mt-10 space-y-2" aria-label="Navegación principal">
         {visibleNavigation.map((item) => {
           const hasSubmenu = item.submenu && item.submenu.length > 0;
           const isOpen = flyoutKey === item.label;
@@ -100,7 +100,7 @@ function Sidebar({ isOpen, onClose, onOpenProfile }) {
               {isOpen && (
                 <div
                   ref={flyoutRef}
-                  className="static mt-1 w-full rounded-2xl bg-[#1e3a8a] py-2 shadow-2xl animate-flyout lg:absolute lg:left-full lg:top-0 lg:z-10 lg:ml-2 lg:w-auto lg:min-w-[200px]"
+                  className="absolute left-full top-0 z-10 ml-2 min-w-[200px] rounded-2xl bg-[#1e3a8a] py-2 shadow-2xl animate-flyout"
                   onMouseEnter={() => setFlyoutKey(item.label)}
                   onMouseLeave={() => setFlyoutKey(null)}
                 >

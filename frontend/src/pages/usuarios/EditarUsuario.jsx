@@ -580,7 +580,7 @@ function EditarUsuario() {
 
                                 <div className="mt-6 space-y-6">
                                     <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                        <div className="flex flex-wrap items-center justify-between gap-2">
+                                        <div className="flex items-center justify-between">
                                             <h3 className="text-base font-semibold text-[#071b3b]">
                                                 Seguro de Gastos Médicos
                                             </h3>
@@ -591,7 +591,7 @@ function EditarUsuario() {
                                                     { value: true, label: "Sí" },
                                                     { value: false, label: "No" },
                                                 ]}
-                                                className="flex shrink-0 items-center gap-4"
+                                                className="flex items-center gap-4"
                                             />
                                         </div>
                                         {tieneSeguroGastos && (
@@ -645,7 +645,7 @@ function EditarUsuario() {
                                     </div>
 
                                     <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                        <div className="flex flex-wrap items-center justify-between gap-2">
+                                        <div className="flex items-center justify-between">
                                             <h3 className="text-base font-semibold text-[#071b3b]">
                                                 Seguro de Vida
                                             </h3>
@@ -656,7 +656,7 @@ function EditarUsuario() {
                                                     { value: true, label: "Sí" },
                                                     { value: false, label: "No" },
                                                 ]}
-                                                className="flex shrink-0 items-center gap-4"
+                                                className="flex items-center gap-4"
                                             />
                                         </div>
                                         {tieneSeguroVida && (
@@ -695,11 +695,11 @@ function EditarUsuario() {
                             </label>
                         </div>
 
-                        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+                        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                             <button
                                 type="button"
                                 onClick={() => navigate("/colaboradores")}
-                                className="h-14 whitespace-nowrap cursor-pointer rounded-2xl border border-[#dce3ee] px-6 font-bold text-[#5b6e8b] transition hover:bg-[#f0f4fa]"
+                                className="h-14 cursor-pointer rounded-2xl border border-[#dce3ee] px-6 font-bold text-[#5b6e8b] transition hover:bg-[#f0f4fa]"
                             >
                                 Cancelar
                             </button>
@@ -719,7 +719,7 @@ function EditarUsuario() {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="flex h-14 whitespace-nowrap cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-7 font-bold text-white transition hover:bg-[#183fca] disabled:cursor-not-allowed disabled:opacity-60"
+                                className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-7 font-bold text-white transition hover:bg-[#183fca] disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 <Save className="h-5 w-5" />
                                 {isSubmitting ? "Guardando..." : "Guardar"}

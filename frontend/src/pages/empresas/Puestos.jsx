@@ -236,7 +236,7 @@ function Puestos() {
 
     return (
         <DashboardLayout title="Puestos">
-            <div className="mx-auto max-w-7xl py-8">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
                 <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
@@ -272,8 +272,8 @@ function Puestos() {
 
                 <div className="rounded-[26px] bg-white shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
                     <div className="border-b border-[#dce3ee] p-4 sm:px-6">
-                        <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-                            <div className="relative min-w-0 max-w-full flex-1">
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <div className="relative flex-1">
                                 <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#9ba8c2]" />
                                 <input
                                     type="text"
@@ -284,7 +284,7 @@ function Puestos() {
                                 />
                             </div>
 
-                            <div className="w-full max-w-[200px] min-w-0 sm:flex-1">
+                            <div className="w-full max-w-[200px]">
                                 <SelectField
                                     ariaLabel="Estado de puestos"
                                     value={activo}
@@ -296,7 +296,7 @@ function Puestos() {
                                 </SelectField>
                             </div>
 
-                            <div className="w-full max-w-[260px] min-w-0 sm:flex-1">
+                            <div className="w-full max-w-[260px]">
                                 <SearchableSelect
                                     placeholder="Divisiones"
                                     value={divisionId}
@@ -311,7 +311,7 @@ function Puestos() {
                                 />
                             </div>
 
-                            <div className="w-full max-w-[260px] min-w-0 sm:flex-1">
+                            <div className="w-full max-w-[260px]">
                                 <SearchableSelect
                                     placeholder="Departamentos"
                                     value={departamentoId}
@@ -451,7 +451,7 @@ function Puestos() {
                             Mostrando {firstItem} a {lastItem} de{" "}
                             {result.total.toLocaleString("es-GT")} puestos
                         </p>
-                        <div className="flex flex-wrap items-center justify-center gap-2">
+                        <div className="flex items-center gap-2">
                             <button
                                 type="button"
                                 disabled={loading || result.page <= 1}
@@ -459,7 +459,7 @@ function Puestos() {
                                 className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                             >
                                 <ChevronLeft className="h-4 w-4" />
-                                <span className="hidden sm:inline">Anterior</span>
+                                Anterior
                             </button>
                             <span className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-[#3162e9] px-3 font-bold text-white">
                                 {result.page}
@@ -472,7 +472,7 @@ function Puestos() {
                                 }
                                 className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                             >
-                                <span className="hidden sm:inline">Siguiente</span>
+                                Siguiente
                                 <ChevronRight className="h-4 w-4" />
                             </button>
                         </div>

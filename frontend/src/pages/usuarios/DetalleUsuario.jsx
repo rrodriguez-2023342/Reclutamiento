@@ -555,7 +555,7 @@ function DetalleUsuario() {
                         )}
 
                         <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
-                            <div className="flex flex-wrap items-center justify-between gap-3">
+                            <div className="flex items-center justify-between">
                                 <h2 className="text-lg font-bold text-[#071b3b]">
                                     Empresa y patrono
                                 </h2>
@@ -593,7 +593,7 @@ function DetalleUsuario() {
                         </section>
 
                         <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
-                            <div className="flex flex-wrap items-center justify-between gap-3">
+                            <div className="flex items-center justify-between">
                                 <h2 className="text-lg font-bold text-[#071b3b]">
                                     Información económica
                                 </h2>
@@ -791,14 +791,14 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
             aria-modal="true"
         >
             <div className="w-full max-w-5xl max-h-[80vh] overflow-hidden rounded-[26px] bg-white shadow-2xl flex flex-col">
-                <div className="flex items-start justify-between gap-4 border-b border-[#dce3ee] px-6 py-4">
-                    <h2 className="text-base sm:text-xl font-bold text-[#071b3b]">
+                <div className="flex items-center justify-between border-b border-[#dce3ee] px-6 py-4">
+                    <h2 className="text-xl font-bold text-[#071b3b]">
                         Historial de sueldo base y bonificación decreto ley
                     </h2>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="shrink-0 cursor-pointer text-[#5b6e8b] transition hover:text-[#071b3b]"
+                        className="cursor-pointer text-[#5b6e8b] transition hover:text-[#071b3b]"
                     >
                         ✕
                     </button>
@@ -812,7 +812,7 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
                             No hay registros de cambios de sueldo base.
                         </p>
                     ) : (
-                        <table className="w-full min-w-[720px] border-separate border-spacing-0 text-left text-sm">
+                        <table className="w-full border-separate border-spacing-0 text-left text-sm">
                             <thead>
                                 <tr className="text-base font-semibold text-[#5b6e8b]">
                                     <th className="border-b border-[#dfe5ee] px-4 py-3">Fecha</th>
@@ -868,7 +868,7 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
                 </div>
 
                 {totalPages > 1 && (
-                    <div className="flex flex-wrap items-center justify-center gap-2 text-xs sm:gap-3 sm:text-sm border-t border-[#dce3ee] px-6 py-4">
+                    <div className="flex items-center justify-center gap-3 border-t border-[#dce3ee] px-6 py-4">
                         <button
                             type="button"
                             disabled={page <= 1}
@@ -929,14 +929,14 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
             aria-modal="true"
         >
             <div className="w-full max-w-5xl max-h-[80vh] overflow-hidden rounded-[26px] bg-white shadow-2xl flex flex-col">
-                <div className="flex items-start justify-between gap-4 border-b border-[#dce3ee] px-6 py-4">
-                    <h2 className="text-base sm:text-xl font-bold text-[#071b3b]">
+                <div className="flex items-center justify-between border-b border-[#dce3ee] px-6 py-4">
+                    <h2 className="text-xl font-bold text-[#071b3b]">
                         Historial de cambios de empresa
                     </h2>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="shrink-0 cursor-pointer text-[#5b6e8b] transition hover:text-[#071b3b]"
+                        className="cursor-pointer text-[#5b6e8b] transition hover:text-[#071b3b]"
                     >
                         ✕
                     </button>
@@ -950,7 +950,7 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
                             No hay registros de cambios de empresa.
                         </p>
                     ) : (
-                        <table className="w-full min-w-[560px] border-separate border-spacing-0 text-left text-sm">
+                        <table className="w-full border-separate border-spacing-0 text-left text-sm">
                             <thead>
                                 <tr className="text-base font-semibold text-[#5b6e8b]">
                                     <th className="border-b border-[#dfe5ee] px-4 py-3">Fecha</th>
@@ -994,7 +994,7 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
                 </div>
 
                 {totalPages > 1 && (
-                    <div className="flex flex-wrap items-center justify-center gap-2 text-xs sm:gap-3 sm:text-sm border-t border-[#dce3ee] px-6 py-4">
+                    <div className="flex items-center justify-center gap-3 border-t border-[#dce3ee] px-6 py-4">
                         <button
                             type="button"
                             disabled={page <= 1}

@@ -56,7 +56,7 @@ function formatDate(value) {
 
 function SelectField({ ariaLabel, value, onChange, children }) {
   return (
-    <div className="relative min-w-0">
+    <div className="relative">
       <select
         aria-label={ariaLabel}
         value={value}
@@ -101,7 +101,7 @@ function SearchableSelect({ placeholder, value, options, onChange }) {
   };
 
   return (
-    <div ref={ref} className="relative min-w-0">
+    <div ref={ref} className="relative">
       <div
         onClick={() => {
           setOpen(true);
@@ -286,13 +286,13 @@ function Postulantes() {
         </div>
       )}
       <section className="rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-6">
-        <div className="flex flex-wrap items-center gap-4">
-          <label className="flex h-14 min-w-[220px] flex-1 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_192px_176px_232px_auto]">
+          <label className="flex h-14 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
             <Search className="h-5 w-5 shrink-0" />
             <input
               value={search}
               onChange={(event) => updateSearch(event.target.value)}
-              placeholder="Buscar postulantes"
+              placeholder="Buscar por nombre o DPI..."
               className="w-full bg-transparent text-base outline-none placeholder:text-[#7787a2]"
             />
           </label>
@@ -319,7 +319,7 @@ function Postulantes() {
           <button
             type="button"
             onClick={() => navigate("/postulantes/nuevo")}
-            className="flex h-14 shrink-0 items-center justify-center gap-2 cursor-pointer rounded-2xl bg-[#3162e9] px-5 text-base font-bold text-white transition hover:bg-[#183fca]"
+            className="flex h-14 items-center justify-center gap-2 cursor-pointer rounded-2xl bg-[#3162e9] px-5 text-base font-bold text-white transition hover:bg-[#183fca]"
           >
             <Plus className="h-5 w-5" />
             Nuevo Postulante
@@ -436,12 +436,12 @@ function Postulantes() {
             </tbody>
           </table>
         </div>
-        <footer className="flex flex-col gap-4 px-4 py-5 text-[#5b6e8b] sm:px-7 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="flex flex-col gap-4 px-7 py-5 text-[#5b6e8b] sm:flex-row sm:items-center sm:justify-between">
           <p>
             Mostrando {firstItem} a {lastItem} de{" "}
             {result.total.toLocaleString("es-GT")} postulantes
           </p>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               disabled={loading || result.page <= 1}

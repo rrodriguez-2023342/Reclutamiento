@@ -40,10 +40,14 @@ function Sidebar({ isOpen, onClose, onOpenProfile }) {
   const [flyoutKey, setFlyoutKey] = useState(null);
   const flyoutRef = useRef(null);
 
-  const visibleNavigation =
-    user?.rol === "Administrador RHCorp"
-      ? navigation
-      : navigation.filter((item) => item.to !== "/colaboradores");
+  const esAdmin = user?.rol === "Administrador RHCorp";
+  const esStaff = esAdmin || user?.rol === "Recursos Humanos";
+
+  const visibleNavigation = navigation.filter((item) => {
+    if (item.to === "/colaboradores") return esStaff;
+    if (item.to === "/configuracion") return esAdmin;
+    return true;
+  });
 
   useEffect(() => {
     const handleClickOutside = (e) => {

@@ -29,7 +29,8 @@ export const listarEmpresas = async (req, res) => {
   const query = validar(listarEmpresasQuerySchema, req.query, res)
   if (!query) return
 
-  const resultado = await empresaService.listar(query)
+  // Alcance por empresa (Recursos Humanos): array = limitar, null = sin limite
+  const resultado = await empresaService.listar({ ...query, empresa_ids: req.empresaIds })
   res.json({ status: 'ok', data: resultado })
 }
 
@@ -38,7 +39,7 @@ export const exportarEmpresas = async (req, res) => {
   const query = validar(listarEmpresasQuerySchema, req.query, res)
   if (!query) return
 
-  const data = await empresaService.exportar(query)
+  const data = await empresaService.exportar({ ...query, empresa_ids: req.empresaIds })
   res.json({ status: 'ok', data })
 }
 
@@ -46,6 +47,11 @@ export const exportarEmpresas = async (req, res) => {
 export const getEmpresaById = async (req, res) => {
   const id = parsearId(req, res)
   if (!id) return
+
+  // Alcance limitado (RRHH): una empresa fuera de sus asignadas responde 404
+  if (Array.isArray(req.empresaIds) && !req.empresaIds.includes(id)) {
+    return res.status(404).json({ status: 'error', message: 'Empresa no encontrada' })
+  }
 
   const empresa = await empresaService.obtenerPorId(id)
   if (!empresa) {

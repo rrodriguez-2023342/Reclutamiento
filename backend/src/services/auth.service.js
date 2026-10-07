@@ -10,7 +10,13 @@ class AuthService {
   async login(correo, password) {
     const user = await prisma.usuario.findUnique({
       where: { correo },
-      include: { rol: true },
+      include: {
+        rol: true,
+        empresas_asignadas: {
+          include: { empresa: { select: { id: true, nombre_empresa: true } } },
+          orderBy: { empresa: { nombre_empresa: 'asc' } },
+        },
+      },
     })
 
     if (!user) {
@@ -42,6 +48,7 @@ class AuthService {
         correo: user.correo,
         rol: user.rol.nombre,
         mustChangePassword: user.mustChangePassword,
+        empresasAsignadas: user.empresas_asignadas.map((e) => e.empresa),
       },
     }
 
@@ -52,7 +59,13 @@ class AuthService {
   async getMe(userId) {
     const user = await prisma.usuario.findUnique({
       where: { id: userId },
-      include: { rol: true },
+      include: {
+        rol: true,
+        empresas_asignadas: {
+          include: { empresa: { select: { id: true, nombre_empresa: true } } },
+          orderBy: { empresa: { nombre_empresa: 'asc' } },
+        },
+      },
     })
 
     if (!user) {
@@ -67,6 +80,7 @@ class AuthService {
       correo: user.correo,
       rol: user.rol.nombre,
       mustChangePassword: user.mustChangePassword,
+      empresasAsignadas: user.empresas_asignadas.map((e) => e.empresa),
     }
   }
 

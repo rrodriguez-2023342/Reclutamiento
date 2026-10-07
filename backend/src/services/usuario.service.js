@@ -4,6 +4,7 @@ import crypto from "crypto";
 import { sendTemporalPasswordEmail } from "../config/email.js";
 import { historialSueldoService } from "./historial-sueldo.service.js";
 import { historialEmpresaService } from "./historial-empresa.service.js";
+import { COLABORADOR_ROLE } from "../config/roles.constant.js";
 
 // Funcion para crear un error con mensaje y status
 function crearError(mensaje, status) {
@@ -12,10 +13,16 @@ function crearError(mensaje, status) {
   return error;
 }
 
+// Verifica que una empresa este dentro del alcance del solicitante (null = sin limite)
+function dentroDeAlcance(empresaIds, empresaId) {
+  if (!Array.isArray(empresaIds)) return true;
+  return empresaId !== null && empresaId !== undefined && empresaIds.includes(empresaId);
+}
+
 // Servicio para manejar operaciones relacionadas con usuarios
 class UsuarioService {
   // Construye el filtro where compartido entre listado y exportación
-  construirWhere({ q, rol_id, activo } = {}) {
+  construirWhere({ q, rol_id, activo, empresa_ids } = {}) {
     const where = {};
 
     if (activo !== undefined) {
@@ -25,6 +32,11 @@ class UsuarioService {
     // Filtrar por rol si se proporciona
     if (rol_id) {
       where.rol_id = rol_id;
+    }
+
+    // Alcance por empresa (Recursos Humanos): array = limitar, null = sin limite
+    if (Array.isArray(empresa_ids)) {
+      where.empresa_id = { in: empresa_ids };
     }
 
     // Filtrar por busqueda en nombre o correo si se proporciona
@@ -47,6 +59,10 @@ class UsuarioService {
           empresa: { select: { id: true, nombre_empresa: true } },
           patrono: { select: { id: true, razon_social: true } },
           puesto: { select: { id: true, nombre: true, descripcion: true } },
+          empresas_asignadas: {
+            include: { empresa: { select: { id: true, nombre_empresa: true, activo: true } } },
+            orderBy: { empresa: { nombre_empresa: "asc" } },
+          },
         },
         orderBy: [{ creado_en: "desc" }, { id: "desc" }],
         skip: (page - 1) * limit,
@@ -108,7 +124,7 @@ class UsuarioService {
   }
 
   // Obtener un usuario por su ID, excluyendo campos sensibles
-  async obtenerPorId(id) {
+  async obtenerPorId(id, ctx = {}) {
     const usuario = await prisma.usuario.findUnique({
       where: { id },
       include: {
@@ -123,17 +139,43 @@ class UsuarioService {
             departamento: { select: { nombre: true } },
           },
         },
+        empresas_asignadas: {
+          include: { empresa: { select: { id: true, nombre_empresa: true, activo: true } } },
+          orderBy: { empresa: { nombre_empresa: "asc" } },
+        },
       },
     });
 
     if (!usuario) return null;
+
+    // Si el solicitante tiene alcance limitado (RRHH) y el usuario queda fuera, se oculta
+    if (!dentroDeAlcance(ctx.empresaIds, usuario.empresa_id)) return null;
 
     const { password, resetToken, resetTokenExpiry, ...resto } = usuario;
     return resto;
   }
 
   // Crear un nuevo usuario, verificando duplicados y enviando correo si es necesario
-  async crear(data, adminId) {
+  async crear(data, adminId, ctx = {}) {
+    // Recursos Humanos solo puede crear colaboradores dentro de sus empresas asignadas
+    if (ctx.esRH) {
+      const rolColaborador = await prisma.role.findUnique({
+        where: { nombre: COLABORADOR_ROLE },
+      });
+      if (!rolColaborador || data.rol_id !== rolColaborador.id) {
+        throw crearError(
+          "Solo el administrador puede asignar roles distintos a Colaborador",
+          403,
+        );
+      }
+      if (!data.empresa_id) {
+        throw crearError("Debe asignar una empresa al colaborador", 400);
+      }
+      if (!dentroDeAlcance(ctx.empresaIds, data.empresa_id)) {
+        throw crearError("No tiene permiso sobre esa empresa", 403);
+      }
+    }
+
     // Verificar si ya existe un usuario con el mismo correo
     const existente = await prisma.usuario.findUnique({
       where: { correo: data.correo },
@@ -272,11 +314,42 @@ class UsuarioService {
   }
 
   // Actualizar un usuario existente, verificando duplicados y existencia de rol
-  async actualizar(id, data, adminId) {
+  async actualizar(id, data, adminId, ctx = {}) {
     // Verificar si el usuario existe
     const usuario = await prisma.usuario.findUnique({ where: { id } });
     if (!usuario) {
       throw crearError("Usuario no encontrado", 404);
+    }
+
+    // Alcance limitado (RRHH): no puede tocar usuarios fuera de sus empresas
+    if (!dentroDeAlcance(ctx.empresaIds, usuario.empresa_id)) {
+      throw crearError("Usuario no encontrado", 404);
+    }
+
+    if (ctx.esRH) {
+      // Recursos Humanos no puede cambiar roles
+      if (data.rol_id) {
+        const rolColaborador = await prisma.role.findUnique({
+          where: { nombre: COLABORADOR_ROLE },
+        });
+        if (!rolColaborador || data.rol_id !== rolColaborador.id) {
+          throw crearError(
+            "Solo el administrador puede asignar roles distintos a Colaborador",
+            403,
+          );
+        }
+      }
+      // Recursos Humanos no puede quitarle la empresa ni moverlo fuera de su alcance
+      if (data.empresa_id === null) {
+        throw crearError("Debe mantenerse la empresa asignada al colaborador", 403);
+      }
+      if (
+        data.empresa_id !== undefined &&
+        data.empresa_id !== null &&
+        !dentroDeAlcance(ctx.empresaIds, data.empresa_id)
+      ) {
+        throw crearError("No tiene permiso sobre esa empresa", 403);
+      }
     }
 
     // Verificar si el correo proporcionado ya existe en otro usuario
@@ -408,12 +481,15 @@ class UsuarioService {
     return resto;
   }
 
-  async registrarBaja(id, data) {
+  async registrarBaja(id, data, ctx = {}) {
     const usuario = await prisma.usuario.findUnique({
       where: { id },
-      select: { id: true },
+      select: { id: true, empresa_id: true },
     });
     if (!usuario) {
+      throw crearError("Usuario no encontrado", 404);
+    }
+    if (!dentroDeAlcance(ctx.empresaIds, usuario.empresa_id)) {
       throw crearError("Usuario no encontrado", 404);
     }
 
@@ -436,20 +512,23 @@ class UsuarioService {
   }
 
   // Desactivar un usuario, asegurando que no se pueda desactivar a si mismo y que exista y este activo
-  async desactivar(id, adminId) {
-    // Verificar que el administrador no intente descactivar su propia cuenta
-    if (Number(id) === Number(adminId)) {
-      throw crearError("No puede desactivar su propia cuenta", 400);
-    }
-
+  async desactivar(id, adminId, ctx = {}) {
     // Verificar si el usuario existe y si esta activo
     const usuario = await prisma.usuario.findUnique({
       where: { id },
-      select: { id: true, nombre: true, correo: true, activo: true },
+      select: { id: true, nombre: true, correo: true, activo: true, empresa_id: true },
     });
     // Si el usuario no existe, lanzar un error 404
     if (!usuario) {
       throw crearError("Usuario no encontrado", 404);
+    }
+    // Alcance limitado (RRHH): no visible fuera de sus empresas
+    if (!dentroDeAlcance(ctx.empresaIds, usuario.empresa_id)) {
+      throw crearError("Usuario no encontrado", 404);
+    }
+    // Verificar que el administrador no intente descactivar su propia cuenta
+    if (Number(id) === Number(adminId)) {
+      throw crearError("No puede desactivar su propia cuenta", 400);
     }
     // Si el usuario ya esta desactivado, lanzar un error 400
     if (!usuario.activo) {
@@ -474,12 +553,15 @@ class UsuarioService {
   }
 
   // Activar un usuario, asegurando que exista y que no este ya activo
-  async activar(id) {
+  async activar(id, ctx = {}) {
     const usuario = await prisma.usuario.findUnique({
       where: { id },
-      select: { id: true, nombre: true, correo: true, activo: true },
+      select: { id: true, nombre: true, correo: true, activo: true, empresa_id: true },
     });
     if (!usuario) {
+      throw crearError("Usuario no encontrado", 404);
+    }
+    if (!dentroDeAlcance(ctx.empresaIds, usuario.empresa_id)) {
       throw crearError("Usuario no encontrado", 404);
     }
 
@@ -502,11 +584,18 @@ class UsuarioService {
     return actualizado;
   }
 
-  async resetPassword(id) {
+  async resetPassword(id, ctx = {}) {
     // Buscar al usuario por el ID proporcionado
-    const usuario = await prisma.usuario.findUnique({ where: { id } });
+    const usuario = await prisma.usuario.findUnique({
+      where: { id },
+      select: { id: true, correo: true, empresa_id: true },
+    });
     // Si el usuario no existe se genera un error 404
     if (!usuario) {
+      throw crearError("Usuario no encontrado", 404);
+    }
+    // Alcance limitado (RRHH): no visible fuera de sus empresas
+    if (!dentroDeAlcance(ctx.empresaIds, usuario.empresa_id)) {
       throw crearError("Usuario no encontrado", 404);
     }
 
@@ -538,6 +627,67 @@ class UsuarioService {
 
     // Devuelve el resultado de la operacion
     return { success: true, correoEnviado: true };
+  }
+
+  // Obtiene las empresas asignadas a un usuario (rol Recursos Humanos)
+  async obtenerEmpresasAsignadas(id) {
+    const usuario = await prisma.usuario.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    if (!usuario) {
+      throw crearError("Usuario no encontrado", 404);
+    }
+
+    const filas = await prisma.usuarioEmpresa.findMany({
+      where: { usuario_id: id },
+      include: {
+        empresa: { select: { id: true, nombre_empresa: true, activo: true } },
+      },
+      orderBy: { empresa: { nombre_empresa: "asc" } },
+    });
+
+    return filas.map((f) => f.empresa);
+  }
+
+  // Reemplaza las empresas asignadas a un usuario (solo administrador)
+  async asignarEmpresas(id, empresaIds) {
+    const usuario = await prisma.usuario.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    if (!usuario) {
+      throw crearError("Usuario no encontrado", 404);
+    }
+
+    const unicos = [...new Set(empresaIds)];
+
+    // Verificar que todas las empresas indicadas existan
+    const existentes = await prisma.empresa.findMany({
+      where: { id: { in: unicos } },
+      select: { id: true },
+    });
+    if (existentes.length !== unicos.length) {
+      throw crearError("Una o más empresas no existen", 400);
+    }
+
+    // Reemplazar el conjunto de asignaciones en una transaccion
+    await prisma.$transaction([
+      prisma.usuarioEmpresa.deleteMany({ where: { usuario_id: id } }),
+      ...(unicos.length > 0
+        ? [
+            prisma.usuarioEmpresa.createMany({
+              data: unicos.map((empresa_id) => ({
+                usuario_id: id,
+                empresa_id,
+              })),
+              skipDuplicates: true,
+            }),
+          ]
+        : []),
+    ]);
+
+    return this.obtenerEmpresasAsignadas(id);
   }
 }
 

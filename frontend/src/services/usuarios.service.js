@@ -59,6 +59,18 @@ export const getRoles = async () => {
     return data.data
 }
 
+// Obtener las empresas asignadas a un usuario (rol Recursos Humanos)
+export const getUsuarioEmpresas = async (id) => {
+    const { data } = await api.get(`/usuarios/${id}/empresas`)
+    return data.data
+}
+
+// Reemplazar las empresas asignadas a un usuario (solo administrador)
+export const setUsuarioEmpresas = async (id, empresa_ids) => {
+    const { data } = await api.put(`/usuarios/${id}/empresas`, { empresa_ids })
+    return data.data
+}
+
 // Obtener todas las empresas (para selects)
 export const getEmpresas = async () => {
     const { data } = await api.get('/empresas', { params: { limit: 100 } })

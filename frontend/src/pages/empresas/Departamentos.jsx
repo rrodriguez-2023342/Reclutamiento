@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
+import { useAuth } from "../../hooks/useAuth.js";
 import {
     getDepartamentos,
     getDepartamentosExport,
@@ -136,6 +137,8 @@ export function SearchableSelect({ placeholder, value, options, onChange }) {
 function Departamentos() {
     const location = useLocation();
     const navigate = useNavigate();
+    const { user: authUser } = useAuth();
+    const esAdmin = authUser?.rol === "Administrador RHCorp";
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [activo, setActivo] = useState("");
@@ -225,14 +228,16 @@ function Departamentos() {
                         </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-3">
-                        <button
-                            type="button"
-                            onClick={() => navigate("/empresas/departamentos/nueva")}
-                            className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
-                        >
-                            <Plus className="h-5 w-5" />
-                            Nuevo Departamento
-                        </button>
+                        {esAdmin && (
+                            <button
+                                type="button"
+                                onClick={() => navigate("/empresas/departamentos/nueva")}
+                                className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
+                            >
+                                <Plus className="h-5 w-5" />
+                                Nuevo Departamento
+                            </button>
+                        )}
                         <ExportarExcelButton onExport={manejarExportar} compacto />
                     </div>
                 </div>
@@ -362,18 +367,20 @@ function Departamentos() {
                                                     >
                                                         <Eye className="h-5 w-5" />
                                                     </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() =>
-                                                            navigate(
-                                                                `/empresas/departamentos/${departamento.id}/editar`,
-                                                            )
-                                                        }
-                                                        aria-label={`Editar ${departamento.nombre}`}
-                                                        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
-                                                    >
-                                                        <Pencil className="h-5 w-5" />
-                                                    </button>
+                                                    {esAdmin && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                navigate(
+                                                                    `/empresas/departamentos/${departamento.id}/editar`,
+                                                                )
+                                                            }
+                                                            aria-label={`Editar ${departamento.nombre}`}
+                                                            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
+                                                        >
+                                                            <Pencil className="h-5 w-5" />
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </td>
                                         </tr>

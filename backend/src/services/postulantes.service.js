@@ -169,7 +169,7 @@ class PostulanteService {
     const creado = await prisma.postulante.create({
       data: {
         ...generales,
-        ...(plaza_id && { plaza: { connect: { id: plaza_id } } }),
+        ...(plaza_id && { plaza_id: Number(plaza_id) }),
         usuario_id: usuarioId,
         estado: "POSTULANTE",
         fecha_registro: new Date(),

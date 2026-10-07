@@ -1,4 +1,6 @@
 import { verifyToken } from '../utils/jwt.js'
+import prisma from '../config/prisma.js'
+import { RRHH_ROLE } from '../config/roles.constant.js'
 
 // Middleware para autenticar al usuario mediante JWT
 export const authenticate = (req, res, next) => {
@@ -40,5 +42,26 @@ export const authorize = (...roles) => {
     }
 
     next()
+  }
+}
+
+// Carga el alcance de empresas del usuario autenticado.
+// Recursos Humanos solo administra sus empresas asignadas (req.empresaIds = [..]);
+// para los demas roles req.empresaIds = null (sin limite).
+export const scopeEmpresas = async (req, res, next) => {
+  if (req.userRol !== RRHH_ROLE) {
+    req.empresaIds = null
+    return next()
+  }
+
+  try {
+    const asignadas = await prisma.usuarioEmpresa.findMany({
+      where: { usuario_id: req.userId },
+      select: { empresa_id: true },
+    })
+    req.empresaIds = asignadas.map((a) => a.empresa_id)
+    next()
+  } catch (err) {
+    next(err)
   }
 }

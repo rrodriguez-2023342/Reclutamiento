@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
+import { useAuth } from "../../hooks/useAuth.js";
 import {
     activarEmpresa,
     desactivarEmpresa,
@@ -75,6 +76,8 @@ function Modal({ action, loading, onClose, onConfirm }) {
 function DetalleEmpresa() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user: authUser } = useAuth();
+    const esAdmin = authUser?.rol === "Administrador RHCorp";
     const [empresa, setEmpresa] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -161,34 +164,36 @@ function DetalleEmpresa() {
                             Volver a empresas
                         </button>
 
-                        <div className="flex flex-wrap gap-3">
-                            <button
-                                type="button"
-                                onClick={() => navigate(`/empresas/${empresa.id}/editar`)}
-                                className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
-                            >
-                                <Pencil className="h-5 w-5" />
-                                Editar
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    setModalAction({
-                                        type: empresa.activo ? "desactivar" : "activar",
-                                        title: empresa.activo
-                                            ? "Desactivar empresa"
-                                            : "Activar empresa",
-                                        description: empresa.activo
-                                            ? `¿Deseas desactivar a ${empresa.nombre_empresa}?`
-                                            : `¿Deseas activar a ${empresa.nombre_empresa}?`,
-                                    })
-                                }
-                                className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-bold text-[#071b3b] transition hover:bg-[#f0f4fa]"
-                            >
-                                <Power className="h-5 w-5" />
-                                {empresa.activo ? "Desactivar" : "Activar"}
-                            </button>
-                        </div>
+                        {esAdmin && (
+                            <div className="flex flex-wrap gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => navigate(`/empresas/${empresa.id}/editar`)}
+                                    className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
+                                >
+                                    <Pencil className="h-5 w-5" />
+                                    Editar
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setModalAction({
+                                            type: empresa.activo ? "desactivar" : "activar",
+                                            title: empresa.activo
+                                                ? "Desactivar empresa"
+                                                : "Activar empresa",
+                                            description: empresa.activo
+                                                ? `¿Deseas desactivar a ${empresa.nombre_empresa}?`
+                                                : `¿Deseas activar a ${empresa.nombre_empresa}?`,
+                                        })
+                                    }
+                                    className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-bold text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                                >
+                                    <Power className="h-5 w-5" />
+                                    {empresa.activo ? "Desactivar" : "Activar"}
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     <section className="rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">

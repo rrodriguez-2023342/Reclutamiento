@@ -34,6 +34,7 @@ import NuevaPuesto from "../pages/empresas/NuevaPuesto.jsx";
 import DetallePuesto from "../pages/empresas/DetallePuesto.jsx";
 import EditarPuesto from "../pages/empresas/EditarPuesto.jsx";
 import Patronos from "../pages/patronos/Patronos.jsx";
+import Configuracion from "../pages/configuracion/Configuracion.jsx";
 import NuevoPatrono from "../pages/patronos/NuevoPatrono.jsx";
 import DetallePatrono from "../pages/patronos/DetallePatrono.jsx";
 import EditarPatrono from "../pages/patronos/EditarPatrono.jsx";
@@ -50,10 +51,13 @@ function ProtectedWithPasswordCheck({ children }) {
   return children;
 }
 
-function AdminRoute({ children }) {
+const ADMIN_ROLE = "Administrador RHCorp";
+const RRHH_ROLE = "Recursos Humanos";
+
+function RoleRoute({ roles, children }) {
   const { user } = useAuth();
 
-  if (!user || user.rol !== 'Administrador RHCorp') {
+  if (!user || !roles.includes(user.rol)) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -182,11 +186,11 @@ function AppRouter() {
         path="/colaboradores"
         element={
           <ProtectedRoute>
-            <AdminRoute>
+            <RoleRoute roles={[ADMIN_ROLE, RRHH_ROLE]}>
               <ProtectedWithPasswordCheck>
                 <Usuarios />
               </ProtectedWithPasswordCheck>
-            </AdminRoute>
+            </RoleRoute>
           </ProtectedRoute>
         }
       />
@@ -194,11 +198,11 @@ function AppRouter() {
         path="/colaboradores/nuevo"
         element={
           <ProtectedRoute>
-            <AdminRoute>
+            <RoleRoute roles={[ADMIN_ROLE, RRHH_ROLE]}>
               <ProtectedWithPasswordCheck>
                 <NuevoUsuario />
               </ProtectedWithPasswordCheck>
-            </AdminRoute>
+            </RoleRoute>
           </ProtectedRoute>
         }
       />
@@ -206,11 +210,11 @@ function AppRouter() {
         path="/colaboradores/:id"
         element={
           <ProtectedRoute>
-            <AdminRoute>
+            <RoleRoute roles={[ADMIN_ROLE, RRHH_ROLE]}>
               <ProtectedWithPasswordCheck>
                 <DetalleUsuario />
               </ProtectedWithPasswordCheck>
-            </AdminRoute>
+            </RoleRoute>
           </ProtectedRoute>
         }
       />
@@ -218,11 +222,11 @@ function AppRouter() {
         path="/colaboradores/:id/editar"
         element={
           <ProtectedRoute>
-            <AdminRoute>
+            <RoleRoute roles={[ADMIN_ROLE, RRHH_ROLE]}>
               <ProtectedWithPasswordCheck>
                 <EditarUsuario />
               </ProtectedWithPasswordCheck>
-            </AdminRoute>
+            </RoleRoute>
           </ProtectedRoute>
         }
       />
@@ -240,9 +244,11 @@ function AppRouter() {
         path="/empresas/nueva"
         element={
           <ProtectedRoute>
-            <ProtectedWithPasswordCheck>
-              <NuevaEmpresa />
-            </ProtectedWithPasswordCheck>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <NuevaEmpresa />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
           </ProtectedRoute>
         }
       />
@@ -260,9 +266,11 @@ function AppRouter() {
         path="/empresas/:id/editar"
         element={
           <ProtectedRoute>
-            <ProtectedWithPasswordCheck>
-              <EditarEmpresa />
-            </ProtectedWithPasswordCheck>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <EditarEmpresa />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
           </ProtectedRoute>
         }
       />
@@ -280,9 +288,11 @@ function AppRouter() {
         path="/empresas/divisiones/nueva"
         element={
           <ProtectedRoute>
-            <ProtectedWithPasswordCheck>
-              <NuevaDivision />
-            </ProtectedWithPasswordCheck>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <NuevaDivision />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
           </ProtectedRoute>
         }
       />
@@ -300,9 +310,11 @@ function AppRouter() {
         path="/empresas/divisiones/:id/editar"
         element={
           <ProtectedRoute>
-            <ProtectedWithPasswordCheck>
-              <EditarDivision />
-            </ProtectedWithPasswordCheck>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <EditarDivision />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
           </ProtectedRoute>
         }
       />
@@ -320,9 +332,11 @@ function AppRouter() {
         path="/empresas/departamentos/nueva"
         element={
           <ProtectedRoute>
-            <ProtectedWithPasswordCheck>
-              <NuevaDepartamento />
-            </ProtectedWithPasswordCheck>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <NuevaDepartamento />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
           </ProtectedRoute>
         }
       />
@@ -340,9 +354,11 @@ function AppRouter() {
         path="/empresas/departamentos/:id/editar"
         element={
           <ProtectedRoute>
-            <ProtectedWithPasswordCheck>
-              <EditarDepartamento />
-            </ProtectedWithPasswordCheck>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <EditarDepartamento />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
           </ProtectedRoute>
         }
       />
@@ -360,9 +376,11 @@ function AppRouter() {
         path="/empresas/puestos/nueva"
         element={
           <ProtectedRoute>
-            <ProtectedWithPasswordCheck>
-              <NuevaPuesto />
-            </ProtectedWithPasswordCheck>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <NuevaPuesto />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
           </ProtectedRoute>
         }
       />
@@ -380,9 +398,23 @@ function AppRouter() {
         path="/empresas/puestos/:id/editar"
         element={
           <ProtectedRoute>
-            <ProtectedWithPasswordCheck>
-              <EditarPuesto />
-            </ProtectedWithPasswordCheck>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <EditarPuesto />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/configuracion"
+        element={
+          <ProtectedRoute>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <Configuracion />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
           </ProtectedRoute>
         }
       />

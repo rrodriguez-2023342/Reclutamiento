@@ -13,6 +13,7 @@ import {
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import UsuarioPdf from "../../components/usuarios/UsuarioPdf.jsx";
 import CamposAltaUsuario from "../../components/usuarios/CamposAltaUsuario.jsx";
+import { useAuth } from "../../hooks/useAuth.js";
 import {
     getRoles,
     getUsuarioById,
@@ -29,6 +30,8 @@ import {
 function EditarUsuario() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user: authUser } = useAuth();
+    const esAdmin = authUser?.rol === "Administrador RHCorp";
     const [roles, setRoles] = useState([]);
     const [empresas, setEmpresas] = useState([]);
     const [patronos, setPatronos] = useState([]);
@@ -183,9 +186,18 @@ function EditarUsuario() {
     const onSubmit = async (values) => {
         try {
             setServerError("");
+            if (!esAdmin && !values.empresa_id) {
+                setServerError("Debe asignar una empresa al colaborador.");
+                return;
+            }
+            const rolColaborador = roles.find(
+                (role) => role.nombre === "Colaborador",
+            );
             const payload = {
                 ...values,
-                rol_id: Number(values.rol_id),
+                rol_id: esAdmin
+                    ? Number(values.rol_id)
+                    : rolColaborador?.id ?? Number(values.rol_id),
                 empresa_id: values.empresa_id || null,
                 patrono_id: values.patrono_id || null,
                 puesto_id: values.puesto_id || null,
@@ -309,19 +321,21 @@ function EditarUsuario() {
                                 />
                             </Field>
 
-                            <Field label="Rol *" error={errors.rol_id?.message}>
-                                <Select
-                                    registration={register("rol_id")}
-                                    error={errors.rol_id?.message}
-                                >
-                                    <option value="">Seleccionar rol</option>
-                                    {roles.map((role) => (
-                                        <option key={role.id} value={role.id}>
-                                            {role.nombre}
-                                        </option>
-                                    ))}
-                                </Select>
-                            </Field>
+                            {esAdmin && (
+                                <Field label="Rol *" error={errors.rol_id?.message}>
+                                    <Select
+                                        registration={register("rol_id")}
+                                        error={errors.rol_id?.message}
+                                    >
+                                        <option value="">Seleccionar rol</option>
+                                        {roles.map((role) => (
+                                            <option key={role.id} value={role.id}>
+                                                {role.nombre}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                </Field>
+                            )}
 
                             <div className="grid gap-5 sm:grid-cols-2">
                                 <Field label="Empresa" error={errors.empresa_id?.message}>

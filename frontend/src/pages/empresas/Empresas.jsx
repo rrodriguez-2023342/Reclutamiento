@@ -17,6 +17,7 @@ import {
 import ExportarExcelButton from "../../components/ExportarExcelButton.jsx";
 import { exportarExcel } from "../../utils/excel.js";
 import { hojasEmpresa } from "../../utils/exportaciones/generales.js";
+import { useAuth } from "../../hooks/useAuth.js";
 
 const PAGE_SIZE = 6;
 
@@ -31,6 +32,8 @@ function formatDate(value) {
 function Empresas() {
     const location = useLocation();
     const navigate = useNavigate();
+    const { user: authUser } = useAuth();
+    const esAdmin = authUser?.rol === "Administrador RHCorp";
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [activo, setActivo] = useState("");
@@ -156,14 +159,16 @@ function Empresas() {
                         <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#65758f]" />
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={() => navigate("/empresas/nueva")}
-                        className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-6 font-bold text-white shadow-[0_7px_16px_rgba(49,98,233,0.18)] transition hover:bg-[#183fca]"
-                    >
-                        <Plus className="h-5 w-5" />
-                        Nueva Empresa
-                    </button>
+                    {esAdmin && (
+                        <button
+                            type="button"
+                            onClick={() => navigate("/empresas/nueva")}
+                            className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-6 font-bold text-white shadow-[0_7px_16px_rgba(49,98,233,0.18)] transition hover:bg-[#183fca]"
+                        >
+                            <Plus className="h-5 w-5" />
+                            Nueva Empresa
+                        </button>
+                    )}
                     <ExportarExcelButton onExport={manejarExportar} />
                 </div>
             </section>
@@ -265,16 +270,18 @@ function Empresas() {
                                                 >
                                                     <Eye className="h-5 w-5" />
                                                 </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        navigate(`/empresas/${empresa.id}/editar`)
-                                                    }
-                                                    aria-label={`Editar ${empresa.nombre_empresa}`}
-                                                    className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
-                                                >
-                                                    <Pencil className="h-5 w-5" />
-                                                </button>
+                                                {esAdmin && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            navigate(`/empresas/${empresa.id}/editar`)
+                                                        }
+                                                        aria-label={`Editar ${empresa.nombre_empresa}`}
+                                                        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
+                                                    >
+                                                        <Pencil className="h-5 w-5" />
+                                                    </button>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>

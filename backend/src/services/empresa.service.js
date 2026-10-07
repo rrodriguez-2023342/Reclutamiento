@@ -31,8 +31,13 @@ function normalizarDatosEmpresa(data) {
 }
 
 // Construye el filtro where compartido entre listado y exportación
-function construirWhere({ q, activo } = {}) {
+function construirWhere({ q, activo, empresa_ids } = {}) {
   const where = {}
+
+  // Alcance por empresa (Recursos Humanos): array = limitar, null = sin limite
+  if (Array.isArray(empresa_ids)) {
+    where.id = { in: empresa_ids }
+  }
 
   if (activo !== undefined) {
     where.activo = activo

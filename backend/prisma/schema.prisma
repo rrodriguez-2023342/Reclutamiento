@@ -112,6 +112,7 @@ model Empresa {
   usuarios                  Usuario[]
   historial_empresa_anterior HistorialEmpresa[] @relation("EmpresaAnterior")
   historial_empresa_nuevo    HistorialEmpresa[] @relation("EmpresaNuevo")
+  usuarios_rh               UsuarioEmpresa[]
 
   @@map("empresas")
 }
@@ -236,6 +237,7 @@ model Usuario {
   categoria_seguro_vida            String?   @map("categoria_seguro_vida") @db.VarChar(100)
   rol                 Role         @relation(fields: [rol_id], references: [id])
   postulantes         Postulante[]
+  empresas_asignadas  UsuarioEmpresa[]
   postulantes_rechazados Postulante[] @relation("RechazadoPor")
   postulantes_contratados Postulante[] @relation("ContratadoPor")
   historial_sueldo        HistorialSueldo[]
@@ -519,5 +521,16 @@ model HistorialRechazo {
   rechazado_por_usuario Usuario  @relation("RechazadoPor", fields: [rechazado_por], references: [id])
   fecha_rechazo      DateTime  @default(now()) @map("fecha_rechazo") @db.Timestamp(0)
 
-  @@map("historial_rechazo")
+  @@map("historial_rechazos")
+}
+
+// Relacion N:M entre usuarios (rol Recursos Humanos) y las empresas que administran
+model UsuarioEmpresa {
+  usuario_id Int     @map("usuario_id")
+  empresa_id  Int     @map("empresa_id")
+  usuario    Usuario @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  empresa     Empresa @relation(fields: [empresa_id], references: [id], onDelete: Cascade)
+
+  @@id([usuario_id, empresa_id])
+  @@map("usuario_empresas")
 }

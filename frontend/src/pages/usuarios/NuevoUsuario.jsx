@@ -13,6 +13,7 @@ import {
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import UsuarioPdf from "../../components/usuarios/UsuarioPdf.jsx";
 import CamposAltaUsuario from "../../components/usuarios/CamposAltaUsuario.jsx";
+import { useAuth } from "../../hooks/useAuth.js";
 import {
     createUsuario,
     getRoles,
@@ -28,6 +29,8 @@ import {
 function NuevoUsuario() {
     const navigate = useNavigate();
     const location = useLocation();
+    const { user: authUser } = useAuth();
+    const esAdmin = authUser?.rol === "Administrador RHCorp";
     const [roles, setRoles] = useState([]);
     const [empresas, setEmpresas] = useState([]);
     const [patronos, setPatronos] = useState([]);
@@ -39,12 +42,15 @@ function NuevoUsuario() {
         getValues,
         watch,
         reset,
+        setValue,
         control,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(usuarioSchema),
         defaultValues: defaultUsuarioValues,
     });
+
+    const rolColaborador = roles.find((role) => role.nombre === "Colaborador");
 
     const tieneSeguroGastos = watch("tiene_seguro_gastos_medicos");
     const tieneSeguroVida = watch("tiene_seguro_vida");
@@ -143,11 +149,23 @@ function NuevoUsuario() {
         }
     }, [location.state, reset]);
 
+    // Solo el administrador puede elegir el rol; los demás crean Colaboradores
+    useEffect(() => {
+        if (!esAdmin && rolColaborador) {
+            setValue("rol_id", rolColaborador.id);
+        }
+    }, [esAdmin, rolColaborador, setValue]);
+
     const onSubmit = async (values) => {
         try {
             setServerError("");
+            if (!esAdmin && !values.empresa_id) {
+                setServerError("Debe asignar una empresa al colaborador.");
+                return;
+            }
             const payload = {
                 ...values,
+                rol_id: esAdmin ? values.rol_id : rolColaborador?.id ?? values.rol_id,
                 empresa_id: values.empresa_id || null,
                 patrono_id: values.patrono_id || null,
                 puesto_id: values.puesto_id || null,
@@ -260,19 +278,21 @@ function NuevoUsuario() {
                             />
                         </Field>
 
-                        <Field label="Rol *" error={errors.rol_id?.message}>
-                            <Select
-                                registration={register("rol_id")}
-                                error={errors.rol_id?.message}
-                            >
-                                <option value="">Seleccionar rol</option>
-                                {roles.map((role) => (
-                                    <option key={role.id} value={role.id}>
-                                        {role.nombre}
-                                    </option>
-                                ))}
-                            </Select>
-                        </Field>
+                        {esAdmin && (
+                            <Field label="Rol *" error={errors.rol_id?.message}>
+                                <Select
+                                    registration={register("rol_id")}
+                                    error={errors.rol_id?.message}
+                                >
+                                    <option value="">Seleccionar rol</option>
+                                    {roles.map((role) => (
+                                        <option key={role.id} value={role.id}>
+                                            {role.nombre}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </Field>
+                        )}
 
                         <div className="grid gap-5 sm:grid-cols-2">
                             <Field label="Empresa" error={errors.empresa_id?.message}>

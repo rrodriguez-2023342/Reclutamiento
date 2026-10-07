@@ -516,6 +516,8 @@ class UsuarioService {
         motivo_baja: data.motivo_baja,
         notas_baja: data.notas_baja || null,
         reingreso_baja: data.reingreso_baja,
+        // Registrar la baja desactiva al colaborador en el mismo update
+        activo: false,
       },
       select: {
         id: true,
@@ -523,6 +525,7 @@ class UsuarioService {
         motivo_baja: true,
         notas_baja: true,
         reingreso_baja: true,
+        activo: true,
       },
     });
   }

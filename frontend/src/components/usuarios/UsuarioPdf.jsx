@@ -311,6 +311,7 @@ function UsuarioPdf({
     empresa,
     patrono,
     onError,
+    onBajaSaved,
 }) {
     const { user: authUser } = useAuth();
     const [modalType, setModalType] = useState(null);
@@ -358,6 +359,7 @@ function UsuarioPdf({
                     notas_baja: notesBaja.trim() || null,
                     reingreso_baja: reingresoBaja === "SI",
                 });
+                onBajaSaved?.();
             }
 
             printWindow.document.write(
@@ -435,7 +437,7 @@ function UsuarioPdf({
                 className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-red-300 bg-white px-6 font-bold text-red-700 transition hover:bg-red-50"
             >
                 <Download className="h-5 w-5" />
-                Descargar Baja
+                Dar de baja
             </button>
             {modalType && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4">

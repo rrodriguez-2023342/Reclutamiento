@@ -47,6 +47,7 @@ function EditarUsuario() {
         reset,
         watch,
         control,
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: zodResolver(usuarioSchema),
@@ -182,6 +183,15 @@ function EditarUsuario() {
             active = false;
         };
     }, [id, reset]);
+
+    // Tras registrar la baja: el colaborador queda desactivado en el formulario
+    // y se actualizan los datos de baja sin resetear los cambios sin guardar
+    const handleBajaSaved = () => {
+        setValue("activo", false);
+        getUsuarioById(id)
+            .then((data) => setUsuarioOriginal(data))
+            .catch(() => {});
+    };
 
     const onSubmit = async (values) => {
         try {
@@ -690,6 +700,7 @@ function EditarUsuario() {
                                 empresa={empresaSeleccionada}
                                 patrono={patronoSeleccionado}
                                 onError={setServerError}
+                                onBajaSaved={handleBajaSaved}
                             />
                             <button
                                 type="submit"

@@ -1010,7 +1010,7 @@ function DocumentosSection({ p, onReload }) {
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex flex-wrap items-center justify-end gap-2 shrink-0">
                 {doc && esFoto && doc.mime_type?.startsWith("image/") && (
                   <span className="text-xs text-[#5b6e8b] italic">
                     Foto cargada
@@ -1379,7 +1379,7 @@ function DetallePostulante() {
       </section>
       <div className="mt-7 grid gap-6 lg:grid-cols-[minmax(250px,0.34fr)_minmax(0,1fr)]">
         <nav
-          className="flex gap-2 overflow-x-auto lg:block lg:space-y-2"
+          className="flex flex-wrap gap-2 lg:block lg:space-y-2"
           aria-label="Secciones de la ficha"
         >
           {sections.map((name, index) => (
@@ -1387,7 +1387,7 @@ function DetallePostulante() {
               type="button"
               key={name}
               onClick={() => setSection(index)}
-              className={`min-w-max rounded-2xl px-6 py-4 text-left font-medium transition lg:block lg:w-full ${section === index ? "bg-white font-semibold text-[#315cf5] shadow-[0_10px_24px_rgba(20,43,89,0.06)]" : "text-[#5b6e8b] cursor-pointer hover:bg-white/70"}`}
+              className={`rounded-2xl px-6 py-4 text-left font-medium transition lg:block lg:w-full ${section === index ? "bg-white font-semibold text-[#315cf5] shadow-[0_10px_24px_rgba(20,43,89,0.06)]" : "text-[#5b6e8b] cursor-pointer hover:bg-white/70"}`}
             >
               {index + 1}. {name}
             </button>
@@ -1451,14 +1451,14 @@ function HistorialRechazoModal({ postulanteId, onClose }) {
       aria-modal="true"
     >
       <div className="w-full max-w-3xl max-h-[80vh] overflow-hidden rounded-[26px] bg-white shadow-2xl flex flex-col">
-        <div className="flex items-center justify-between border-b border-[#dce3ee] px-6 py-4">
-          <h2 className="text-xl font-bold text-[#071b3b]">
+        <div className="flex items-start justify-between gap-4 border-b border-[#dce3ee] px-6 py-4">
+          <h2 className="text-base sm:text-xl font-bold text-[#071b3b]">
             Historial de rechazos
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer text-[#5b6e8b] transition hover:text-[#071b3b]"
+            className="shrink-0 cursor-pointer text-[#5b6e8b] transition hover:text-[#071b3b]"
           >
             ✕
           </button>
@@ -1472,7 +1472,7 @@ function HistorialRechazoModal({ postulanteId, onClose }) {
               No hay registros de rechazos.
             </p>
           ) : (
-            <table className="w-full border-separate border-spacing-0 text-left text-sm">
+            <table className="w-full min-w-[520px] border-separate border-spacing-0 text-left text-sm">
               <thead>
                 <tr className="text-base font-semibold text-[#5b6e8b]">
                   <th className="border-b border-[#dfe5ee] px-4 py-3">
@@ -1506,7 +1506,7 @@ function HistorialRechazoModal({ postulanteId, onClose }) {
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-3 border-t border-[#dce3ee] px-6 py-4">
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs sm:gap-3 sm:text-sm border-t border-[#dce3ee] px-6 py-4">
             <button
               type="button"
               disabled={page <= 1}

@@ -47,7 +47,7 @@ function Modal({ action, loading, onClose, onConfirm }) {
             role="dialog"
             aria-modal="true"
         >
-            <div className="w-full max-w-md rounded-[26px] bg-white p-6 shadow-2xl">
+            <div className="w-full max-w-md rounded-[26px] bg-white p-6 shadow-2xl max-h-[85vh] overflow-y-auto">
                 <h2 className="text-xl font-bold text-[#071b3b]">{action.title}</h2>
                 <p className="mt-2 text-[#5b6e8b]">{action.description}</p>
                 <div className="mt-6 flex justify-end gap-3">
@@ -198,12 +198,12 @@ function DetalleEmpresa() {
 
                     <section className="rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
                         <div className="flex flex-col gap-5 border-b border-[#dce3ee] pb-7 sm:flex-row sm:items-center sm:justify-between">
-                            <div className="flex items-center gap-4">
+                            <div className="flex min-w-0 flex-1 items-center gap-4">
                                 <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#f0f4fa] text-xl font-bold text-[#3162e9]">
                                     <Building2 className="h-7 w-7" />
                                 </span>
                                 <div>
-                                    <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
+                                    <h1 className="break-words text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
                                         {empresa.nombre_empresa}
                                     </h1>
                                     <p className="mt-2 text-[#5b6e8b]">
@@ -222,7 +222,7 @@ function DetalleEmpresa() {
                         <div className="mt-7 grid gap-5 sm:grid-cols-2">
                             <div className="rounded-xl bg-[#f0f4fa] p-5">
                                 <p className="text-sm font-semibold text-[#5b6e8b]">Nombre</p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <p className="mt-2 break-words text-lg font-bold text-[#071b3b]">
                                     {empresa.nombre_empresa}
                                 </p>
                             </div>
@@ -278,7 +278,7 @@ function DetalleEmpresa() {
                                     Correo
                                 </p>
                                 <p
-                                    className={`mt-2 text-lg font-bold ${isEmpty(empresa.correo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                    className={`mt-2 break-words text-lg font-bold ${isEmpty(empresa.correo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
                                 >
                                     {empresa.correo || "\u2014"}
                                 </p>

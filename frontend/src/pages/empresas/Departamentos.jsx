@@ -217,7 +217,7 @@ function Departamentos() {
 
     return (
         <DashboardLayout title="Departamentos">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+            <div className="mx-auto max-w-7xl py-8">
                 <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
@@ -394,7 +394,7 @@ function Departamentos() {
                             Mostrando {firstItem} a {lastItem} de{" "}
                             {result.total.toLocaleString("es-GT")} departamentos
                         </p>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center justify-center gap-2">
                             <button
                                 type="button"
                                 disabled={loading || result.page <= 1}
@@ -402,7 +402,7 @@ function Departamentos() {
                                 className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                             >
                                 <ChevronLeft className="h-4 w-4" />
-                                Anterior
+                                <span className="hidden sm:inline">Anterior</span>
                             </button>
                             <span className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-[#3162e9] px-3 font-bold text-white">
                                 {result.page}
@@ -415,7 +415,7 @@ function Departamentos() {
                                 }
                                 className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
                             >
-                                Siguiente
+                                <span className="hidden sm:inline">Siguiente</span>
                                 <ChevronRight className="h-4 w-4" />
                             </button>
                         </div>

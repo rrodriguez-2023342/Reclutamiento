@@ -76,7 +76,7 @@ function Dashboard() {
         {metrics.map(({ label, value, icon: Icon }) => (
           <article
             key={label}
-            className="rounded-[26px] bg-white px-7 py-7 shadow-[0_10px_24px_rgba(20,43,89,0.06)]"
+            className="rounded-[26px] bg-white px-5 py-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:px-7 sm:py-7"
           >
             <div className="flex items-start justify-between gap-4">
               <p className="text-base font-medium uppercase tracking-[0.01em] text-[#5b6e8b]">
@@ -86,7 +86,7 @@ function Dashboard() {
                 <Icon className="h-6 w-6" strokeWidth={2} />
               </div>
             </div>
-            <p className="mt-4 text-5xl font-bold tracking-[-0.055em] text-[#071b3b]">
+            <p className="mt-4 text-4xl sm:text-5xl font-bold tracking-[-0.055em] text-[#071b3b]">
               {loading ? "—" : (value || 0).toLocaleString("es-GT")}
             </p>
           </article>
@@ -94,7 +94,7 @@ function Dashboard() {
       </section>
 
       <section className="mt-7 rounded-[26px] bg-white px-5 py-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:px-7 sm:py-7">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
           <h2 className="text-xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-2xl">
             Últimas solicitudes ingresadas
           </h2>

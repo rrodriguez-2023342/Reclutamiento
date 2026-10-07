@@ -4,7 +4,7 @@ import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 function Informes() {
   return (
     <DashboardLayout title="Informes y docs">
-      <section className="rounded-[26px] bg-white p-10 text-center shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
+      <section className="rounded-[26px] bg-white p-6 sm:p-10 text-center shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f0f4fa] text-[#3162e9]">
           <FileText className="h-8 w-8" strokeWidth={2} />
         </div>

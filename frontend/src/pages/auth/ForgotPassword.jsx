@@ -28,13 +28,13 @@ function ForgotPassword() {
   return (
     <AuthLayout>
       <Brand />
-      <div className="mt-8 w-full max-w-[522px] lg:mt-10">
-        <h1 className="text-4xl font-bold tracking-[-0.05em] sm:text-[40px]">¿Olvidaste tu contraseña?</h1>
+      <div className="mt-6 sm:mt-8 w-full max-w-[522px] lg:mt-10">
+        <h1 className="text-[28px] font-bold tracking-[-0.05em] sm:text-4xl sm:text-[40px]">¿Olvidaste tu contraseña?</h1>
         <p className="mt-2 text-base text-[#65738c] sm:text-lg">
           Ingresa tu correo y te enviaremos un enlace para restablecerla.
         </p>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-7 space-y-4" noValidate>
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-7 space-y-3 sm:space-y-4" noValidate>
           {status === 'success' && (
             <p className="rounded-xl bg-green-50 px-4 py-3 text-sm font-semibold text-green-600">
               Si el correo existe, recibirás un enlace para restablecer tu contraseña.

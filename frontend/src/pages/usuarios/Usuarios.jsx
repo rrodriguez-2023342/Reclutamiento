@@ -270,8 +270,8 @@ function Usuarios() {
             )}
 
             <section className="rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-6">
-                <div className="grid gap-4 md:grid-cols-[200px_240px_180px_auto_auto]">
-                    <div className="relative">
+                <div className="flex flex-wrap items-center gap-4">
+                    <div className="relative min-w-0">
                         <select
                             aria-label="Filtrar por empresa"
                             value={empresaId}
@@ -291,7 +291,7 @@ function Usuarios() {
                         <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#65758f]" />
                     </div>
 
-                    <div className="relative">
+                    <div className="relative min-w-0">
                         <select
                             aria-label="Filtrar por patrono"
                             value={patronoId}
@@ -311,7 +311,7 @@ function Usuarios() {
                         <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#65758f]" />
                     </div>
 
-                    <div className="relative">
+                    <div className="relative min-w-0">
                         <select
                             aria-label="Filtrar por estado"
                             value={activo}
@@ -331,7 +331,7 @@ function Usuarios() {
                     <button
                         type="button"
                         onClick={() => navigate("/colaboradores/nuevo")}
-                        className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-6 font-bold text-white shadow-[0_7px_16px_rgba(49,98,233,0.18)] transition hover:bg-[#183fca]"
+                        className="flex h-14 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-6 font-bold text-white shadow-[0_7px_16px_rgba(49,98,233,0.18)] transition hover:bg-[#183fca]"
                     >
                         <Plus className="h-5 w-5" />
                         Nuevo Colaborador
@@ -490,7 +490,7 @@ function Usuarios() {
                     Mostrando {firstItem} a {lastItem} de{" "}
                     {result.total.toLocaleString("es-GT")} colaboradores
                 </p>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                     <button
                         type="button"
                         disabled={loading || result.page <= 1}

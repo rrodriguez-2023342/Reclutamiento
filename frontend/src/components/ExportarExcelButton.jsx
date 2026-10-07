@@ -28,7 +28,7 @@ function ExportarExcelButton({
       type="button"
       onClick={manejarExportar}
       disabled={exportando}
-      className={`flex ${compacto ? "h-12 px-5" : "h-14 px-6"} cursor-pointer items-center justify-center gap-2 rounded-2xl border border-[#dce3ee] font-bold text-[#071b3b] transition hover:border-[#3162e9] hover:text-[#3162e9] disabled:cursor-wait disabled:opacity-60`}
+      className={`flex shrink-0 whitespace-nowrap ${compacto ? "h-12 px-5" : "h-14 px-6"} cursor-pointer items-center justify-center gap-2 rounded-2xl border border-[#dce3ee] font-bold text-[#071b3b] transition hover:border-[#3162e9] hover:text-[#3162e9] disabled:cursor-wait disabled:opacity-60`}
     >
       <Download className="h-5 w-5" />
       {exportando ? "Exportando…" : etiqueta}

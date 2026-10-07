@@ -52,7 +52,7 @@ function Header({
         >
           <Bell className="h-5 w-5" strokeWidth={2} />
         </button>
-        <div className="hidden border-l border-[#e1e6ef] pl-5 sm:block">
+        <div className="hidden max-w-[160px] border-l border-[#e1e6ef] pl-5 sm:block xl:max-w-[280px]">
           <UserMenu onClick={onOpenProfile} />
         </div>
       </div>

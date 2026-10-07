@@ -19,7 +19,7 @@ const PAGE_SIZE = 6;
 
 function StatusFilter({ value, onChange }) {
   return (
-    <div className="relative">
+    <div className="relative min-w-0">
       <select
         aria-label="Filtrar plazas por estado"
         value={value}
@@ -40,7 +40,7 @@ function StatusFilter({ value, onChange }) {
 
 function MonedaFilter({ value, onChange }) {
   return (
-    <div className="relative">
+    <div className="relative min-w-0">
       <select
         aria-label="Filtrar plazas por tipo de moneda"
         value={value}
@@ -170,8 +170,8 @@ function Plazas() {
       )}
 
       <section className="rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-6">
-        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_220px_auto_auto]">
-          <label className="flex h-14 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
+        <div className="flex flex-wrap items-center gap-4">
+          <label className="flex h-14 min-w-[220px] flex-1 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
             <Search className="h-5 w-5 shrink-0" />
             <input
               value={search}
@@ -180,7 +180,7 @@ function Plazas() {
                 setPage(1);
               }}
               placeholder="Buscar plaza..."
-              className="w-full bg-transparent text-base outline-none placeholder:text-[#91a0b7]"
+              className="w-full min-w-0 bg-transparent text-base outline-none placeholder:text-[#91a0b7]"
             />
           </label>
           <StatusFilter
@@ -200,7 +200,7 @@ function Plazas() {
           <button
             type="button"
             onClick={() => navigate("/plazas/nueva")}
-            className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-6 font-bold text-white shadow-[0_7px_16px_rgba(49,98,233,0.18)] transition hover:bg-[#183fca]"
+            className="flex h-14 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-6 font-bold text-white shadow-[0_7px_16px_rgba(49,98,233,0.18)] transition hover:bg-[#183fca]"
           >
             <Plus className="h-5 w-5" />
             Nueva Plaza
@@ -227,7 +227,7 @@ function Plazas() {
               key={plaza.id}
               onClick={() => navigate(`/plazas/${plaza.id}`)}
               aria-label={`Ver información de ${plaza.nombre}`}
-              className="group min-h-[306px] cursor-pointer rounded-[26px] bg-white p-7 text-left shadow-[0_10px_24px_rgba(20,43,89,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_30px_rgba(20,43,89,0.10)] focus:outline-none focus:ring-2 focus:ring-[#3162e9]"
+              className="group min-h-[306px] cursor-pointer rounded-[26px] bg-white p-5 text-left shadow-[0_10px_24px_rgba(20,43,89,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_30px_rgba(20,43,89,0.10)] focus:outline-none focus:ring-2 focus:ring-[#3162e9] sm:p-7"
             >
               <div className="flex items-start justify-between gap-4">
                 <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f0f4fa] text-[#2764ff]">
@@ -240,7 +240,7 @@ function Plazas() {
                 </span>
               </div>
               <div className="mt-6">
-                <h2 className="text-[22px] font-bold tracking-[-0.035em] text-[#071b3b]">
+                <h2 className="break-words text-[22px] font-bold tracking-[-0.035em] text-[#071b3b]">
                   {plaza.nombre}
                 </h2>
                 <p className="mt-1 line-clamp-1 text-base text-[#65758f]">
@@ -270,7 +270,7 @@ function Plazas() {
           Mostrando {firstItem} a {lastItem} de{" "}
           {plazas.length.toLocaleString("es-GT")} plazas
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-2">
           <button
             type="button"
             disabled={loading || page <= 1}
@@ -278,7 +278,7 @@ function Plazas() {
             className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
           >
             <ChevronLeft className="h-4 w-4" />
-            Anterior
+            <span className="hidden sm:inline">Anterior</span>
           </button>
           <span className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-[#3162e9] px-3 font-bold text-white">
             {page}
@@ -289,7 +289,7 @@ function Plazas() {
             onClick={() => setPage((current) => current + 1)}
             className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
           >
-            Siguiente
+            <span className="hidden sm:inline">Siguiente</span>
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>

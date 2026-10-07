@@ -1,0 +1,735 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeft, Save, Shield } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+    Field,
+    Input,
+    SearchableSelect,
+    RadioGroup,
+    Select,
+} from "../../components/postulantes/formControls.jsx";
+import DashboardLayout from "../../layouts/DashboardLayout.jsx";
+import UsuarioPdf from "../../components/usuarios/UsuarioPdf.jsx";
+import CamposAltaUsuario from "../../components/usuarios/CamposAltaUsuario.jsx";
+import { useAuth } from "../../hooks/useAuth.js";
+import {
+    getRoles,
+    getUsuarioById,
+    updateUsuario,
+    getEmpresas,
+    getPatronos,
+    getPuestos,
+} from "../../services/usuarios.service.js";
+import {
+    defaultUsuarioValues,
+    usuarioSchema,
+} from "../../validators/usuarios.validator.js";
+
+function EditarUsuario() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const { user: authUser } = useAuth();
+    const esAdmin = authUser?.rol === "Administrador RHCorp";
+    const [roles, setRoles] = useState([]);
+    const [empresas, setEmpresas] = useState([]);
+    const [patronos, setPatronos] = useState([]);
+    const [puestos, setPuestos] = useState([]);
+    const [serverError, setServerError] = useState("");
+    const [loadingUser, setLoadingUser] = useState(true);
+    const [usuarioOriginal, setUsuarioOriginal] = useState(null);
+
+    const {
+        register,
+        handleSubmit,
+        getValues,
+        reset,
+        watch,
+        control,
+        setValue,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        resolver: zodResolver(usuarioSchema),
+        defaultValues: defaultUsuarioValues,
+    });
+
+    const currentSueldo = watch("sueldo");
+    const currentBonos = watch("bonos");
+    const currentEmpresa = watch("empresa_id");
+    const tieneSeguroGastos = watch("tiene_seguro_gastos_medicos");
+    const tieneSeguroVida = watch("tiene_seguro_vida");
+    const tipoSeguroGastos = watch("tipo_seguro_gastos_medicos");
+    const tipoContrato = watch("tipo_contrato");
+    const selectedEmpresa = watch("empresa_id") ?? "";
+    const selectedPatrono = watch("patrono_id") ?? "";
+    const selectedPuesto = watch("puesto_id") ?? "";
+    const puestoSeleccionado =
+        puestos.find((puesto) => puesto.id === Number(selectedPuesto)) || null;
+    const empresaSeleccionada =
+        empresas.find((empresa) => empresa.id === Number(selectedEmpresa))
+            ?.nombre_empresa || "";
+    const patronoSeleccionado =
+        patronos.find((patrono) => patrono.id === Number(selectedPatrono))
+            ?.razon_social || "";
+    const [originalSueldo, setOriginalSueldo] = useState(null);
+    const [originalBonos, setOriginalBonos] = useState(null);
+    const [originalEmpresa, setOriginalEmpresa] = useState(null);
+    const hasSalaryChange =
+        (originalSueldo !== null || originalBonos !== null) &&
+        (Number(currentSueldo || 0) !== Number(originalSueldo || 0) ||
+            Number(currentBonos || 0) !== Number(originalBonos || 0));
+    const hasEmpresaChange =
+        originalEmpresa !== null &&
+        Number(currentEmpresa || 0) !== Number(originalEmpresa || 0);
+
+    useEffect(() => {
+        let active = true;
+        Promise.all([getRoles(), getEmpresas(), getPatronos(), getPuestos()])
+            .then(([r, e, p, pst]) => {
+                if (active) {
+                    setRoles(r || []);
+                    setEmpresas(e || []);
+                    setPatronos(p || []);
+                    setPuestos(pst || []);
+                }
+            })
+            .catch(() => {
+                if (active) {
+                    setRoles([]);
+                    setEmpresas([]);
+                    setPatronos([]);
+                }
+            });
+
+        return () => {
+            active = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        let active = true;
+        setLoadingUser(true);
+        getUsuarioById(id)
+            .then((data) => {
+                if (active) {
+                    setUsuarioOriginal(data);
+                    reset({
+                        ...defaultUsuarioValues,
+                        nombre: data.nombre || "",
+                        correo: data.correo || "",
+                        usuario: data.usuario || "",
+                        rol_id: data.rol?.id ?? 2,
+                        activo: data.activo ?? true,
+                        empresa_id: data.empresa?.id ?? null,
+                        patrono_id: data.patrono?.id ?? null,
+                        puesto_id: data.puesto?.id ?? null,
+                        fecha_nacimiento: data.fecha_nacimiento
+                            ? data.fecha_nacimiento.split("T")[0]
+                            : "",
+                        estado_civil: data.estado_civil || "",
+                        nacionalidad: data.nacionalidad || "",
+                        telefono: data.telefono || "",
+                        ultimo_grado_cursado: data.ultimo_grado_cursado || "",
+                        moneda_sueldo: data.moneda_sueldo || "QUETZAL",
+                        banco: data.banco || "",
+                        tipo_cuenta_bancaria: data.tipo_cuenta_bancaria || "",
+                        numero_cuenta_bancaria: data.numero_cuenta_bancaria || "",
+                        contacto_emergencia_nombre:
+                            data.contacto_emergencia_nombre || "",
+                        contacto_emergencia_telefono:
+                            data.contacto_emergencia_telefono || "",
+                        fecha_contratacion: data.fecha_contratacion
+                            ? data.fecha_contratacion.split("T")[0]
+                            : "",
+                        tipo_contrato: data.tipo_contrato || "INDEFINIDO",
+                        fecha_fin_contrato: data.fecha_fin_contrato
+                            ? data.fecha_fin_contrato.split("T")[0]
+                            : "",
+                        nit: data.nit || "",
+                        numero_afiliacion_igss: data.numero_afiliacion_igss || "",
+                        sexo: data.sexo || "",
+                        dpi: data.dpi || "",
+                        dpi_extendido_en: data.dpi_extendido_en || "",
+                        direccion: data.direccion || "",
+                        sueldo: data.sueldo ?? "",
+                        bonos: data.bonos ?? "",
+                        tiene_seguro_gastos_medicos:
+                            data.tiene_seguro_gastos_medicos ?? false,
+                        empresa_seguro_gastos_medicos:
+                            data.empresa_seguro_gastos_medicos || "",
+                        tipo_seguro_gastos_medicos: data.tipo_seguro_gastos_medicos || "",
+                        categoria_seguro_gastos_medicos:
+                            data.categoria_seguro_gastos_medicos || "",
+                        tiene_seguro_vida: data.tiene_seguro_vida ?? false,
+                        empresa_seguro_vida: data.empresa_seguro_vida || "",
+                        categoria_seguro_vida: data.categoria_seguro_vida || "",
+                    });
+                    setOriginalSueldo(data.sueldo ?? null);
+                    setOriginalBonos(data.bonos ?? null);
+                    setOriginalEmpresa(data.empresa?.id ?? null);
+                }
+            })
+            .catch((requestError) => {
+                if (active) {
+                    setServerError(
+                        requestError.response?.data?.message ||
+                            "No fue posible cargar el colaborador.",
+                    );
+                }
+            })
+            .finally(() => active && setLoadingUser(false));
+
+        return () => {
+            active = false;
+        };
+    }, [id, reset]);
+
+    // Tras registrar la baja: el colaborador queda desactivado en el formulario
+    // y se actualizan los datos de baja sin resetear los cambios sin guardar
+    const handleBajaSaved = () => {
+        setValue("activo", false);
+        getUsuarioById(id)
+            .then((data) => setUsuarioOriginal(data))
+            .catch(() => {});
+    };
+
+    const onSubmit = async (values) => {
+        try {
+            setServerError("");
+            if (!esAdmin && !values.empresa_id) {
+                setServerError("Debe asignar una empresa al colaborador.");
+                return;
+            }
+            const rolColaborador = roles.find(
+                (role) => role.nombre === "Colaborador",
+            );
+            const payload = {
+                ...values,
+                correo: values.correo || null,
+                usuario: values.usuario || null,
+                rol_id: esAdmin
+                    ? Number(values.rol_id)
+                    : rolColaborador?.id ?? Number(values.rol_id),
+                empresa_id: values.empresa_id || null,
+                patrono_id: values.patrono_id || null,
+                puesto_id: values.puesto_id || null,
+                fecha_nacimiento: values.fecha_nacimiento || null,
+                estado_civil: values.estado_civil || null,
+                nacionalidad: values.nacionalidad || null,
+                telefono: values.telefono || null,
+                ultimo_grado_cursado: values.ultimo_grado_cursado || null,
+                tipo_contrato: values.tipo_contrato || "INDEFINIDO",
+                fecha_fin_contrato:
+                    values.tipo_contrato === "DEFINIDO"
+                        ? values.fecha_fin_contrato || null
+                        : null,
+                nit: values.nit || null,
+                numero_afiliacion_igss: values.numero_afiliacion_igss || null,
+                sexo: values.sexo || null,
+                dpi: values.dpi || null,
+                dpi_extendido_en: values.dpi_extendido_en || null,
+                direccion: values.direccion || null,
+                sueldo: values.sueldo || null,
+                bonos: values.bonos || null,
+                moneda_sueldo: values.moneda_sueldo || "QUETZAL",
+                banco: values.banco || null,
+                tipo_cuenta_bancaria: values.tipo_cuenta_bancaria || null,
+                numero_cuenta_bancaria: values.numero_cuenta_bancaria || null,
+                contacto_emergencia_nombre:
+                    values.contacto_emergencia_nombre || null,
+                contacto_emergencia_telefono:
+                    values.contacto_emergencia_telefono || null,
+                motivo_cambio_sueldo: hasSalaryChange
+                    ? values.motivo_cambio_sueldo || null
+                    : null,
+                motivo_cambio_empresa: hasEmpresaChange
+                    ? values.motivo_cambio_empresa || null
+                    : null,
+                tiene_seguro_gastos_medicos:
+                    values.tiene_seguro_gastos_medicos || false,
+                empresa_seguro_gastos_medicos: values.tiene_seguro_gastos_medicos
+                    ? values.empresa_seguro_gastos_medicos || null
+                    : null,
+                tipo_seguro_gastos_medicos: values.tiene_seguro_gastos_medicos
+                    ? values.tipo_seguro_gastos_medicos || null
+                    : null,
+                categoria_seguro_gastos_medicos: values.tiene_seguro_gastos_medicos
+                    ? values.categoria_seguro_gastos_medicos || null
+                    : null,
+                tiene_seguro_vida: values.tiene_seguro_vida || false,
+                empresa_seguro_vida: values.tiene_seguro_vida
+                    ? values.empresa_seguro_vida || null
+                    : null,
+                categoria_seguro_vida: values.tiene_seguro_vida
+                    ? values.categoria_seguro_vida || null
+                    : null,
+            };
+            await updateUsuario(id, payload);
+            navigate("/colaboradores", {
+                state: { mensaje: "Colaborador actualizado correctamente" },
+            });
+        } catch (requestError) {
+            setServerError(
+                requestError.response?.data?.message ||
+                    "No fue posible actualizar el colaborador.",
+            );
+        }
+    };
+
+    return (
+        <DashboardLayout title="Editar Colaborador">
+            <div className="mx-auto max-w-3xl">
+                <div className="mb-6 flex items-center gap-4">
+                    <button
+                        type="button"
+                        onClick={() => navigate("/colaboradores")}
+                        aria-label="Volver a colaboradores"
+                        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border border-[#dce3ee] bg-white text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                    >
+                        <ArrowLeft className="h-5 w-5" />
+                    </button>
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
+                            Editar Colaborador
+                        </h1>
+                        <p className="mt-1 text-[#5b6e8b]">
+                            Actualiza la información del colaborador.
+                        </p>
+                    </div>
+                </div>
+
+                {loadingUser ? (
+                    <div className="rounded-[26px] bg-white p-10 text-center text-[#5b6e8b] shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
+                        Cargando colaborador...
+                    </div>
+                ) : (
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8"
+                        noValidate
+                    >
+                        {serverError && (
+                            <div
+                                role="alert"
+                                className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 font-semibold text-red-600"
+                            >
+                                {serverError}
+                            </div>
+                        )}
+
+                        <div className="grid gap-5">
+                            <Field label="Nombre *" error={errors.nombre?.message}>
+                                <Input
+                                    registration={register("nombre")}
+                                    placeholder="Ej. Carlos Méndez"
+                                />
+                            </Field>
+
+                            <Field label="Correo" error={errors.correo?.message}>
+                                <Input
+                                    type="email"
+                                    registration={register("correo")}
+                                    placeholder="nombre@empresa.com"
+                                />
+                            </Field>
+
+                            <Field
+                                label="Usuario (si no tiene correo)"
+                                error={errors.usuario?.message}
+                            >
+                                <Input
+                                    registration={register("usuario")}
+                                    placeholder="Nombre para iniciar sesión"
+                                />
+                            </Field>
+
+                            {esAdmin && (
+                                <Field label="Rol *" error={errors.rol_id?.message}>
+                                    <Select
+                                        registration={register("rol_id")}
+                                        value={watch("rol_id") ?? ""}
+                                        error={errors.rol_id?.message}
+                                    >
+                                        <option value="">Seleccionar rol</option>
+                                        {roles.map((role) => (
+                                            <option key={role.id} value={role.id}>
+                                                {role.nombre}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                </Field>
+                            )}
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field label="Empresa" error={errors.empresa_id?.message}>
+                                    <SearchableSelect
+                                        control={control}
+                                        name="empresa_id"
+                                        options={[
+                                            { value: "", label: "Sin empresa" },
+                                            ...empresas.map((empresa) => ({
+                                                value: empresa.id,
+                                                label: empresa.nombre_empresa,
+                                            })),
+                                        ]}
+                                        placeholder="Sin empresa"
+                                        valueAsNumber
+                                        error={errors.empresa_id?.message}
+                                    />
+                                </Field>
+
+                                <Field label="Patrono" error={errors.patrono_id?.message}>
+                                    <SearchableSelect
+                                        control={control}
+                                        name="patrono_id"
+                                        options={[
+                                            { value: "", label: "Sin patrono" },
+                                            ...patronos.map((patrono) => ({
+                                                value: patrono.id,
+                                                label: patrono.razon_social,
+                                            })),
+                                        ]}
+                                        placeholder="Sin patrono"
+                                        valueAsNumber
+                                        error={errors.patrono_id?.message}
+                                    />
+                                </Field>
+                            </div>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field label="Puesto" error={errors.puesto_id?.message}>
+                                    <SearchableSelect
+                                        control={control}
+                                        name="puesto_id"
+                                        options={[
+                                            { value: "", label: "Sin puesto" },
+                                            ...puestos.map((puesto) => ({
+                                                value: puesto.id,
+                                                label: puesto.nombre,
+                                            })),
+                                        ]}
+                                        placeholder="Sin puesto"
+                                        valueAsNumber
+                                        error={errors.puesto_id?.message}
+                                    />
+                                </Field>
+                            </div>
+
+                            {hasEmpresaChange && (
+                                <Field
+                                    label="Motivo del cambio de empresa *"
+                                    error={errors.motivo_cambio_empresa?.message}
+                                >
+                                    <textarea
+                                        {...register("motivo_cambio_empresa", {
+                                            required:
+                                                "El motivo es requerido cuando cambia la empresa",
+                                        })}
+                                        rows={3}
+                                        className="w-full rounded-xl border border-[#dce3ee] bg-white px-4 py-3 text-[#071b3b] transition placeholder:text-[#9ba8c2] focus:border-[#3162e9] focus:outline-none"
+                                        placeholder="Explique el motivo del cambio de empresa..."
+                                    />
+                                </Field>
+                            )}
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field
+                                    label="Fecha de nacimiento"
+                                    error={errors.fecha_nacimiento?.message}
+                                >
+                                    <Input
+                                        registration={register("fecha_nacimiento")}
+                                        type="date"
+                                    />
+                                </Field>
+
+                                <Field
+                                    label="Fecha de contratación *"
+                                    error={errors.fecha_contratacion?.message}
+                                >
+                                    <Input
+                                        registration={register("fecha_contratacion")}
+                                        type="date"
+                                    />
+                                </Field>
+                            </div>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field
+                                    label="Tipo de contrato *"
+                                    error={errors.tipo_contrato?.message}
+                                >
+                                    <Select registration={register("tipo_contrato")}>
+                                        <option value="INDEFINIDO">Indefinido</option>
+                                        <option value="DEFINIDO">Definido</option>
+                                    </Select>
+                                </Field>
+                                {tipoContrato === "DEFINIDO" && (
+                                    <Field
+                                        label="Fecha de finalización *"
+                                        error={errors.fecha_fin_contrato?.message}
+                                    >
+                                        <Input
+                                            registration={register("fecha_fin_contrato")}
+                                            type="date"
+                                        />
+                                    </Field>
+                                )}
+                            </div>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field label="Sexo" error={errors.sexo?.message}>
+                                    <Select registration={register("sexo")}>
+                                        <option value="">Seleccionar...</option>
+                                        <option value="MASCULINO">Masculino</option>
+                                        <option value="FEMENINO">Femenino</option>
+                                    </Select>
+                                </Field>
+                            </div>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field label="DPI" error={errors.dpi?.message}>
+                                    <Input
+                                        registration={register("dpi")}
+                                        placeholder="Número de DPI"
+                                    />
+                                </Field>
+
+                                <Field
+                                    label="Extendido en"
+                                    error={errors.dpi_extendido_en?.message}
+                                >
+                                    <Input
+                                        registration={register("dpi_extendido_en")}
+                                        placeholder="Ej. Guatemala"
+                                    />
+                                </Field>
+                            </div>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field label="NIT" error={errors.nit?.message}>
+                                    <Input
+                                        registration={register("nit")}
+                                        placeholder="Número de NIT"
+                                    />
+                                </Field>
+                                <Field
+                                    label="No. de afiliación IGSS"
+                                    error={errors.numero_afiliacion_igss?.message}
+                                >
+                                    <Input
+                                        registration={register("numero_afiliacion_igss")}
+                                        placeholder="Número de afiliación IGSS"
+                                    />
+                                </Field>
+                            </div>
+
+                            <Field label="Dirección" error={errors.direccion?.message}>
+                                <Input
+                                    registration={register("direccion")}
+                                    placeholder="Dirección completa"
+                                />
+                            </Field>
+
+                            <CamposAltaUsuario
+                                register={register}
+                                errors={errors}
+                                valorTipoCuenta={
+                                    watch("tipo_cuenta_bancaria") || ""
+                                }
+                            />
+
+                            <div className="grid gap-5 sm:grid-cols-3">
+                                <Field label="Sueldo Base" error={errors.sueldo?.message}>
+                                    <Input
+                                        registration={register("sueldo")}
+                                        type="number"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                    />
+                                </Field>
+
+                                <Field
+                                    label="Bonificación decreto ley"
+                                    error={errors.bonos?.message}
+                                >
+                                    <Input
+                                        registration={register("bonos")}
+                                        type="number"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                    />
+                                </Field>
+                                <Field
+                                    label="Moneda del sueldo"
+                                    error={errors.moneda_sueldo?.message}
+                                >
+                                    <Select registration={register("moneda_sueldo")}>
+                                        <option value="QUETZAL">Quetzales (GTQ)</option>
+                                        <option value="DOLAR">Dólares (USD)</option>
+                                    </Select>
+                                </Field>
+                            </div>
+
+                            <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                                <div className="flex items-center gap-3">
+                                    <Shield className="h-6 w-6 text-[#3162e9]" />
+                                    <h2 className="text-lg font-bold text-[#071b3b]">Seguros</h2>
+                                </div>
+
+                                <div className="mt-6 space-y-6">
+                                    <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="text-base font-semibold text-[#071b3b]">
+                                                Seguro de Gastos Médicos
+                                            </h3>
+                                            <RadioGroup
+                                                control={control}
+                                                name="tiene_seguro_gastos_medicos"
+                                                options={[
+                                                    { value: true, label: "Sí" },
+                                                    { value: false, label: "No" },
+                                                ]}
+                                                className="flex items-center gap-4"
+                                            />
+                                        </div>
+                                        {tieneSeguroGastos && (
+                                            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                                                <Field
+                                                    label="Modalidad *"
+                                                    error={errors.tipo_seguro_gastos_medicos?.message}
+                                                >
+                                                    <Select
+                                                        registration={register(
+                                                            "tipo_seguro_gastos_medicos",
+                                                        )}
+                                                    >
+                                                        <option value="">Seleccionar...</option>
+                                                        <option value="INDIVIDUAL">Individual</option>
+                                                        <option value="FAMILIAR">Familiar</option>
+                                                    </Select>
+                                                </Field>
+                                                {tipoSeguroGastos && (
+                                                    <>
+                                                        <Field
+                                                            label="Empresa aseguradora *"
+                                                            error={
+                                                                errors.empresa_seguro_gastos_medicos?.message
+                                                            }
+                                                        >
+                                                            <Input
+                                                                registration={register(
+                                                                    "empresa_seguro_gastos_medicos",
+                                                                )}
+                                                                placeholder="Nombre de la empresa aseguradora"
+                                                            />
+                                                        </Field>
+                                                        <Field
+                                                            label="Categoría *"
+                                                            error={
+                                                                errors.categoria_seguro_gastos_medicos?.message
+                                                            }
+                                                        >
+                                                            <Input
+                                                                registration={register(
+                                                                    "categoria_seguro_gastos_medicos",
+                                                                )}
+                                                                placeholder="Categoría del seguro médico"
+                                                            />
+                                                        </Field>
+                                                    </>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="text-base font-semibold text-[#071b3b]">
+                                                Seguro de Vida
+                                            </h3>
+                                            <RadioGroup
+                                                control={control}
+                                                name="tiene_seguro_vida"
+                                                options={[
+                                                    { value: true, label: "Sí" },
+                                                    { value: false, label: "No" },
+                                                ]}
+                                                className="flex items-center gap-4"
+                                            />
+                                        </div>
+                                        {tieneSeguroVida && (
+                                            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                                                <Field
+                                                    label="Empresa aseguradora *"
+                                                    error={errors.empresa_seguro_vida?.message}
+                                                >
+                                                    <Input
+                                                        registration={register("empresa_seguro_vida")}
+                                                        placeholder="Nombre de la empresa aseguradora"
+                                                    />
+                                                </Field>
+                                                <Field
+                                                    label="Categoría *"
+                                                    error={errors.categoria_seguro_vida?.message}
+                                                >
+                                                    <Input
+                                                        registration={register("categoria_seguro_vida")}
+                                                        placeholder="Categoría del seguro de vida"
+                                                    />
+                                                </Field>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </section>
+
+                            <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">
+                                <input
+                                    type="checkbox"
+                                    {...register("activo")}
+                                    className="h-5 w-5 cursor-pointer accent-[#3162e9]"
+                                />
+                                <span className="font-semibold">Colaborador activo</span>
+                            </label>
+                        </div>
+
+                        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                            <button
+                                type="button"
+                                onClick={() => navigate("/colaboradores")}
+                                className="h-14 cursor-pointer rounded-2xl border border-[#dce3ee] px-6 font-bold text-[#5b6e8b] transition hover:bg-[#f0f4fa]"
+                            >
+                                Cancelar
+                            </button>
+                            <UsuarioPdf
+                                getUsuario={getValues}
+                                usuarioId={Number(id)}
+                                fechaBajaInicial={usuarioOriginal?.fecha_baja}
+                                motivoBajaInicial={usuarioOriginal?.motivo_baja}
+                                notasBajaInicial={usuarioOriginal?.notas_baja}
+                                reingresoBajaInicial={usuarioOriginal?.reingreso_baja}
+                                puesto={puestoSeleccionado}
+                                empresa={empresaSeleccionada}
+                                patrono={patronoSeleccionado}
+                                onError={setServerError}
+                                onBajaSaved={handleBajaSaved}
+                            />
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-7 font-bold text-white transition hover:bg-[#183fca] disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                <Save className="h-5 w-5" />
+                                {isSubmitting ? "Guardando..." : "Guardar"}
+                            </button>
+                        </div>
+                    </form>
+                )}
+            </div>
+        </DashboardLayout>
+    );
+}
+
+export default EditarUsuario;

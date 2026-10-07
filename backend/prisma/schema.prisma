@@ -1,0 +1,541 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum EstadoPostulante {
+  POSTULANTE      @map("Postulante")
+  CONTRATADO      @map("Contratado")
+  RECHAZADO       @map("Rechazado")
+}
+
+enum EstadoCivil {
+  SOLTERO    @map("Soltero (a)")
+  CASADO     @map("Casado (a)")
+  UNIDO      @map("Unido (a)")
+  VIUDO      @map("Viudo (a)")
+  DIVORCIADO @map("Divorciado (a)")
+}
+
+enum Sexo {
+  MASCULINO @map("Masculino")
+  FEMENINO  @map("Femenino")
+}
+
+enum ViviendaTipo {
+  PROPIA    @map("Propia")
+  ALQUILADA @map("Alquilada")
+  FAMILIAR  @map("Familiar")
+  OTRA      @map("Otra")
+}
+
+enum MedioEnterado {
+  ANUNCIO    @map("Anuncio")
+  REFERENCIA @map("Referencia")
+  OTRO       @map("Otro")
+}
+
+enum Parentesco {
+  PADRE      @map("Padre")
+  MADRE      @map("Madre")
+  ESPOSO_A   @map("Esposo(a)")
+  HIJO_A     @map("Hijo(a)")
+  HERMANO_A  @map("Hermano(a)")
+  EMERGENCIA @map("Emergencia")
+}
+
+enum NivelEducativo {
+  PRIMARIA      @map("Primaria")
+  BASICOS       @map("Básicos")
+  DIVERSIFICADO @map("Diversificado")
+  TECNICO       @map("Técnico")
+  LICENCIATURA  @map("Licenciatura")
+  MAESTRIA      @map("Maestría")
+  OTRO          @map("Otro")
+}
+
+enum EstadoEducativo {
+  COMPLETA    @map("Completa")
+  INCOMPLETA  @map("Incompleta")
+}
+
+enum MotivoRetiro {
+  RENUNCIA       @map("Renuncia")
+  DESPIDO        @map("Despido")
+  REORGANIZACION @map("Reorganización")
+  OTRO           @map("Otro")
+}
+
+enum TipoDocumento {
+  FOTO
+  ANTECEDENTES_PENALES
+  CARTA_RECOMENDACION
+  COPIA_DPI
+  TARJETA_SALUD
+  CURRICULUM
+}
+
+enum TipoMoneda {
+  QUETZAL @map("GTQ")
+  DOLAR   @map("USD")
+}
+
+model Plaza {
+  id          Int             @id @default(autoincrement())
+  nombre      String          @unique @map("nombre") @db.VarChar(100)
+  descripcion String?         @map("descripcion") @db.Text
+  tipo_moneda TipoMoneda      @default(QUETZAL) @map("tipo_moneda")
+  salario_min Decimal?        @map("salario_min") @db.Decimal(12, 2)
+  salario_max Decimal?        @map("salario_max") @db.Decimal(12, 2)
+  activo      Boolean         @default(true) @map("activa")
+  creado_en   DateTime        @default(now()) @map("creado_en") @db.Timestamp(0)
+  postulantes Postulante[]
+
+  @@map("plazas")
+}
+
+model Empresa {
+  id                        Int               @id @default(autoincrement())
+  nombre_empresa            String            @unique @map("nombre_empresa") @db.VarChar(150)
+  detalle_empresa           String?           @map("detalle_empresa") @db.Text
+  direccion                 String?           @map("direccion") @db.Text
+  telefono                  String?           @map("telefono") @db.VarChar(20)
+  correo                    String?           @map("correo") @db.VarChar(100)
+  fecha_aniversario         DateTime?         @map("fecha_aniversario") @db.Date
+  activo                    Boolean           @default(true) @map("activa")
+  creado_en                 DateTime          @default(now()) @map("creado_en") @db.Timestamp(0)
+  usuarios                  Usuario[]
+  historial_empresa_anterior HistorialEmpresa[] @relation("EmpresaAnterior")
+  historial_empresa_nuevo    HistorialEmpresa[] @relation("EmpresaNuevo")
+  usuarios_rh               UsuarioEmpresa[]
+
+  @@map("empresas")
+}
+
+model Division {
+  id              Int          @id @default(autoincrement())
+  nombre          String       @map("nombre") @db.VarChar(150)
+  descripcion     String?      @map("descripcion") @db.Text
+  activo          Boolean      @default(true) @map("activa")
+  creado_en       DateTime     @default(now()) @map("creado_en") @db.Timestamp(0)
+  puestos         Puesto[]
+
+  @@map("divisiones")
+}
+
+model Departamento {
+  id               Int          @id @default(autoincrement())
+  nombre           String       @map("nombre") @db.VarChar(150)
+  descripcion      String?      @map("descripcion") @db.Text
+  activo           Boolean      @default(true) @map("activa")
+  creado_en        DateTime     @default(now()) @map("creado_en") @db.Timestamp(0)
+  puestos          Puesto[]
+
+  @@map("departamentos")
+}
+
+model Puesto {
+  id               Int          @id @default(autoincrement())
+  nombre           String       @map("nombre") @db.VarChar(150)
+  descripcion      String?      @map("descripcion") @db.Text
+  division_id      Int          @map("division_id")
+  division         Division     @relation(fields: [division_id], references: [id], onDelete: Restrict)
+  departamento_id  Int          @map("departamento_id")
+  departamento     Departamento @relation(fields: [departamento_id], references: [id], onDelete: Cascade)
+  activo           Boolean      @default(true) @map("activa")
+  creado_en        DateTime     @default(now()) @map("creado_en") @db.Timestamp(0)
+  usuarios         Usuario[]
+
+  @@map("puestos")
+}
+
+model Patrono {
+  id                    Int           @id @default(autoincrement())
+  razon_social          String        @unique @map("razon_social") @db.VarChar(150)
+  numero_patronal       String?       @map("numero_patronal") @db.VarChar(50)
+  nit                   String?       @map("nit") @db.VarChar(20)
+  representante_legal   String?       @map("representante_legal") @db.VarChar(150)
+  dpi_representante     String?       @map("dpi_representante") @db.VarChar(20)
+  fecha_vencimiento_dpi DateTime?     @map("fecha_vencimiento_dpi") @db.Date
+  fecha_nacimiento      DateTime?     @map("fecha_nacimiento") @db.Date
+  sexo                  Sexo?         @map("sexo")
+  estado_civil          EstadoCivil?  @map("estado_civil")
+  profesion             String?       @map("profesion") @db.VarChar(100)
+  dpi_extendido_en      String?       @map("dpi_extendido_en") @db.VarChar(100)
+  direccion             String?       @map("direccion") @db.Text
+  telefono              String?       @map("telefono") @db.VarChar(20)
+  correo                String?       @map("correo") @db.VarChar(100)
+  activo                Boolean       @default(true) @map("activa")
+  creado_en             DateTime      @default(now()) @map("creado_en") @db.Timestamp(0)
+  usuarios              Usuario[]
+
+  @@map("patronos")
+}
+
+model Role {
+  id       Int       @id @default(autoincrement())
+  nombre   String    @unique @map("nombre") @db.VarChar(50)
+  usuarios Usuario[]
+
+  @@map("roles")
+}
+
+model Usuario {
+  id                  Int          @id @default(autoincrement())
+  nombre              String       @map("nombre") @db.VarChar(100)
+  usuario             String?      @unique @map("usuario") @db.VarChar(50)
+  correo              String?      @unique @map("correo") @db.VarChar(100)
+  password            String       @map("password") @db.VarChar(255)
+  rol_id              Int          @map("rol_id")
+  activo              Boolean      @default(true) @map("activo")
+  creado_en           DateTime     @default(now()) @map("creado_en") @db.Timestamp(0)
+  mustChangePassword  Boolean      @default(false) @map("must_change_password")
+  resetToken          String?      @unique @map("reset_token") @db.VarChar(255)
+  resetTokenExpiry    DateTime?    @map("reset_token_expiry") @db.Timestamp(0)
+  empresa_id          Int?         @map("empresa_id")
+  empresa             Empresa?     @relation(fields: [empresa_id], references: [id], onDelete: SetNull)
+  patrono_id          Int?         @map("patrono_id")
+  patrono             Patrono?     @relation(fields: [patrono_id], references: [id], onDelete: SetNull)
+  puesto_id           Int?         @map("puesto_id")
+  puesto              Puesto?      @relation(fields: [puesto_id], references: [id], onDelete: SetNull)
+  fecha_nacimiento    DateTime?    @map("fecha_nacimiento") @db.Date
+  estado_civil        EstadoCivil? @map("estado_civil")
+  sexo                Sexo?        @map("sexo")
+  dpi                 String?      @map("dpi") @db.VarChar(20)
+  dpi_extendido_en    String?      @map("dpi_extendido_en") @db.VarChar(100)
+  direccion           String?      @map("direccion") @db.Text
+  nacionalidad        String?      @map("nacionalidad") @db.VarChar(100)
+  telefono            String?      @map("telefono") @db.VarChar(20)
+  ultimo_grado_cursado NivelEducativo? @map("ultimo_grado_cursado")
+  fecha_contratacion  DateTime?    @map("fecha_contratacion") @db.Date
+  tipo_contrato       String       @default("INDEFINIDO") @map("tipo_contrato") @db.VarChar(20)
+  fecha_fin_contrato  DateTime?    @map("fecha_fin_contrato") @db.Date
+  fecha_baja          DateTime?    @map("fecha_baja") @db.Date
+  motivo_baja         String?      @map("motivo_baja") @db.VarChar(100)
+  notas_baja          String?      @map("notas_baja") @db.Text
+  reingreso_baja      Boolean?     @map("reingreso_baja")
+  nit                 String?      @map("nit") @db.VarChar(20)
+  numero_afiliacion_igss String?    @map("numero_afiliacion_igss") @db.VarChar(30)
+  sueldo              Decimal?     @map("sueldo") @db.Decimal(10, 2)
+  bonos               Decimal?     @map("bonos") @db.Decimal(10, 2)
+  moneda_sueldo       TipoMoneda   @default(QUETZAL) @map("moneda_sueldo")
+  banco               String?      @map("banco") @db.VarChar(100)
+  tipo_cuenta_bancaria String?     @map("tipo_cuenta_bancaria") @db.VarChar(50)
+  numero_cuenta_bancaria String?   @map("numero_cuenta_bancaria") @db.VarChar(50)
+  contacto_emergencia_nombre String? @map("contacto_emergencia_nombre") @db.VarChar(150)
+  contacto_emergencia_telefono String? @map("contacto_emergencia_telefono") @db.VarChar(20)
+  tiene_seguro_gastos_medicos      Boolean   @default(false) @map("tiene_seguro_gastos_medicos")
+  empresa_seguro_gastos_medicos    String?   @map("empresa_seguro_gastos_medicos") @db.VarChar(100)
+  tipo_seguro_gastos_medicos       String?   @map("tipo_seguro_gastos_medicos") @db.VarChar(20)
+  categoria_seguro_gastos_medicos  String?   @map("categoria_seguro_gastos_medicos") @db.VarChar(100)
+  tiene_seguro_vida                Boolean   @default(false) @map("tiene_seguro_vida")
+  empresa_seguro_vida              String?   @map("empresa_seguro_vida") @db.VarChar(100)
+  categoria_seguro_vida            String?   @map("categoria_seguro_vida") @db.VarChar(100)
+  rol                 Role         @relation(fields: [rol_id], references: [id])
+  postulantes         Postulante[]
+  empresas_asignadas  UsuarioEmpresa[]
+  postulantes_rechazados Postulante[] @relation("RechazadoPor")
+  postulantes_contratados Postulante[] @relation("ContratadoPor")
+  postulantes_devueltos Postulante[] @relation("DevueltoPor")
+  historial_sueldo        HistorialSueldo[]
+  historial_sueldo_cambios HistorialSueldo[] @relation("HistorialSueldoCambiadoPor")
+  historial_empresa         HistorialEmpresa[]
+  historial_empresa_cambios HistorialEmpresa[] @relation("HistorialEmpresaCambiadoPor")
+  historial_rechazos        HistorialRechazo[] @relation("RechazadoPor")
+
+  @@map("usuarios")
+}
+
+model Postulante {
+  id                           Int                  @id @default(autoincrement())
+  usuario_id                   Int                  @map("usuario_id")
+  estado                       EstadoPostulante     @map("estado")
+  fecha_registro               DateTime             @map("fecha_registro") @db.Date
+  motivo_rechazo               String?              @map("motivo_rechazo") @db.Text
+  fecha_rechazo                DateTime?            @map("fecha_rechazo") @db.Date
+  rechazado_por                Int?                 @map("rechazado_por")
+  rechazado_por_usuario        Usuario?             @relation("RechazadoPor", fields: [rechazado_por], references: [id])
+  fecha_contratacion           DateTime?            @map("fecha_contratacion") @db.Date
+  contratado_por               Int?                 @map("contratado_por")
+  contratado_por_usuario       Usuario?             @relation("ContratadoPor", fields: [contratado_por], references: [id])
+  motivo_devolucion            String?              @map("motivo_devolucion") @db.Text
+  fecha_devolucion             DateTime?            @map("fecha_devolucion") @db.Date
+  devuelto_por                 Int?                 @map("devuelto_por")
+  devuelto_por_usuario         Usuario?             @relation("DevueltoPor", fields: [devuelto_por], references: [id])
+  nombre_completo              String               @map("nombre_completo") @db.VarChar(150)
+  direccion                    String               @map("direccion") @db.Text
+  lugar_nacimiento             String               @map("lugar_nacimiento") @db.VarChar(100)
+  fecha_nacimiento             DateTime             @map("fecha_nacimiento") @db.Date
+  telefono                     String               @map("telefono") @db.VarChar(20)
+  correo                       String               @map("correo") @db.VarChar(100)
+  estado_civil                 EstadoCivil          @map("estado_civil")
+  sexo                         Sexo?                @map("sexo")
+  dpi                          String               @unique @map("dpi") @db.VarChar(20)
+  dpi_extendido_en             String?              @map("dpi_extendido_en") @db.VarChar(100)
+  nit                          String?              @map("nit") @db.VarChar(20)
+  igss                         String?              @map("igss") @db.VarChar(20)
+  perfil_facebook              String?              @map("perfil_facebook") @db.VarChar(100)
+  afiliacion_gremial           Boolean?             @map("afiliacion_gremial")
+  afiliacion_religiosa         Boolean?             @map("afiliacion_religiosa")
+  afiliacion_politica          Boolean?             @map("afiliacion_politica")
+  afiliacion_deportiva         Boolean?             @map("afiliacion_deportiva")
+  afiliacion_sociales          Boolean?             @map("afiliacion_sociales")
+  afiliacion_civicos           Boolean?             @map("afiliacion_civicos")
+  afiliacion_sindicales        Boolean?             @map("afiliacion_sindicales")
+  afiliacion_otros             Boolean?             @map("afiliacion_otros")
+  afiliacion_gremial_especificar    String?          @map("afiliacion_gremial_especificar")    @db.VarChar(255)
+  afiliacion_religiosa_especificar  String?          @map("afiliacion_religiosa_especificar")  @db.VarChar(255)
+  afiliacion_politica_especificar   String?          @map("afiliacion_politica_especificar")   @db.VarChar(255)
+  afiliacion_deportiva_especificar  String?          @map("afiliacion_deportiva_especificar")  @db.VarChar(255)
+  afiliacion_sociales_especificar   String?          @map("afiliacion_sociales_especificar")   @db.VarChar(255)
+  afiliacion_civicos_especificar    String?          @map("afiliacion_civicos_especificar")    @db.VarChar(255)
+  afiliacion_sindicales_especificar String?          @map("afiliacion_sindicales_especificar") @db.VarChar(255)
+  afiliacion_otros_especificar      String?          @map("afiliacion_otros_especificar")      @db.VarChar(255)
+  practica_deporte             Boolean?             @map("practica_deporte")
+  deporte_cual                 String?              @map("deporte_cual") @db.VarChar(100)
+  ha_estado_enfermo_gravedad   Boolean?             @map("ha_estado_enfermo_gravedad")
+  ha_estado_enfermo_gravedad_especificar String?    @map("ha_estado_enfermo_gravedad_especificar") @db.VarChar(255)
+  toma_medicamento             Boolean?             @map("toma_medicamento")
+  toma_medicamento_especificar String?              @map("toma_medicamento_especificar") @db.VarChar(255)
+  fuma_o_bebe                  Boolean?             @map("fuma_o_bebe")
+  fuma_bebe_frecuencia         String?              @map("fuma_bebe_frecuencia") @db.VarChar(100)
+  impedimento_fisico             Boolean?             @map("impedimento_fisico")
+  impedimento_fisico_especificar String?              @map("impedimento_fisico_especificar") @db.VarChar(255)
+  estudia_actualidad             Boolean?             @map("estudia_actualidad")
+  estudia_que                    String?              @map("estudia_que") @db.VarChar(150)
+  estudia_establecimiento        String?              @map("estudia_establecimiento") @db.VarChar(150)
+  estudia_horario                String?              @map("estudia_horario") @db.VarChar(100)
+  posee_conocimientos_tecnicos   Boolean?             @map("posee_conocimientos_tecnicos")
+  conocimientos_tecnicos_especificar String?          @map("conocimientos_tecnicos_especificar") @db.VarChar(500)
+  equipo_maquinaria              String?              @map("equipo_maquinaria") @db.Text
+  personas_dependientes        Int?                 @map("personas_dependientes")
+  fortaleza_1                  String?              @map("fortaleza_1") @db.VarChar(255)
+  fortaleza_2                  String?              @map("fortaleza_2") @db.VarChar(255)
+  fortaleza_3                  String?              @map("fortaleza_3") @db.VarChar(255)
+  debilidad_1                  String?              @map("debilidad_1") @db.VarChar(255)
+  debilidad_2                  String?              @map("debilidad_2") @db.VarChar(255)
+  debilidad_3                  String?              @map("debilidad_3") @db.VarChar(255)
+  total_efectivo_hogar         Decimal?             @map("total_efectivo_hogar") @db.Decimal(10, 2)
+  vivienda_tipo                ViviendaTipo?        @map("vivienda_tipo")
+  vivienda_valor               Decimal?             @map("vivienda_valor") @db.Decimal(10, 2)
+  vivienda_renta_monto         Decimal?             @map("vivienda_renta_monto") @db.Decimal(10, 2)
+  vivienda_otra_especificar    String?              @map("vivienda_otra_especificar") @db.VarChar(255)
+  vivienda_asegurada           Boolean?             @map("vivienda_asegurada")
+  vivienda_seguro_monto        Decimal?             @map("vivienda_seguro_monto") @db.Decimal(10, 2)
+  tiene_otro_inmueble          Boolean?             @map("tiene_otro_inmueble")
+  otro_inmueble_especificar    String?              @map("otro_inmueble_especificar") @db.VarChar(255)
+  otro_inmueble_monto          Decimal?             @map("otro_inmueble_monto") @db.Decimal(10, 2)
+  tiene_vehiculo               Boolean?             @map("tiene_vehiculo")
+  tipo_vehiculo                String?              @map("tipo_vehiculo") @db.VarChar(50)
+  vehiculo_marca               String?              @map("vehiculo_marca") @db.VarChar(100)
+  vehiculo_placa               String?              @map("vehiculo_placa") @db.VarChar(20)
+  licencia_tipo                String?              @map("licencia_tipo") @db.VarChar(50)
+  licencia_numero              String?              @map("licencia_numero") @db.VarChar(50)
+  vehiculo_asegurado           Boolean?             @map("vehiculo_asegurado")
+  vehiculo_seguro_monto        Decimal?             @map("vehiculo_seguro_monto") @db.Decimal(10, 2)
+  ingresos_adicionales         Boolean?             @map("ingresos_adicionales")
+  ingresos_adicionales_monto   Decimal?             @map("ingresos_adicionales_monto") @db.Decimal(10, 2)
+  ingresos_adicionales_motivo  String?              @map("ingresos_adicionales_motivo") @db.VarChar(255)
+  tiene_cuenta_bancaria        Boolean?             @map("tiene_cuenta_bancaria")
+  banco                        String?              @map("banco") @db.VarChar(100)
+  tipo_cuenta_bancaria         String?              @map("tipo_cuenta_bancaria") @db.VarChar(50)
+  numero_cuenta_bancaria       String?              @map("numero_cuenta_bancaria") @db.VarChar(50)
+  deudas_pendientes            Boolean?             @map("deudas_pendientes")
+  deudas_monto                 Decimal?             @map("deudas_monto") @db.Decimal(10, 2)
+  deudas_institucion           String?              @map("deudas_institucion") @db.VarChar(150)
+  deudas_motivo                String?              @map("deudas_motivo") @db.VarChar(255)
+  tiene_hipotecas              Boolean?             @map("tiene_hipotecas")
+  hipoteca_motivo              String?              @map("hipoteca_motivo") @db.VarChar(255)
+  hipoteca_monto               Decimal?             @map("hipoteca_monto") @db.Decimal(10, 2)
+  hipoteca_institucion         String?              @map("hipoteca_institucion") @db.VarChar(150)
+  otras_deudas                 Boolean?             @map("otras_deudas")
+  otra_deuda_motivo            String?              @map("otra_deuda_motivo") @db.VarChar(255)
+  otra_deuda_monto             Decimal?             @map("otra_deuda_monto") @db.Decimal(10, 2)
+  otra_deuda_institucion       String?              @map("otra_deuda_institucion") @db.VarChar(150)
+  detenido_policia             Boolean?             @map("detenido_policia")
+  detenido_motivo              String?              @map("detenido_motivo") @db.VarChar(255)
+  procesado_legalmente         Boolean?             @map("procesado_legalmente")
+  procesado_motivo             String?              @map("procesado_motivo") @db.VarChar(255)
+  conoce_detenido_entorno      Boolean?             @map("conoce_detenido_entorno")
+  conoce_detenido_motivo       String?              @map("conoce_detenido_motivo") @db.VarChar(255)
+  plaza_id                     Int?                 @map("plaza_id")
+  plaza                        Plaza?               @relation(fields: [plaza_id], references: [id], onDelete: SetNull)
+  salario_aspira               Decimal?             @map("salario_aspira") @db.Decimal(10, 2)
+  fecha_inicio_disponible      DateTime?            @map("fecha_inicio_disponible") @db.Date
+  trabajar_extraordinario      Boolean?             @map("trabajar_extraordinario")
+  trabajar_turnos_rotativos    Boolean?             @map("trabajar_turnos_rotativos")
+  medio_enterado               MedioEnterado?       @map("medio_enterado")
+  medio_enterado_especificar   String?              @map("medio_enterado_especificar") @db.VarChar(255)
+  tiene_parientes_empresa      Boolean?             @map("tiene_parientes_empresa")
+  parientes_empresa_nombre     String?              @map("parientes_empresa_nombre") @db.VarChar(255)
+  porque_gustaria_trabajar     String?              @map("porque_gustaria_trabajar") @db.Text
+  porque_deberiamoss_contratar String?              @map("porque_deberiamoss_contratar") @db.Text
+  usuario                      Usuario              @relation(fields: [usuario_id], references: [id])
+  datosFamiliares              DatosFamiliares[]
+  educacionHistorial           EducacionHistorial[]
+  idiomas                      Idioma[]
+  capacitaciones               Capacitacion[]
+  experienciaLaboral           ExperienciaLaboral[]
+  referenciasPersonales        ReferenciaPersonal[]
+  documentos                   DocumentoPostulante[]
+  historial_rechazos           HistorialRechazo[]
+
+  @@map("postulantes")
+}
+
+model DatosFamiliares {
+  id                Int        @id @default(autoincrement())
+  postulante_id     Int        @map("postulante_id")
+  parentesco        Parentesco @map("parentesco")
+  nombres_apellidos String     @map("nombres_apellidos") @db.VarChar(150)
+  edad              Int?       @map("edad")
+  direccion         String?    @map("direccion") @db.Text
+  ocupacion         String?    @map("ocupacion") @db.VarChar(100)
+  telefono          String?    @map("telefono") @db.VarChar(20)
+  postulante        Postulante @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
+
+  @@map("datos_familiares")
+}
+
+model EducacionHistorial {
+  id              Int             @id @default(autoincrement())
+  postulante_id   Int             @map("postulante_id")
+  nivel           NivelEducativo  @map("nivel")
+  establecimiento String?         @map("establecimiento") @db.VarChar(150)
+  ano_inicial     Int?            @map("ano_inicial")
+  ano_final       Int?            @map("ano_final")
+  estado          EstadoEducativo @default(COMPLETA) @map("estado")
+  postulante      Postulante      @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
+
+  @@map("educacion_historial")
+}
+
+model Idioma {
+  id            Int        @id @default(autoincrement())
+  postulante_id Int        @map("postulante_id")
+  idioma        String     @map("idioma") @db.VarChar(50)
+  habla         Boolean?   @map("habla")
+  lee           Boolean?   @map("lee")
+  escribe       Boolean?   @map("escribe")
+  postulante    Postulante @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
+
+  @@map("idiomas")
+}
+
+model Capacitacion {
+  id                   Int        @id @default(autoincrement())
+  postulante_id        Int        @map("postulante_id")
+  nombre_curso         String     @map("nombre_curso") @db.VarChar(150)
+  establecimiento_pais String?    @map("establecimiento_pais") @db.VarChar(150)
+  tiempo_duracion      String?    @map("tiempo_duracion") @db.VarChar(50)
+  fecha_inicial        DateTime?  @map("fecha_inicial") @db.Date
+  fecha_final          DateTime?  @map("fecha_final") @db.Date
+  postulante           Postulante @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
+
+  @@map("capacitaciones")
+}
+
+model ExperienciaLaboral {
+  id                Int           @id @default(autoincrement())
+  postulante_id     Int           @map("postulante_id")
+  empresa           String        @map("empresa") @db.VarChar(150)
+  direccion         String?       @map("direccion") @db.Text
+  telefono          String?       @map("telefono") @db.VarChar(20)
+  puesto            String        @map("puesto") @db.VarChar(100)
+  jefe_inmediato    String?       @map("jefe_inmediato") @db.VarChar(150)
+  fecha_ingreso     DateTime?     @map("fecha_ingreso") @db.Date
+  fecha_retiro      DateTime?     @map("fecha_retiro") @db.Date
+  salario_inicial   Decimal?      @map("salario_inicial") @db.Decimal(10, 2)
+  salario_final     Decimal?      @map("salario_final") @db.Decimal(10, 2)
+  tareas_realizadas String?       @map("tareas_realizadas") @db.Text
+  motivo_retiro     MotivoRetiro? @map("motivo_retiro")
+  motivo_retiro_otro String?       @map("motivo_retiro_otro") @db.VarChar(255)
+  postulante        Postulante    @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
+
+  @@map("experiencia_laboral")
+}
+
+model ReferenciaPersonal {
+  id            Int        @id @default(autoincrement())
+  postulante_id Int        @map("postulante_id")
+  nombre        String     @map("nombre") @db.VarChar(150)
+  direccion     String?    @map("direccion") @db.Text
+  telefono      String     @map("telefono") @db.VarChar(20)
+  postulante    Postulante @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
+
+  @@map("referencias_personales")
+}
+
+model DocumentoPostulante {
+  id             Int            @id @default(autoincrement())
+  postulante_id  Int            @map("postulante_id")
+  tipo           TipoDocumento  @map("tipo")
+  nombre_archivo String         @map("nombre_archivo") @db.VarChar(255)
+  ruta           String         @map("ruta") @db.VarChar(500)
+  mime_type      String         @map("mime_type") @db.VarChar(100)
+  tamano_bytes   Int            @map("tamano_bytes")
+  fecha_subida   DateTime       @default(now()) @map("fecha_subida") @db.Timestamp(0)
+  postulante     Postulante     @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
+
+  @@unique([postulante_id, tipo])
+  @@map("documentos_postulante")
+}
+
+model HistorialSueldo {
+  id                Int      @id @default(autoincrement())
+  usuario_id        Int      @map("usuario_id")
+  usuario           Usuario  @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  cambiado_por_id   Int?     @map("cambiado_por_id")
+  cambiado_por      Usuario? @relation("HistorialSueldoCambiadoPor", fields: [cambiado_por_id], references: [id], onDelete: SetNull)
+  sueldo_anterior   Decimal? @map("sueldo_anterior") @db.Decimal(10, 2)
+  sueldo_nuevo      Decimal? @map("sueldo_nuevo") @db.Decimal(10, 2)
+  bonos_anterior    Decimal? @map("bonos_anterior") @db.Decimal(10, 2)
+  bonos_nuevo       Decimal? @map("bonos_nuevo") @db.Decimal(10, 2)
+  motivo            String   @map("motivo") @db.Text
+  fecha_cambio      DateTime @default(now()) @map("fecha_cambio") @db.Timestamp(0)
+
+  @@map("historial_sueldo")
+}
+
+model HistorialEmpresa {
+  id                    Int      @id @default(autoincrement())
+  usuario_id            Int      @map("usuario_id")
+  usuario               Usuario  @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  empresa_anterior_id   Int?     @map("empresa_anterior_id")
+  empresa_anterior      Empresa? @relation("EmpresaAnterior", fields: [empresa_anterior_id], references: [id], onDelete: SetNull)
+  empresa_nuevo_id      Int?     @map("empresa_nuevo_id")
+  empresa_nuevo         Empresa? @relation("EmpresaNuevo", fields: [empresa_nuevo_id], references: [id], onDelete: SetNull)
+  motivo                String   @map("motivo") @db.Text
+  cambiado_por_id       Int?     @map("cambiado_por_id")
+  cambiado_por          Usuario? @relation("HistorialEmpresaCambiadoPor", fields: [cambiado_por_id], references: [id], onDelete: SetNull)
+  fecha_cambio          DateTime @default(now()) @map("fecha_cambio") @db.Timestamp(0)
+
+  @@map("historial_empresa")
+}
+
+model HistorialRechazo {
+  id                 Int       @id @default(autoincrement())
+  postulante_id      Int       @map("postulante_id")
+  postulante         Postulante @relation(fields: [postulante_id], references: [id], onDelete: Cascade)
+  motivo             String    @map("motivo") @db.Text
+  rechazado_por      Int       @map("rechazado_por")
+  rechazado_por_usuario Usuario  @relation("RechazadoPor", fields: [rechazado_por], references: [id])
+  fecha_rechazo      DateTime  @default(now()) @map("fecha_rechazo") @db.Timestamp(0)
+
+  @@map("historial_rechazos")
+}
+
+// Relacion N:M entre usuarios (rol Recursos Humanos) y las empresas que administran
+model UsuarioEmpresa {
+  usuario_id Int     @map("usuario_id")
+  empresa_id  Int     @map("empresa_id")
+  usuario    Usuario @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  empresa     Empresa @relation(fields: [empresa_id], references: [id], onDelete: Cascade)
+
+  @@id([usuario_id, empresa_id])
+  @@map("usuario_empresas")
+}

@@ -1,0 +1,500 @@
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth.js";
+import ChangePassword from "../pages/auth/ChangePassword.jsx";
+import ForgotPassword from "../pages/auth/ForgotPassword.jsx";
+import Login from "../pages/auth/Login.jsx";
+import ResetPassword from "../pages/auth/ResetPassword.jsx";
+import Dashboard from "../pages/dashboard/Dashboard.jsx";
+import Postulantes from "../pages/postulantes/Postulantes.jsx";
+import NuevoPostulante from "../pages/postulantes/NuevoPostulante.jsx";
+import EditarPostulante from "../pages/postulantes/EditarPostulante.jsx";
+import DetallePostulante from "../pages/postulantes/DetallePostulante.jsx";
+import Plazas from "../pages/plazas/Plazas.jsx";
+import NuevaPlaza from "../pages/plazas/NuevaPlaza.jsx";
+import EditarPlaza from "../pages/plazas/EditarPlaza.jsx";
+import DetallePlaza from "../pages/plazas/DetallePlaza.jsx";
+import Usuarios from "../pages/usuarios/Usuarios.jsx";
+import NuevoUsuario from "../pages/usuarios/NuevoUsuario.jsx";
+import DetalleUsuario from "../pages/usuarios/DetalleUsuario.jsx";
+import EditarUsuario from "../pages/usuarios/EditarUsuario.jsx";
+import Empresas from "../pages/empresas/Empresas.jsx";
+import NuevaEmpresa from "../pages/empresas/NuevaEmpresa.jsx";
+import DetalleEmpresa from "../pages/empresas/DetalleEmpresa.jsx";
+import EditarEmpresa from "../pages/empresas/EditarEmpresa.jsx";
+import Divisiones from "../pages/empresas/Divisiones.jsx";
+import NuevaDivision from "../pages/empresas/NuevaDivision.jsx";
+import DetalleDivision from "../pages/empresas/DetalleDivision.jsx";
+import EditarDivision from "../pages/empresas/EditarDivision.jsx";
+import Departamentos from "../pages/empresas/Departamentos.jsx";
+import NuevaDepartamento from "../pages/empresas/NuevaDepartamento.jsx";
+import DetalleDepartamento from "../pages/empresas/DetalleDepartamento.jsx";
+import EditarDepartamento from "../pages/empresas/EditarDepartamento.jsx";
+import Puestos from "../pages/empresas/Puestos.jsx";
+import NuevaPuesto from "../pages/empresas/NuevaPuesto.jsx";
+import DetallePuesto from "../pages/empresas/DetallePuesto.jsx";
+import EditarPuesto from "../pages/empresas/EditarPuesto.jsx";
+import Patronos from "../pages/patronos/Patronos.jsx";
+import Informes from "../pages/informes/Informes.jsx";
+import Configuracion from "../pages/configuracion/Configuracion.jsx";
+import NuevoPatrono from "../pages/patronos/NuevoPatrono.jsx";
+import DetallePatrono from "../pages/patronos/DetallePatrono.jsx";
+import EditarPatrono from "../pages/patronos/EditarPatrono.jsx";
+import ProtectedRoute from "./ProtectedRoute.jsx";
+import PublicRoute from "./PublicRoute.jsx";
+
+function ProtectedWithPasswordCheck({ children }) {
+  const { user } = useAuth();
+
+  if (user?.mustChangePassword) {
+    return <Navigate to="/cambiar-password" replace />;
+  }
+
+  return children;
+}
+
+const ADMIN_ROLE = "Administrador RHCorp";
+const RRHH_ROLE = "Recursos Humanos";
+
+function RoleRoute({ roles, children }) {
+  const { user } = useAuth();
+
+  if (!user || !roles.includes(user.rol)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}
+
+const COLABORADOR_ROLE = "Colaborador";
+
+// Envoltorio de rutas: el rol Colaborador solo tiene disponible /informes
+function SoloStaff() {
+  const { user } = useAuth();
+
+  // Sin usuario (cargando o sesion cerrada): dejamos que ProtectedRoute
+  // resuelva (Cargando... o redirija a /login). Si no, /dashboard apuntaria
+  // a si mismo y entraria en bucle de redireccion con pantalla en blanco.
+  if (user && ![ADMIN_ROLE, RRHH_ROLE].includes(user.rol)) {
+    return (
+      <Navigate
+        to={user.rol === COLABORADOR_ROLE ? "/informes" : "/dashboard"}
+        replace
+      />
+    );
+  }
+
+  return <Outlet />;
+}
+
+function AppRouter() {
+  return (
+    <Routes>
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/recuperar"
+        element={
+          <PublicRoute>
+            <ForgotPassword />
+          </PublicRoute>
+        }
+      />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
+      <Route
+        path="/cambiar-password"
+        element={
+          <ProtectedRoute>
+            <ChangePassword />
+          </ProtectedRoute>
+        }
+      />
+      <Route element={<SoloStaff />}>
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Dashboard />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/postulantes"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Postulantes />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/postulantes/nuevo"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <NuevoPostulante />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/postulantes/:id"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <DetallePostulante />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/postulantes/:id/editar"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <EditarPostulante />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/plazas"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Plazas />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/plazas/nueva"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <NuevaPlaza />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/plazas/:id"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <DetallePlaza />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/plazas/:id/editar"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <EditarPlaza />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/colaboradores"
+        element={
+          <ProtectedRoute>
+            <RoleRoute roles={[ADMIN_ROLE, RRHH_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <Usuarios />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/colaboradores/nuevo"
+        element={
+          <ProtectedRoute>
+            <RoleRoute roles={[ADMIN_ROLE, RRHH_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <NuevoUsuario />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/colaboradores/:id"
+        element={
+          <ProtectedRoute>
+            <RoleRoute roles={[ADMIN_ROLE, RRHH_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <DetalleUsuario />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/colaboradores/:id/editar"
+        element={
+          <ProtectedRoute>
+            <RoleRoute roles={[ADMIN_ROLE, RRHH_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <EditarUsuario />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Empresas />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/nueva"
+        element={
+          <ProtectedRoute>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <NuevaEmpresa />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/:id"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <DetalleEmpresa />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/:id/editar"
+        element={
+          <ProtectedRoute>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <EditarEmpresa />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/divisiones"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Divisiones />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/divisiones/nueva"
+        element={
+          <ProtectedRoute>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <NuevaDivision />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/divisiones/:id"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <DetalleDivision />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/divisiones/:id/editar"
+        element={
+          <ProtectedRoute>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <EditarDivision />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/departamentos"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Departamentos />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/departamentos/nueva"
+        element={
+          <ProtectedRoute>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <NuevaDepartamento />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/departamentos/:id"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <DetalleDepartamento />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/departamentos/:id/editar"
+        element={
+          <ProtectedRoute>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <EditarDepartamento />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/puestos"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Puestos />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/puestos/nueva"
+        element={
+          <ProtectedRoute>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <NuevaPuesto />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/puestos/:id"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <DetallePuesto />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/empresas/puestos/:id/editar"
+        element={
+          <ProtectedRoute>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <EditarPuesto />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/configuracion"
+        element={
+          <ProtectedRoute>
+            <RoleRoute roles={[ADMIN_ROLE]}>
+              <ProtectedWithPasswordCheck>
+                <Configuracion />
+              </ProtectedWithPasswordCheck>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patronos"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Patronos />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patronos/nuevo"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <NuevoPatrono />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patronos/:id"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <DetallePatrono />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patronos/:id/editar"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <EditarPatrono />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      </Route>
+      <Route
+        path="/informes"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Informes />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
+  );
+}
+
+export default AppRouter;

@@ -1,0 +1,473 @@
+import { useEffect, useRef, useState } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  Eye,
+  Pencil,
+  Plus,
+  Search,
+  X,
+} from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import DashboardLayout from "../../layouts/DashboardLayout.jsx";
+import {
+  getPostulantes,
+  getPostulantesExport,
+} from "../../services/postulantes.service.js";
+import { getPlazas } from "../../services/plazas.service.js";
+import ExportarExcelButton from "../../components/ExportarExcelButton.jsx";
+import { exportarExcel } from "../../utils/excel.js";
+import { hojasPostulante } from "../../utils/exportaciones/postulantes.js";
+
+const PAGE_SIZE = 6;
+
+const STATUS_OPTIONS = [
+  { value: "", label: "Estado" },
+  { value: "POSTULANTE", label: "Postulante" },
+  { value: "CONTRATADO", label: "Contratado" },
+  { value: "RECHAZADO", label: "Rechazado" },
+];
+
+const statusStyles = {
+  POSTULANTE: "bg-[#fff0bd] text-[#a86b00]",
+  CONTRATADO: "bg-[#c9f3dd] text-[#087947]",
+  RECHAZADO: "bg-[#ffe0e2] text-[#df353c]",
+};
+
+const statusLabels = Object.fromEntries(
+  STATUS_OPTIONS.slice(1).map(({ value, label }) => [value, label]),
+);
+
+function formatDpi(dpi = "") {
+  const digits = String(dpi).replace(/\D/g, "");
+  return digits.length === 13
+    ? `${digits.slice(0, 4)}-${digits.slice(4, 9)}-${digits.slice(9)}`
+    : dpi;
+}
+
+function formatDate(value) {
+  if (!value) return "—";
+  const date = new Date(`${String(value).slice(0, 10)}T12:00:00`);
+  return Number.isNaN(date.getTime())
+    ? "—"
+    : new Intl.DateTimeFormat("es-GT").format(date);
+}
+
+function SelectField({ ariaLabel, value, onChange, children }) {
+  return (
+    <div className="relative">
+      <select
+        aria-label={ariaLabel}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
+      >
+        {children}
+      </select>
+      <ChevronDown
+        aria-hidden="true"
+        className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#65758f]"
+      />
+    </div>
+  );
+}
+
+function SearchableSelect({ placeholder, value, options, onChange }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const ref = useRef(null);
+  const inputRef = useRef(null);
+
+  const selected = options.find((o) => String(o.value) === String(value));
+  const displayValue = selected ? selected.label : "";
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filtered = options.filter((o) =>
+    o.label.toLowerCase().includes(query.toLowerCase()),
+  );
+
+  const handleSelect = (val) => {
+    onChange(val === value ? "" : val);
+    setQuery("");
+    setOpen(false);
+  };
+
+  return (
+    <div ref={ref} className="relative">
+      <div
+        onClick={() => {
+          setOpen(true);
+          setTimeout(() => inputRef.current?.focus(), 0);
+        }}
+        className="flex h-14 cursor-pointer items-center rounded-2xl border border-[#dce3ee] bg-white px-4 text-base font-semibold text-[#071b3b] transition focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15"
+      >
+        <input
+          ref={inputRef}
+          value={open ? query : displayValue}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => setOpen(true)}
+          placeholder={placeholder}
+          className="h-full w-full bg-transparent outline-none placeholder:text-[#91a0b7]"
+          readOnly={!open && !!displayValue}
+        />
+        {displayValue && !open && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onChange("");
+            }}
+            className="ml-1 cursor-pointer p-1 text-[#65758f] hover:text-[#071b3b]"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+        <ChevronDown className="ml-1 h-5 w-5 shrink-0 text-[#65758f]" />
+      </div>
+      {open && (
+        <ul className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-xl border border-[#dce3ee] bg-white py-1 shadow-lg">
+          {filtered.length === 0 && (
+            <li className="px-4 py-3 text-sm text-[#91a0b7]">
+              Sin resultados
+            </li>
+          )}
+          {filtered.map((o) => (
+            <li
+              key={o.value}
+              onClick={() => handleSelect(o.value)}
+              className={`cursor-pointer px-4 py-3 text-base transition hover:bg-[#f0f4fa] ${
+                String(o.value) === String(value)
+                  ? "font-semibold text-[#3162e9] bg-[#f0f4fa]"
+                  : "text-[#071b3b]"
+              }`}
+            >
+              {o.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function Postulantes() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [estado, setEstado] = useState("");
+  const [plazaId, setPlazaId] = useState("");
+  const [page, setPage] = useState(1);
+  const [result, setResult] = useState({
+    data: [],
+    total: 0,
+    page: 1,
+    totalPages: 1,
+  });
+  const [plazas, setPlazas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState(
+    location.state?.mensaje || "",
+  );
+
+  useEffect(() => {
+    if (!successMessage) return undefined;
+    const timer = window.setTimeout(() => setSuccessMessage(""), 5000);
+    return () => window.clearTimeout(timer);
+  }, [successMessage]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(
+      () => setDebouncedSearch(search.trim()),
+      300,
+    );
+    return () => window.clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    let active = true;
+    getPlazas({ activo: true })
+      .then(
+        (data) =>
+          active && setPlazas(data.map(({ id, nombre }) => ({ id, nombre }))),
+      )
+      .catch(() => active && setPlazas([]));
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    getPostulantes({
+      page,
+      limit: PAGE_SIZE,
+      ...(debouncedSearch && { q: debouncedSearch }),
+      ...(estado && { estado }),
+      ...(plazaId && { plaza_id: plazaId }),
+    })
+      .then((data) => {
+        if (active) {
+          setResult(data);
+          setError("");
+        }
+      })
+      .catch((requestError) => {
+        if (active)
+          setError(
+            requestError.response?.data?.message ||
+              "No fue posible cargar los postulantes.",
+          );
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [page, debouncedSearch, estado, plazaId]);
+
+  const firstItem = result.total === 0 ? 0 : (result.page - 1) * PAGE_SIZE + 1;
+  const lastItem = Math.min(result.page * PAGE_SIZE, result.total);
+  const updateSearch = (value) => {
+    setSearch(value);
+    setPage(1);
+    setLoading(true);
+  };
+  const updateEstado = (value) => {
+    setEstado(value);
+    setPage(1);
+    setLoading(true);
+  };
+  const updatePlaza = (value) => {
+    setPlazaId(value);
+    setPage(1);
+    setLoading(true);
+  };
+  const goToPage = (nextPage) => {
+    setPage(nextPage);
+    setLoading(true);
+  };
+
+  const manejarExportar = async () => {
+    const datos = await getPostulantesExport({
+      ...(debouncedSearch && { q: debouncedSearch }),
+      ...(estado && { estado }),
+      ...(plazaId && { plaza_id: plazaId }),
+    });
+    exportarExcel({ filename: "postulantes", hojas: hojasPostulante(datos) });
+  };
+
+  return (
+    <DashboardLayout
+      title="Gestión de Postulantes"
+      headerSearch={{
+        value: search,
+        onChange: updateSearch,
+        placeholder: "Buscar postulante...",
+      }}
+    >
+      {successMessage && (
+        <div
+          role="status"
+          className="mb-5 rounded-2xl border border-[#b9e8ce] bg-[#edfff4] px-5 py-4 font-semibold text-[#087947]"
+        >
+          {successMessage}
+        </div>
+      )}
+      <section className="rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-6">
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_192px_176px_232px_auto]">
+          <label className="flex h-14 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
+            <Search className="h-5 w-5 shrink-0" />
+            <input
+              value={search}
+              onChange={(event) => updateSearch(event.target.value)}
+              placeholder="Buscar por nombre o DPI..."
+              className="w-full bg-transparent text-base outline-none placeholder:text-[#7787a2]"
+            />
+          </label>
+          <SelectField
+            ariaLabel="Filtrar por estado"
+            value={estado}
+            onChange={updateEstado}
+          >
+            {STATUS_OPTIONS.map(({ value, label }) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </SelectField>
+          <SearchableSelect
+            placeholder="Plazas"
+            value={plazaId}
+            options={[
+              { value: "", label: "Plazas" },
+              ...plazas.map((plaza) => ({ value: plaza.id, label: plaza.nombre })),
+            ]}
+            onChange={updatePlaza}
+          />
+          <button
+            type="button"
+            onClick={() => navigate("/postulantes/nuevo")}
+            className="flex h-14 items-center justify-center gap-2 cursor-pointer rounded-2xl bg-[#3162e9] px-5 text-base font-bold text-white transition hover:bg-[#183fca]"
+          >
+            <Plus className="h-5 w-5" />
+            Nuevo Postulante
+          </button>
+          <ExportarExcelButton onExport={manejarExportar} />
+        </div>
+      </section>
+
+      <section className="mt-7 overflow-hidden rounded-[26px] bg-white shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left">
+            <thead>
+              <tr className="text-base font-semibold text-[#5b6e8b]">
+                <th className="border-b border-[#dfe5ee] px-7 py-5 font-semibold">
+                  Nombre Completo
+                </th>
+                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                  DPI (Guatemala)
+                </th>
+                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                  Plaza Aplicada
+                </th>
+                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                  Estado
+                </th>
+                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                  Registro
+                </th>
+                <th className="border-b border-[#dfe5ee] px-7 py-5 text-right font-semibold">
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading && (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="px-7 py-14 text-center text-[#5b6e8b]"
+                  >
+                    Cargando postulantes…
+                  </td>
+                </tr>
+              )}
+              {!loading && error && (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="px-7 py-14 text-center text-[#df353c]"
+                  >
+                    {error}
+                  </td>
+                </tr>
+              )}
+              {!loading && !error && result.data.length === 0 && (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="px-7 py-14 text-center text-[#5b6e8b]"
+                  >
+                    No hay postulantes que coincidan con los filtros.
+                  </td>
+                </tr>
+              )}
+              {!loading &&
+                !error &&
+                result.data.map((postulante) => (
+                  <tr key={postulante.id} className="text-base">
+                    <td className="border-b border-[#dfe5ee] px-7 py-6 font-bold text-[#071b3b]">
+                      {postulante.nombre_completo}
+                    </td>
+                    <td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">
+                      {formatDpi(postulante.dpi)}
+                    </td>
+                    <td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">
+                      {postulante.plaza?.nombre || "—"}
+                    </td>
+                    <td className="border-b border-[#dfe5ee] px-5 py-6">
+                      <span
+                        className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${statusStyles[postulante.estado] || "bg-[#f1f4f9] text-[#5b6e8b]"}`}
+                      >
+                        {statusLabels[postulante.estado] || postulante.estado}
+                      </span>
+                    </td>
+                    <td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">
+                      {formatDate(postulante.fecha_registro)}
+                    </td>
+                    <td className="border-b border-[#dfe5ee] px-7 py-6">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigate(`/postulantes/${postulante.id}`)
+                          }
+                          aria-label={`Ver ${postulante.nombre_completo}`}
+                          className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
+                        >
+                          <Eye className="h-5 w-5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigate(`/postulantes/${postulante.id}/editar`)
+                          }
+                          aria-label={`Editar ${postulante.nombre_completo}`}
+                          className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
+                        >
+                          <Pencil className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+        <footer className="flex flex-col gap-4 px-7 py-5 text-[#5b6e8b] sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            Mostrando {firstItem} a {lastItem} de{" "}
+            {result.total.toLocaleString("es-GT")} postulantes
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={loading || result.page <= 1}
+              onClick={() => goToPage(result.page - 1)}
+              className="flex h-11 items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] cursor-pointer disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Anterior
+            </button>
+            <span className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-[#3162e9] px-3 font-bold text-white">
+              {result.page}
+            </span>
+            <button
+              type="button"
+              disabled={loading || result.page >= result.totalPages}
+              onClick={() => goToPage(result.page + 1)}
+              className="flex h-11 items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] cursor-pointer disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              Siguiente
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </footer>
+      </section>
+    </DashboardLayout>
+  );
+}
+
+export default Postulantes;

@@ -1,0 +1,375 @@
+import { z } from "zod";
+
+// Funcion para convertir valores vacios a null
+const emptyToNull = (value) =>
+  value === "" || value === undefined || value === null || Number.isNaN(value) ? null : value;
+
+// Funciones para crear validaciones opcionales
+const optionalText = (max) =>
+  z.preprocess(emptyToNull, z.string().trim().max(max).nullable());
+const optionalNumber = (min, max) =>
+  z.preprocess(emptyToNull, z.number().min(min).max(max).nullable());
+const optionalDate = z.preprocess(
+  emptyToNull,
+  z
+    .string()
+    .refine(
+      (value) => !Number.isNaN(new Date(`${value}T12:00:00`).getTime()),
+      "Fecha inválida",
+    )
+    .nullable(),
+);
+const optionalBoolean = z.boolean().nullable().optional();
+const phone = z
+  .string()
+  .trim()
+  .regex(/^[\d\s()+-]{7,20}$/, "Teléfono inválido");
+
+// Schema para validacion de familiares
+const familiarSchema = z.object({
+  parentesco: z.enum(
+    ["PADRE", "MADRE", "ESPOSO_A", "HIJO_A", "HERMANO_A", "EMERGENCIA"],
+    { error: "Seleccione el parentesco" },
+  ),
+  nombres_apellidos: z
+    .string()
+    .trim()
+    .min(1, "El nombre es requerido")
+    .max(150),
+  edad: optionalNumber(0, 120),
+  direccion: optionalText(5000),
+  ocupacion: optionalText(100),
+  telefono: z.preprocess(emptyToNull, phone.nullable()),
+});
+
+// Schema para validacion de historial educativo
+const educacionSchema = z.object({
+  nivel: z.enum(
+    [
+      "PRIMARIA",
+      "BASICOS",
+      "DIVERSIFICADO",
+      "TECNICO",
+      "LICENCIATURA",
+      "MAESTRIA",
+      "OTRO",
+    ],
+    { error: "Seleccione el nivel" },
+  ),
+  establecimiento: optionalText(150),
+  ano_inicial: optionalNumber(1900, 2100),
+  ano_final: optionalNumber(1900, 2100),
+  estado: z.enum(["COMPLETA", "INCOMPLETA"]).default("COMPLETA"),
+});
+
+// Schema para validacion de idiomas
+const idiomaSchema = z.object({
+  idioma: z.string().trim().min(1, "El idioma es requerido").max(50),
+  habla: optionalBoolean,
+  lee: optionalBoolean,
+  escribe: optionalBoolean,
+});
+
+// Schema para validacion de capacitaciones
+const capacitacionSchema = z.object({
+  nombre_curso: z.string().trim().min(1, "El curso es requerido").max(150),
+  establecimiento_pais: optionalText(150),
+  tiempo_duracion: optionalText(50),
+  fecha_inicial: optionalDate,
+  fecha_final: optionalDate,
+});
+
+// Schema para validacion de experiencia laboral
+const experienciaSchema = z.object({
+  empresa: z.string().trim().min(1, "La empresa es requerida").max(150),
+  puesto: z.string().trim().min(1, "El puesto es requerido").max(100),
+  direccion: optionalText(5000),
+  telefono: z.preprocess(emptyToNull, phone.nullable()),
+  jefe_inmediato: optionalText(150),
+  fecha_ingreso: optionalDate,
+  fecha_retiro: optionalDate,
+  salario_inicial: optionalNumber(0, 99999999.99),
+  salario_final: optionalNumber(0, 99999999.99),
+  tareas_realizadas: optionalText(5000),
+  motivo_retiro: z.preprocess(
+    emptyToNull,
+    z.enum(["RENUNCIA", "DESPIDO", "REORGANIZACION", "OTRO"]).nullable(),
+  ),
+  motivo_retiro_otro: optionalText(255),
+});
+const referenciaSchema = z.object({
+  nombre: z.string().trim().min(1, "El nombre es requerido").max(150),
+  telefono: phone.optional(),
+  direccion: optionalText(5000),
+});
+
+// Schema principal para validacion del formulario de postulante
+export const postulanteSchema = z.object({
+  nombre_completo: z
+    .string()
+    .trim()
+    .min(1, "El nombre completo es requerido")
+    .max(150),
+  direccion: z.string().trim().min(1, "La dirección es requerida").max(5000),
+  lugar_nacimiento: z
+    .string()
+    .trim()
+    .min(1, "El lugar de nacimiento es requerido")
+    .max(100),
+  fecha_nacimiento: z
+    .string()
+    .min(1, "La fecha de nacimiento es requerida")
+    .refine((value) => {
+      const date = new Date(`${value}T12:00:00`);
+      return !Number.isNaN(date.getTime()) && date < new Date();
+    }, "La fecha de nacimiento debe ser anterior a hoy"),
+  telefono: phone,
+  correo: z.string().trim().email("Correo inválido").max(100),
+  estado_civil: z.enum(["SOLTERO", "CASADO", "UNIDO", "VIUDO", "DIVORCIADO"], {
+    error: "Seleccione el estado civil",
+  }),
+  sexo: z.preprocess(
+    emptyToNull,
+    z.enum(["MASCULINO", "FEMENINO"]).nullable(),
+  ),
+  dpi: z
+    .string()
+    .transform((value) => value.replace(/[\s-]/g, ""))
+    .refine((value) => /^\d{13}$/.test(value), "El DPI debe tener 13 dígitos"),
+  dpi_extendido_en: optionalText(100),
+  nit: optionalText(20),
+  igss: optionalText(20),
+  perfil_facebook: optionalText(100),
+  plaza_id: z.coerce
+    .number({ error: "Seleccione una plaza válida" })
+    .int("Seleccione una plaza válida")
+    .positive("Seleccione una plaza válida"),
+  salario_aspira: optionalNumber(0, 99999999.99),
+  fecha_inicio_disponible: optionalDate,
+  trabajar_extraordinario: optionalBoolean,
+  trabajar_turnos_rotativos: optionalBoolean,
+  medio_enterado: z.preprocess(
+    emptyToNull,
+    z.enum(["ANUNCIO", "REFERENCIA", "OTRO"]).nullable(),
+  ),
+  medio_enterado_especificar: optionalText(255),
+  tiene_parientes_empresa: optionalBoolean,
+  parientes_empresa_nombre: optionalText(255),
+  porque_gustaria_trabajar: optionalText(5000),
+  porque_deberiamoss_contratar: optionalText(5000),
+  fortaleza_1: optionalText(255),
+  fortaleza_2: optionalText(255),
+  fortaleza_3: optionalText(255),
+  debilidad_1: optionalText(255),
+  debilidad_2: optionalText(255),
+  debilidad_3: optionalText(255),
+  afiliacion_gremial: optionalBoolean,
+  afiliacion_gremial_especificar: optionalText(255),
+  afiliacion_politica: optionalBoolean,
+  afiliacion_politica_especificar: optionalText(255),
+  afiliacion_sociales: optionalBoolean,
+  afiliacion_sociales_especificar: optionalText(255),
+  afiliacion_religiosa: optionalBoolean,
+  afiliacion_religiosa_especificar: optionalText(255),
+  afiliacion_civicos: optionalBoolean,
+  afiliacion_civicos_especificar: optionalText(255),
+  afiliacion_sindicales: optionalBoolean,
+  afiliacion_sindicales_especificar: optionalText(255),
+  afiliacion_deportiva: optionalBoolean,
+  afiliacion_deportiva_especificar: optionalText(255),
+  afiliacion_otros: optionalBoolean,
+  afiliacion_otros_especificar: optionalText(255),
+  practica_deporte: optionalBoolean,
+  deporte_cual: optionalText(100),
+  ha_estado_enfermo_gravedad: optionalBoolean,
+  ha_estado_enfermo_gravedad_especificar: optionalText(255),
+  toma_medicamento: optionalBoolean,
+  toma_medicamento_especificar: optionalText(255),
+  fuma_o_bebe: optionalBoolean,
+  fuma_bebe_frecuencia: optionalText(100),
+  impedimento_fisico: optionalBoolean,
+  impedimento_fisico_especificar: optionalText(255),
+  estudia_actualidad: optionalBoolean,
+  estudia_que: optionalText(150),
+  estudia_establecimiento: optionalText(150),
+  estudia_horario: optionalText(100),
+  posee_conocimientos_tecnicos: optionalBoolean,
+  conocimientos_tecnicos_especificar: optionalText(500),
+  equipo_maquinaria: optionalText(2000),
+  personas_dependientes: optionalNumber(0, 99),
+  total_efectivo_hogar: optionalNumber(0, 99999999.99),
+  vivienda_tipo: z.preprocess(
+    emptyToNull,
+    z.enum(["PROPIA", "ALQUILADA", "FAMILIAR", "OTRA"]).nullable(),
+  ),
+  vivienda_valor: optionalNumber(0, 99999999.99),
+  vivienda_renta_monto: optionalNumber(0, 99999999.99),
+  vivienda_otra_especificar: optionalText(255),
+  vivienda_asegurada: optionalBoolean,
+  vivienda_seguro_monto: optionalNumber(0, 99999999.99),
+  tiene_otro_inmueble: optionalBoolean,
+  otro_inmueble_especificar: optionalText(255),
+  otro_inmueble_monto: optionalNumber(0, 99999999.99),
+  tiene_vehiculo: optionalBoolean,
+  tipo_vehiculo: optionalText(50),
+  vehiculo_marca: optionalText(100),
+  vehiculo_placa: optionalText(20),
+  licencia_tipo: optionalText(50),
+  licencia_numero: optionalText(50),
+  vehiculo_asegurado: optionalBoolean,
+  vehiculo_seguro_monto: optionalNumber(0, 99999999.99),
+  ingresos_adicionales: optionalBoolean,
+  ingresos_adicionales_monto: optionalNumber(0, 99999999.99),
+  ingresos_adicionales_motivo: optionalText(255),
+  tiene_cuenta_bancaria: optionalBoolean,
+  banco: optionalText(100),
+  tipo_cuenta_bancaria: optionalText(50),
+  numero_cuenta_bancaria: optionalText(50),
+  deudas_pendientes: optionalBoolean,
+  deudas_monto: optionalNumber(0, 99999999.99),
+  deudas_institucion: optionalText(150),
+  deudas_motivo: optionalText(255),
+  tiene_hipotecas: optionalBoolean,
+  hipoteca_motivo: optionalText(255),
+  hipoteca_monto: optionalNumber(0, 99999999.99),
+  hipoteca_institucion: optionalText(150),
+  otras_deudas: optionalBoolean,
+  otra_deuda_motivo: optionalText(255),
+  otra_deuda_monto: optionalNumber(0, 99999999.99),
+  otra_deuda_institucion: optionalText(150),
+  detenido_policia: optionalBoolean,
+  detenido_motivo: optionalText(255),
+  procesado_legalmente: optionalBoolean,
+  procesado_motivo: optionalText(255),
+  conoce_detenido_entorno: optionalBoolean,
+  conoce_detenido_motivo: optionalText(255),
+  datosFamiliares: z
+    .array(familiarSchema)
+    .refine((arr) => arr.some((f) => f.parentesco === "EMERGENCIA"), {
+      message:
+        "Debe agregar al menos un contacto de emergencia (parentesco: Emergencia)",
+    })
+    .default([]),
+  educacionHistorial: z.array(educacionSchema).default([]),
+  idiomas: z.array(idiomaSchema).default([]),
+  capacitaciones: z.array(capacitacionSchema).default([]),
+  experienciaLaboral: z.array(experienciaSchema).default([]),
+  referenciasPersonales: z.array(referenciaSchema).default([]),
+});
+
+// Valores por defecto para un nuevo postulante
+export const defaultPostulanteValues = {
+  nombre_completo: "",
+  direccion: "",
+  lugar_nacimiento: "",
+  fecha_nacimiento: "",
+  telefono: "",
+  correo: "",
+  estado_civil: undefined,
+  sexo: undefined,
+  dpi: "",
+  dpi_extendido_en: "",
+  nit: "",
+  igss: "",
+  perfil_facebook: "",
+  plaza_id: undefined,
+  salario_aspira: undefined,
+  fecha_inicio_disponible: "",
+  trabajar_extraordinario: null,
+  trabajar_turnos_rotativos: null,
+  medio_enterado: undefined,
+  medio_enterado_especificar: "",
+  tiene_parientes_empresa: null,
+  parientes_empresa_nombre: "",
+  porque_gustaria_trabajar: "",
+  porque_deberiamoss_contratar: "",
+  fortaleza_1: "",
+  fortaleza_2: "",
+  fortaleza_3: "",
+  debilidad_1: "",
+  debilidad_2: "",
+  debilidad_3: "",
+  afiliacion_gremial: null,
+  afiliacion_gremial_especificar: "",
+  afiliacion_politica: null,
+  afiliacion_politica_especificar: "",
+  afiliacion_sociales: null,
+  afiliacion_sociales_especificar: "",
+  afiliacion_religiosa: null,
+  afiliacion_religiosa_especificar: "",
+  afiliacion_civicos: null,
+  afiliacion_civicos_especificar: "",
+  afiliacion_sindicales: null,
+  afiliacion_sindicales_especificar: "",
+  afiliacion_deportiva: null,
+  afiliacion_deportiva_especificar: "",
+  afiliacion_otros: null,
+  afiliacion_otros_especificar: "",
+  practica_deporte: null,
+  deporte_cual: "",
+  ha_estado_enfermo_gravedad: null,
+  ha_estado_enfermo_gravedad_especificar: "",
+  toma_medicamento: null,
+  toma_medicamento_especificar: "",
+  fuma_o_bebe: null,
+  fuma_bebe_frecuencia: "",
+  impedimento_fisico: null,
+  impedimento_fisico_especificar: "",
+  estudia_actualidad: null,
+  estudia_que: "",
+  estudia_establecimiento: "",
+  estudia_horario: "",
+  posee_conocimientos_tecnicos: null,
+  conocimientos_tecnicos_especificar: "",
+  equipo_maquinaria: "",
+  personas_dependientes: undefined,
+  total_efectivo_hogar: undefined,
+  vivienda_tipo: undefined,
+  vivienda_valor: undefined,
+  vivienda_renta_monto: undefined,
+  vivienda_otra_especificar: "",
+  vivienda_asegurada: null,
+  vivienda_seguro_monto: undefined,
+  tiene_otro_inmueble: null,
+  otro_inmueble_especificar: "",
+  otro_inmueble_monto: undefined,
+  tiene_vehiculo: null,
+  tipo_vehiculo: "",
+  vehiculo_marca: "",
+  vehiculo_placa: "",
+  licencia_tipo: "",
+  licencia_numero: "",
+  vehiculo_asegurado: null,
+  vehiculo_seguro_monto: undefined,
+  ingresos_adicionales: null,
+  ingresos_adicionales_monto: undefined,
+  ingresos_adicionales_motivo: "",
+  tiene_cuenta_bancaria: null,
+  banco: "",
+  tipo_cuenta_bancaria: "",
+  numero_cuenta_bancaria: "",
+  deudas_pendientes: null,
+  deudas_monto: undefined,
+  deudas_institucion: "",
+  deudas_motivo: "",
+  tiene_hipotecas: null,
+  hipoteca_motivo: "",
+  hipoteca_monto: undefined,
+  hipoteca_institucion: "",
+  otras_deudas: null,
+  otra_deuda_motivo: "",
+  otra_deuda_monto: undefined,
+  otra_deuda_institucion: "",
+  detenido_policia: null,
+  detenido_motivo: "",
+  procesado_legalmente: null,
+  procesado_motivo: "",
+  conoce_detenido_entorno: null,
+  conoce_detenido_motivo: "",
+  datosFamiliares: [],
+  educacionHistorial: [],
+  idiomas: [],
+  capacitaciones: [],
+  experienciaLaboral: [],
+  referenciasPersonales: [],
+};

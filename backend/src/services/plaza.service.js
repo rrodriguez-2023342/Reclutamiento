@@ -1,0 +1,102 @@
+import prisma from '../config/prisma.js'
+
+// Funcion para crear un error con mensaje y status
+function crearError(mensaje, status) {
+  const error = new Error(mensaje)
+  error.status = status
+  return error
+}
+
+// Construye el filtro where compartido entre listado y exportación
+function construirWhere({ q, activo, tipo_moneda } = {}) {
+  const where = {}
+
+  if (activo !== undefined) {
+    where.activo = activo
+  }
+
+  if (tipo_moneda) {
+    where.tipo_moneda = tipo_moneda
+  }
+
+  if (q) {
+    where.OR = [
+      { nombre: { contains: q } },
+    ]
+  }
+
+  return where
+}
+
+// Servicio para manejar las plazas
+class PlazaService {
+  // Listar todas las plazas con filtros opcionales
+  async listar(filtros = {}) {
+    return prisma.plaza.findMany({
+      where: construirWhere(filtros),
+      orderBy: { nombre: 'asc' },
+      include: {
+        _count: { select: { postulantes: true } },
+      },
+    })
+  }
+
+  // Exportar todas las plazas filtradas con sus conteos
+  async exportar(filtros = {}) {
+    return this.listar(filtros)
+  }
+
+  // Obtener una plaza por su id
+  async obtenerPorId(id) {
+    return prisma.plaza.findUnique({ where: { id } })
+  }
+
+  // Crear una nueva plaza
+  async crear(data) {
+    const existente = await prisma.plaza.findUnique({ where: { nombre: data.nombre } })
+    if (existente) {
+      throw crearError('Ya existe una plaza con ese nombre', 409)
+    }
+
+    return prisma.plaza.create({ data })
+  }
+
+  // Actualizar una plaza existente
+  async actualizar(id, data) {
+    const plaza = await prisma.plaza.findUnique({ where: { id } })
+    if (!plaza) {
+      throw crearError('Plaza no encontrada', 404)
+    }
+
+    if (data.nombre && data.nombre !== plaza.nombre) {
+      const duplicada = await prisma.plaza.findFirst({
+        where: { nombre: data.nombre, id: { not: id } },
+      })
+      if (duplicada) {
+        throw crearError('Ya existe otra plaza con ese nombre', 409)
+      }
+    }
+
+    return prisma.plaza.update({ where: { id }, data })
+  }
+
+  // Eliminar una plaza
+  async eliminar(id) {
+    const plaza = await prisma.plaza.findUnique({
+      where: { id },
+      select: { id: true, postulantes: { select: { id: true }, take: 1 } },
+    })
+
+    if (!plaza) {
+      throw crearError('Plaza no encontrada', 404)
+    }
+
+    if (plaza.postulantes.length > 0) {
+      throw crearError('No se puede eliminar: hay postulantes asociados a esta plaza', 409)
+    }
+
+    return prisma.plaza.delete({ where: { id } })
+  }
+}
+
+export const plazaService = new PlazaService()

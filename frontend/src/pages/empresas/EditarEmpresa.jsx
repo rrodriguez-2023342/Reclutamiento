@@ -1,0 +1,223 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeft, Save } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+    Field,
+    Input,
+    Textarea,
+} from "../../components/postulantes/formControls.jsx";
+import DashboardLayout from "../../layouts/DashboardLayout.jsx";
+import {
+    getEmpresaById,
+    updateEmpresa,
+} from "../../services/empresas.service.js";
+import {
+    defaultEmpresaValues,
+    empresaSchema,
+} from "../../validators/empresas.validator.js";
+
+function EditarEmpresa() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [serverError, setServerError] = useState("");
+    const [loadingEmpresa, setLoadingEmpresa] = useState(true);
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        resolver: zodResolver(empresaSchema),
+        defaultValues: defaultEmpresaValues,
+    });
+
+    useEffect(() => {
+        let active = true;
+        setLoadingEmpresa(true);
+        getEmpresaById(id)
+            .then((data) => {
+                if (active) {
+                    reset({
+                        ...defaultEmpresaValues,
+                        nombre_empresa: data.nombre_empresa || "",
+                        detalle_empresa: data.detalle_empresa || "",
+                        direccion: data.direccion || "",
+                        telefono: data.telefono || "",
+                        correo: data.correo || "",
+                        fecha_aniversario: data.fecha_aniversario
+                            ? data.fecha_aniversario.split("T")[0]
+                            : "",
+                        activo: data.activo ?? true,
+                    });
+                }
+            })
+            .catch((requestError) => {
+                if (active) {
+                    setServerError(
+                        requestError.response?.data?.message ||
+                            "No fue posible cargar la empresa.",
+                    );
+                }
+            })
+            .finally(() => active && setLoadingEmpresa(false));
+
+        return () => {
+            active = false;
+        };
+    }, [id, reset]);
+
+    const onSubmit = async (values) => {
+        try {
+            setServerError("");
+            const payload = {
+                ...values,
+                detalle_empresa: values.detalle_empresa || null,
+                direccion: values.direccion || null,
+                telefono: values.telefono || null,
+                correo: values.correo || null,
+                fecha_aniversario: values.fecha_aniversario || null,
+            };
+            await updateEmpresa(id, payload);
+            navigate("/empresas", {
+                state: { mensaje: "Empresa actualizada correctamente" },
+            });
+        } catch (requestError) {
+            setServerError(
+                requestError.response?.data?.message ||
+                    "No fue posible actualizar la empresa.",
+            );
+        }
+    };
+
+    return (
+        <DashboardLayout title="Editar Empresa">
+            <div className="mx-auto max-w-3xl">
+                <div className="mb-6 flex items-center gap-4">
+                    <button
+                        type="button"
+                        onClick={() => navigate("/empresas")}
+                        aria-label="Volver a empresas"
+                        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border border-[#dce3ee] bg-white text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                    >
+                        <ArrowLeft className="h-5 w-5" />
+                    </button>
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
+                            Editar Empresa
+                        </h1>
+                        <p className="mt-1 text-[#5b6e8b]">
+                            Actualiza la información de la empresa.
+                        </p>
+                    </div>
+                </div>
+
+                {loadingEmpresa ? (
+                    <div className="rounded-[26px] bg-white p-10 text-center text-[#5b6e8b] shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
+                        Cargando empresa...
+                    </div>
+                ) : (
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8"
+                        noValidate
+                    >
+                        {serverError && (
+                            <div
+                                role="alert"
+                                className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 font-semibold text-red-600"
+                            >
+                                {serverError}
+                            </div>
+                        )}
+
+                        <div className="grid gap-5">
+                            <Field
+                                label="Nombre de la Empresa *"
+                                error={errors.nombre_empresa?.message}
+                            >
+                                <Input
+                                    registration={register("nombre_empresa")}
+                                    placeholder="Ej. Clarion Group"
+                                />
+                            </Field>
+
+                            <Field
+                                label="Detalle de la Empresa"
+                                error={errors.detalle_empresa?.message}
+                            >
+                                <Textarea
+                                    registration={register("detalle_empresa")}
+                                    placeholder="Ej. Empresa dedicada a la consultoría..."
+                                />
+                            </Field>
+
+                            <Field label="Dirección" error={errors.direccion?.message}>
+                                <Textarea
+                                    registration={register("direccion")}
+                                    placeholder="Dirección completa de la empresa"
+                                />
+                            </Field>
+
+                            <Field label="Teléfono" error={errors.telefono?.message}>
+                                <Input
+                                    registration={register("telefono")}
+                                    placeholder="Ej. +502 1234 5678"
+                                />
+                            </Field>
+
+                            <Field label="Correo" error={errors.correo?.message}>
+                                <Input
+                                    type="email"
+                                    registration={register("correo")}
+                                    placeholder="ejemplo@empresa.com"
+                                />
+                            </Field>
+
+                            <Field
+                                label="Fecha de aniversario"
+                                error={errors.fecha_aniversario?.message}
+                            >
+                                <Input
+                                    type="date"
+                                    registration={register("fecha_aniversario")}
+                                />
+                            </Field>
+
+                            <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">
+                                <input
+                                    type="checkbox"
+                                    {...register("activo")}
+                                    className="h-5 w-5 cursor-pointer accent-[#3162e9]"
+                                />
+                                <span className="font-semibold">Empresa activa</span>
+                            </label>
+                        </div>
+
+                        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                            <button
+                                type="button"
+                                onClick={() => navigate("/empresas")}
+                                className="h-14 cursor-pointer rounded-2xl border border-[#dce3ee] px-6 font-bold text-[#5b6e8b] transition hover:bg-[#f0f4fa]"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-7 font-bold text-white transition hover:bg-[#183fca] disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                <Save className="h-5 w-5" />
+                                {isSubmitting ? "Guardando..." : "Guardar"}
+                            </button>
+                        </div>
+                    </form>
+                )}
+            </div>
+        </DashboardLayout>
+    );
+}
+
+export default EditarEmpresa;

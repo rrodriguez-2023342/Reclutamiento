@@ -53,7 +53,7 @@ function ProtectedWithPasswordCheck({ children }) {
 function AdminRoute({ children }) {
   const { user } = useAuth();
 
-  if (!user || user.rol !== 'Administrador') {
+  if (!user || user.rol !== 'Administrador RHCorp') {
     return <Navigate to="/dashboard" replace />;
   }
 

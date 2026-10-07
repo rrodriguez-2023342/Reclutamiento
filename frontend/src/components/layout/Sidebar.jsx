@@ -41,7 +41,7 @@ function Sidebar({ isOpen, onClose, onOpenProfile }) {
   const flyoutRef = useRef(null);
 
   const visibleNavigation =
-    user?.rol === "Administrador"
+    user?.rol === "Administrador RHCorp"
       ? navigation
       : navigation.filter((item) => item.to !== "/colaboradores");
 

@@ -11,7 +11,7 @@ import { authenticate, authorize } from '../middlewares/auth.middleware.js'
 
 const router = Router()
 
-// Todas las rutas de roles exigen: token JWT válido + rol Administrador.
+// Todas las rutas de roles exigen: token JWT válido + rol Administrador RHCorp.
 // Sin token → 401. Con token pero sin rol admin → 403.
 router.use(authenticate, authorize(ADMIN_ROLE))
 

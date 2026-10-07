@@ -6,10 +6,12 @@ import { sendPasswordResetEmail, sendTemporalPasswordEmail } from '../config/ema
 import crypto from 'crypto'
 
 class AuthService {
-  // Login
-  async login(correo, password) {
-    const user = await prisma.usuario.findUnique({
-      where: { correo },
+  // Login (acepta correo o nombre de usuario)
+  async login(identificador, password) {
+    const user = await prisma.usuario.findFirst({
+      where: {
+        OR: [{ correo: identificador }, { usuario: identificador }],
+      },
       include: {
         rol: true,
         empresas_asignadas: {
@@ -20,6 +22,13 @@ class AuthService {
     })
 
     if (!user) {
+      const err = new Error('Credenciales inválidas')
+      err.status = 401
+      throw err
+    }
+
+    // La comparacion de MySQL es case-insensitive: exige coincidencia exacta
+    if (user.correo !== identificador && user.usuario !== identificador) {
       const err = new Error('Credenciales inválidas')
       err.status = 401
       throw err

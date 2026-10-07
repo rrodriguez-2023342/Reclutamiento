@@ -55,9 +55,13 @@ class UsuarioService {
       where.patrono_id = patrono_id;
     }
 
-    // Filtrar por busqueda en nombre o correo si se proporciona
+    // Filtrar por busqueda en nombre, correo o usuario si se proporciona
     if (q) {
-      where.OR = [{ nombre: { contains: q } }, { correo: { contains: q } }];
+      where.OR = [
+        { nombre: { contains: q } },
+        { correo: { contains: q } },
+        { usuario: { contains: q } },
+      ];
     }
 
     return where;
@@ -192,12 +196,22 @@ class UsuarioService {
       }
     }
 
-    // Verificar si ya existe un usuario con el mismo correo
-    const existente = await prisma.usuario.findUnique({
-      where: { correo: data.correo },
-    });
-    if (existente) {
-      throw crearError("Ya existe un usuario con ese correo", 409);
+    // Verificar si ya existe un usuario con el mismo correo o nombre de usuario
+    if (data.correo) {
+      const existenteCorreo = await prisma.usuario.findUnique({
+        where: { correo: data.correo },
+      });
+      if (existenteCorreo) {
+        throw crearError("Ya existe un usuario con ese correo", 409);
+      }
+    }
+    if (data.usuario) {
+      const existenteUsuario = await prisma.usuario.findUnique({
+        where: { usuario: data.usuario },
+      });
+      if (existenteUsuario) {
+        throw crearError("Ya existe un usuario con ese nombre de usuario", 409);
+      }
     }
 
     // Verificar si el rol proporcionado existe
@@ -226,7 +240,8 @@ class UsuarioService {
     const creado = await prisma.usuario.create({
       data: {
         nombre: data.nombre,
-        correo: data.correo,
+        usuario: data.usuario || null,
+        correo: data.correo || null,
         password: hashedPassword,
         rol_id: data.rol_id,
         activo,
@@ -285,26 +300,37 @@ class UsuarioService {
       },
     });
 
-    // Enviar correo con contraseña temporal si se genero una
+    // Enviar correo con contraseña temporal solo si se genero una y hay correo
+    let correoEnviado = false;
+    let passwordTemporal = null;
     if (temporalPassword) {
-      try {
-        await sendTemporalPasswordEmail(
-          creado.correo,
-          creado.nombre,
-          temporalPassword,
-        );
-      } catch (errorEmail) {
-        console.error(
-          "No fue posible enviar el correo de contraseña temporal:",
-          errorEmail.message,
-        );
+      if (creado.correo) {
+        try {
+          await sendTemporalPasswordEmail(
+            creado.correo,
+            creado.nombre,
+            temporalPassword,
+          );
+          correoEnviado = true;
+        } catch (errorEmail) {
+          console.error(
+            "No fue posible enviar el correo de contraseña temporal:",
+            errorEmail.message,
+          );
+        }
+      } else {
+        // Sin correo no se puede enviar: se devuelve para mostrarla en pantalla
+        passwordTemporal = temporalPassword;
       }
     }
 
     // Excluir campos sensibles antes de devolver los datos
     const { password, resetToken, resetTokenExpiry, ...resto } = creado;
-    // Devolver el usuario creado junto con la informacion de si se envio el correo
-    const resultado = { ...resto, correoEnviado: temporalPassword !== null };
+    // Devolver el usuario creado junto con el estado del correo y la contraseña si aplica
+    const resultado = { ...resto, correoEnviado };
+    if (passwordTemporal) {
+      resultado.passwordTemporal = passwordTemporal;
+    }
 
     // Registrar historial de sueldo si se asigno uno
     if (data.sueldo || data.bonos) {
@@ -375,6 +401,16 @@ class UsuarioService {
       });
       if (duplicado) {
         throw crearError("Ya existe otro usuario con ese correo", 409);
+      }
+    }
+
+    // Verificar si el nombre de usuario proporcionado ya existe en otro usuario
+    if (data.usuario && data.usuario !== usuario.usuario) {
+      const duplicadoUsuario = await prisma.usuario.findFirst({
+        where: { usuario: data.usuario, id: { not: id } },
+      });
+      if (duplicadoUsuario) {
+        throw crearError("Ya existe otro usuario con ese nombre de usuario", 409);
       }
     }
 
@@ -607,7 +643,7 @@ class UsuarioService {
     // Buscar al usuario por el ID proporcionado
     const usuario = await prisma.usuario.findUnique({
       where: { id },
-      select: { id: true, correo: true, empresa_id: true },
+      select: { id: true, nombre: true, correo: true, empresa_id: true },
     });
     // Si el usuario no existe se genera un error 404
     if (!usuario) {
@@ -630,6 +666,12 @@ class UsuarioService {
       },
     });
 
+    // Sin correo no se puede enviar: se devuelve la contraseña para mostrarla en pantalla
+    if (!usuario.correo) {
+      return { success: true, correoEnviado: false, passwordTemporal };
+    }
+
+    let correoEnviado = true;
     try {
       // Envia la contraseña temporal al correo
       await sendTemporalPasswordEmail(
@@ -638,6 +680,7 @@ class UsuarioService {
         temporalPassword,
       );
     } catch (errorEmail) {
+      correoEnviado = false;
       console.error(
         "No fue posible enviar el correo de contraseña temporal:",
         errorEmail.message,
@@ -645,7 +688,7 @@ class UsuarioService {
     }
 
     // Devuelve el resultado de la operacion
-    return { success: true, correoEnviado: true };
+    return { success: true, correoEnviado };
   }
 
   // Obtiene las empresas asignadas a un usuario (rol Recursos Humanos)

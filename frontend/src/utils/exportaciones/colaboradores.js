@@ -38,6 +38,7 @@ export function hojasColaborador(usuarios) {
         col("ID", (u) => numero(u.id)),
         col("Nombre", (u) => texto(u.nombre)),
         col("Correo", (u) => texto(u.correo)),
+        col("Usuario", (u) => texto(u.usuario)),
         col("Rol", (u) => texto(u.rol?.nombre)),
         col("Estado", (u) => activoTexto(u.activo)),
         col("Creado", (u) => fechaExcel(u.creado_en)),

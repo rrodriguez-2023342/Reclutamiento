@@ -322,7 +322,13 @@ function DetalleUsuario() {
                                 <div className="rounded-xl bg-[#f0f4fa] p-5">
                                     <p className="text-sm font-semibold text-[#5b6e8b]">Correo</p>
                                     <p className="mt-2 text-lg font-bold text-[#071b3b]">
-                                        {usuario.correo}
+                                        {usuario.correo || "—"}
+                                    </p>
+                                </div>
+                                <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <p className="text-sm font-semibold text-[#5b6e8b]">Usuario</p>
+                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                        {usuario.usuario || "—"}
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-[#f0f4fa] p-5">

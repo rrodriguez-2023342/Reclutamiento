@@ -30,7 +30,8 @@ const validarSeguros = (data, ctx) => {
 // Esquema de validacion del usuario
 export const usuarioSchema = z.object({
     nombre: z.string().trim().min(1, 'El nombre es requerido').max(100, 'El nombre no puede exceder 100 caracteres'),
-    correo: z.string().trim().min(1, 'El correo es requerido').email('Correo inválido'),
+    correo: z.string().trim().max(100, 'El correo no puede exceder 100 caracteres').refine((valor) => !valor || /^\S+@\S+\.\S+$/.test(valor), 'Correo inválido'),
+    usuario: z.string().trim().max(30, 'El usuario no puede exceder 30 caracteres').regex(/^[A-Za-z0-9._-]*$/, 'El usuario solo admite letras, números, puntos, guiones y guiones bajos').refine((valor) => !valor || valor.length >= 3, 'El usuario debe tener al menos 3 caracteres'),
     rol_id: z.coerce.number({ error: 'Seleccione un rol válido' }).int('Seleccione un rol válido').positive('Seleccione un rol válido'),
     activo: z.boolean().default(true),
     empresa_id: z.coerce.number().int().positive().nullish(),
@@ -67,12 +68,18 @@ export const usuarioSchema = z.object({
     empresa_seguro_vida: z.string().trim().max(100).nullish(),
     categoria_seguro_vida: z.string().trim().max(100).nullish(),
     puesto_id: z.coerce.number().int().positive().nullish(),
-}).superRefine(validarSeguros)
+}).superRefine(validarSeguros).superRefine((data, ctx) => {
+    // Todo usuario debe poder iniciar sesión: al menos un correo o un usuario
+    if (!data.correo && !data.usuario) {
+        ctx.addIssue({ code: 'custom', path: ['usuario'], message: 'Indica un correo o un nombre de usuario' })
+    }
+})
 
 // Valores iniciales del formulario
 export const defaultUsuarioValues = {
     nombre: '',
     correo: '',
+    usuario: '',
     rol_id: 2,
     activo: true,
     empresa_id: null,

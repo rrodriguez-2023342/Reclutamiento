@@ -192,7 +192,7 @@ function Configuracion() {
                         <input
                             value={search}
                             onChange={(event) => setSearch(event.target.value)}
-                            placeholder="Buscar usuario por nombre o correo"
+                            placeholder="Buscar usuario por nombre, correo o usuario"
                             className="w-full bg-transparent text-base outline-none placeholder:text-[#91a0b7]"
                         />
                     </label>

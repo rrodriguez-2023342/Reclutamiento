@@ -188,7 +188,8 @@ model Role {
 model Usuario {
   id                  Int          @id @default(autoincrement())
   nombre              String       @map("nombre") @db.VarChar(100)
-  correo              String       @unique @map("correo") @db.VarChar(100)
+  usuario             String?      @unique @map("usuario") @db.VarChar(50)
+  correo              String?      @unique @map("correo") @db.VarChar(100)
   password            String       @map("password") @db.VarChar(255)
   rol_id              Int          @map("rol_id")
   activo              Boolean      @default(true) @map("activo")

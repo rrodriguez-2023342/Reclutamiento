@@ -118,6 +118,7 @@ function EditarUsuario() {
                         ...defaultUsuarioValues,
                         nombre: data.nombre || "",
                         correo: data.correo || "",
+                        usuario: data.usuario || "",
                         rol_id: data.rol?.id ?? 2,
                         activo: data.activo ?? true,
                         empresa_id: data.empresa?.id ?? null,
@@ -205,6 +206,8 @@ function EditarUsuario() {
             );
             const payload = {
                 ...values,
+                correo: values.correo || null,
+                usuario: values.usuario || null,
                 rol_id: esAdmin
                     ? Number(values.rol_id)
                     : rolColaborador?.id ?? Number(values.rol_id),
@@ -323,7 +326,7 @@ function EditarUsuario() {
                                 />
                             </Field>
 
-                            <Field label="Correo *" error={errors.correo?.message}>
+                            <Field label="Correo" error={errors.correo?.message}>
                                 <Input
                                     type="email"
                                     registration={register("correo")}
@@ -331,10 +334,21 @@ function EditarUsuario() {
                                 />
                             </Field>
 
+                            <Field
+                                label="Usuario (si no tiene correo)"
+                                error={errors.usuario?.message}
+                            >
+                                <Input
+                                    registration={register("usuario")}
+                                    placeholder="Nombre para iniciar sesión"
+                                />
+                            </Field>
+
                             {esAdmin && (
                                 <Field label="Rol *" error={errors.rol_id?.message}>
                                     <Select
                                         registration={register("rol_id")}
+                                        value={watch("rol_id") ?? ""}
                                         error={errors.rol_id?.message}
                                     >
                                         <option value="">Seleccionar rol</option>

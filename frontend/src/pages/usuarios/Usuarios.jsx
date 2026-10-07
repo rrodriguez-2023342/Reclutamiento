@@ -199,13 +199,25 @@ function Usuarios() {
 
     const handleResetPassword = async () => {
         if (!modalAction || !modalAction.user) return;
+        const nombreUsuario = modalAction.user.nombre;
         try {
             setActionLoading(true);
-            await resetPasswordUsuario(modalAction.user.id);
+            const respuesta = await resetPasswordUsuario(modalAction.user.id);
+            const datos = respuesta?.data;
             setModalAction(null);
-            setSuccessMessage(
-                "Se envió contraseña temporal al correo del colaborador",
-            );
+            if (datos?.passwordTemporal) {
+                setSuccessMessage(
+                    `Contraseña temporal de ${nombreUsuario}: ${datos.passwordTemporal} (compártela manualmente, no tiene correo)`,
+                );
+            } else if (datos?.correoEnviado === false) {
+                setSuccessMessage(
+                    `La contraseña de ${nombreUsuario} fue restablecida, pero no se pudo enviar el correo.`,
+                );
+            } else {
+                setSuccessMessage(
+                    "Se envió contraseña temporal al correo del colaborador",
+                );
+            }
             setRefreshKey((current) => current + 1);
         } catch (requestError) {
             setError(

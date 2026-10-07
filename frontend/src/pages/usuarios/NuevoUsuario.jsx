@@ -165,6 +165,8 @@ function NuevoUsuario() {
             }
             const payload = {
                 ...values,
+                correo: values.correo || null,
+                usuario: values.usuario || null,
                 rol_id: esAdmin ? values.rol_id : rolColaborador?.id ?? values.rol_id,
                 empresa_id: values.empresa_id || null,
                 patrono_id: values.patrono_id || null,
@@ -214,9 +216,13 @@ function NuevoUsuario() {
                     ? values.categoria_seguro_vida || null
                     : null,
             };
-            await createUsuario(payload);
+            const creado = await createUsuario(payload);
             navigate("/colaboradores", {
-                state: { mensaje: "Colaborador creado correctamente" },
+                state: {
+                    mensaje: creado?.passwordTemporal
+                        ? `Colaborador creado — Contraseña temporal: ${creado.passwordTemporal} (compártela manualmente, no tiene correo)`
+                        : "Colaborador creado correctamente",
+                },
             });
         } catch (requestError) {
             setServerError(
@@ -270,7 +276,7 @@ function NuevoUsuario() {
                             />
                         </Field>
 
-                        <Field label="Correo *" error={errors.correo?.message}>
+                        <Field label="Correo" error={errors.correo?.message}>
                             <Input
                                 type="email"
                                 registration={register("correo")}
@@ -278,10 +284,21 @@ function NuevoUsuario() {
                             />
                         </Field>
 
+                        <Field
+                            label="Usuario (si no tiene correo)"
+                            error={errors.usuario?.message}
+                        >
+                            <Input
+                                registration={register("usuario")}
+                                placeholder="Nombre para iniciar sesión"
+                            />
+                        </Field>
+
                         {esAdmin && (
                             <Field label="Rol *" error={errors.rol_id?.message}>
                                 <Select
                                     registration={register("rol_id")}
+                                    value={watch("rol_id") ?? ""}
                                     error={errors.rol_id?.message}
                                 >
                                     <option value="">Seleccionar rol</option>

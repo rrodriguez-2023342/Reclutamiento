@@ -56,18 +56,14 @@ function Login() {
 
           <label className="block">
             <span className="mb-2 block text-sm font-semibold text-[#071b3b]">
-              Correo electrónico
+              Correo o usuario
             </span>
             <input
               className={inputClass}
-              type="email"
-              placeholder="email@gmail.com"
+              type="text"
+              placeholder="correo@empresa.com o usuario"
               {...register("usuario", {
-                required: "El correo es requerido",
-                pattern: {
-                  value: /^\S+@\S+\.\S+$/,
-                  message: "Ingresa un correo válido",
-                },
+                required: "El correo o usuario es requerido",
               })}
             />
             {errors.usuario && (

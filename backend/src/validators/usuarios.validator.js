@@ -32,10 +32,47 @@ const validarSeguros = (data, ctx) => {
   }
 };
 
+// Convierte cadenas vacias a undefined para campos opcionales (correo, usuario)
+const cadenaVacia = (valor) =>
+  typeof valor === "string" && valor.trim() === "" ? undefined : valor;
+
+// Todo usuario debe poder iniciar sesión: al menos un correo o un usuario
+const validarIdentificadorLogin = (data, ctx) => {
+  if (!data.correo && !data.usuario) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["usuario"],
+      message: "Indica un correo o un nombre de usuario",
+    });
+  }
+};
+
+// Nombre de usuario para iniciar sesión (solo cuando no tiene correo)
+const usuarioSchemaLogin = z.preprocess(
+  cadenaVacia,
+  z
+    .string()
+    .trim()
+    .min(3, "El usuario debe tener al menos 3 caracteres")
+    .max(30, "El usuario no puede exceder 30 caracteres")
+    .regex(
+      /^[A-Za-z0-9._-]+$/,
+      "El usuario solo admite letras, números, puntos, guiones y guiones bajos",
+    )
+    .nullish(),
+);
+
+// Correo opcional: se valida el formato solo si se proporciona
+const correoSchemaOpcional = z.preprocess(
+  cadenaVacia,
+  z.string().trim().email("Correo inválido").max(100).nullish(),
+);
+
 // Esquema para validar los datos necesarios al crear un usuario
 export const createUsuarioSchema = z.object({
   nombre: z.string().trim().min(1, "El nombre es requerido").max(100),
-  correo: z.string().trim().email("Correo inválido").max(100),
+  correo: correoSchemaOpcional,
+  usuario: usuarioSchemaLogin,
   rol_id: z.coerce
     .number({ error: "Seleccione un rol válido" })
     .int("Seleccione un rol válido")
@@ -80,7 +117,9 @@ export const createUsuarioSchema = z.object({
   tiene_seguro_vida: z.boolean().nullish(),
   empresa_seguro_vida: z.string().trim().max(100).nullish(),
   categoria_seguro_vida: textoOpcional(100),
-}).superRefine(validarSeguros);
+})
+  .superRefine(validarSeguros)
+  .superRefine(validarIdentificadorLogin);
 
 // Esquema para validar los datos utilizados para actualizar un usuario
 export const updateUsuarioSchema = z.object({
@@ -90,7 +129,8 @@ export const updateUsuarioSchema = z.object({
     .min(1, "El nombre es requerido")
     .max(100)
     .optional(),
-  correo: z.string().trim().email("Correo inválido").max(100).optional(),
+  correo: correoSchemaOpcional,
+  usuario: usuarioSchemaLogin,
   rol_id: z.coerce
     .number({ error: "Seleccione un rol válido" })
     .int("Seleccione un rol válido")
@@ -131,7 +171,9 @@ export const updateUsuarioSchema = z.object({
   tiene_seguro_vida: z.boolean().nullish(),
   empresa_seguro_vida: z.string().trim().max(100).nullish(),
   categoria_seguro_vida: textoOpcional(100),
-}).superRefine(validarSeguros);
+})
+  .superRefine(validarSeguros)
+  .superRefine(validarIdentificadorLogin);
 
 // Esquema para validar la asignacion de empresas a un usuario (rol Recursos Humanos)
 export const asignarEmpresasSchema = z.object({

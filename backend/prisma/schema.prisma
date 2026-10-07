@@ -240,6 +240,7 @@ model Usuario {
   empresas_asignadas  UsuarioEmpresa[]
   postulantes_rechazados Postulante[] @relation("RechazadoPor")
   postulantes_contratados Postulante[] @relation("ContratadoPor")
+  postulantes_devueltos Postulante[] @relation("DevueltoPor")
   historial_sueldo        HistorialSueldo[]
   historial_sueldo_cambios HistorialSueldo[] @relation("HistorialSueldoCambiadoPor")
   historial_empresa         HistorialEmpresa[]
@@ -261,6 +262,10 @@ model Postulante {
   fecha_contratacion           DateTime?            @map("fecha_contratacion") @db.Date
   contratado_por               Int?                 @map("contratado_por")
   contratado_por_usuario       Usuario?             @relation("ContratadoPor", fields: [contratado_por], references: [id])
+  motivo_devolucion            String?              @map("motivo_devolucion") @db.Text
+  fecha_devolucion             DateTime?            @map("fecha_devolucion") @db.Date
+  devuelto_por                 Int?                 @map("devuelto_por")
+  devuelto_por_usuario         Usuario?             @relation("DevueltoPor", fields: [devuelto_por], references: [id])
   nombre_completo              String               @map("nombre_completo") @db.VarChar(150)
   direccion                    String               @map("direccion") @db.Text
   lugar_nacimiento             String               @map("lugar_nacimiento") @db.VarChar(100)

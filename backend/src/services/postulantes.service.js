@@ -1,6 +1,7 @@
 import prisma from "../config/prisma.js";
 import { sendEstadoPostulanteEmail } from "../config/email.js";
 import { historialRechazoService } from "./historial-rechazo.service.js";
+import { ADMIN_ROLE, RRHH_ROLE } from "../config/roles.constant.js";
 
 // Constantes de estado y transiciones válidas para el flujo de postulantes
 const ETIQUETAS_ESTADO = {
@@ -12,7 +13,7 @@ const ETIQUETAS_ESTADO = {
 // Transiciones válidas: desde un estado, a qué estados puede pasar
 const TRANSICIONES_PERMITIDAS = {
   POSTULANTE: ["CONTRATADO", "RECHAZADO"],
-  CONTRATADO: [],
+  CONTRATADO: ["POSTULANTE"],
   RECHAZADO: ["POSTULANTE"],
 };
 
@@ -44,6 +45,7 @@ const INCLUDE_COMPLETO = {
   referenciasPersonales: true,
   rechazado_por_usuario: { select: { id: true, nombre: true, correo: true } },
   contratado_por_usuario: { select: { id: true, nombre: true } },
+  devuelto_por_usuario: { select: { id: true, nombre: true } },
   documentos: {
     select: {
       id: true,
@@ -250,7 +252,7 @@ class PostulanteService {
   async cambiarEstado(id, nuevoEstado, extras = {}) {
     const postulante = await prisma.postulante.findUnique({
       where: { id },
-      select: { id: true, estado: true, usuario_id: true },
+      select: { id: true, estado: true, usuario_id: true, contratado_por: true },
     });
     if (!postulante) {
       throw crearError("Postulante no encontrado", 404);
@@ -277,14 +279,43 @@ class PostulanteService {
       );
     }
 
+    // Devolución de una contratación: solo Administrador o quien lo contrató, y con motivo obligatorio
+    const esDevolucion = postulante.estado === "CONTRATADO" && nuevoEstado === "POSTULANTE";
+    if (esDevolucion) {
+      const esAdmin = extras.rol_solicitante === ADMIN_ROLE;
+      const esDueno =
+        extras.quien_solicita != null &&
+        postulante.contratado_por === extras.quien_solicita;
+      const puedeDevolver =
+        esAdmin || (extras.rol_solicitante === RRHH_ROLE && esDueno);
+      if (!puedeDevolver) {
+        throw crearError(
+          "No tienes permiso para devolver este postulante: solo puede hacerlo un administrador o la persona que lo contrató",
+          403,
+        );
+      }
+      if (!(extras.motivo_devolucion || "").trim()) {
+        throw crearError("El motivo de devolución es obligatorio", 400);
+      }
+    }
+
     // Guarda el nuevo estado
     const data = { estado: nuevoEstado };
+
+    // La auditoría de devolución solo aplica mientras vuelve a estar como postulante por esa vía:
+    // se limpia al salir de POSTULANTE (contratar/rechazar) y al reactivar desde rechazo
+    const limpiarDevolucion = {
+      motivo_devolucion: null,
+      fecha_devolucion: null,
+      devuelto_por: null,
+    };
 
     // Si se rechaza, guardar motivo, fecha y quién rechazó
     if (nuevoEstado === "RECHAZADO") {
       data.motivo_rechazo = extras.motivo_rechazo || null;
       data.fecha_rechazo = new Date();
       data.rechazado_por = extras.quien_rechazo || null;
+      Object.assign(data, limpiarDevolucion);
     }
 
     // Si se reactiva (RECHAZADO -> POSTULANTE), actualizar historial de rechazo
@@ -293,12 +324,23 @@ class PostulanteService {
     const esReactivacion = postulante.estado === "RECHAZADO" && nuevoEstado === "POSTULANTE";
     if (esReactivacion) {
       data.fecha_registro = postulante.fecha_registro;
+      Object.assign(data, limpiarDevolucion);
+    }
+
+    // Si se devuelve (CONTRATADO -> POSTULANTE), deshacer la contratación y guardar la auditoría
+    if (esDevolucion) {
+      data.fecha_contratacion = null;
+      data.contratado_por = null;
+      data.motivo_devolucion = extras.motivo_devolucion.trim();
+      data.fecha_devolucion = new Date();
+      data.devuelto_por = extras.quien_solicita ?? null;
     }
 
     // Si se contrata, guardar fecha y quién contrató, y asignar empresa y patrono al usuario
     if (nuevoEstado === "CONTRATADO") {
       data.fecha_contratacion = new Date();
       data.contratado_por = extras.quien_contrato || null;
+      Object.assign(data, limpiarDevolucion);
       const usuarioData = {};
       if (extras.empresa_id) usuarioData.empresa_id = extras.empresa_id;
       if (extras.patrono_id) usuarioData.patrono_id = extras.patrono_id;
@@ -318,6 +360,8 @@ class PostulanteService {
         estado: true,
         fecha_registro: true,
         fecha_contratacion: true,
+        motivo_devolucion: true,
+        fecha_devolucion: true,
         nombre_completo: true,
         correo: true,
       },

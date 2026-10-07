@@ -97,8 +97,11 @@ export const updatePostulanteEstado = async (req, res) => {
     empresa_id: data.empresa_id,
     patrono_id: data.patrono_id,
     motivo_rechazo: data.motivo_rechazo,
+    motivo_devolucion: data.motivo_devolucion,
     quien_rechazo: req.userId,
     quien_contrato: req.userId,
+    quien_solicita: req.userId,
+    rol_solicitante: req.userRol,
   })
   res.json({ status: 'ok', data: postulante })
 }

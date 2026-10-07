@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
+import { useAuth } from "../../hooks/useAuth.js";
 import PostulantePdf from "../../components/postulantes/PostulantePdf.jsx";
 import {
   getPostulanteById,
@@ -71,7 +72,15 @@ const transitions = {
       description: "La postulación volverá al estado de postulante.",
     },
   ],
-  CONTRATADO: [],
+  CONTRATADO: [
+    {
+      estado: "POSTULANTE",
+      label: "Devolver a postulante",
+      description: "El postulante regresará al estado inicial del proceso.",
+      requiereMotivo: true,
+      devolucion: true,
+    },
+  ],
 };
 const text = (value) =>
   value === null || value === undefined || value === "" ? "—" : value;
@@ -179,6 +188,7 @@ function MiniTable({ headers, rows, name }) {
 function Modal({ action, onClose, onConfirm, loading, motivo, setMotivo }) {
   if (!action) return null;
   const esRechazo = action.estado === "RECHAZADO";
+  const pideMotivo = esRechazo || action.requiereMotivo;
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4"
@@ -188,16 +198,21 @@ function Modal({ action, onClose, onConfirm, loading, motivo, setMotivo }) {
       <div className="w-full max-w-md rounded-[26px] bg-white p-6 shadow-2xl">
         <h2 className="text-xl font-bold text-[#071b3b]">{action.label}</h2>
         <p className="mt-2 text-[#5b6e8b]">{action.description}</p>
-        {esRechazo && (
+        {pideMotivo && (
           <div className="mt-4">
             <label className="block text-sm font-semibold text-[#5b6e8b]">
-              Motivo del rechazo <span className="text-[#df353c]">*</span>
+              {esRechazo ? "Motivo del rechazo" : "Motivo de la devolución"}{" "}
+              <span className="text-[#df353c]">*</span>
             </label>
             <textarea
               value={motivo}
               onChange={(e) => setMotivo(e.target.value)}
               rows={4}
-              placeholder="Describe el motivo del rechazo..."
+              placeholder={
+                esRechazo
+                  ? "Describe el motivo del rechazo..."
+                  : "Describe el motivo de la devolución..."
+              }
               className="mt-2 w-full rounded-xl border border-[#dce3ee] px-4 py-3 text-base text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15 resize-none"
             />
           </div>
@@ -214,7 +229,7 @@ function Modal({ action, onClose, onConfirm, loading, motivo, setMotivo }) {
           <button
             type="button"
             onClick={onConfirm}
-            disabled={loading || (esRechazo && !motivo.trim())}
+            disabled={loading || (pideMotivo && !motivo.trim())}
             className="rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? "Actualizando…" : "Confirmar"}
@@ -1061,6 +1076,9 @@ function DetallePostulante() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user: authUser } = useAuth();
+  const esAdmin = authUser?.rol === "Administrador RHCorp";
+  const esRRHH = authUser?.rol === "Recursos Humanos";
   const [postulante, setPostulante] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -1070,7 +1088,7 @@ function DetallePostulante() {
   const [updating, setUpdating] = useState(false);
   const [section, setSection] = useState(0);
   const [fotoUrl, setFotoUrl] = useState(null);
-  const [motivoRechazo, setMotivoRechazo] = useState("");
+  const [motivoAccion, setMotivoAccion] = useState("");
   const [showHistorialRechazo, setShowHistorialRechazo] = useState(false);
   const load = useCallback(async () => {
     setLoading(true);
@@ -1118,11 +1136,14 @@ function DetallePostulante() {
     try {
       const payload = { estado: action.estado };
       if (action.estado === "RECHAZADO") {
-        payload.motivo_rechazo = motivoRechazo.trim();
+        payload.motivo_rechazo = motivoAccion.trim();
+      }
+      if (action.requiereMotivo) {
+        payload.motivo_devolucion = motivoAccion.trim();
       }
       const resultado = await updateEstadoPostulante(id, payload);
       setAction(null);
-      setMotivoRechazo("");
+      setMotivoAccion("");
       if (action.estado === "CONTRATADO") {
         navigate("/colaboradores/nuevo", {
           state: {
@@ -1157,8 +1178,7 @@ function DetallePostulante() {
       await load();
     } catch (requestError) {
       setAction(null);
-      setMotivoRechazo("");
-      setObservacionesReactivacion("");
+      setMotivoAccion("");
       setError(
         requestError.response?.data?.message ||
           "No fue posible actualizar el estado.",
@@ -1195,19 +1215,23 @@ function DetallePostulante() {
       </DashboardLayout>
     );
   const p = postulante;
-  const actions = transitions[p.estado] || [];
+  const actions = (transitions[p.estado] || []).filter((item) => {
+    if (!item.devolucion) return true;
+    if (esAdmin) return true;
+    return esRRHH && p.contratado_por_usuario?.id === authUser?.id;
+  });
   return (
     <DashboardLayout title="Ficha del Candidato">
       <Modal
         action={action}
         onClose={() => {
           setAction(null);
-          setMotivoRechazo("");
+          setMotivoAccion("");
         }}
         onConfirm={confirm}
         loading={updating}
-        motivo={motivoRechazo}
-        setMotivo={setMotivoRechazo}
+        motivo={motivoAccion}
+        setMotivo={setMotivoAccion}
       />
 
       {showHistorialRechazo && (
@@ -1285,6 +1309,25 @@ function DetallePostulante() {
                   </p>
                 </div>
               )}
+              {p.estado === "POSTULANTE" && p.motivo_devolucion && (
+                <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                  <p className="text-sm font-semibold text-[#a86b00]">
+                    Devuelto a postulante
+                    {p.fecha_devolucion ? ` — ${date(p.fecha_devolucion)}` : ""}
+                  </p>
+                  {p.devuelto_por_usuario && (
+                    <p className="mt-1 text-sm text-[#5b6e8b]">
+                      Devuelto por:{" "}
+                      <span className="font-semibold text-[#071b3b]">
+                        {p.devuelto_por_usuario.nombre}
+                      </span>
+                    </p>
+                  )}
+                  <p className="mt-1 text-sm text-[#071b3b]">
+                    {p.motivo_devolucion}
+                  </p>
+                </div>
+              )}
               {p.estado === "CONTRATADO" && (
                 <div className="mt-3 rounded-xl border border-green-200 bg-green-50 p-4">
                   <p className="text-sm font-semibold text-[#087947]">
@@ -1343,11 +1386,6 @@ function DetallePostulante() {
                 {item.label}
               </button>
             ))}
-            {p.estado === "CONTRATADO" && (
-              <span className="self-center text-sm font-semibold text-[#087947]">
-                Proceso finalizado
-              </span>
-            )}
           </div>
         </div>
       </section>

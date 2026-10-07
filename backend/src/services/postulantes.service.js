@@ -1,5 +1,4 @@
 import prisma from "../config/prisma.js";
-import { sendEstadoPostulanteEmail } from "../config/email.js";
 import { historialRechazoService } from "./historial-rechazo.service.js";
 import { ADMIN_ROLE, RRHH_ROLE } from "../config/roles.constant.js";
 
@@ -380,23 +379,7 @@ class PostulanteService {
       console.error("No fue posible registrar historial de rechazo:", errorHistorial.message);
     }
 
-    // El correo es un aviso complementario: si falla el envío NO se revierte el cambio de estado
-    let correoEnviado = false;
-    try {
-      await sendEstadoPostulanteEmail(
-        actualizado.correo,
-        actualizado.nombre_completo,
-        nuevoEstado,
-      );
-      correoEnviado = true;
-    } catch (errorCorreo) {
-      console.error(
-        "No fue posible enviar el correo de cambio de estado:",
-        errorCorreo.message,
-      );
-    }
-
-    return { ...actualizado, correoEnviado };
+    return actualizado;
   }
 }
 

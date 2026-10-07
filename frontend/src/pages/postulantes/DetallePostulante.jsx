@@ -1083,7 +1083,6 @@ function DetallePostulante() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(location.state?.mensaje || "");
-  const [avisoCorreo, setAvisoCorreo] = useState(false);
   const [action, setAction] = useState(null);
   const [updating, setUpdating] = useState(false);
   const [section, setSection] = useState(0);
@@ -1121,7 +1120,6 @@ function DetallePostulante() {
     if (!success) return undefined;
     const timer = window.setTimeout(() => {
       setSuccess("");
-      setAvisoCorreo(false);
     }, 5000);
     return () => window.clearTimeout(timer);
   }, [success]);
@@ -1174,7 +1172,6 @@ function DetallePostulante() {
         return;
       }
       setSuccess("Estado actualizado correctamente");
-      setAvisoCorreo(resultado?.correoEnviado === false);
       await load();
     } catch (requestError) {
       setAction(null);
@@ -1247,15 +1244,6 @@ function DetallePostulante() {
           className="mb-5 rounded-2xl border border-[#b9e8ce] bg-[#edfff4] px-5 py-4 font-semibold text-[#087947]"
         >
           {success}
-        </div>
-      )}
-      {success && avisoCorreo && (
-        <div
-          role="alert"
-          className="mb-5 rounded-2xl border border-[#f3e0ae] bg-[#fffaeb] px-5 py-4 font-semibold text-[#a86b00]"
-        >
-          No se pudo enviar el correo de notificación al postulante; el cambio
-          de estado quedó guardado.
         </div>
       )}
       <section className="rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-7">

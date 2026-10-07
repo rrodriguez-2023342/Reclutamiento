@@ -5,27 +5,30 @@ function Header({
   title = "Resumen general",
   headerSearch,
   isSidebarOpen,
+  showSidebarToggle = true,
   onToggleSidebar,
   onOpenProfile,
 }) {
   return (
     <header className="sticky top-0 z-10 flex h-[76px] items-center justify-between gap-4 border-b border-[#dce3ee] bg-white px-4 sm:h-[86px] sm:px-6 lg:px-8">
       <div className="flex min-w-0 items-center gap-3">
-        <button
-          type="button"
-          aria-label={
-            isSidebarOpen ? "Ocultar navegación" : "Mostrar navegación"
-          }
-          aria-expanded={isSidebarOpen}
-          onClick={onToggleSidebar}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[#1e3a8a] transition hover:bg-[#f1f4f9] cursor-pointer"
-        >
-          {isSidebarOpen ? (
-            <PanelLeftClose className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </button>
+        {showSidebarToggle && (
+          <button
+            type="button"
+            aria-label={
+              isSidebarOpen ? "Ocultar navegación" : "Mostrar navegación"
+            }
+            aria-expanded={isSidebarOpen}
+            onClick={onToggleSidebar}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[#1e3a8a] transition hover:bg-[#f1f4f9] cursor-pointer"
+          >
+            {isSidebarOpen ? (
+              <PanelLeftClose className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
+        )}
         <h1 className="truncate text-xl font-bold tracking-[-0.045em] text-[#071b3b] sm:text-[30px]">
           {title}
         </h1>

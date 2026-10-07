@@ -25,7 +25,9 @@ function Login() {
       // Si debe cambiar contraseña, ir a la página de cambio; si no, al dashboard
       const destination = result.mustChangePassword
         ? "/cambiar-password"
-        : "/dashboard";
+        : result.rol === "Colaborador"
+          ? "/informes"
+          : "/dashboard";
       navigate(destination, { replace: true, state: { fromLogin: true } });
     } catch (err) {
       setError(err.response?.data?.message || "Error al iniciar sesión");

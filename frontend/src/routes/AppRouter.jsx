@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.js";
 import ChangePassword from "../pages/auth/ChangePassword.jsx";
 import ForgotPassword from "../pages/auth/ForgotPassword.jsx";
@@ -34,6 +34,7 @@ import NuevaPuesto from "../pages/empresas/NuevaPuesto.jsx";
 import DetallePuesto from "../pages/empresas/DetallePuesto.jsx";
 import EditarPuesto from "../pages/empresas/EditarPuesto.jsx";
 import Patronos from "../pages/patronos/Patronos.jsx";
+import Informes from "../pages/informes/Informes.jsx";
 import Configuracion from "../pages/configuracion/Configuracion.jsx";
 import NuevoPatrono from "../pages/patronos/NuevoPatrono.jsx";
 import DetallePatrono from "../pages/patronos/DetallePatrono.jsx";
@@ -64,6 +65,27 @@ function RoleRoute({ roles, children }) {
   return children;
 }
 
+const COLABORADOR_ROLE = "Colaborador";
+
+// Envoltorio de rutas: el rol Colaborador solo tiene disponible /informes
+function SoloStaff() {
+  const { user } = useAuth();
+
+  // Sin usuario (cargando o sesion cerrada): dejamos que ProtectedRoute
+  // resuelva (Cargando... o redirija a /login). Si no, /dashboard apuntaria
+  // a si mismo y entraria en bucle de redireccion con pantalla en blanco.
+  if (user && ![ADMIN_ROLE, RRHH_ROLE].includes(user.rol)) {
+    return (
+      <Navigate
+        to={user.rol === COLABORADOR_ROLE ? "/informes" : "/dashboard"}
+        replace
+      />
+    );
+  }
+
+  return <Outlet />;
+}
+
 function AppRouter() {
   return (
     <Routes>
@@ -92,6 +114,7 @@ function AppRouter() {
           </ProtectedRoute>
         }
       />
+      <Route element={<SoloStaff />}>
       <Route
         path="/dashboard"
         element={
@@ -454,6 +477,17 @@ function AppRouter() {
           <ProtectedRoute>
             <ProtectedWithPasswordCheck>
               <EditarPatrono />
+            </ProtectedWithPasswordCheck>
+          </ProtectedRoute>
+        }
+      />
+      </Route>
+      <Route
+        path="/informes"
+        element={
+          <ProtectedRoute>
+            <ProtectedWithPasswordCheck>
+              <Informes />
             </ProtectedWithPasswordCheck>
           </ProtectedRoute>
         }

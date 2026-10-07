@@ -8,14 +8,14 @@ import {
     Pencil,
     Plus,
     Power,
-    Search,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
     activarUsuario,
     desactivarUsuario,
-    getRoles,
+    getEmpresas,
+    getPatronos,
     getUsuarios,
     getUsuariosExport,
     resetPasswordUsuario,
@@ -78,7 +78,8 @@ function Usuarios() {
     const navigate = useNavigate();
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
-    const [rolId, setRolId] = useState("");
+    const [empresaId, setEmpresaId] = useState("");
+    const [patronoId, setPatronoId] = useState("");
     const [activo, setActivo] = useState("");
     const [page, setPage] = useState(1);
     const [result, setResult] = useState({
@@ -87,7 +88,8 @@ function Usuarios() {
         page: 1,
         totalPages: 1,
     });
-    const [roles, setRoles] = useState([]);
+    const [empresas, setEmpresas] = useState([]);
+    const [patronos, setPatronos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState(
@@ -113,9 +115,12 @@ function Usuarios() {
 
     useEffect(() => {
         let active = true;
-        getRoles()
-            .then((data) => active && setRoles(data || []))
-            .catch(() => active && setRoles([]));
+        getEmpresas()
+            .then((data) => active && setEmpresas(data || []))
+            .catch(() => active && setEmpresas([]));
+        getPatronos()
+            .then((data) => active && setPatronos(data || []))
+            .catch(() => active && setPatronos([]));
 
         return () => {
             active = false;
@@ -129,7 +134,8 @@ function Usuarios() {
             page,
             limit: PAGE_SIZE,
             ...(debouncedSearch && { q: debouncedSearch }),
-            ...(rolId && { rol_id: Number(rolId) }),
+            ...(empresaId && { empresa_id: Number(empresaId) }),
+            ...(patronoId && { patrono_id: Number(patronoId) }),
             ...(activo !== "" && { activo: activo === "true" }),
         })
             .then((data) => {
@@ -153,7 +159,7 @@ function Usuarios() {
         return () => {
             active = false;
         };
-    }, [page, debouncedSearch, rolId, activo, refreshKey]);
+    }, [page, debouncedSearch, empresaId, patronoId, activo, refreshKey]);
 
     const firstItem = result.total === 0 ? 0 : (result.page - 1) * PAGE_SIZE + 1;
     const lastItem = Math.min(result.page * PAGE_SIZE, result.total);
@@ -161,7 +167,8 @@ function Usuarios() {
     const manejarExportar = async () => {
         const datos = await getUsuariosExport({
             ...(debouncedSearch && { q: debouncedSearch }),
-            ...(rolId && { rol_id: Number(rolId) }),
+            ...(empresaId && { empresa_id: Number(empresaId) }),
+            ...(patronoId && { patrono_id: Number(patronoId) }),
             ...(activo !== "" && { activo: activo === "true" }),
         });
         exportarExcel({ filename: "colaboradores", hojas: hojasColaborador(datos) });
@@ -221,7 +228,17 @@ function Usuarios() {
     };
 
     return (
-        <DashboardLayout title="Gestión de Colaboradores">
+        <DashboardLayout
+            title="Gestión de Colaboradores"
+            headerSearch={{
+                value: search,
+                onChange: (value) => {
+                    setSearch(value);
+                    setPage(1);
+                },
+                placeholder: "Buscar colaborador...",
+            }}
+        >
             {successMessage && (
                 <div
                     role="status"
@@ -241,34 +258,41 @@ function Usuarios() {
             )}
 
             <section className="rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-6">
-                <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_220px_auto_auto]">
-                    <label className="flex h-14 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
-                        <Search className="h-5 w-5 shrink-0" />
-                        <input
-                            value={search}
-                            onChange={(event) => {
-                                setSearch(event.target.value);
-                                setPage(1);
-                            }}
-                            placeholder="Buscar por nombre o correo"
-                            className="w-full bg-transparent text-base outline-none placeholder:text-[#91a0b7]"
-                        />
-                    </label>
-
+                <div className="grid gap-4 md:grid-cols-[200px_240px_180px_auto_auto]">
                     <div className="relative">
                         <select
-                            aria-label="Filtrar por rol"
-                            value={rolId}
+                            aria-label="Filtrar por empresa"
+                            value={empresaId}
                             onChange={(event) => {
-                                setRolId(event.target.value);
+                                setEmpresaId(event.target.value);
                                 setPage(1);
                             }}
                             className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
                         >
-                            <option value="">Roles</option>
-                            {roles.map((role) => (
-                                <option key={role.id} value={role.id}>
-                                    {role.nombre}
+                            <option value="">Empresas</option>
+                            {empresas.map((empresa) => (
+                                <option key={empresa.id} value={empresa.id}>
+                                    {empresa.nombre_empresa}
+                                </option>
+                            ))}
+                        </select>
+                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#65758f]" />
+                    </div>
+
+                    <div className="relative">
+                        <select
+                            aria-label="Filtrar por patrono"
+                            value={patronoId}
+                            onChange={(event) => {
+                                setPatronoId(event.target.value);
+                                setPage(1);
+                            }}
+                            className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
+                        >
+                            <option value="">Patronos</option>
+                            {patronos.map((patrono) => (
+                                <option key={patrono.id} value={patrono.id}>
+                                    {patrono.razon_social}
                                 </option>
                             ))}
                         </select>
@@ -313,10 +337,10 @@ function Usuarios() {
                                     Nombre
                                 </th>
                                 <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
-                                    Correo
+                                    Empresa
                                 </th>
                                 <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
-                                    Rol
+                                    Patrono
                                 </th>
                                 <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
                                     Estado
@@ -359,12 +383,10 @@ function Usuarios() {
                                             {usuario.nombre}
                                         </td>
                                         <td className="border-b border-[#eef2f8] px-5 py-4 text-[#5b6e8b]">
-                                            {usuario.correo}
+                                            {usuario.empresa?.nombre_empresa || "—"}
                                         </td>
-                                        <td className="border-b border-[#eef2f8] px-5 py-4">
-                                            <span className="rounded-full bg-[#edf3ff] px-2.5 py-1 text-xs font-bold text-[#234db8]">
-                                                {usuario.rol?.nombre || "Sin rol"}
-                                            </span>
+                                        <td className="border-b border-[#eef2f8] px-5 py-4 text-[#5b6e8b]">
+                                            {usuario.patrono?.razon_social || "—"}
                                         </td>
                                         <td className="border-b border-[#eef2f8] px-5 py-4">
                                             <span

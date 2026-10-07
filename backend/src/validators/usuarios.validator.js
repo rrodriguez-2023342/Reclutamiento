@@ -179,10 +179,22 @@ export const listarUsuariosQuerySchema = z
       .positive()
       .optional(),
     activo: z.string().optional(),
+    empresa_id: z.coerce
+      .number({ error: "Empresa inválida" })
+      .int()
+      .positive()
+      .optional(),
+    patrono_id: z.coerce
+      .number({ error: "Patrono inválido" })
+      .int()
+      .positive()
+      .optional(),
   })
   .transform((query) => ({
     ...query,
     q: query.q || undefined,
     rol_id: query.rol_id || undefined,
     activo: query.activo !== undefined ? query.activo === 'true' : undefined,
+    empresa_id: query.empresa_id || undefined,
+    patrono_id: query.patrono_id || undefined,
   }));

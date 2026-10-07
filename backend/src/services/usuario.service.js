@@ -22,7 +22,7 @@ function dentroDeAlcance(empresaIds, empresaId) {
 // Servicio para manejar operaciones relacionadas con usuarios
 class UsuarioService {
   // Construye el filtro where compartido entre listado y exportación
-  construirWhere({ q, rol_id, activo, empresa_ids } = {}) {
+  construirWhere({ q, rol_id, activo, empresa_ids, empresa_id, patrono_id } = {}) {
     const where = {};
 
     if (activo !== undefined) {
@@ -37,6 +37,22 @@ class UsuarioService {
     // Alcance por empresa (Recursos Humanos): array = limitar, null = sin limite
     if (Array.isArray(empresa_ids)) {
       where.empresa_id = { in: empresa_ids };
+    }
+
+    // Filtrar por empresa puntual (interseccionado con el alcance)
+    if (empresa_id) {
+      if (Array.isArray(where.empresa_id?.in)) {
+        where.empresa_id = where.empresa_id.in.includes(empresa_id)
+          ? empresa_id
+          : { in: [] };
+      } else {
+        where.empresa_id = empresa_id;
+      }
+    }
+
+    // Filtrar por patrono si se proporciona
+    if (patrono_id) {
+      where.patrono_id = patrono_id;
     }
 
     // Filtrar por busqueda en nombre o correo si se proporciona

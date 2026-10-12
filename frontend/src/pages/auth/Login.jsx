@@ -6,7 +6,7 @@ import { useAuth } from "../../hooks/useAuth.js";
 import { PasswordInput } from "../../components/postulantes/formControls.jsx";
 
 const inputClass =
-  "h-14 w-full rounded-xl border border-[#d9e0eb] bg-white px-5 text-base text-[#0b2146] outline-none transition placeholder:text-[#7b879b] focus:border-[#3162e9] focus:ring-4 focus:ring-[#3162e9]/10";
+  "h-14 w-full rounded-[8px] border border-border bg-surface px-5 text-base text-text-soft outline-none transition placeholder:text-text-soft focus:border-action focus:ring-4 focus:ring-action/10";
 
 function Login() {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ function Login() {
         <h1 className="text-4xl font-bold tracking-[-0.05em] sm:text-[40px]">
           ¡Bienvenido!
         </h1>
-        <p className="mt-2 text-base text-[#65738c] sm:text-lg">
+        <p className="mt-2 text-base text-text-soft sm:text-lg">
           Inicia sesión para registrar o evaluar candidatos.
         </p>
 
@@ -51,13 +51,13 @@ function Login() {
           noValidate
         >
           {error && (
-            <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-600">
+            <p className="rounded-[8px] bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">
               {error}
             </p>
           )}
 
           <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-[#071b3b]">
+            <span className="mb-2 block text-sm font-semibold text-text-main">
               Correo o usuario
             </span>
             <input
@@ -69,14 +69,14 @@ function Login() {
               })}
             />
             {errors.usuario && (
-              <span className="mt-1 block text-xs font-semibold text-red-500">
+              <span className="mt-1 block text-xs font-semibold text-danger">
                 {errors.usuario.message}
               </span>
             )}
           </label>
 
           <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-[#071b3b]">
+            <span className="mb-2 block text-sm font-semibold text-text-main">
               Contraseña
             </span>
             <PasswordInput
@@ -90,9 +90,9 @@ function Login() {
           </label>
 
           <div className="flex flex-col gap-4 pt-0.5 text-sm sm:flex-row sm:items-center sm:justify-between sm:text-base">
-            <label className="flex w-fit cursor-pointer items-center gap-2 text-[#687893]">
+            <label className="flex w-fit cursor-pointer items-center gap-2 text-text-soft">
               <input
-                className="h-4 w-4 accent-[#3162e9]"
+                className="h-4 w-4 accent-action"
                 defaultChecked
                 name="remember"
                 type="checkbox"
@@ -100,7 +100,7 @@ function Login() {
               Recordarme
             </label>
             <a
-              className="font-medium text-[#315cf5] transition hover:text-[#183fca]"
+              className="font-medium text-action transition hover:text-action"
               href="/recuperar"
             >
               ¿Olvidaste tu contraseña?
@@ -110,13 +110,13 @@ function Login() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="mt-1 h-14 w-full rounded-xl bg-[#1e3a8a] text-base font-semibold text-white transition cursor-pointer hover:bg-[#182f70] focus:outline-none focus:ring-4 focus:ring-[#1e3a8a]/25 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-1 h-14 w-full rounded-[8px] bg-ink text-base font-semibold text-white transition cursor-pointer hover:bg-ink focus:outline-none focus:ring-4 focus:ring-ink/25 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting ? "Ingresando..." : "Iniciar sesión"}
           </button>
         </form>
       </div>
-      <p className="mt-auto pt-8 text-center text-sm text-[#71809a] sm:text-base lg:pt-6">
+      <p className="mt-auto pt-8 text-center text-sm text-text-soft sm:text-base lg:pt-6">
         Uso exclusivo para personal autorizado de Recursos Humanos.
       </p>
     </AuthLayout>

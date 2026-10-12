@@ -61,28 +61,28 @@ function Sidebar({ isOpen, onClose, onOpenProfile }) {
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-20 flex w-[min(330px,86vw)] flex-col bg-[#1e3a8a] px-5 py-6 text-white shadow-2xl transition-transform duration-300 lg:w-[330px] lg:shadow-none ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
+      className={`fixed inset-y-0 left-0 z-20 flex w-[min(330px,86vw)] flex-col bg-ink px-5 py-6 text-white transition-transform duration-300 lg:w-[330px] ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
     >
       <div className="flex items-center gap-4 px-3">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#3162e9]">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[9px] bg-surface/10 text-accent">
           <BriefcaseBusiness className="h-7 w-7" strokeWidth={2.2} />
         </div>
         <div className="min-w-0">
           <p className="truncate text-[23px] font-extrabold leading-none tracking-[-0.045em]">
             GHCorp
           </p>
-          <p className="mt-1 text-sm text-[#b5c5ee]">Gestión de candidatos</p>
+          <p className="mt-1 text-xs text-white/65">Gestión de candidatos</p>
         </div>
         <button
           type="button"
           aria-label="Cerrar menú"
           onClick={onClose}
-          className="ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white/80 transition hover:bg-white/10 cursor-pointer lg:hidden"
+          className="ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] text-white/80 transition hover:bg-surface/10 cursor-pointer lg:hidden"
         >
           <X className="h-6 w-6" />
         </button>
       </div>
-      <nav className="mt-10 space-y-2" aria-label="Navegación principal">
+      <nav className="mt-8 space-y-1.5" aria-label="Navegación principal">
         {visibleNavigation.map((item) => {
           const hasSubmenu = item.submenu && item.submenu.length > 0;
           const isOpen = flyoutKey === item.label;
@@ -91,7 +91,7 @@ function Sidebar({ isOpen, onClose, onOpenProfile }) {
               <button
                 type="button"
                 onClick={() => setFlyoutKey(isOpen ? null : item.label)}
-                className={`flex h-14 items-center gap-4 rounded-2xl px-5 text-base font-semibold transition w-full ${isOpen ? "bg-[#3162e9] text-white" : "text-[#e1e9ff] hover:bg-white/10"}`}
+                className={`flex h-12 items-center gap-3 rounded-[8px] px-4 text-sm font-medium transition w-full ${isOpen ? "bg-accent/15 text-accent" : "text-white/75 hover:bg-surface/10 hover:text-white"}`}
               >
                 <item.icon className="h-6 w-6" strokeWidth={2} />
                 {item.label}
@@ -100,7 +100,7 @@ function Sidebar({ isOpen, onClose, onOpenProfile }) {
               {isOpen && (
                 <div
                   ref={flyoutRef}
-                  className="absolute left-full top-0 z-10 ml-2 min-w-[200px] rounded-2xl bg-[#1e3a8a] py-2 shadow-2xl animate-flyout"
+                  className="absolute left-full top-0 z-10 ml-2 min-w-[200px] rounded-[9px] border border-white/10 bg-ink py-2 shadow-xl animate-flyout"
                   onMouseEnter={() => setFlyoutKey(item.label)}
                   onMouseLeave={() => setFlyoutKey(null)}
                 >
@@ -110,7 +110,7 @@ function Sidebar({ isOpen, onClose, onOpenProfile }) {
                       to={sub.to}
                       onClick={onClose}
                       className={({ isActive }) =>
-                        `flex h-12 items-center gap-3 rounded-xl px-5 text-sm font-semibold transition ${isActive ? "bg-[#3162e9] text-white" : "text-[#e1e9ff] hover:bg-white/10"}`
+                        `flex h-11 items-center gap-3 rounded-[7px] px-4 text-sm font-medium transition ${isActive ? "bg-accent/15 text-accent" : "text-white/75 hover:bg-surface/10 hover:text-white"}`
                       }
                     >
                       {sub.label}
@@ -125,7 +125,7 @@ function Sidebar({ isOpen, onClose, onOpenProfile }) {
               to={item.to}
               onClick={onClose}
               className={({ isActive }) =>
-                `flex h-14 items-center gap-4 rounded-2xl px-5 text-base font-semibold transition ${isActive ? "bg-[#3162e9] text-white" : "text-[#e1e9ff] hover:bg-white/10"}`
+                `flex h-12 items-center gap-3 rounded-[8px] px-4 text-sm font-medium transition ${isActive ? "bg-accent/15 text-accent before:mr-[-0.5rem] before:h-1.5 before:w-1.5 before:shrink-0 before:rounded-full before:bg-accent before:content-['']" : "text-white/75 hover:bg-surface/10 hover:text-white"}`
               }
             >
               <item.icon className="h-6 w-6" strokeWidth={2} />

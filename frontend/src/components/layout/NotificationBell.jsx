@@ -88,33 +88,33 @@ function NotificationBell() {
         aria-label={`Notificaciones${noLeidas ? `, ${noLeidas} sin leer` : ''}`}
         aria-expanded={abierto}
         onClick={() => setAbierto((actual) => !actual)}
-        className="relative flex h-11 w-11 items-center justify-center rounded-full bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e8edf6] cursor-pointer"
+        className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-[8px] border border-border bg-surface text-ink transition hover:bg-bg"
       >
         <Bell className="h-5 w-5" strokeWidth={2} />
         {noLeidas > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-xs font-bold text-white">
+          <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-md bg-danger px-1 text-xs font-medium text-white">
             {noLeidas > 99 ? '99+' : noLeidas}
           </span>
         )}
       </button>
       {abierto && (
-        <section className="absolute right-0 top-14 z-50 w-[min(380px,90vw)] rounded-2xl border border-[#dce3ee] bg-white p-4 text-[#071b3b] shadow-xl">
+        <section className="absolute right-0 top-14 z-50 w-[min(380px,90vw)] rounded-[9px] border border-border bg-surface p-4 text-text-main shadow-lg">
           <div className="flex items-center justify-between gap-3">
             <h2 className="font-bold">Notificaciones</h2>
             <button
               type="button"
               onClick={marcarTodas}
               disabled={!noLeidas || cargando}
-              className="flex items-center gap-1 text-xs font-semibold text-[#3162e9] disabled:opacity-50"
+              className="flex items-center gap-1 text-xs font-medium text-action disabled:opacity-50"
             >
               <CheckCheck className="h-4 w-4" />
               Marcar todas leídas
             </button>
           </div>
-          {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+          {error && <p role="alert" className="mt-3 text-sm text-danger">{error}</p>}
           <div className="mt-3 max-h-[60vh] space-y-2 overflow-y-auto">
             {!notificaciones.length && !error && (
-              <p className="py-6 text-center text-sm text-[#65758f]">No tienes notificaciones.</p>
+              <p className="py-6 text-center text-sm text-text-soft">No tienes notificaciones.</p>
             )}
             {notificaciones.map((notificacion) => (
               <button
@@ -122,14 +122,14 @@ function NotificationBell() {
                 type="button"
                 disabled={cargando}
                 onClick={() => abrirNotificacion(notificacion)}
-                className={`w-full rounded-xl p-3 text-left transition hover:bg-[#f1f4f9] ${notificacion.leida_en ? 'bg-white' : 'bg-blue-50'}`}
+                className={`w-full rounded-[8px] p-3 text-left transition hover:bg-bg ${notificacion.leida_en ? 'bg-surface' : 'bg-accent-soft'}`}
               >
                 <span className="flex items-start justify-between gap-2">
                   <span className="font-semibold">{notificacion.titulo}</span>
-                  {!notificacion.leida_en && <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blue-600" />}
+                  {!notificacion.leida_en && <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-accent" />}
                 </span>
-                <span className="mt-1 block text-sm text-[#5b6e8b]">{notificacion.mensaje}</span>
-                <span className="mt-2 block text-xs text-[#8794a8]">{hora(notificacion.creada_en)}</span>
+                <span className="mt-1 block text-sm text-text-soft">{notificacion.mensaje}</span>
+                <span className="mt-2 block text-xs text-text-soft">{hora(notificacion.creada_en)}</span>
               </button>
             ))}
           </div>

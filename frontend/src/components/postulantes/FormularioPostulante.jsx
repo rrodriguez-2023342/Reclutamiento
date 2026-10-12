@@ -114,7 +114,7 @@ function AddButton({ children, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-2 cursor-pointer text-sm font-bold text-[#3162e9] transition hover:text-[#183fca]"
+      className="inline-flex items-center gap-2 cursor-pointer text-sm font-bold text-action transition hover:text-action"
     >
       <Plus className="h-4 w-4" />
       {children}
@@ -124,7 +124,7 @@ function AddButton({ children, onClick }) {
 function ErrorText({ error }) {
   return (
     error && (
-      <p className="mt-1 text-xs font-semibold text-red-500">{error.message}</p>
+      <p className="mt-1 text-xs font-semibold text-danger">{error.message}</p>
     )
   );
 }
@@ -556,7 +556,7 @@ function FormularioPostulante({ postulanteId }) {
   if (cargando)
     return (
       <DashboardLayout title={titulo}>
-        <div className="rounded-[26px] bg-white p-12 text-center text-[#5b6e8b] shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
+        <div className="rounded-[10px] border border-border bg-surface p-12 text-center text-text-soft shadow-none">
           Cargando información del postulante…
         </div>
       </DashboardLayout>
@@ -564,15 +564,15 @@ function FormularioPostulante({ postulanteId }) {
   if (errorCarga)
     return (
       <DashboardLayout title={titulo}>
-        <section className="rounded-[26px] bg-white p-10 text-center shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
-          <CircleAlert className="mx-auto h-10 w-10 text-[#df353c]" />
-          <h2 className="mt-4 text-xl font-bold text-[#071b3b]">
+        <section className="rounded-[10px] border border-border bg-surface p-10 text-center shadow-none">
+          <CircleAlert className="mx-auto h-10 w-10 text-danger" />
+          <h2 className="mt-4 text-xl font-bold text-text-main">
             {errorCarga}
           </h2>
           <button
             type="button"
             onClick={() => navigate("/postulantes")}
-            className="mt-6 inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#3162e9] px-5 py-3 font-bold text-white"
+            className="mt-6 inline-flex cursor-pointer items-center gap-2 rounded-[8px] bg-action px-5 py-3 font-bold text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Volver al listado
@@ -592,29 +592,29 @@ function FormularioPostulante({ postulanteId }) {
       }}
     >
       {cancelOpen && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-[#071b3b]/50 p-4">
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-ink/50 p-4">
           <form
             onSubmit={cancelarFormulario}
-            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+            className="w-full max-w-md rounded-[10px] border border-border bg-surface p-6 shadow-2xl"
           >
-            <h2 className="text-xl font-bold text-[#071b3b]">
+            <h2 className="text-xl font-bold text-text-main">
               Cancelar formulario
             </h2>
-            <p className="mt-2 text-sm text-[#5b6e8b]">
+            <p className="mt-2 text-sm text-text-soft">
               Confirma la contraseña del usuario conectado para salir.
             </p>
             {cancelError && (
-              <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-600">
+              <p className="mt-4 rounded-lg bg-danger-bg px-3 py-2 text-sm font-semibold text-danger">
                 {cancelError}
               </p>
             )}
-            <label className="mt-4 block text-sm font-semibold text-[#071b3b]">
+            <label className="mt-4 block text-sm font-semibold text-text-main">
               <span className="mb-2 block">Contraseña</span>
               <PasswordInput
                 autoFocus
                 value={cancelPassword}
                 onChange={(event) => setCancelPassword(event.target.value)}
-                className="h-12 w-full rounded-xl border border-[#dce3ee] px-4 outline-none focus:border-[#3162e9]"
+                className="h-12 w-full rounded-[8px] border border-border px-4 outline-none focus:border-action"
               />
             </label>
             <div className="mt-6 flex justify-end gap-3">
@@ -625,14 +625,14 @@ function FormularioPostulante({ postulanteId }) {
                   setCancelPassword("");
                   setCancelError("");
                 }}
-                className="rounded-xl border border-[#dce3ee] px-4 py-2 font-semibold text-[#071b3b] cursor-pointer"
+                className="rounded-[8px] border border-border px-4 py-2 font-semibold text-text-main cursor-pointer"
               >
                 Continuar formulario
               </button>
               <button
                 type="submit"
                 disabled={cancelando || !cancelPassword}
-                className="rounded-xl bg-[#df353c] px-4 py-2 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-[8px] bg-danger px-4 py-2 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {cancelando ? "Validando..." : "Confirmar salida"}
               </button>
@@ -652,10 +652,10 @@ function FormularioPostulante({ postulanteId }) {
         onKeyDown={(e) => {
           if (e.key === "Enter" && step !== 8) e.preventDefault();
         }}
-        className="mt-7 rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-7 lg:p-10"
+        className="mt-7 rounded-[10px] border border-border bg-surface p-5 shadow-none sm:p-7 lg:p-10"
       >
         {draft && !draftDismissed && (
-          <div className="mb-6 flex flex-col justify-between gap-3 rounded-xl border border-[#b9d8ff] bg-[#edf6ff] px-4 py-3 text-sm text-[#2456a6] sm:flex-row sm:items-center">
+          <div className="mb-6 flex flex-col justify-between gap-3 rounded-[8px] border border-border bg-neutral-bg px-4 py-3 text-sm text-action sm:flex-row sm:items-center">
             Se restauró un borrador guardado automáticamente.
             <button
               type="button"
@@ -667,7 +667,7 @@ function FormularioPostulante({ postulanteId }) {
           </div>
         )}
         {serverError && (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600">
+          <div className="mb-6 rounded-[8px] border border-danger bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">
             {serverError}
           </div>
         )}
@@ -1345,7 +1345,7 @@ function FormularioPostulante({ postulanteId }) {
                 Agregar familiar
               </AddButton>
               {errors.datosFamiliares?._errors?.length > 0 && (
-                <p className="mt-2 text-sm font-semibold text-red-500">
+                <p className="mt-2 text-sm font-semibold text-danger">
                   {errors.datosFamiliares._errors[0]}
                 </p>
               )}
@@ -1576,13 +1576,13 @@ function FormularioPostulante({ postulanteId }) {
                 return (
                   <div
                     key={tipo}
-                    className="rounded-xl border border-[#dce3ee] bg-white p-4 sm:flex sm:items-center sm:justify-between gap-4"
+                    className="rounded-[8px] border border-border bg-surface p-4 sm:flex sm:items-center sm:justify-between gap-4"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-sm font-medium text-[#071b3b]">
+                      <span className="text-sm font-medium text-text-main">
                         {etiquetasTipoDocumento[tipo]}
                       </span>
-                      <span className="text-xs text-[#5b6e8b]">
+                      <span className="text-xs text-text-soft">
                         {tipo === "FOTO"
                           ? "JPG, PNG, WebP (máx. 5 MB)"
                           : "PDF (máx. 5 MB)"}
@@ -1590,16 +1590,16 @@ function FormularioPostulante({ postulanteId }) {
                     </div>
                     <div className="flex items-center gap-3">
                       {existente && !archivoNuevo && (
-                        <span className="text-xs text-[#087947] font-medium truncate max-w-[200px]">
+                        <span className="text-xs text-success font-medium truncate max-w-[200px]">
                           {existente.nombre_archivo}
                         </span>
                       )}
                       {archivoNuevo && (
-                        <span className="text-xs text-[#3162e9] font-medium truncate max-w-[200px]">
+                        <span className="text-xs text-action font-medium truncate max-w-[200px]">
                           Nuevo: {archivoNuevo.name}
                         </span>
                       )}
-                      <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-[#3162e9] bg-[#f4f7ff] px-4 text-sm font-bold text-[#1e3a8a] transition hover:bg-[#e8efff]">
+                      <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-[8px] border border-action bg-neutral-bg px-4 text-sm font-bold text-text-main transition hover:bg-neutral-bg">
                         <Upload className="h-4 w-4" />
                         {archivoNuevo
                           ? "Cambiar archivo"
@@ -1633,13 +1633,13 @@ function FormularioPostulante({ postulanteId }) {
             </div>
           </section>
         )}
-        <div className="mt-9 flex flex-col-reverse gap-4 border-t border-[#dfe5ee] pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-9 flex flex-col-reverse gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
             {step === 1 ? (
               <button
                 type="button"
                 onClick={() => setCancelOpen(true)}
-                className="rounded-xl border border-[#dce3ee] px-5 py-3 cursor-pointer font-semibold text-[#071b3b] transition hover:bg-[#f6f8fc]"
+                className="rounded-[8px] border border-border px-5 py-3 cursor-pointer font-semibold text-text-main transition hover:bg-neutral-bg"
               >
                 {esEdicion ? "Cancelar edición" : "Cancelar registro"}
               </button>
@@ -1648,7 +1648,7 @@ function FormularioPostulante({ postulanteId }) {
                 <button
                   type="button"
                   onClick={() => setStep((current) => current - 1)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-[#dce3ee] px-5 py-3 cursor-pointer font-semibold text-[#071b3b] transition hover:bg-[#f6f8fc]"
+                  className="inline-flex items-center gap-2 rounded-[8px] border border-border px-5 py-3 cursor-pointer font-semibold text-text-main transition hover:bg-neutral-bg"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   Paso anterior
@@ -1656,7 +1656,7 @@ function FormularioPostulante({ postulanteId }) {
                 <button
                   type="button"
                   onClick={() => setCancelOpen(true)}
-                  className="rounded-xl border border-[#f0b8bc] px-5 py-3 cursor-pointer font-semibold text-[#b4232a] transition hover:bg-[#fff1f2]"
+                  className="rounded-[8px] border border-border px-5 py-3 cursor-pointer font-semibold text-danger transition hover:bg-danger-bg"
                 >
                   Cancelar formulario
                 </button>
@@ -1667,7 +1667,7 @@ function FormularioPostulante({ postulanteId }) {
             <button
               type="button"
               onClick={next}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1e3a8a] px-5 py-3 cursor-pointer font-bold text-white transition hover:bg-[#142d70]"
+              className="inline-flex items-center justify-center gap-2 rounded-[8px] bg-ink px-5 py-3 cursor-pointer font-bold text-white transition hover:bg-ink"
             >
               Guardar y continuar (Paso {step + 1})
               <ArrowRight className="h-4 w-4" />
@@ -1676,7 +1676,7 @@ function FormularioPostulante({ postulanteId }) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3162e9] px-5 py-3 cursor-pointer font-bold text-white transition hover:bg-[#183fca] disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center justify-center gap-2 rounded-[8px] bg-action px-5 py-3 cursor-pointer font-bold text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Save className="h-4 w-4" />
               {isSubmitting
@@ -1695,17 +1695,17 @@ function FormularioPostulante({ postulanteId }) {
 function Title({ title, description }) {
   return (
     <div className="mb-7">
-      <h2 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b]">
+      <h2 className="text-2xl font-bold tracking-[-0.04em] text-text-main">
         {title}
       </h2>
-      <p className="mt-1 text-[#5b6e8b]">{description}</p>
+      <p className="mt-1 text-text-soft">{description}</p>
     </div>
   );
 }
 function TextGroup({ title, names, register }) {
   return (
     <div>
-      <p className="mb-3 text-sm font-semibold text-[#071b3b]">{title}</p>
+      <p className="mb-3 text-sm font-semibold text-text-main">{title}</p>
       <div className="grid gap-3 sm:grid-cols-3">
         {names.map((name, index) => (
           <Input
@@ -1967,7 +1967,7 @@ function DynamicEducation({
 function SectionHeader({ title, onAdd, label }) {
   return (
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-      <h3 className="text-lg font-bold text-[#071b3b]">{title}</h3>
+      <h3 className="text-lg font-bold text-text-main">{title}</h3>
       <AddButton onClick={onAdd}>{label}</AddButton>
     </div>
   );

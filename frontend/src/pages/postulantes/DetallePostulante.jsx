@@ -124,14 +124,14 @@ function Details({ items }) {
           <div key={label}>
             <dt
               className={`text-sm ${
-                empty ? "text-[#df353c]" : "text-[#5b6e8b]"
+                empty ? "text-danger" : "text-text-soft"
               }`}
             >
               {label}
             </dt>
             <dd
               className={`mt-1 break-words font-semibold ${
-                empty ? "text-[#df353c]" : "text-[#071b3b]"
+                empty ? "text-danger" : "text-text-main"
               }`}
             >
               {value}
@@ -144,7 +144,7 @@ function Details({ items }) {
 }
 function Empty({ name }) {
   return (
-    <p className="rounded-2xl bg-[#f0f4fa] px-5 py-7 text-[#5b6e8b]">
+    <p className="rounded-[10px] bg-neutral-bg px-5 py-7 text-text-soft">
       Aún no hay información registrada para «{name}» en este expediente.
     </p>
   );
@@ -153,9 +153,9 @@ function MiniTable({ headers, rows, name }) {
   return rows.length === 0 ? (
     <Empty name={name} />
   ) : (
-    <div className="overflow-x-auto rounded-xl border border-[#dfe5ee]">
+    <div className="overflow-x-auto rounded-[8px] border border-border">
       <table className="min-w-full text-left text-sm">
-        <thead className="bg-[#f0f4fa] text-[#5b6e8b]">
+        <thead className="bg-neutral-bg text-text-soft">
           <tr>
             {headers.map((header) => (
               <th
@@ -169,11 +169,11 @@ function MiniTable({ headers, rows, name }) {
         </thead>
         <tbody>
           {rows.map((row, index) => (
-            <tr key={index} className="border-t border-[#dfe5ee]">
+            <tr key={index} className="border-t border-border">
               {row.map((cell, cellIndex) => (
                 <td
                   key={cellIndex}
-                  className="whitespace-nowrap px-4 py-3 text-[#071b3b]"
+                  className="whitespace-nowrap px-4 py-3 text-text-main"
                 >
                   {cell}
                 </td>
@@ -191,18 +191,18 @@ function Modal({ action, onClose, onConfirm, loading, motivo, setMotivo }) {
   const pideMotivo = esRechazo || action.requiereMotivo;
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/45 p-4"
       role="dialog"
       aria-modal="true"
     >
-      <div className="w-full max-w-md rounded-[26px] bg-white p-6 shadow-2xl">
-        <h2 className="text-xl font-bold text-[#071b3b]">{action.label}</h2>
-        <p className="mt-2 text-[#5b6e8b]">{action.description}</p>
+      <div className="w-full max-w-md rounded-[10px] border border-border bg-surface p-6 shadow-2xl">
+        <h2 className="text-xl font-bold text-text-main">{action.label}</h2>
+        <p className="mt-2 text-text-soft">{action.description}</p>
         {pideMotivo && (
           <div className="mt-4">
-            <label className="block text-sm font-semibold text-[#5b6e8b]">
+            <label className="block text-sm font-semibold text-text-soft">
               {esRechazo ? "Motivo del rechazo" : "Motivo de la devolución"}{" "}
-              <span className="text-[#df353c]">*</span>
+              <span className="text-danger">*</span>
             </label>
             <textarea
               value={motivo}
@@ -213,7 +213,7 @@ function Modal({ action, onClose, onConfirm, loading, motivo, setMotivo }) {
                   ? "Describe el motivo del rechazo..."
                   : "Describe el motivo de la devolución..."
               }
-              className="mt-2 w-full rounded-xl border border-[#dce3ee] px-4 py-3 text-base text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15 resize-none"
+              className="mt-2 w-full rounded-[8px] border border-border px-4 py-3 text-base text-text-main outline-none transition focus:border-action focus:ring-2 focus:ring-action/15 resize-none"
             />
           </div>
         )}
@@ -222,7 +222,7 @@ function Modal({ action, onClose, onConfirm, loading, motivo, setMotivo }) {
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="rounded-xl border border-[#dce3ee] px-4 py-2.5 font-semibold text-[#071b3b] cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-[8px] border border-border px-4 py-2.5 font-semibold text-text-main cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
           >
             Cancelar
           </button>
@@ -230,7 +230,7 @@ function Modal({ action, onClose, onConfirm, loading, motivo, setMotivo }) {
             type="button"
             onClick={onConfirm}
             disabled={loading || (pideMotivo && !motivo.trim())}
-            className="rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-[8px] bg-action px-4 py-2.5 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? "Actualizando…" : "Confirmar"}
           </button>
@@ -245,7 +245,7 @@ function SectionContent({ section, p, onReload }) {
   if (section === 0)
     return (
       <>
-        <h2 className="text-2xl font-bold text-[#071b3b]">{title}</h2>
+        <h2 className="text-2xl font-bold text-text-main">{title}</h2>
         <div className="mt-8">
           <Details
             items={[
@@ -281,7 +281,7 @@ function SectionContent({ section, p, onReload }) {
   if (section === 1)
     return (
       <>
-        <h2 className="text-2xl font-bold text-[#071b3b]">{title}</h2>
+        <h2 className="text-2xl font-bold text-text-main">{title}</h2>
         <div className="mt-8">
           <MiniTable
             name={sections[section]}
@@ -308,10 +308,10 @@ function SectionContent({ section, p, onReload }) {
   if (section === 2)
     return (
       <>
-        <h2 className="text-2xl font-bold text-[#071b3b]">{title}</h2>
+        <h2 className="text-2xl font-bold text-text-main">{title}</h2>
         <div className="mt-8 space-y-8">
           <div>
-            <h3 className="mb-3 font-bold text-[#071b3b]">
+            <h3 className="mb-3 font-bold text-text-main">
               Historial académico
             </h3>
             <MiniTable
@@ -333,7 +333,7 @@ function SectionContent({ section, p, onReload }) {
             />
           </div>
           <div>
-            <h3 className="mb-3 font-bold text-[#071b3b]">Idiomas</h3>
+            <h3 className="mb-3 font-bold text-text-main">Idiomas</h3>
             <MiniTable
               name="Idiomas"
               headers={["Idioma", "Habla", "Lee", "Escribe"]}
@@ -346,7 +346,7 @@ function SectionContent({ section, p, onReload }) {
             />
           </div>
           <div>
-            <h3 className="mb-3 font-bold text-[#071b3b]">Capacitaciones</h3>
+            <h3 className="mb-3 font-bold text-text-main">Capacitaciones</h3>
             <MiniTable
               name="Capacitaciones"
               headers={[
@@ -366,7 +366,7 @@ function SectionContent({ section, p, onReload }) {
             />
           </div>
           <div>
-            <h3 className="mb-3 font-bold text-[#071b3b]">Estudios actuales</h3>
+            <h3 className="mb-3 font-bold text-text-main">Estudios actuales</h3>
             <Details
               items={[
                 [
@@ -385,7 +385,7 @@ function SectionContent({ section, p, onReload }) {
             />
           </div>
           <div>
-            <h3 className="mb-3 font-bold text-[#071b3b]">
+            <h3 className="mb-3 font-bold text-text-main">
               Conocimientos técnicos
             </h3>
             <Details
@@ -404,7 +404,7 @@ function SectionContent({ section, p, onReload }) {
             />
           </div>
           <div>
-            <h3 className="mb-3 font-bold text-[#071b3b]">
+            <h3 className="mb-3 font-bold text-text-main">
               Equipo o maquinaria
             </h3>
             <Details
@@ -423,7 +423,7 @@ function SectionContent({ section, p, onReload }) {
   if (section === 3)
     return (
       <>
-        <h2 className="text-2xl font-bold text-[#071b3b]">{title}</h2>
+        <h2 className="text-2xl font-bold text-text-main">{title}</h2>
         <div className="mt-8">
           <MiniTable
             name={sections[section]}
@@ -454,7 +454,7 @@ function SectionContent({ section, p, onReload }) {
   if (section === 4)
     return (
       <>
-        <h2 className="text-2xl font-bold text-[#071b3b]">{title}</h2>
+        <h2 className="text-2xl font-bold text-text-main">{title}</h2>
         <div className="mt-8">
           <Details
             items={[
@@ -789,7 +789,7 @@ function SectionContent({ section, p, onReload }) {
   if (section === 5)
     return (
       <>
-        <h2 className="text-2xl font-bold text-[#071b3b]">{title}</h2>
+        <h2 className="text-2xl font-bold text-text-main">{title}</h2>
         <div className="mt-8">
           <Details
             items={[
@@ -870,7 +870,7 @@ function SectionContent({ section, p, onReload }) {
   if (section === 6)
     return (
       <>
-        <h2 className="text-2xl font-bold text-[#071b3b]">{title}</h2>
+        <h2 className="text-2xl font-bold text-text-main">{title}</h2>
         <div className="mt-8">
           <MiniTable
             name={sections[section]}
@@ -964,17 +964,17 @@ function DocumentosSection({ p, onReload }) {
   if (cargando) {
     return (
       <>
-        <h2 className="text-2xl font-bold text-[#071b3b]">
+        <h2 className="text-2xl font-bold text-text-main">
           Detalles del Candidato - Documentos
         </h2>
-        <p className="mt-8 text-[#5b6e8b]">Cargando documentos…</p>
+        <p className="mt-8 text-text-soft">Cargando documentos…</p>
       </>
     );
   }
 
   return (
     <>
-      <h2 className="text-2xl font-bold text-[#071b3b]">
+      <h2 className="text-2xl font-bold text-text-main">
         Detalles del Candidato - Documentos
       </h2>
       <div className="mt-8 space-y-4">
@@ -984,35 +984,35 @@ function DocumentosSection({ p, onReload }) {
           return (
             <div
               key={tipo}
-              className="flex flex-col gap-3 rounded-xl border border-[#dfe5ee] p-4 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-3 rounded-[8px] border border-border p-4 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex items-center gap-3 min-w-0">
                 {doc ? (
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#c9f3dd] text-[#087947]">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-success-bg text-success">
                     <Check className="h-4 w-4" />
                   </span>
                 ) : (
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#ffe0e2] text-[#df353c]">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-danger-bg text-danger">
                     <X className="h-4 w-4" />
                   </span>
                 )}
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-[#071b3b]">
+                  <p className="text-sm font-semibold text-text-main">
                     {etiquetasTipoDocumento[tipo]}
                   </p>
                   {doc ? (
-                    <p className="mt-0.5 text-xs text-[#5b6e8b] truncate max-w-[300px]">
+                    <p className="mt-0.5 text-xs text-text-soft truncate max-w-[300px]">
                       {doc.nombre_archivo} ·{" "}
                       {(doc.tamano_bytes / 1024).toFixed(0)} KB
                     </p>
                   ) : (
-                    <p className="mt-0.5 text-xs text-[#5b6e8b]">No subido</p>
+                    <p className="mt-0.5 text-xs text-text-soft">No subido</p>
                   )}
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 {doc && esFoto && doc.mime_type?.startsWith("image/") && (
-                  <span className="text-xs text-[#5b6e8b] italic">
+                  <span className="text-xs text-text-soft italic">
                     Foto cargada
                   </span>
                 )}
@@ -1020,7 +1020,7 @@ function DocumentosSection({ p, onReload }) {
                   <button
                     type="button"
                     onClick={() => handleDescargar(tipo)}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#dce3ee] px-3 py-2 text-xs font-semibold text-[#071b3b] transition hover:bg-[#f6f8fc]"
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs font-semibold text-text-main transition hover:bg-neutral-bg"
                   >
                     <Download className="h-3.5 w-3.5" />
                     Descargar
@@ -1031,13 +1031,13 @@ function DocumentosSection({ p, onReload }) {
                     type="button"
                     onClick={() => handleEliminar(tipo)}
                     disabled={eliminando === tipo}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#dce3ee] px-3 py-2 text-xs font-semibold text-[#df353c] transition hover:bg-[#ffe0e2] disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs font-semibold text-danger transition hover:bg-danger-bg disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                     {eliminando === tipo ? "…" : "Eliminar"}
                   </button>
                 )}
-                <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-[#3162e9] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#183fca]">
+                <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-action px-3 py-2 text-xs font-bold text-white transition hover:bg-ink">
                   <Upload className="h-3.5 w-3.5" />
                   {subiendo === tipo
                     ? "Subiendo…"
@@ -1187,7 +1187,7 @@ function DetallePostulante() {
   if (loading)
     return (
       <DashboardLayout title="Ficha del Candidato">
-        <div className="rounded-[26px] bg-white p-12 text-center text-[#5b6e8b] shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
+        <div className="rounded-[10px] border border-border bg-surface p-12 text-center text-text-soft shadow-none">
           Cargando ficha del postulante…
         </div>
       </DashboardLayout>
@@ -1195,15 +1195,15 @@ function DetallePostulante() {
   if (error || !postulante)
     return (
       <DashboardLayout title="Ficha del Candidato">
-        <section className="rounded-[26px] bg-white p-10 text-center shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
-          <CircleAlert className="mx-auto h-10 w-10 text-[#df353c]" />
-          <h2 className="mt-4 text-xl font-bold text-[#071b3b]">
+        <section className="rounded-[10px] border border-border bg-surface p-10 text-center shadow-none">
+          <CircleAlert className="mx-auto h-10 w-10 text-danger" />
+          <h2 className="mt-4 text-xl font-bold text-text-main">
             {error || "Postulante no encontrado"}
           </h2>
           <button
             type="button"
             onClick={() => navigate("/postulantes")}
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#3162e9] px-5 py-3 font-bold text-white"
+            className="mt-6 inline-flex items-center gap-2 rounded-[8px] bg-action px-5 py-3 font-bold text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Volver al listado
@@ -1241,12 +1241,12 @@ function DetallePostulante() {
       {success && (
         <div
           role="status"
-          className="mb-5 rounded-2xl border border-[#b9e8ce] bg-[#edfff4] px-5 py-4 font-semibold text-[#087947]"
+          className="mb-5 rounded-[10px] border border-border bg-success-bg px-5 py-4 font-semibold text-success"
         >
           {success}
         </div>
       )}
-      <section className="rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-7">
+      <section className="rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-7">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex min-w-0 items-center gap-4">
             {fotoUrl ? (
@@ -1256,13 +1256,13 @@ function DetallePostulante() {
                 className="h-20 w-20 shrink-0 rounded-full object-cover"
               />
             ) : (
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[#e7f0ff] text-2xl font-bold text-[#1e3a8a]">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-neutral-bg text-2xl font-bold text-text-main">
                 {initials(p.nombre_completo) || <UserRound />}
               </div>
             )}
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
+                <h1 className="text-2xl font-bold tracking-[-0.04em] text-text-main sm:text-3xl">
                   {p.nombre_completo}
                 </h1>
                 <span
@@ -1271,61 +1271,61 @@ function DetallePostulante() {
                   {etiquetasEstadoPostulante[p.estado]}
                 </span>
               </div>
-              <p className="mt-2 text-[#5b6e8b]">
+              <p className="mt-2 text-text-soft">
                 Candidato aplicando para:{" "}
-                <span className="font-semibold text-[#3162e9]">
+                <span className="font-semibold text-action">
                   {p.plaza?.nombre || "—"}
                 </span>{" "}
                 · Registrado el {date(p.fecha_registro)}
               </p>
               {p.estado === "RECHAZADO" && p.motivo_rechazo && (
-                <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-4">
-                  <p className="text-sm font-semibold text-[#df353c]">
+                <div className="mt-3 rounded-[8px] border border-danger bg-danger-bg p-4">
+                  <p className="text-sm font-semibold text-danger">
                     Motivo de rechazo
                     {p.fecha_rechazo ? ` — ${date(p.fecha_rechazo)}` : ""}
                   </p>
                   {p.rechazado_por_usuario && (
-                    <p className="mt-1 text-sm text-[#5b6e8b]">
+                    <p className="mt-1 text-sm text-text-soft">
                       Rechazado por:{" "}
-                      <span className="font-semibold text-[#071b3b]">
+                      <span className="font-semibold text-text-main">
                         {p.rechazado_por_usuario.nombre}
                       </span>
                     </p>
                   )}
-                  <p className="mt-1 text-sm text-[#071b3b]">
+                  <p className="mt-1 text-sm text-text-main">
                     {p.motivo_rechazo}
                   </p>
                 </div>
               )}
               {p.estado === "POSTULANTE" && p.motivo_devolucion && (
-                <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
-                  <p className="text-sm font-semibold text-[#a86b00]">
+                <div className="mt-3 rounded-[8px] border border-pending bg-pending-bg p-4">
+                  <p className="text-sm font-semibold text-pending">
                     Devuelto a postulante
                     {p.fecha_devolucion ? ` — ${date(p.fecha_devolucion)}` : ""}
                   </p>
                   {p.devuelto_por_usuario && (
-                    <p className="mt-1 text-sm text-[#5b6e8b]">
+                    <p className="mt-1 text-sm text-text-soft">
                       Devuelto por:{" "}
-                      <span className="font-semibold text-[#071b3b]">
+                      <span className="font-semibold text-text-main">
                         {p.devuelto_por_usuario.nombre}
                       </span>
                     </p>
                   )}
-                  <p className="mt-1 text-sm text-[#071b3b]">
+                  <p className="mt-1 text-sm text-text-main">
                     {p.motivo_devolucion}
                   </p>
                 </div>
               )}
               {p.estado === "CONTRATADO" && (
-                <div className="mt-3 rounded-xl border border-green-200 bg-green-50 p-4">
-                  <p className="text-sm font-semibold text-[#087947]">
+                <div className="mt-3 rounded-[8px] border border-success bg-success-bg p-4">
+                  <p className="text-sm font-semibold text-success">
                     Contratado el{" "}
                     {p.fecha_contratacion ? date(p.fecha_contratacion) : "—"}
                   </p>
                   {p.contratado_por_usuario && (
-                    <p className="mt-1 text-sm text-[#5b6e8b]">
+                    <p className="mt-1 text-sm text-text-soft">
                       Contratado por:{" "}
-                      <span className="font-semibold text-[#071b3b]">
+                      <span className="font-semibold text-text-main">
                         {p.contratado_por_usuario.nombre}
                       </span>
                     </p>
@@ -1343,7 +1343,7 @@ function DetallePostulante() {
             <button
               type="button"
               onClick={() => navigate("/postulantes")}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#dce3ee] px-4 py-3 font-semibold text-[#071b3b]"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-[8px] border border-border px-4 py-3 font-semibold text-text-main"
             >
               <ArrowLeft className="h-4 w-4" />
               Regresar
@@ -1351,7 +1351,7 @@ function DetallePostulante() {
             <button
               type="button"
               onClick={() => navigate(`/postulantes/${p.id}/editar`)}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#dce3ee] px-4 py-3 font-semibold text-[#071b3b] transition hover:bg-[#f6f8fc]"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-[8px] border border-border px-4 py-3 font-semibold text-text-main transition hover:bg-neutral-bg"
             >
               <Pencil className="h-4 w-4" />
               Editar
@@ -1359,7 +1359,7 @@ function DetallePostulante() {
             <button
               type="button"
               onClick={() => setShowHistorialRechazo(true)}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#3162e9] px-4 py-3 font-bold text-white transition hover:bg-[#183fca]"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-[8px] bg-action px-4 py-3 font-bold text-white transition hover:bg-ink"
             >
               <Clock className="h-4 w-4" />
               Ver historial
@@ -1369,7 +1369,7 @@ function DetallePostulante() {
                 key={item.estado}
                 type="button"
                 onClick={() => setAction(item)}
-                className="cursor-pointer rounded-xl bg-[#3162e9] px-4 py-3 font-bold text-white transition hover:bg-[#183fca]"
+                className="cursor-pointer rounded-[8px] bg-action px-4 py-3 font-bold text-white transition hover:bg-ink"
               >
                 {item.label}
               </button>
@@ -1387,17 +1387,17 @@ function DetallePostulante() {
               type="button"
               key={name}
               onClick={() => setSection(index)}
-              className={`min-w-max rounded-2xl px-6 py-4 text-left font-medium transition lg:block lg:w-full ${section === index ? "bg-white font-semibold text-[#315cf5] shadow-[0_10px_24px_rgba(20,43,89,0.06)]" : "text-[#5b6e8b] cursor-pointer hover:bg-white/70"}`}
+              className={`min-w-max rounded-[10px] px-6 py-4 text-left font-medium transition lg:block lg:w-full ${section === index ? "bg-surface font-semibold text-action shadow-none" : "text-text-soft cursor-pointer hover:bg-surface/70"}`}
             >
               {index + 1}. {name}
             </button>
           ))}
         </nav>
-        <section className="min-h-[430px] rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-10">
+        <section className="min-h-[430px] rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-10">
           <SectionContent section={section} p={p} onReload={load} />
-          <div className="mt-10 rounded-2xl bg-[#f0f4fa] px-5 py-4 text-sm text-[#5b6e8b]">
+          <div className="mt-10 rounded-[10px] bg-neutral-bg px-5 py-4 text-sm text-text-soft">
             Esta solicitud fue digitalizada por{" "}
-            <span className="font-semibold text-[#071b3b]">
+            <span className="font-semibold text-text-main">
               {p.usuario?.nombre || "—"}
             </span>{" "}
             el {date(p.fecha_registro)}.
@@ -1445,19 +1445,19 @@ function HistorialRechazoModal({ postulanteId, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/45 p-4"
       role="dialog"
       aria-modal="true"
     >
-      <div className="w-full max-w-3xl max-h-[80vh] overflow-hidden rounded-[26px] bg-white shadow-2xl flex flex-col">
-        <div className="flex items-center justify-between border-b border-[#dce3ee] px-6 py-4">
-          <h2 className="text-xl font-bold text-[#071b3b]">
+      <div className="w-full max-w-3xl max-h-[80vh] overflow-hidden rounded-[10px] border border-border bg-surface shadow-2xl flex flex-col">
+        <div className="flex items-center justify-between border-b border-border px-6 py-4">
+          <h2 className="text-xl font-bold text-text-main">
             Historial de rechazos
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer text-[#5b6e8b] transition hover:text-[#071b3b]"
+            className="cursor-pointer text-text-soft transition hover:text-text-main"
           >
             ✕
           </button>
@@ -1465,36 +1465,36 @@ function HistorialRechazoModal({ postulanteId, onClose }) {
 
         <div className="overflow-auto flex-1 p-6">
           {loading ? (
-            <p className="text-center text-[#5b6e8b]">Cargando historial...</p>
+            <p className="text-center text-text-soft">Cargando historial...</p>
           ) : data.length === 0 ? (
-            <p className="text-center text-[#5b6e8b]">
+            <p className="text-center text-text-soft">
               No hay registros de rechazos.
             </p>
           ) : (
             <table className="w-full border-separate border-spacing-0 text-left text-sm">
               <thead>
-                <tr className="text-base font-semibold text-[#5b6e8b]">
-                  <th className="border-b border-[#dfe5ee] px-4 py-3">
+                <tr className="text-base font-semibold text-text-soft">
+                  <th className="border-b border-border px-4 py-3">
                     Fecha Rechazo
                   </th>
-                  <th className="border-b border-[#dfe5ee] px-4 py-3">
+                  <th className="border-b border-border px-4 py-3">
                     Motivo
                   </th>
-                  <th className="border-b border-[#dfe5ee] px-4 py-3">
+                  <th className="border-b border-border px-4 py-3">
                     Rechazado por
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {data.map((item) => (
-                  <tr key={item.id} className="text-[#071b3b]">
-                    <td className="border-b border-[#dfe5ee] px-4 py-3 whitespace-nowrap">
+                  <tr key={item.id} className="text-text-main">
+                    <td className="border-b border-border px-4 py-3 whitespace-nowrap">
                       {formatDate(item.fecha_rechazo)}
                     </td>
-                    <td className="border-b border-[#dfe5ee] px-4 py-3 max-w-[200px] truncate">
+                    <td className="border-b border-border px-4 py-3 max-w-[200px] truncate">
                       {item.motivo}
                     </td>
-                    <td className="border-b border-[#dfe5ee] px-4 py-3">
+                    <td className="border-b border-border px-4 py-3">
                       {item.rechazado_por_usuario?.nombre || "—"}
                     </td>
                   </tr>
@@ -1505,23 +1505,23 @@ function HistorialRechazoModal({ postulanteId, onClose }) {
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-3 border-t border-[#dce3ee] px-6 py-4">
+          <div className="flex items-center justify-center gap-3 border-t border-border px-6 py-4">
             <button
               type="button"
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="cursor-pointer rounded-xl border border-[#dce3ee] px-4 py-2 text-sm font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa] disabled:cursor-not-allowed disabled:opacity-60"
+              className="cursor-pointer rounded-[8px] border border-border px-4 py-2 text-sm font-semibold text-text-main transition hover:bg-neutral-bg disabled:cursor-not-allowed disabled:opacity-60"
             >
               Anterior
             </button>
-            <span className="text-sm text-[#5b6e8b]">
+            <span className="text-sm text-text-soft">
               Página {page} de {totalPages}
             </span>
             <button
               type="button"
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="cursor-pointer rounded-xl border border-[#dce3ee] px-4 py-2 text-sm font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa] disabled:cursor-not-allowed disabled:opacity-60"
+              className="cursor-pointer rounded-[8px] border border-border px-4 py-2 text-sm font-semibold text-text-main transition hover:bg-neutral-bg disabled:cursor-not-allowed disabled:opacity-60"
             >
               Siguiente
             </button>

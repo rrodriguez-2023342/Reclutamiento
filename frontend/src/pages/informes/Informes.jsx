@@ -49,14 +49,14 @@ function estadoLabel(estado) {
 
 function Badge({ estado }) {
   const color = {
-    PENDIENTE: 'bg-amber-100 text-amber-800',
-    EN_PROCESO: 'bg-blue-100 text-blue-800',
-    GENERADO: 'bg-emerald-100 text-emerald-800',
-    RECHAZADA: 'bg-red-100 text-red-800',
-    ACTIVA: 'bg-emerald-100 text-emerald-800',
-    INACTIVA: 'bg-slate-100 text-slate-700',
-    OBSOLETA: 'bg-amber-100 text-amber-800',
-  }[estado] || 'bg-slate-100 text-slate-700'
+    PENDIENTE: 'bg-pending-bg text-pending',
+    EN_PROCESO: 'bg-pending-bg text-pending',
+    GENERADO: 'bg-success-bg text-success',
+    RECHAZADA: 'bg-danger-bg text-danger',
+    ACTIVA: 'bg-success-bg text-success',
+    INACTIVA: 'bg-danger-bg text-danger',
+    OBSOLETA: 'bg-pending-bg text-pending',
+  }[estado] || 'bg-neutral-bg text-text-main'
   return <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${color}`}>{estadoLabel(estado)}</span>
 }
 
@@ -73,9 +73,9 @@ function guardarBlob(blob, nombre) {
 
 function Panel({ title, children, action }) {
   return (
-    <section className="rounded-3xl border border-[#e5eaf2] bg-white p-5 shadow-[0_10px_30px_rgba(20,43,89,0.05)] sm:p-7">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-[#eef1f6] pb-4">
-        <h2 className="text-lg font-bold tracking-[-0.03em] text-[#071b3b] sm:text-xl">{title}</h2>
+    <section className="rounded-[10px] border border-border bg-surface p-5 shadow-none sm:p-7">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+        <h2 className="text-lg font-bold tracking-[-0.03em] text-text-main sm:text-xl">{title}</h2>
         {action}
       </div>
       {children}
@@ -109,7 +109,7 @@ function SearchableSelect({ value, options, placeholder, onChange, disabled = fa
 
   return (
     <div ref={ref} className="relative">
-      <div className={`flex min-h-11 items-center gap-2 rounded-xl border border-[#dce3ee] bg-white px-3 transition focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/10 ${disabled ? 'cursor-not-allowed bg-slate-50 opacity-60' : ''}`}>
+      <div className={`flex min-h-11 items-center gap-2 rounded-[8px] border border-border bg-surface px-3 transition focus-within:border-action focus-within:ring-2 focus-within:ring-action/10 ${disabled ? 'cursor-not-allowed bg-bg opacity-60' : ''}`}>
         <input
           role="combobox"
           aria-expanded={open}
@@ -128,21 +128,21 @@ function SearchableSelect({ value, options, placeholder, onChange, disabled = fa
           placeholder={placeholder}
           readOnly={disabled}
           disabled={disabled}
-          className="min-w-0 flex-1 bg-transparent py-2.5 text-sm text-[#071b3b] outline-none placeholder:text-[#8290a5]"
+          className="min-w-0 flex-1 bg-transparent py-2.5 text-sm text-text-main outline-none placeholder:text-text-soft"
         />
         {selected && !disabled && (
-          <button type="button" aria-label="Limpiar selección" onClick={() => { onChange(''); setQuery(''); setOpen(false) }} className="rounded p-1 text-[#8290a5] hover:bg-slate-100 hover:text-[#33445f]">
+          <button type="button" aria-label="Limpiar selección" onClick={() => { onChange(''); setQuery(''); setOpen(false) }} className="rounded p-1 text-text-soft hover:bg-neutral-bg hover:text-text-soft">
             <X className="h-4 w-4" />
           </button>
         )}
-        <ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0 text-[#8290a5]" />
+        <ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0 text-text-soft" />
       </div>
       {open && !disabled && (
-        <ul id={optionsId} role="listbox" className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-xl border border-[#dce3ee] bg-white py-1 shadow-lg">
-          {!filtered.length && <li className="px-3 py-2.5 text-sm text-[#8290a5]">Sin resultados</li>}
+        <ul id={optionsId} role="listbox" className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-[8px] border border-border bg-surface py-1 shadow-lg">
+          {!filtered.length && <li className="px-3 py-2.5 text-sm text-text-soft">Sin resultados</li>}
           {filtered.map((option) => (
             <li key={option.value} role="option" aria-selected={String(option.value) === String(value)}>
-              <button type="button" onClick={() => choose(option)} className={`w-full px-3 py-2.5 text-left text-sm hover:bg-[#f0f4fa] ${String(option.value) === String(value) ? 'font-semibold text-[#3162e9]' : 'text-[#33445f]'}`}>
+              <button type="button" onClick={() => choose(option)} className={`w-full px-3 py-2.5 text-left text-sm hover:bg-neutral-bg ${String(option.value) === String(value) ? 'font-semibold text-action' : 'text-text-soft'}`}>
                 {option.label}
               </button>
             </li>
@@ -167,23 +167,23 @@ function PasoNav({ items, active, onChange }) {
             type="button"
             onClick={() => onChange(id)}
             aria-current={seleccionado ? 'page' : undefined}
-            className={`flex min-h-[76px] items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${
+            className={`flex min-h-[76px] items-center gap-3 rounded-[10px] border px-4 py-3 text-left transition ${
               seleccionado
-                ? 'border-[#3162e9] bg-[#eef4ff] ring-2 ring-[#3162e9]/10'
-                : 'border-[#e5eaf2] bg-white hover:border-[#b9c9e5] hover:bg-[#f9fbff]'
+                ? 'border-action bg-neutral-bg ring-2 ring-action/10'
+                : 'border-border bg-surface hover:border-border hover:bg-neutral-bg'
             }`}
           >
-            <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${seleccionado ? 'bg-[#3162e9] text-white' : 'bg-[#f1f4f9] text-[#50627e]'}`}>
+            <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] ${seleccionado ? 'bg-action text-white' : 'bg-neutral-bg text-text-soft'}`}>
               <Icon className="h-5 w-5" />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="flex items-center gap-2 font-bold text-[#071b3b]">
+              <span className="flex items-center gap-2 font-bold text-text-main">
                 {label}
-                {count > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800">{count}</span>}
+                {count > 0 && <span className="rounded-full bg-pending-bg px-2 py-0.5 text-xs font-bold text-pending">{count}</span>}
               </span>
-              <span className="mt-0.5 block text-xs text-[#65758f]">{description}</span>
+              <span className="mt-0.5 block text-xs text-text-soft">{description}</span>
             </span>
-            <ArrowRight className={`h-4 w-4 shrink-0 ${seleccionado ? 'text-[#3162e9]' : 'text-[#a4afc0]'}`} />
+            <ArrowRight className={`h-4 w-4 shrink-0 ${seleccionado ? 'text-action' : 'text-text-soft'}`} />
           </button>
         )
       })}
@@ -683,43 +683,45 @@ function Informes() {
   return (
     <DashboardLayout title={colaborador ? 'Solicitar documentos' : 'Gestión de documentos'}>
       <div className="mx-auto max-w-[1440px] space-y-6">
-        <header className="overflow-hidden rounded-3xl bg-gradient-to-r from-[#102957] via-[#1d4389] to-[#3162e9] p-6 text-white shadow-[0_18px_38px_rgba(29,67,137,0.18)] sm:p-8">
+        <header className="overflow-hidden rounded-[10px] bg-gradient-to-r from-ink via-ink to-action p-6 text-white shadow-none sm:p-8">
           <div className="flex flex-wrap items-end justify-between gap-5">
             <div className="max-w-3xl">
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-blue-100">
-                <Sparkles className="h-4 w-4" />
-                {colaborador ? 'Tus documentos, en un solo lugar' : admin ? 'Administración global' : 'Espacio de Recursos Humanos'}
-              </div>
+              {(colaborador || !admin) && (
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-surface/10 px-3 py-1 text-xs font-semibold text-action">
+                  <Sparkles className="h-4 w-4" />
+                  {colaborador ? 'Tus documentos, en un solo lugar' : 'Espacio de Recursos Humanos'}
+                </div>
+              )}
               <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
                 {colaborador ? 'Solicita y consulta tus documentos' : 'Documentos laborales'}
               </h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-blue-100 sm:text-base">
-                {colaborador
-              ? 'Solicita un documento disponible y revisa su estado. Cuando esté listo, pasa a Recursos Humanos para recogerlo.'
-                  : 'Atiende solicitudes, administra plantillas Word y genera documentos con los datos del colaborador.'}
-              </p>
+              {colaborador && (
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-action sm:text-base">
+                  Solicita un documento disponible y revisa su estado. Cuando esté listo, pasa a Recursos Humanos para recogerlo.
+                </p>
+              )}
             </div>
             <div className="flex gap-3">
               {colaborador ? (
                 <>
-                  <div className="min-w-24 rounded-2xl bg-white/10 px-4 py-3">
+                  <div className="min-w-24 rounded-[10px] border border-border bg-surface/10 px-4 py-3">
                     <span className="block text-2xl font-extrabold">{misSolicitudes.filter((item) => item.estado === 'PENDIENTE' || item.estado === 'EN_PROCESO').length}</span>
-                    <span className="text-xs text-blue-100">En trámite</span>
+                    <span className="text-xs text-action">En trámite</span>
                   </div>
-                  <div className="min-w-24 rounded-2xl bg-white/10 px-4 py-3">
+                  <div className="min-w-24 rounded-[10px] border border-border bg-surface/10 px-4 py-3">
                     <span className="block text-2xl font-extrabold">{misSolicitudes.filter((item) => item.estado === 'GENERADO').length}</span>
-                    <span className="text-xs text-blue-100">Listos</span>
+                    <span className="text-xs text-action">Listos</span>
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="min-w-24 rounded-2xl bg-white/10 px-4 py-3">
+                  <div className="min-w-24 rounded-[10px] border border-border bg-surface/10 px-4 py-3">
                     <span className="block text-2xl font-extrabold">{tiposActivos.length}</span>
-                    <span className="text-xs text-blue-100">Tipos activos</span>
+                    <span className="text-xs font-medium text-white/85">Tipos activos</span>
                   </div>
-                  <div className="min-w-24 rounded-2xl bg-white/10 px-4 py-3">
+                  <div className="min-w-24 rounded-[10px] border border-border bg-surface/10 px-4 py-3">
                     <span className="block text-2xl font-extrabold">{solicitudesPendientes}</span>
-                    <span className="text-xs text-blue-100">Por atender</span>
+                    <span className="text-xs font-medium text-white/85">Por atender</span>
                   </div>
                 </>
               )}
@@ -727,9 +729,9 @@ function Informes() {
           </div>
         </header>
 
-        {error && <p role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-800">{error}</p>}
-        {mensaje && <p role="status" className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-800">{mensaje}</p>}
-        {cargando && <p className="rounded-xl bg-white px-4 py-3 text-sm text-[#5b6e8b] shadow-sm">Cargando información...</p>}
+        {error && <p role="alert" className="rounded-[10px] border border-danger bg-danger-bg p-4 text-sm font-medium text-danger">{error}</p>}
+        {mensaje && <p role="status" className="rounded-[10px] border border-success bg-success-bg p-4 text-sm font-medium text-success">{mensaje}</p>}
+        {cargando && <p className="rounded-[8px] bg-surface px-4 py-3 text-sm text-text-soft shadow-sm">Cargando información...</p>}
 
         {colaborador ? (
           <>
@@ -745,36 +747,36 @@ function Informes() {
               <Panel title="Documentos disponibles">
                 <div className="grid gap-4 lg:grid-cols-2">
                   {tiposActivos.map((tipo) => (
-                    <article key={tipo.id} className="rounded-2xl border border-[#dce3ee] p-5">
+                    <article key={tipo.id} className="rounded-[10px] border border-border p-5">
                       <h3 className="font-bold">{tipo.nombre}</h3>
-                      <p className="mt-2 text-sm text-[#5b6e8b]">{tipo.descripcion || 'Solicita este documento a Recursos Humanos.'}</p>
+                      <p className="mt-2 text-sm text-text-soft">{tipo.descripcion || 'Solicita este documento a Recursos Humanos.'}</p>
                       <label className="mt-4 block text-sm font-semibold">
                         Comentario opcional
-                        <textarea value={comentariosSolicitud[tipo.id] || ''} onChange={(event) => setComentariosSolicitud((actuales) => ({ ...actuales, [tipo.id]: event.target.value }))} maxLength={5000} className="mt-1 w-full rounded-xl border border-[#dce3ee] p-3" rows={2} />
+                        <textarea value={comentariosSolicitud[tipo.id] || ''} onChange={(event) => setComentariosSolicitud((actuales) => ({ ...actuales, [tipo.id]: event.target.value }))} maxLength={5000} className="mt-1 w-full rounded-[8px] border border-border p-3" rows={2} />
                       </label>
-                      <button type="button" disabled={cargando} onClick={() => solicitar(tipo.id)} className="mt-3 rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white disabled:opacity-50">Solicitar</button>
+                      <button type="button" disabled={cargando} onClick={() => solicitar(tipo.id)} className="mt-3 rounded-[8px] bg-action px-4 py-2.5 font-bold text-white disabled:opacity-50">Solicitar</button>
                     </article>
                   ))}
                 </div>
-                {!tiposActivos.length && <p className="py-8 text-center text-[#65758f]">No hay documentos disponibles para tu empresa.</p>}
+                {!tiposActivos.length && <p className="py-8 text-center text-text-soft">No hay documentos disponibles para tu empresa.</p>}
               </Panel>
             ) : activeTab === 'mis-solicitudes' ? (
               <Panel title="Mis solicitudes">
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[620px] text-left text-sm">
-                    <thead><tr className="border-b text-[#65758f]"><th className="p-3">Documento</th><th className="p-3">Fecha</th><th className="p-3">Estado</th><th className="p-3">Detalle</th><th className="p-3">Siguiente paso</th></tr></thead>
+                    <thead><tr className="border-b text-text-soft"><th className="p-3">Documento</th><th className="p-3">Fecha</th><th className="p-3">Estado</th><th className="p-3">Detalle</th><th className="p-3">Siguiente paso</th></tr></thead>
                     <tbody>{misSolicitudes.map((item) => (
-                      <tr key={item.id} className="border-b border-[#eef1f6]">
+                      <tr key={item.id} className="border-b border-border">
                         <td className="p-3 font-semibold">{item.tipo_documento.nombre}</td>
-                        <td className="p-3">{fecha(item.solicitada_en)}</td>
+                        <td className="p-3 font-mono tabular-nums">{fecha(item.solicitada_en)}</td>
                         <td className="p-3"><Badge estado={item.estado} /></td>
-                        <td className="p-3 text-[#5b6e8b]">{item.motivo_rechazo || item.comentario || '—'}</td>
-                        <td className="p-3">{item.estado === 'GENERADO' ? <span className="font-medium text-emerald-800">Pasa a Recursos Humanos para recogerlo</span> : '—'}</td>
+                        <td className="p-3 text-text-soft">{item.motivo_rechazo || item.comentario || '—'}</td>
+                        <td className="p-3">{item.estado === 'GENERADO' ? <span className="font-medium text-success">Pasa a Recursos Humanos para recogerlo</span> : '—'}</td>
                       </tr>
                     ))}</tbody>
                   </table>
                 </div>
-                {!misSolicitudes.length && <p className="py-8 text-center text-[#65758f]">Todavía no tienes solicitudes.</p>}
+                {!misSolicitudes.length && <p className="py-8 text-center text-text-soft">Todavía no tienes solicitudes.</p>}
               </Panel>
             ) : null}
           </>
@@ -794,7 +796,7 @@ function Informes() {
 
             {activeTab === 'plantillas' && (
               <div className="space-y-5">
-                <div className="rounded-2xl border border-blue-100 bg-blue-50 px-5 py-4 text-sm leading-6 text-blue-900">
+                <div className="rounded-[10px] border border-action bg-accent-soft px-5 py-4 text-sm leading-6 text-action">
                   <strong className="block text-base">Configura primero el tipo de documento y después su plantilla.</strong>
                   <span>Las versiones anteriores se conservan. Puedes activar una versión nueva sin perder el historial.</span>
                 </div>
@@ -813,10 +815,10 @@ function Informes() {
                   )}
                   <div className="space-y-2">
                     {tipos.map((tipo) => (
-                      <div key={tipo.id} className={`flex items-center justify-between gap-2 rounded-xl border p-3 ${tipoSeleccionado === String(tipo.id) ? 'border-[#3162e9] bg-blue-50' : 'border-[#dce3ee]'}`}>
+                      <div key={tipo.id} className={`flex items-center justify-between gap-2 rounded-[8px] border p-3 ${tipoSeleccionado === String(tipo.id) ? 'border-action bg-accent-soft' : 'border-border'}`}>
                         <button type="button" onClick={() => { setTipoSeleccionado(String(tipo.id)); setNombreTipoEditado(tipo.nombre); setDescripcionTipoEditada(tipo.descripcion || ''); setResultadoSubida(null) }} className="min-w-0 flex-1 text-left">
                           <span className="block truncate font-bold">{tipo.nombre}</span>
-                          <span className="text-xs text-[#65758f]">{tipo.empresa?.nombre_empresa || 'Global'} · {tipo.clave}</span>
+                          <span className="text-xs text-text-soft">{tipo.empresa?.nombre_empresa || 'Global'} · {tipo.clave}</span>
                         </button>
                         <div className="flex items-center gap-2">
                           <Badge estado={tipo.activo ? 'ACTIVA' : 'INACTIVA'} />
@@ -824,18 +826,18 @@ function Informes() {
                             <button type="button" disabled={cargando} onClick={async () => {
                               const actualizado = await ejecutar(() => actualizarTipoDocumento(tipo.id, { activo: !tipo.activo }), 'Se actualizó el tipo de documento.')
                               if (actualizado) setRefresh((actual) => actual + 1)
-                            }} className="text-xs font-bold text-[#3162e9]">{tipo.activo ? 'Desactivar' : 'Activar'}</button>
+                            }} className="text-xs font-bold text-action">{tipo.activo ? 'Desactivar' : 'Activar'}</button>
                           )}
                         </div>
                       </div>
                     ))}
-                    {!tipos.length && <p className="py-5 text-center text-sm text-[#65758f]">No hay tipos de documento.</p>}
+                    {!tipos.length && <p className="py-5 text-center text-sm text-text-soft">No hay tipos de documento.</p>}
                   </div>
-                  <form onSubmit={crearTipo} className="mt-6 space-y-3 border-t border-[#e5eaf2] pt-5">
+                  <form onSubmit={crearTipo} className="mt-6 space-y-3 border-t border-border pt-5">
                     <h3 className="font-bold">Crear tipo de documento</h3>
-                    <input required maxLength={80} placeholder="Clave (ej. CONSTANCIA_LABORAL)" value={nuevoTipo.clave} onChange={(event) => setNuevoTipo({ ...nuevoTipo, clave: event.target.value })} className="w-full rounded-xl border border-[#dce3ee] p-3" />
-                    <input required maxLength={150} placeholder="Nombre visible" value={nuevoTipo.nombre} onChange={(event) => setNuevoTipo({ ...nuevoTipo, nombre: event.target.value })} className="w-full rounded-xl border border-[#dce3ee] p-3" />
-                    <textarea maxLength={5000} placeholder="Descripción opcional" value={nuevoTipo.descripcion} onChange={(event) => setNuevoTipo({ ...nuevoTipo, descripcion: event.target.value })} className="w-full rounded-xl border border-[#dce3ee] p-3" rows={2} />
+                    <input required maxLength={80} placeholder="Clave (ej. CONSTANCIA_LABORAL)" value={nuevoTipo.clave} onChange={(event) => setNuevoTipo({ ...nuevoTipo, clave: event.target.value })} className="w-full rounded-[8px] border border-border p-3" />
+                    <input required maxLength={150} placeholder="Nombre visible" value={nuevoTipo.nombre} onChange={(event) => setNuevoTipo({ ...nuevoTipo, nombre: event.target.value })} className="w-full rounded-[8px] border border-border p-3" />
+                    <textarea maxLength={5000} placeholder="Descripción opcional" value={nuevoTipo.descripcion} onChange={(event) => setNuevoTipo({ ...nuevoTipo, descripcion: event.target.value })} className="w-full rounded-[8px] border border-border p-3" rows={2} />
                     {admin ? (
                       <SearchableSelect value={nuevoTipo.empresa_id} onChange={(empresa_id) => setNuevoTipo({ ...nuevoTipo, empresa_id })} placeholder="Global o empresa" options={[
                         { value: '', label: 'Global (visible a todas las empresas)' },
@@ -847,7 +849,7 @@ function Informes() {
                         ...empresas.map((empresa) => ({ value: String(empresa.id), label: empresa.nombre_empresa })),
                       ]} />
                     )}
-                    <button disabled={cargando} className="rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white disabled:opacity-50">Crear tipo</button>
+                    <button disabled={cargando} className="rounded-[8px] bg-action px-4 py-2.5 font-bold text-white disabled:opacity-50">Crear tipo</button>
                   </form>
                   {tipoActivo && (admin || tipoActivo.empresa_id) && (
                     <form onSubmit={async (event) => {
@@ -860,11 +862,11 @@ function Informes() {
                         'Tipo de documento actualizado.',
                       )
                       if (resultado) setRefresh((actual) => actual + 1)
-                    }} className="mt-6 space-y-3 border-t border-[#e5eaf2] pt-5">
+                    }} className="mt-6 space-y-3 border-t border-border pt-5">
                       <h3 className="font-bold">Editar tipo seleccionado</h3>
-                      <input required maxLength={150} value={nombreTipoEditado} onChange={(event) => setNombreTipoEditado(event.target.value)} className="w-full rounded-xl border border-[#dce3ee] p-3" />
-                      <textarea maxLength={5000} value={descripcionTipoEditada} onChange={(event) => setDescripcionTipoEditada(event.target.value)} className="w-full rounded-xl border border-[#dce3ee] p-3" rows={2} />
-                      <button disabled={cargando} className="rounded-xl border border-[#3162e9] px-4 py-2.5 font-bold text-[#3162e9] disabled:opacity-50">Guardar cambios</button>
+                      <input required maxLength={150} value={nombreTipoEditado} onChange={(event) => setNombreTipoEditado(event.target.value)} className="w-full rounded-[8px] border border-border p-3" />
+                      <textarea maxLength={5000} value={descripcionTipoEditada} onChange={(event) => setDescripcionTipoEditada(event.target.value)} className="w-full rounded-[8px] border border-border p-3" rows={2} />
+                      <button disabled={cargando} className="rounded-[8px] border border-action px-4 py-2.5 font-bold text-action disabled:opacity-50">Guardar cambios</button>
                     </form>
                   )}
                 </Panel>
@@ -874,40 +876,40 @@ function Informes() {
                     {tipoActivo && (
                       <>
                         {(admin || tipoActivo.empresa_id) ? (
-                          <form onSubmit={subirNuevaPlantilla} className="grid gap-3 rounded-2xl bg-[#f6f8fc] p-4 md:grid-cols-2">
+                          <form onSubmit={subirNuevaPlantilla} className="grid gap-3 rounded-[10px] bg-neutral-bg p-4 md:grid-cols-2">
                           <label className="text-sm font-semibold">Plantilla Word (.docx, máximo 2 MB)
                             <input required type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(event) => setArchivo(event.target.files?.[0] || null)} className="mt-2 block w-full text-sm" />
                           </label>
                           <label className="text-sm font-semibold">Notas del cambio
-                            <textarea value={notasCambio} onChange={(event) => setNotasCambio(event.target.value)} maxLength={5000} rows={2} className="mt-2 w-full rounded-xl border border-[#dce3ee] p-3" />
+                            <textarea value={notasCambio} onChange={(event) => setNotasCambio(event.target.value)} maxLength={5000} rows={2} className="mt-2 w-full rounded-[8px] border border-border p-3" />
                           </label>
-                          <button disabled={cargando || !archivo} className="rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white disabled:opacity-50 md:col-span-2">Subir nueva versión inmutable</button>
+                          <button disabled={cargando || !archivo} className="rounded-[8px] bg-action px-4 py-2.5 font-bold text-white disabled:opacity-50 md:col-span-2">Subir nueva versión inmutable</button>
                           </form>
                         ) : (
-                          <p className="rounded-xl bg-blue-50 p-4 text-sm text-blue-800">Esta plantilla es global y está en modo de solo lectura. Solicita al Administrador RHCorp los cambios.</p>
+                          <p className="rounded-[8px] bg-accent-soft p-4 text-sm text-action">Esta plantilla es global y está en modo de solo lectura. Solicita al Administrador RHCorp los cambios.</p>
                         )}
                         {resultadoSubida && (
-                          <div className="mt-4 rounded-xl border border-[#dce3ee] p-4">
+                          <div className="mt-4 rounded-[8px] border border-border p-4">
                             <h3 className="font-bold">Validación de la versión</h3>
-                            <p className="mt-2 text-sm text-[#5b6e8b]">Marcadores reconocidos: {resultadoSubida.reconocidos.join(', ') || 'ninguno'}</p>
-                            {resultadoSubida.desconocidos.length > 0 && <ul className="mt-2 list-inside list-disc text-sm text-amber-800">{resultadoSubida.desconocidos.map((item) => <li key={item.marcador}>{`{${item.marcador}}`}{item.sugerencia ? ` — ¿Quisiste decir {${item.sugerencia}}?` : ''}</li>)}</ul>}
-                            {resultadoSubida.advertencias.map((item) => <p key={item} className="mt-2 text-sm text-amber-800">{item}</p>)}
+                            <p className="mt-2 text-sm text-text-soft">Marcadores reconocidos: {resultadoSubida.reconocidos.join(', ') || 'ninguno'}</p>
+                            {resultadoSubida.desconocidos.length > 0 && <ul className="mt-2 list-inside list-disc text-sm text-pending">{resultadoSubida.desconocidos.map((item) => <li key={item.marcador}>{`{${item.marcador}}`}{item.sugerencia ? ` — ¿Quisiste decir {${item.sugerencia}}?` : ''}</li>)}</ul>}
+                            {resultadoSubida.advertencias.map((item) => <p key={item} className="mt-2 text-sm text-pending">{item}</p>)}
                           </div>
                         )}
                         <div className="mt-5 space-y-2">
                           {versiones.map((version) => (
-                            <article key={version.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#dce3ee] p-4">
+                            <article key={version.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[8px] border border-border p-4">
                               <div>
                                 <p className="font-bold">Versión {version.version} <Badge estado={version.estado} /></p>
-                                <p className="mt-1 text-xs text-[#65758f]">{fecha(version.creada_en)} · {version.creada_por?.nombre || 'Usuario'}</p>
-                                {version.notas_cambio && <p className="mt-1 text-sm text-[#5b6e8b]">{version.notas_cambio}</p>}
-                                <p className="mt-1 text-xs text-[#65758f]">Marcadores: {version.marcadores.join(', ') || 'ninguno'}</p>
+                                <p className="mt-1 text-xs text-text-soft">{fecha(version.creada_en)} · {version.creada_por?.nombre || 'Usuario'}</p>
+                                {version.notas_cambio && <p className="mt-1 text-sm text-text-soft">{version.notas_cambio}</p>}
+                                <p className="mt-1 text-xs text-text-soft">Marcadores: {version.marcadores.join(', ') || 'ninguno'}</p>
                               </div>
                               <div className="flex items-center gap-3">
                                 <button type="button" onClick={async () => {
                                   const blob = await ejecutar(() => descargarPlantilla(version.id))
                                   if (blob) guardarBlob(blob, version.nombre_archivo)
-                                }} className="text-sm font-bold text-[#3162e9]">Descargar original</button>
+                                }} className="text-sm font-bold text-action">Descargar original</button>
                                 {(admin || tipoActivo.empresa_id) && (
                                 <>
                                   <SearchableSelect value={version.estado} placeholder="Estado de versión" options={[
@@ -918,7 +920,7 @@ function Informes() {
                                     const actualizado = await ejecutar(() => cambiarEstadoPlantilla(version.id, estado), 'Estado de versión actualizado.')
                                     if (actualizado) setRefresh((actual) => actual + 1)
                                   }} />
-                                  <button type="button" disabled={cargando} onClick={() => eliminarVersion(version)} aria-label={`Eliminar versión ${version.version}`} title="Retirar versión" className="rounded-lg border border-red-200 p-2 text-red-700 transition hover:bg-red-50 disabled:opacity-50">
+                                  <button type="button" disabled={cargando} onClick={() => eliminarVersion(version)} aria-label={`Eliminar versión ${version.version}`} title="Retirar versión" className="rounded-lg border border-danger p-2 text-danger transition hover:bg-danger-bg disabled:opacity-50">
                                     <Trash2 className="h-4 w-4" />
                                   </button>
                                 </>
@@ -926,11 +928,11 @@ function Informes() {
                               </div>
                             </article>
                           ))}
-                          {!versiones.length && <p className="py-5 text-center text-sm text-[#65758f]">Aún no hay versiones. Sube el primer archivo Word.</p>}
+                          {!versiones.length && <p className="py-5 text-center text-sm text-text-soft">Aún no hay versiones. Sube el primer archivo Word.</p>}
                         </div>
                       </>
                     )}
-                    {!tipoActivo && <p className="text-sm text-[#65758f]">Selecciona un tipo de documento.</p>}
+                    {!tipoActivo && <p className="text-sm text-text-soft">Selecciona un tipo de documento.</p>}
                   </Panel>
                 </div>
               </div>
@@ -939,14 +941,14 @@ function Informes() {
 
             {activeTab === 'solicitudes' && (
               <div className="space-y-5">
-                <div className="rounded-2xl border border-blue-100 bg-blue-50 px-5 py-4 text-sm leading-6 text-blue-900">
+                <div className="rounded-[10px] border border-action bg-accent-soft px-5 py-4 text-sm leading-6 text-action">
                   <strong className="block text-base">Cómo atender una solicitud</strong>
                   <span>Selecciona una solicitud, revisa los datos, elige la versión correcta, verifica la vista previa y luego genera o rechaza con un motivo.</span>
                 </div>
                 <div className="grid items-start gap-5 xl:grid-cols-[minmax(340px,0.9fr)_minmax(400px,1.1fr)]">
                 <Panel title={`Solicitudes recibidas${solicitudesPendientes ? ` · ${solicitudesPendientes} por atender` : ''}`}>
                   {admin && (
-                    <label className="mb-3 block text-sm font-semibold text-[#33445f]">
+                    <label className="mb-3 block text-sm font-semibold text-text-soft">
                       Empresa
                       <div className="mt-1">
                         <SearchableSelect value={String(empresaFiltro)} onChange={setEmpresaFiltro} placeholder="Todas las empresas" options={[
@@ -957,19 +959,19 @@ function Informes() {
                     </label>
                   )}
                   <div className="mb-4 grid gap-3 sm:grid-cols-3">
-                    <label className="text-xs font-semibold text-[#65758f]">Estado
+                    <label className="text-xs font-semibold text-text-soft">Estado
                       <div className="mt-1"><SearchableSelect value={filtroEstado} onChange={setFiltroEstado} placeholder="Todos los estados" options={[
                         { value: '', label: 'Todos' },
                         ...ESTADOS.map(([value, label]) => ({ value, label })),
                       ]} /></div>
                     </label>
-                    <label className="text-xs font-semibold text-[#65758f]">Tipo de documento
+                    <label className="text-xs font-semibold text-text-soft">Tipo de documento
                       <div className="mt-1"><SearchableSelect value={String(filtroTipo)} onChange={setFiltroTipo} placeholder="Todos los documentos" options={[
                         { value: '', label: 'Todos' },
                         ...tipos.map((tipo) => ({ value: String(tipo.id), label: tipo.nombre })),
                       ]} /></div>
                     </label>
-                    <label className="text-xs font-semibold text-[#65758f]">Colaborador
+                    <label className="text-xs font-semibold text-text-soft">Colaborador
                       <div className="mt-1"><SearchableSelect value={String(filtroColaborador)} onChange={setFiltroColaborador} placeholder="Todos los colaboradores" options={[
                         { value: '', label: 'Todos' },
                         ...colaboradoresSolicitudes.map((item) => ({ value: String(item.id), label: item.nombre })),
@@ -978,54 +980,54 @@ function Informes() {
                   </div>
                   <div className="max-h-[70vh] space-y-2 overflow-y-auto">
                     {solicitudes.map((solicitud) => (
-                      <button key={solicitud.id} type="button" onClick={() => { setSeleccionada(solicitud); setPreview(null); setPlantillaId('') }} className={`w-full rounded-2xl border p-4 text-left transition ${seleccionada?.id === solicitud.id ? 'border-[#3162e9] bg-blue-50 shadow-sm' : 'border-[#e5eaf2] hover:border-[#b9c9e5] hover:bg-[#f9fbff]'}`}>
-                        <span className="flex flex-wrap items-center justify-between gap-2"><strong className="text-[#071b3b]">{solicitud.colaborador.nombre}</strong><Badge estado={solicitud.estado} /></span>
-                        <span className="mt-1 block text-sm font-medium text-[#33445f]">{solicitud.tipo_documento.nombre}</span>
-                        <span className="mt-1 block text-xs text-[#65758f]">{solicitud.empresa.nombre_empresa} · Recibida {fecha(solicitud.solicitada_en)}</span>
+                      <button key={solicitud.id} type="button" onClick={() => { setSeleccionada(solicitud); setPreview(null); setPlantillaId('') }} className={`w-full rounded-[10px] border p-4 text-left transition ${seleccionada?.id === solicitud.id ? 'border-action bg-accent-soft shadow-sm' : 'border-border hover:border-border hover:bg-neutral-bg'}`}>
+                        <span className="flex flex-wrap items-center justify-between gap-2"><strong className="text-text-main">{solicitud.colaborador.nombre}</strong><Badge estado={solicitud.estado} /></span>
+                        <span className="mt-1 block text-sm font-medium text-text-soft">{solicitud.tipo_documento.nombre}</span>
+                        <span className="mt-1 block text-xs text-text-soft">{solicitud.empresa.nombre_empresa} · Recibida {fecha(solicitud.solicitada_en)}</span>
                       </button>
                     ))}
-                    {!solicitudes.length && <div className="rounded-2xl border border-dashed border-[#d5deea] px-5 py-10 text-center"><ClipboardList className="mx-auto h-8 w-8 text-[#97a6bb]" /><p className="mt-3 font-semibold text-[#33445f]">No hay solicitudes para mostrar</p><p className="mt-1 text-sm text-[#65758f]">Prueba cambiando los filtros o vuelve cuando llegue una solicitud nueva.</p></div>}
+                    {!solicitudes.length && <div className="rounded-[10px] border border-dashed border-border px-5 py-10 text-center"><ClipboardList className="mx-auto h-8 w-8 text-text-soft" /><p className="mt-3 font-semibold text-text-soft">No hay solicitudes para mostrar</p><p className="mt-1 text-sm text-text-soft">Prueba cambiando los filtros o vuelve cuando llegue una solicitud nueva.</p></div>}
                   </div>
                 </Panel>
                 <Panel title={seleccionada ? `Revisar solicitud #${seleccionada.id}` : 'Detalle y entrega'}>
                   {seleccionada ? (
                     <div className="space-y-4">
-                      <div className="grid gap-3 rounded-2xl bg-[#f6f8fc] p-4 text-sm sm:grid-cols-2">
-                        <p><span className="block text-xs font-semibold uppercase tracking-wide text-[#8290a5]">Colaborador</span><strong>{seleccionada.colaborador.nombre}</strong></p>
-                        <p><span className="block text-xs font-semibold uppercase tracking-wide text-[#8290a5]">Documento</span><strong>{seleccionada.tipo_documento.nombre}</strong></p>
-                        <p><span className="block text-xs font-semibold uppercase tracking-wide text-[#8290a5]">Empresa</span><strong>{seleccionada.empresa.nombre_empresa}</strong></p>
-                        <p><span className="block text-xs font-semibold uppercase tracking-wide text-[#8290a5]">Fecha de solicitud</span><strong>{fecha(seleccionada.solicitada_en)}</strong></p>
-                        {seleccionada.comentario && <p className="sm:col-span-2"><span className="block text-xs font-semibold uppercase tracking-wide text-[#8290a5]">Comentario</span>{seleccionada.comentario}</p>}
-                        {seleccionada.motivo_rechazo && <p className="text-red-700 sm:col-span-2"><span className="block text-xs font-semibold uppercase tracking-wide">Motivo de rechazo</span>{seleccionada.motivo_rechazo}</p>}
+                      <div className="grid gap-3 rounded-[10px] bg-neutral-bg p-4 text-sm sm:grid-cols-2">
+                        <p><span className="block text-xs font-semibold uppercase tracking-wide text-text-soft">Colaborador</span><strong>{seleccionada.colaborador.nombre}</strong></p>
+                        <p><span className="block text-xs font-semibold uppercase tracking-wide text-text-soft">Documento</span><strong>{seleccionada.tipo_documento.nombre}</strong></p>
+                        <p><span className="block text-xs font-semibold uppercase tracking-wide text-text-soft">Empresa</span><strong>{seleccionada.empresa.nombre_empresa}</strong></p>
+                        <p><span className="block text-xs font-semibold uppercase tracking-wide text-text-soft">Fecha de solicitud</span><strong>{fecha(seleccionada.solicitada_en)}</strong></p>
+                        {seleccionada.comentario && <p className="sm:col-span-2"><span className="block text-xs font-semibold uppercase tracking-wide text-text-soft">Comentario</span>{seleccionada.comentario}</p>}
+                        {seleccionada.motivo_rechazo && <p className="text-danger sm:col-span-2"><span className="block text-xs font-semibold uppercase tracking-wide">Motivo de rechazo</span>{seleccionada.motivo_rechazo}</p>}
                       </div>
                       {seleccionada.estado === 'GENERADO' ? (
                         seleccionada.documento
-                          ? <button type="button" onClick={() => descargar(seleccionada.documento.id, seleccionada.documento.nombre_archivo)} className="rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white">Descargar documento entregado</button>
-                          : <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">El archivo fue retirado de la lista de documentos disponibles. El registro de la entrega se conserva en el historial.</p>
+                          ? <button type="button" onClick={() => descargar(seleccionada.documento.id, seleccionada.documento.nombre_archivo)} className="rounded-[8px] bg-action px-4 py-2.5 font-bold text-white">Descargar documento entregado</button>
+                          : <p className="rounded-[8px] bg-pending-bg p-3 text-sm text-pending">El archivo fue retirado de la lista de documentos disponibles. El registro de la entrega se conserva en el historial.</p>
                       ) : seleccionada.estado !== 'RECHAZADA' ? (
                         <>
-                          <label className="block text-sm font-semibold text-[#33445f]">1. Elige la versión de plantilla
+                          <label className="block text-sm font-semibold text-text-soft">1. Elige la versión de plantilla
                             <div className="mt-1"><SearchableSelect value={String(plantillaId)} onChange={(value) => { setPlantillaId(value); setPreview(null) }} placeholder="Selecciona una versión" options={[
                               { value: '', label: 'Selecciona una versión' },
                               ...versionesDisponibles.map((version) => ({ value: String(version.id), label: `v${version.version} · ${version.estado}${version.creada_en ? ` · ${fecha(version.creada_en)}` : ''}` })),
                             ]} /></div>
                           </label>
-                          <p className="text-xs leading-5 text-[#65758f]">La vista previa usa los datos actuales del colaborador y cambia al seleccionar otra versión.</p>
-                          {!preview?.blob && plantillaId && seleccionada.estado !== 'GENERADO' && <p className="rounded-xl bg-blue-50 p-3 text-sm text-blue-800">Preparando la vista previa del documento...</p>}
-                          {preview?.blob && <div className="overflow-hidden rounded-2xl border border-[#dce3ee]"><div className="border-b border-[#e5eaf2] bg-[#f6f8fc] px-4 py-2 text-xs font-semibold uppercase tracking-wide text-[#65758f]">2. Vista previa</div><div ref={previewRef} className="docx-preview max-h-[70vh] overflow-auto bg-slate-100 p-3" /></div>}
+                          <p className="text-xs leading-5 text-text-soft">La vista previa usa los datos actuales del colaborador y cambia al seleccionar otra versión.</p>
+                          {!preview?.blob && plantillaId && seleccionada.estado !== 'GENERADO' && <p className="rounded-[8px] bg-accent-soft p-3 text-sm text-action">Preparando la vista previa del documento...</p>}
+                          {preview?.blob && <div className="overflow-hidden rounded-[10px] border border-border"><div className="border-b border-border bg-neutral-bg px-4 py-2 text-xs font-semibold uppercase tracking-wide text-text-soft">2. Vista previa</div><div ref={previewRef} className="docx-preview max-h-[70vh] overflow-auto bg-neutral-bg p-3" /></div>}
                           <div className="flex flex-wrap gap-3">
-                            <button type="button" disabled={!plantillaId || !preview?.blob || cargando} onClick={atenderSolicitud} className="inline-flex items-center gap-2 rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white shadow-sm transition hover:bg-[#244fc7] disabled:cursor-not-allowed disabled:opacity-50"><Check className="h-4 w-4" />3. Generar y entregar</button>
+                            <button type="button" disabled={!plantillaId || !preview?.blob || cargando} onClick={atenderSolicitud} className="inline-flex items-center gap-2 rounded-[8px] bg-action px-4 py-2.5 font-bold text-white shadow-sm transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-50"><Check className="h-4 w-4" />3. Generar y entregar</button>
                           </div>
-                          <div className="border-t border-[#eef1f6] pt-4">
-                            <label className="block text-sm font-semibold text-[#33445f]">¿Necesitas rechazar esta solicitud?
-                              <input value={rechazoMotivo} onChange={(event) => setRechazoMotivo(event.target.value)} placeholder="Explica brevemente el motivo para el colaborador" maxLength={5000} className="mt-2 w-full rounded-xl border border-[#dce3ee] p-3 font-normal" />
+                          <div className="border-t border-border pt-4">
+                            <label className="block text-sm font-semibold text-text-soft">¿Necesitas rechazar esta solicitud?
+                              <input value={rechazoMotivo} onChange={(event) => setRechazoMotivo(event.target.value)} placeholder="Explica brevemente el motivo para el colaborador" maxLength={5000} className="mt-2 w-full rounded-[8px] border border-border p-3 font-normal" />
                             </label>
-                            <button type="button" disabled={cargando || !rechazoMotivo.trim()} onClick={rechazar} className="mt-3 rounded-xl border border-red-200 px-4 py-2.5 font-bold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50">Rechazar y notificar</button>
+                            <button type="button" disabled={cargando || !rechazoMotivo.trim()} onClick={rechazar} className="mt-3 rounded-[8px] border border-danger px-4 py-2.5 font-bold text-danger transition hover:bg-danger-bg disabled:cursor-not-allowed disabled:opacity-50">Rechazar y notificar</button>
                           </div>
                         </>
-                      ) : <p className="text-sm text-[#65758f]">La solicitud fue rechazada.</p>}
+                      ) : <p className="text-sm text-text-soft">La solicitud fue rechazada.</p>}
                     </div>
-                  ) : <p className="text-sm text-[#65758f]">Selecciona una solicitud para revisar sus datos.</p>}
+                  ) : <p className="text-sm text-text-soft">Selecciona una solicitud para revisar sus datos.</p>}
                 </Panel>
               </div>
               </div>
@@ -1034,7 +1036,7 @@ function Informes() {
             {activeTab === 'documentos-generados' && (
               <Panel title="Documentos generados">
                 {admin && (
-                  <label className="mb-4 block max-w-md text-sm font-semibold text-[#33445f]">
+                  <label className="mb-4 block max-w-md text-sm font-semibold text-text-soft">
                     Filtrar empresa
                     <div className="mt-1"><SearchableSelect value={String(empresaFiltro)} onChange={setEmpresaFiltro} placeholder="Todas las empresas" options={[
                       { value: '', label: 'Todas las empresas' },
@@ -1044,17 +1046,17 @@ function Informes() {
                 )}
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[760px] text-left text-sm">
-                    <thead><tr className="border-b text-[#65758f]"><th className="p-3">Documento</th><th className="p-3">Destinatario</th><th className="p-3">Empresa</th><th className="p-3">Generado</th><th className="p-3">Acciones</th></tr></thead>
+                    <thead><tr className="border-b text-text-soft"><th className="p-3">Documento</th><th className="p-3">Destinatario</th><th className="p-3">Empresa</th><th className="p-3">Generado</th><th className="p-3">Acciones</th></tr></thead>
                     <tbody>{documentosGenerados.map((documento) => (
-                      <tr key={documento.id} className="border-b border-[#eef1f6]">
-                        <td className="p-3"><strong className="block">{documento.tipo_documento.nombre}</strong><span className="text-xs text-[#65758f]">Versión {documento.version_plantilla}</span></td>
+                      <tr key={documento.id} className="border-b border-border">
+                        <td className="p-3"><strong className="block">{documento.tipo_documento.nombre}</strong><span className="text-xs text-text-soft">Versión {documento.version_plantilla}</span></td>
                         <td className="p-3">{documento.colaborador.nombre}</td>
                         <td className="p-3">{documento.empresa.nombre_empresa}</td>
-                        <td className="p-3">{fecha(documento.generado_en)}</td>
+                        <td className="p-3 font-mono tabular-nums">{fecha(documento.generado_en)}</td>
                         <td className="p-3">
                           <div className="flex items-center gap-3">
-                            <button type="button" onClick={() => descargar(documento.id, documento.nombre_archivo)} className="font-bold text-[#3162e9]">Descargar</button>
-                            <button type="button" disabled={cargando} onClick={() => eliminarDocumento(documento)} className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-2.5 py-1.5 font-semibold text-red-700 transition hover:bg-red-50 disabled:opacity-50">
+                            <button type="button" onClick={() => descargar(documento.id, documento.nombre_archivo)} className="font-bold text-action">Descargar</button>
+                            <button type="button" disabled={cargando} onClick={() => eliminarDocumento(documento)} className="inline-flex items-center gap-1 rounded-lg border border-danger px-2.5 py-1.5 font-semibold text-danger transition hover:bg-danger-bg disabled:opacity-50">
                               <Trash2 className="h-3.5 w-3.5" />Eliminar
                             </button>
                           </div>
@@ -1063,49 +1065,49 @@ function Informes() {
                     ))}</tbody>
                   </table>
                 </div>
-                {!documentosGenerados.length && <p className="py-8 text-center text-sm text-[#65758f]">No hay documentos generados para mostrar.</p>}
+                {!documentosGenerados.length && <p className="py-8 text-center text-sm text-text-soft">No hay documentos generados para mostrar.</p>}
               </Panel>
             )}
 
             {activeTab === 'campos' && (
               <Panel title="Campos disponibles">
-                <div className="mb-5 rounded-2xl border border-blue-100 bg-blue-50 p-5">
-                  <h3 className="font-bold text-blue-950">Cómo insertar un campo en Word</h3>
-                  <ol className="mt-2 grid gap-2 text-sm leading-5 text-blue-900 md:grid-cols-3">
+                <div className="mb-5 rounded-[10px] border border-action bg-accent-soft p-5">
+                  <h3 className="font-bold text-action">Cómo insertar un campo en Word</h3>
+                  <ol className="mt-2 grid gap-2 text-sm leading-5 text-action md:grid-cols-3">
                     <li><strong>1.</strong> Busca el dato que necesitas.</li>
-                    <li><strong>2.</strong> Copia el marcador completo, por ejemplo <code className="rounded bg-white px-1.5 py-0.5">{'{nombre_colaborador}'}</code>.</li>
+                    <li><strong>2.</strong> Copia el marcador completo, por ejemplo <code className="rounded bg-surface px-1.5 py-0.5">{'{nombre_colaborador}'}</code>.</li>
                     <li><strong>3.</strong> Pégalo en Word sin cambiarle el texto ni el formato a la mitad.</li>
                   </ol>
                 </div>
                 <label className="relative mb-5 block">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8290a5]" />
-                  <input value={busquedaCampo} onChange={(event) => setBusquedaCampo(event.target.value)} placeholder="Buscar por nombre o marcador" className="w-full rounded-xl border border-[#dce3ee] bg-white py-3 pl-10 pr-4 outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/10" />
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-soft" />
+                  <input value={busquedaCampo} onChange={(event) => setBusquedaCampo(event.target.value)} placeholder="Buscar por nombre o marcador" className="w-full rounded-[8px] border border-border bg-surface py-3 pl-10 pr-4 outline-none transition focus:border-action focus:ring-2 focus:ring-action/10" />
                 </label>
                 <div className="grid gap-4 lg:grid-cols-2">
                   {camposFiltrados.map((grupo) => (
-                    <section key={grupo.grupo} className="overflow-hidden rounded-2xl border border-[#e5eaf2]">
-                      <h3 className="border-b border-[#e5eaf2] bg-[#f6f8fc] px-4 py-3 font-bold text-[#33445f]">{grupo.grupo}<span className="ml-2 text-xs font-medium text-[#8290a5]">{grupo.campos.length} campos</span></h3>
-                      <ul className="divide-y divide-[#eef1f6] px-4">
+                    <section key={grupo.grupo} className="overflow-hidden rounded-[10px] border border-border">
+                      <h3 className="border-b border-border bg-neutral-bg px-4 py-3 font-bold text-text-soft">{grupo.grupo}<span className="ml-2 text-xs font-medium text-text-soft">{grupo.campos.length} campos</span></h3>
+                      <ul className="divide-y divide-border px-4">
                         {grupo.campos.map((campo) => (
                           <li key={campo.marcador} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
                             <span className="min-w-0">
-                              <span className="block font-medium text-[#33445f]">{campo.descripcion}</span>
-                              <code className="mt-1 inline-block rounded-md bg-[#eef4ff] px-2 py-1 text-xs font-semibold text-[#1e3a8a]">{`{${campo.marcador}}`}</code>
+                              <span className="block font-medium text-text-soft">{campo.descripcion}</span>
+                              <code className="mt-1 inline-block rounded-md bg-neutral-bg px-2 py-1 text-xs font-semibold text-text-main">{`{${campo.marcador}}`}</code>
                             </span>
-                            <button type="button" onClick={() => copiarMarcador(campo.marcador)} className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#dce3ee] px-3 py-2 text-xs font-bold text-[#3162e9] transition hover:border-[#3162e9] hover:bg-blue-50"><Copy className="h-3.5 w-3.5" />Copiar</button>
+                            <button type="button" onClick={() => copiarMarcador(campo.marcador)} className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs font-bold text-action transition hover:border-action hover:bg-accent-soft"><Copy className="h-3.5 w-3.5" />Copiar</button>
                           </li>
                         ))}
                       </ul>
                     </section>
                   ))}
-                  {!camposFiltrados.length && <p className="rounded-2xl border border-dashed border-[#d5deea] py-10 text-center text-sm text-[#65758f]">No hay campos que coincidan con la búsqueda.</p>}
+                  {!camposFiltrados.length && <p className="rounded-[10px] border border-dashed border-border py-10 text-center text-sm text-text-soft">No hay campos que coincidan con la búsqueda.</p>}
                 </div>
               </Panel>
             )}
 
             {activeTab === 'directo' && (
               <div className="space-y-5">
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-950">
+                <div className="rounded-[10px] border border-pending bg-pending-bg px-5 py-4 text-sm leading-6 text-pending">
                   <strong className="block text-base">Genera un documento sin solicitud previa.</strong>
                   <span>Úsalo cuando Recursos Humanos necesite preparar un documento por iniciativa propia. El colaborador recibirá una notificación cuando esté listo.</span>
                 </div>
@@ -1119,26 +1121,26 @@ function Informes() {
                     </label>
                   )}
                   <div className="grid gap-4 md:grid-cols-3">
-                    <label className="text-sm font-semibold text-[#33445f]">Persona destinataria
+                    <label className="text-sm font-semibold text-text-soft">Persona destinataria
                       <div className="mt-1"><SearchableSelect value={directoColaborador} onChange={cambiarDestinoDirecto} placeholder="Busca por nombre o rol" options={[
                         { value: '', label: 'Selecciona una persona' },
                         ...colaboradoresVisibles.map((item) => ({ value: String(item.id), label: `${item.nombre} · ${item.rol}` })),
                       ]} /></div>
                     </label>
-                    <label className="text-sm font-semibold text-[#33445f]">Empresa del documento
+                    <label className="text-sm font-semibold text-text-soft">Empresa del documento
                       <div className="mt-1"><SearchableSelect value={String(empresaDirecta)} onChange={cambiarEmpresaDirecta} placeholder="Selecciona una empresa" disabled={!destinoDirecto} options={[
                         { value: '', label: 'Selecciona una empresa' },
                         ...empresasDestino.map((empresa) => ({ value: String(empresa.id), label: empresa.nombre_empresa })),
                       ]} /></div>
-                      <span className="mt-1 block text-xs font-normal text-[#65758f]">Si la persona no tiene empresa asignada, selecciona aquí la empresa que aparecerá en el documento.</span>
+                      <span className="mt-1 block text-xs font-normal text-text-soft">Si la persona no tiene empresa asignada, selecciona aquí la empresa que aparecerá en el documento.</span>
                     </label>
-                    <label className="text-sm font-semibold text-[#33445f]">Tipo de documento
+                    <label className="text-sm font-semibold text-text-soft">Tipo de documento
                       <div className="mt-1"><SearchableSelect value={String(directoTipo)} onChange={(value) => { setDirectoTipo(value); setDirectoPlantilla('') }} placeholder="Selecciona documento" options={[
                         { value: '', label: 'Selecciona documento' },
                         ...tiposDirectos.map((tipo) => ({ value: String(tipo.id), label: tipo.nombre })),
                       ]} /></div>
                     </label>
-                    <label className="text-sm font-semibold text-[#33445f] md:col-span-3">Versión de plantilla
+                    <label className="text-sm font-semibold text-text-soft md:col-span-3">Versión de plantilla
                       <div className="mt-1"><SearchableSelect value={String(directoPlantilla)} onChange={(value) => { setDirectoPlantilla(value); setPreview(null) }} placeholder="Selecciona versión" options={[
                         { value: '', label: 'Selecciona versión' },
                         ...versionesDirectas.map((version) => ({ value: String(version.id), label: `v${version.version} · ${version.estado}` })),
@@ -1146,10 +1148,10 @@ function Informes() {
                     </label>
                   </div>
                   <div className="mt-5 flex flex-wrap gap-3">
-                    <button type="button" disabled={!directoColaborador || !empresaDirecta || !tipoDirectoValido || !directoPlantilla || cargando} onClick={() => obtenerPreviewDirecto(directoTipo, directoColaborador, directoPlantilla)} className="rounded-xl border border-[#3162e9] px-4 py-2.5 font-bold text-[#3162e9] transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50">2. Previsualizar</button>
-                    <button type="button" disabled={!directoColaborador || !empresaDirecta || !tipoDirectoValido || !directoPlantilla || cargando} onClick={generarDirecto} className="rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white shadow-sm transition hover:bg-[#244fc7] disabled:cursor-not-allowed disabled:opacity-50">3. Generar y entregar</button>
+                    <button type="button" disabled={!directoColaborador || !empresaDirecta || !tipoDirectoValido || !directoPlantilla || cargando} onClick={() => obtenerPreviewDirecto(directoTipo, directoColaborador, directoPlantilla)} className="rounded-[8px] border border-action px-4 py-2.5 font-bold text-action transition hover:bg-accent-soft disabled:cursor-not-allowed disabled:opacity-50">2. Previsualizar</button>
+                    <button type="button" disabled={!directoColaborador || !empresaDirecta || !tipoDirectoValido || !directoPlantilla || cargando} onClick={generarDirecto} className="rounded-[8px] bg-action px-4 py-2.5 font-bold text-white shadow-sm transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-50">3. Generar y entregar</button>
                   </div>
-                  {preview?.blob && <div className="mt-5 overflow-hidden rounded-2xl border border-[#dce3ee]"><div className="border-b border-[#e5eaf2] bg-[#f6f8fc] px-4 py-2 text-xs font-semibold uppercase tracking-wide text-[#65758f]">Vista previa</div><div ref={previewRef} className="docx-preview max-h-[70vh] overflow-auto bg-slate-100 p-3" /></div>}
+                  {preview?.blob && <div className="mt-5 overflow-hidden rounded-[10px] border border-border"><div className="border-b border-border bg-neutral-bg px-4 py-2 text-xs font-semibold uppercase tracking-wide text-text-soft">Vista previa</div><div ref={previewRef} className="docx-preview max-h-[70vh] overflow-auto bg-neutral-bg p-3" /></div>}
                 </Panel>
               </div>
             )}

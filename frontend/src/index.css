@@ -1,13 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", "Segoe UI", sans-serif;
+  --color-bg: #F7F8FA;
+  --color-surface: #FFFFFF;
+  --color-ink: #1E3A5F;
+  --color-ink-dark: #16293F;
+  --color-action: #3B6EA5;
+  --color-accent: #B8925A;
+  --color-accent-soft: #F3E9DA;
+  --color-text-main: #1A1D23;
+  --color-text-soft: #6B7280;
+  --color-border: #E5E7EB;
+  --color-success: #2F7D5A;
+  --color-success-bg: #E7F3EC;
+  --color-pending: #C08B2C;
+  --color-pending-bg: #FBF1DF;
+  --color-danger: #B84C3E;
+  --color-danger-bg: #FBEAE7;
+  --color-neutral: #6B7A8F;
+  --color-neutral-bg: #EEF1F4;
+  --font-sans: "IBM Plex Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
 }
 
 html {
-  background: #f5f7fb;
+  background: #F7F8FA;
 }
 
 body {
   margin: 0;
+  color: #1A1D23;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+select,
+textarea {
+  border-radius: 8px;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+select:focus,
+textarea:focus {
+  border-color: #3B6EA5;
+  outline-color: #3B6EA5;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+thead th {
+  color: #6B7280;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+tbody tr {
+  border-bottom: 1px solid #E5E7EB;
+  transition: background-color 150ms ease;
+}
+
+tbody tr:hover {
+  background-color: #FAFBFC;
+}
+
+tbody td {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+span[class*="bg-success-bg"]:not([class~="px-2"]),
+span[class*="bg-pending-bg"]:not([class~="px-2"]),
+span[class*="bg-danger-bg"]:not([class~="px-2"]),
+span[class*="bg-neutral-bg"]:not([class~="px-2"]) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+span[class*="bg-success-bg"]:not([class~="px-2"])::before,
+span[class*="bg-pending-bg"]:not([class~="px-2"])::before,
+span[class*="bg-danger-bg"]:not([class~="px-2"])::before,
+span[class*="bg-neutral-bg"]:not([class~="px-2"])::before {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
+  content: "";
+}
+
+button[class~="bg-action"] {
+  border-radius: 7px;
+  font-weight: 500;
+  box-shadow: none;
+}
+
+button[class~="bg-action"]:hover {
+  background-color: #1E3A5F;
+}
+
+nav[aria-label="Navegación principal"] {
+  display: flex;
+  flex-direction: column;
+}
+
+nav[aria-label="Navegación principal"] > a[href="/dashboard"] {
+  order: 0;
+}
+
+nav[aria-label="Navegación principal"] > a[href="/plazas"] {
+  order: 1;
+}
+
+nav[aria-label="Navegación principal"] > a[href="/postulantes"] {
+  order: 2;
+}
+
+nav[aria-label="Navegación principal"] > div.relative.group {
+  order: 3;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgb(255 255 255 / 12%);
+}
+
+nav[aria-label="Navegación principal"] > a[href="/empresas/puestos"] {
+  order: 4;
+}
+
+nav[aria-label="Navegación principal"] > a[href="/colaboradores"] {
+  order: 5;
+}
+
+nav[aria-label="Navegación principal"] > a[href="/informes"] {
+  order: 6;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgb(255 255 255 / 12%);
+}
+
+nav[aria-label="Navegación principal"] > a[href="/configuracion"] {
+  order: 7;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgb(255 255 255 / 12%);
 }

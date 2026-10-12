@@ -301,34 +301,34 @@ function EditarUsuario() {
                         type="button"
                         onClick={() => navigate("/colaboradores")}
                         aria-label="Volver a colaboradores"
-                        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl border border-[#dce3ee] bg-white text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-[8px] border border-border bg-surface text-text-main transition hover:bg-neutral-bg"
                     >
                         <ArrowLeft className="h-5 w-5" />
                     </button>
                     <div>
-                        <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
+                        <h1 className="text-2xl font-bold tracking-[-0.04em] text-text-main sm:text-3xl">
                             Editar Colaborador
                         </h1>
-                        <p className="mt-1 text-[#5b6e8b]">
+                        <p className="mt-1 text-text-soft">
                             Actualiza la información del colaborador.
                         </p>
                     </div>
                 </div>
 
                 {loadingUser ? (
-                    <div className="rounded-[26px] bg-white p-10 text-center text-[#5b6e8b] shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
+                    <div className="rounded-[10px] border border-border bg-surface p-10 text-center text-text-soft shadow-none">
                         Cargando colaborador...
                     </div>
                 ) : (
                     <form
                         onSubmit={handleSubmit(onSubmit)}
-                        className="rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8"
+                        className="rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8"
                         noValidate
                     >
                         {serverError && (
                             <div
                                 role="alert"
-                                className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 font-semibold text-red-600"
+                                className="mb-6 rounded-[10px] border border-danger bg-danger-bg px-5 py-4 font-semibold text-danger"
                             >
                                 {serverError}
                             </div>
@@ -443,7 +443,7 @@ function EditarUsuario() {
                                                 "El motivo es requerido cuando cambia la empresa",
                                         })}
                                         rows={3}
-                                        className="w-full rounded-xl border border-[#dce3ee] bg-white px-4 py-3 text-[#071b3b] transition placeholder:text-[#9ba8c2] focus:border-[#3162e9] focus:outline-none"
+                                        className="w-full rounded-[8px] border border-border bg-surface px-4 py-3 text-text-main transition placeholder:text-text-soft focus:border-action focus:outline-none"
                                         placeholder="Explique el motivo del cambio de empresa..."
                                     />
                                 </Field>
@@ -588,16 +588,16 @@ function EditarUsuario() {
                                 </Field>
                             </div>
 
-                            <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                            <section className="mt-6 rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8">
                                 <div className="flex items-center gap-3">
-                                    <Shield className="h-6 w-6 text-[#3162e9]" />
-                                    <h2 className="text-lg font-bold text-[#071b3b]">Seguros</h2>
+                                    <Shield className="h-6 w-6 text-action" />
+                                    <h2 className="text-lg font-bold text-text-main">Seguros</h2>
                                 </div>
 
                                 <div className="mt-6 space-y-6">
-                                    <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <div className="rounded-[8px] bg-neutral-bg p-5">
                                         <div className="flex items-center justify-between">
-                                            <h3 className="text-base font-semibold text-[#071b3b]">
+                                            <h3 className="text-base font-semibold text-text-main">
                                                 Seguro de Gastos Médicos
                                             </h3>
                                             <RadioGroup
@@ -668,9 +668,9 @@ function EditarUsuario() {
                                         </div>
                                     </div>
 
-                                    <div className="rounded-xl bg-[#f0f4fa] p-5">
+                                    <div className="rounded-[8px] bg-neutral-bg p-5">
                                         <div className="flex items-center justify-between">
-                                            <h3 className="text-base font-semibold text-[#071b3b]">
+                                            <h3 className="text-base font-semibold text-text-main">
                                                 Seguro de Vida
                                             </h3>
                                             <RadioGroup
@@ -717,11 +717,11 @@ function EditarUsuario() {
                                 </div>
                             </section>
 
-                            <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#dce3ee] px-4 py-4 text-[#071b3b]">
+                            <label className="flex cursor-pointer items-center gap-3 rounded-[8px] border border-border px-4 py-4 text-text-main">
                                 <input
                                     type="checkbox"
                                     {...register("activo")}
-                                    className="h-5 w-5 cursor-pointer accent-[#3162e9]"
+                                    className="h-5 w-5 cursor-pointer accent-action"
                                 />
                                 <span className="font-semibold">Colaborador activo</span>
                             </label>
@@ -731,7 +731,7 @@ function EditarUsuario() {
                             <button
                                 type="button"
                                 onClick={() => navigate("/colaboradores")}
-                                className="h-14 cursor-pointer rounded-2xl border border-[#dce3ee] px-6 font-bold text-[#5b6e8b] transition hover:bg-[#f0f4fa]"
+                                className="h-14 cursor-pointer rounded-[10px] border border-border px-6 font-bold text-text-soft transition hover:bg-neutral-bg"
                             >
                                 Cancelar
                             </button>
@@ -751,7 +751,7 @@ function EditarUsuario() {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-7 font-bold text-white transition hover:bg-[#183fca] disabled:cursor-not-allowed disabled:opacity-60"
+                                className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-action px-7 font-bold text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 <Save className="h-5 w-5" />
                                 {isSubmitting ? "Guardando..." : "Guardar"}

@@ -56,7 +56,7 @@ function EditarPlaza() {
   return (
     <DashboardLayout title="Editar Plaza">
       {loading ? (
-        <div className="rounded-[26px] bg-white p-12 text-center text-[#5b6e8b] shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
+        <div className="rounded-[10px] border border-border bg-surface p-12 text-center text-text-soft shadow-none">
           Cargando plaza...
         </div>
       ) : plaza ? (
@@ -70,7 +70,7 @@ function EditarPlaza() {
       ) : (
         <div
           role="alert"
-          className="rounded-[26px] border border-red-200 bg-red-50 p-6 font-semibold text-red-600"
+          className="rounded-[10px] border border-danger bg-danger-bg p-6 font-semibold text-danger"
         >
           {serverError}
           <button

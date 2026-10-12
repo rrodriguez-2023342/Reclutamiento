@@ -60,7 +60,7 @@ function CamposAltaUsuario({ register, errors, valorTipoCuenta = "" }) {
             </div>
 
             <section className="space-y-5">
-                <h2 className="text-lg font-bold text-[#071b3b]">
+                <h2 className="text-lg font-bold text-text-main">
                     Información bancaria
                 </h2>
                 <div className="grid gap-5 sm:grid-cols-2">
@@ -96,7 +96,7 @@ function CamposAltaUsuario({ register, errors, valorTipoCuenta = "" }) {
             </section>
 
             <section className="space-y-5">
-                <h2 className="text-lg font-bold text-[#071b3b]">
+                <h2 className="text-lg font-bold text-text-main">
                     Contacto de emergencia
                 </h2>
                 <div className="grid gap-5 sm:grid-cols-2">

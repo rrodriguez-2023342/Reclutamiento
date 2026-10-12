@@ -423,7 +423,7 @@ function UsuarioPdf({
                     setModalError("");
                     setModalType("ALTA");
                 }}
-                className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-[#3162e9] bg-white px-6 font-bold text-[#3162e9] transition hover:bg-[#edf3ff]"
+                className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-[10px] border border-action bg-surface px-6 font-bold text-action transition hover:bg-neutral-bg"
             >
                 <Download className="h-5 w-5" />
                 Descargar Alta
@@ -434,20 +434,20 @@ function UsuarioPdf({
                     setModalError("");
                     setModalType("BAJA");
                 }}
-                className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-red-300 bg-white px-6 font-bold text-red-700 transition hover:bg-red-50"
+                className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-[10px] border border-danger bg-surface px-6 font-bold text-danger transition hover:bg-danger-bg"
             >
                 <Download className="h-5 w-5" />
                 Dar de baja
             </button>
             {modalType && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4">
-                    <div className="w-full max-w-lg rounded-[26px] bg-white p-6 shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/45 p-4">
+                    <div className="w-full max-w-lg rounded-[10px] border border-border bg-surface p-6 shadow-2xl">
                         <div className="flex items-center justify-between gap-4">
                             <div>
-                                <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#5b6e8b]">
+                                <p className="text-sm font-semibold uppercase tracking-[0.12em] text-text-soft">
                                     Documento
                                 </p>
-                                <h3 className="text-2xl font-bold text-[#071b3b]">
+                                <h3 className="text-2xl font-bold text-text-main">
                                     {modalType === "BAJA"
                                         ? "Datos de la baja"
                                         : "Agregar notas"}
@@ -457,7 +457,7 @@ function UsuarioPdf({
                                 type="button"
                                 onClick={() => !isSavingBaja && setModalType(null)}
                                 disabled={isSavingBaja}
-                                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-[#dce3ee] bg-white text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-[8px] border border-border bg-surface text-text-main transition hover:bg-neutral-bg"
                                 aria-label="Cerrar nota"
                             >
                                 <X className="h-5 w-5" />
@@ -468,7 +468,7 @@ function UsuarioPdf({
                                 <div className="mb-5 grid gap-5 sm:grid-cols-2">
                                     <div>
                                         <label
-                                            className="mb-2 block text-sm font-semibold text-[#071b3b]"
+                                            className="mb-2 block text-sm font-semibold text-text-main"
                                             htmlFor="fecha-baja"
                                         >
                                             Fecha de baja *
@@ -482,12 +482,12 @@ function UsuarioPdf({
                                                 setFechaBaja(event.target.value);
                                                 setModalError("");
                                             }}
-                                            className="w-full rounded-xl border border-[#dce3ee] bg-[#f8faff] px-4 py-3 text-[#071b3b] outline-none transition focus:border-[#3162e9]"
+                                            className="w-full rounded-[8px] border border-border bg-neutral-bg px-4 py-3 text-text-main outline-none transition focus:border-action"
                                         />
                                     </div>
                                     <div>
                                         <label
-                                            className="mb-2 block text-sm font-semibold text-[#071b3b]"
+                                            className="mb-2 block text-sm font-semibold text-text-main"
                                             htmlFor="motivo-baja"
                                         >
                                             Motivo de baja *
@@ -500,7 +500,7 @@ function UsuarioPdf({
                                                 setMotivoBaja(event.target.value);
                                                 setModalError("");
                                             }}
-                                            className="w-full rounded-xl border border-[#dce3ee] bg-[#f8faff] px-4 py-3 text-[#071b3b] outline-none transition focus:border-[#3162e9]"
+                                            className="w-full rounded-[8px] border border-border bg-neutral-bg px-4 py-3 text-text-main outline-none transition focus:border-action"
                                         >
                                             <option value="" disabled>
                                                 Selecciona un motivo
@@ -514,7 +514,7 @@ function UsuarioPdf({
                                     </div>
                                     <div>
                                         <label
-                                            className="mb-2 block text-sm font-semibold text-[#071b3b]"
+                                            className="mb-2 block text-sm font-semibold text-text-main"
                                             htmlFor="reingreso-baja"
                                         >
                                             ¿Puede reingresar? *
@@ -527,7 +527,7 @@ function UsuarioPdf({
                                                 setReingresoBaja(event.target.value);
                                                 setModalError("");
                                             }}
-                                            className="w-full rounded-xl border border-[#dce3ee] bg-[#f8faff] px-4 py-3 text-[#071b3b] outline-none transition focus:border-[#3162e9]"
+                                            className="w-full rounded-[8px] border border-border bg-neutral-bg px-4 py-3 text-text-main outline-none transition focus:border-action"
                                         >
                                             <option value="" disabled>
                                                 Selecciona una opción
@@ -538,7 +538,7 @@ function UsuarioPdf({
                                     </div>
                                 </div>
                             )}
-                            <label className="mb-2 block text-sm font-semibold text-[#071b3b]">
+                            <label className="mb-2 block text-sm font-semibold text-text-main">
                                 Notas del documento
                             </label>
                             <textarea
@@ -550,12 +550,12 @@ function UsuarioPdf({
                                 }
                                 maxLength={160}
                                 rows={7}
-                                className="w-full rounded-2xl border border-[#dce3ee] bg-[#f8faff] px-4 py-3 text-[#071b3b] outline-none transition focus:border-[#3162e9]"
+                                className="w-full rounded-[10px] border border-border bg-neutral-bg px-4 py-3 text-text-main outline-none transition focus:border-action"
                                 placeholder="Escribe aquí las observaciones, comentarios o información adicional que quieres incluir en el PDF..."
                             />
                         </div>
                         {modalError && (
-                            <p className="mt-3 text-sm font-semibold text-red-600" role="alert">
+                            <p className="mt-3 text-sm font-semibold text-danger" role="alert">
                                 {modalError}
                             </p>
                         )}
@@ -564,7 +564,7 @@ function UsuarioPdf({
                                 type="button"
                                 onClick={() => !isSavingBaja && setModalType(null)}
                                 disabled={isSavingBaja}
-                                className="h-12 cursor-pointer rounded-2xl border border-[#dce3ee] px-5 font-bold text-[#5b6e8b] transition hover:bg-[#f0f4fa]"
+                                className="h-12 cursor-pointer rounded-[10px] border border-border px-5 font-bold text-text-soft transition hover:bg-neutral-bg"
                             >
                                 Cancelar
                             </button>
@@ -572,7 +572,7 @@ function UsuarioPdf({
                                 type="button"
                                 onClick={() => handleDownload(modalType)}
                                 disabled={isSavingBaja}
-                                className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-6 font-bold text-white transition hover:bg-[#183fca]"
+                                className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-action px-6 font-bold text-white transition hover:bg-ink"
                             >
                                 <Download className="h-5 w-5" />
                                 {isSavingBaja ? "Guardando baja..." : "Descargar PDF"}

@@ -17,18 +17,18 @@ function UserMenu({ compact = false, onClick }) {
   const content = (
     <>
       <div
-        className={`flex shrink-0 items-center justify-center rounded-full font-bold ${compact ? "h-11 w-11 bg-[#274ba3] text-sm text-white" : "h-12 w-12 bg-[#1e3a8a] text-sm text-white"}`}
+        className={`flex shrink-0 items-center justify-center rounded-full bg-ink font-semibold text-white ${compact ? "h-10 w-10 text-xs" : "h-10 w-10 text-xs"}`}
       >
         {initialsFromName(name)}
       </div>
       <div className="min-w-0 text-left">
         <p
-          className={`truncate font-bold ${compact ? "text-base text-white" : "text-base text-[#071b3b]"}`}
+          className={`truncate font-medium ${compact ? "text-sm text-white" : "text-sm text-text-main"}`}
         >
           {name}
         </p>
         <p
-          className={`mt-0.5 text-sm ${compact ? "text-[#b5c5ee]" : "text-[#315cf5]"}`}
+          className={`mt-0.5 text-xs ${compact ? "text-white/65" : "text-text-soft"}`}
         >
           {role}
         </p>
@@ -41,7 +41,7 @@ function UserMenu({ compact = false, onClick }) {
       <button
         type="button"
         onClick={onClick}
-        className="flex w-full items-center gap-3 rounded-xl text-left transition cursor-pointer hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-[#3162e9]"
+        className="flex w-full cursor-pointer items-center gap-3 rounded-[8px] text-left transition hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-action"
       >
         {content}
       </button>

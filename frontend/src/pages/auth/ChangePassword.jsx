@@ -6,7 +6,7 @@ import { useAuth } from "../../hooks/useAuth.js";
 import { PasswordInput } from "../../components/postulantes/formControls.jsx";
 
 const inputClass =
-  "h-14 w-full rounded-xl border border-[#d9e0eb] bg-white px-5 text-base text-[#0b2146] outline-none transition placeholder:text-[#7b879b] focus:border-[#3162e9] focus:ring-4 focus:ring-[#3162e9]/10";
+  "h-14 w-full rounded-[8px] border border-border bg-surface px-5 text-base text-text-soft outline-none transition placeholder:text-text-soft focus:border-action focus:ring-4 focus:ring-action/10";
 
 function ChangePassword() {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ function ChangePassword() {
         <h1 className="text-4xl font-bold tracking-[-0.05em] sm:text-[40px]">
           {isFirstLogin ? "Establece tu contraseña" : "Cambiar contraseña"}
         </h1>
-        <p className="mt-2 text-base text-[#65738c] sm:text-lg">
+        <p className="mt-2 text-base text-text-soft sm:text-lg">
           {isFirstLogin
             ? "Ingresa la contraseña temporal y define tu nueva contraseña."
             : "Ingresa tu contraseña actual y la nueva."}
@@ -51,18 +51,18 @@ function ChangePassword() {
           noValidate
         >
           {error && (
-            <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-600">
+            <p className="rounded-[8px] bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">
               {error}
             </p>
           )}
           {success && (
-            <p className="rounded-xl bg-green-50 px-4 py-3 text-sm font-semibold text-green-600">
+            <p className="rounded-[8px] bg-success-bg px-4 py-3 text-sm font-semibold text-success">
               Contraseña actualizada correctamente. Redirigiendo...
             </p>
           )}
 
           <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-[#071b3b]">
+            <span className="mb-2 block text-sm font-semibold text-text-main">
               {isFirstLogin ? "Contraseña temporal" : "Contraseña actual"}
             </span>
             <PasswordInput
@@ -80,7 +80,7 @@ function ChangePassword() {
           </label>
 
           <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-[#071b3b]">
+            <span className="mb-2 block text-sm font-semibold text-text-main">
               Nueva contraseña
             </span>
             <PasswordInput
@@ -95,7 +95,7 @@ function ChangePassword() {
           </label>
 
           <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-[#071b3b]">
+            <span className="mb-2 block text-sm font-semibold text-text-main">
               Confirmar nueva contraseña
             </span>
             <PasswordInput
@@ -114,7 +114,7 @@ function ChangePassword() {
           <button
             type="submit"
             disabled={isSubmitting || success}
-            className="mt-1 h-14 w-full rounded-xl bg-[#1e3a8a] cursor-pointer text-base font-semibold text-white transition hover:bg-[#182f70] focus:outline-none focus:ring-4 focus:ring-[#1e3a8a]/25 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-1 h-14 w-full rounded-[8px] bg-ink cursor-pointer text-base font-semibold text-white transition hover:bg-ink focus:outline-none focus:ring-4 focus:ring-ink/25 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting
               ? "Actualizando..."
@@ -124,7 +124,7 @@ function ChangePassword() {
           </button>
         </form>
       </div>
-      <p className="mt-auto pt-8 text-center text-sm text-[#71809a] sm:text-base lg:pt-6">
+      <p className="mt-auto pt-8 text-center text-sm text-text-soft sm:text-base lg:pt-6">
         Uso exclusivo para personal autorizado de Recursos Humanos.
       </p>
     </AuthLayout>

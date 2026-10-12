@@ -170,7 +170,7 @@ function Configuracion() {
             {successMessage && (
                 <div
                     role="status"
-                    className="mb-5 rounded-2xl border border-[#b9e8ce] bg-[#edfff4] px-5 py-4 font-semibold text-[#087947]"
+                    className="mb-5 rounded-[10px] border border-border bg-success-bg px-5 py-4 font-semibold text-success"
                 >
                     {successMessage}
                 </div>
@@ -179,55 +179,55 @@ function Configuracion() {
             {error && (
                 <div
                     role="alert"
-                    className="mb-5 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 font-semibold text-red-600"
+                    className="mb-5 rounded-[10px] border border-danger bg-danger-bg px-5 py-4 font-semibold text-danger"
                 >
                     {error}
                 </div>
             )}
 
-            <section className="rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-6">
+            <section className="rounded-[10px] border border-border bg-surface p-5 shadow-none sm:p-6">
                 <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto]">
-                    <label className="flex h-14 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
+                    <label className="flex h-14 items-center gap-3 rounded-[10px] border border-border px-4 text-text-soft focus-within:border-action focus-within:ring-2 focus-within:ring-action/15">
                         <Search className="h-5 w-5 shrink-0" />
                         <input
                             value={search}
                             onChange={(event) => setSearch(event.target.value)}
                             placeholder="Buscar usuario por nombre, correo o usuario"
-                            className="w-full bg-transparent text-base outline-none placeholder:text-[#91a0b7]"
+                            className="w-full bg-transparent text-base outline-none placeholder:text-text-soft"
                         />
                     </label>
 
                     <Link
                         to="/colaboradores/nuevo"
-                        className="flex h-14 items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-6 font-bold text-white shadow-[0_7px_16px_rgba(49,98,233,0.18)] transition hover:bg-[#183fca]"
+                        className="flex h-14 items-center justify-center gap-2 rounded-[10px] bg-action px-6 font-bold text-white shadow-none transition hover:bg-ink"
                     >
                         <UserPlus className="h-5 w-5" />
                         Nuevo usuario RH
                     </Link>
                 </div>
 
-                <p className="mt-4 text-sm text-[#5b6e8b]">
+                <p className="mt-4 text-sm text-text-soft">
                     Asigna las empresas a las que cada usuario de Recursos
                     Humanos tendrá acceso. Los usuarios sin empresas asignadas
                     no verán colaboradores ni empresas en el sistema.
                 </p>
             </section>
 
-            <section className="mt-7 overflow-hidden rounded-[26px] bg-white shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
+            <section className="mt-7 overflow-hidden rounded-[10px] border border-border bg-surface shadow-none">
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-[860px] border-separate border-spacing-0 text-left">
                         <thead>
-                            <tr className="text-base font-semibold text-[#5b6e8b]">
-                                <th className="border-b border-[#dfe5ee] px-7 py-5 font-semibold">
+                            <tr className="text-base font-semibold text-text-soft">
+                                <th className="border-b border-border px-7 py-5 font-semibold">
                                     Usuario
                                 </th>
-                                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                <th className="border-b border-border px-5 py-5 font-semibold">
                                     Estado
                                 </th>
-                                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                <th className="border-b border-border px-5 py-5 font-semibold">
                                     Empresas asignadas
                                 </th>
-                                <th className="border-b border-[#dfe5ee] px-7 py-5 text-right font-semibold">
+                                <th className="border-b border-border px-7 py-5 text-right font-semibold">
                                     Acciones
                                 </th>
                             </tr>
@@ -237,7 +237,7 @@ function Configuracion() {
                                 <tr>
                                     <td
                                         colSpan="4"
-                                        className="px-7 py-10 text-center font-semibold text-[#5b6e8b]"
+                                        className="px-7 py-10 text-center font-semibold text-text-soft"
                                     >
                                         Cargando usuarios...
                                     </td>
@@ -248,7 +248,7 @@ function Configuracion() {
                                 <tr>
                                     <td
                                         colSpan="4"
-                                        className="px-7 py-10 text-center text-[#5b6e8b]"
+                                        className="px-7 py-10 text-center text-text-soft"
                                     >
                                         {usuarios.length === 0
                                             ? "Aún no hay usuarios con el rol Recursos Humanos. Crea uno desde Colaboradores."
@@ -264,28 +264,28 @@ function Configuracion() {
                                     return (
                                         <tr
                                             key={usuario.id}
-                                            className="transition hover:bg-[#f7f9fd]"
+                                            className="transition hover:bg-neutral-bg"
                                         >
-                                            <td className="border-b border-[#dfe5ee] px-7 py-6">
-                                                <p className="font-bold text-[#071b3b]">
+                                            <td className="border-b border-border px-7 py-6">
+                                                <p className="font-bold text-text-main">
                                                     {usuario.nombre}
                                                 </p>
-                                                <p className="mt-1 text-sm text-[#5b6e8b]">
+                                                <p className="mt-1 text-sm text-text-soft">
                                                     {usuario.correo}
                                                 </p>
                                             </td>
-                                            <td className="border-b border-[#dfe5ee] px-5 py-6">
+                                            <td className="border-b border-border px-5 py-6">
                                                 <span
-                                                    className={`rounded-full px-2.5 py-1 text-xs font-bold ${usuario.activo ? "bg-[#c9f3dd] text-[#087947]" : "bg-[#f1f4f9] text-[#5b6e8b]"}`}
+                                                    className={`rounded-full px-2.5 py-1 text-xs font-bold ${usuario.activo ? "bg-success-bg text-success" : "bg-danger-bg text-danger"}`}
                                                 >
                                                     {usuario.activo
                                                         ? "Activo"
                                                         : "Inactivo"}
                                                 </span>
                                             </td>
-                                            <td className="border-b border-[#dfe5ee] px-5 py-6">
+                                            <td className="border-b border-border px-5 py-6">
                                                 {asignadas.length === 0 ? (
-                                                    <span className="inline-flex rounded-full bg-[#fff3d6] px-3 py-1 text-sm font-semibold text-[#a05a00]">
+                                                    <span className="inline-flex rounded-full bg-pending-bg px-3 py-1 text-sm font-semibold text-pending">
                                                         Sin empresas asignadas
                                                     </span>
                                                 ) : (
@@ -297,7 +297,7 @@ function Configuracion() {
                                                                         fila.empresa
                                                                             .id
                                                                     }
-                                                                    className="inline-flex items-center gap-1 rounded-full bg-[#eef3ff] px-3 py-1 text-sm font-semibold text-[#183fca]"
+                                                                    className="inline-flex items-center gap-1 rounded-full bg-neutral-bg px-3 py-1 text-sm font-semibold text-action"
                                                                 >
                                                                     <Building2 className="h-3.5 w-3.5" />
                                                                     {
@@ -310,7 +310,7 @@ function Configuracion() {
                                                     </div>
                                                 )}
                                             </td>
-                                            <td className="border-b border-[#dfe5ee] px-7 py-6">
+                                            <td className="border-b border-border px-7 py-6">
                                                 <div className="flex justify-end">
                                                     <button
                                                         type="button"
@@ -318,7 +318,7 @@ function Configuracion() {
                                                             abrirModal(usuario)
                                                         }
                                                         aria-label={`Asignar empresas a ${usuario.nombre}`}
-                                                        className="flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#3162e9] px-4 font-bold text-white transition hover:bg-[#183fca]"
+                                                        className="flex h-11 cursor-pointer items-center gap-2 rounded-[8px] bg-action px-4 font-bold text-white transition hover:bg-ink"
                                                     >
                                                         <Building2 className="h-4 w-4" />
                                                         Asignar empresas
@@ -335,28 +335,28 @@ function Configuracion() {
 
             {modalUser && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-ink/45 p-4"
                     role="dialog"
                     aria-modal="true"
                 >
-                    <div className="w-full max-w-lg rounded-[26px] bg-white p-6 shadow-2xl">
-                        <h2 className="text-xl font-bold text-[#071b3b]">
+                    <div className="w-full max-w-lg rounded-[10px] border border-border bg-surface p-6 shadow-2xl">
+                        <h2 className="text-xl font-bold text-text-main">
                             Asignar empresas
                         </h2>
-                        <p className="mt-1 text-[#5b6e8b]">
+                        <p className="mt-1 text-text-soft">
                             {modalUser.nombre} · {modalUser.correo}
                         </p>
 
                         {modalError && (
                             <div
                                 role="alert"
-                                className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 font-semibold text-red-600"
+                                className="mt-4 rounded-[10px] border border-danger bg-danger-bg px-4 py-3 font-semibold text-danger"
                             >
                                 {modalError}
                             </div>
                         )}
 
-                        <label className="mt-5 flex h-12 items-center gap-3 rounded-2xl border border-[#dce3ee] px-4 text-[#65758f] focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15">
+                        <label className="mt-5 flex h-12 items-center gap-3 rounded-[10px] border border-border px-4 text-text-soft focus-within:border-action focus-within:ring-2 focus-within:ring-action/15">
                             <Search className="h-5 w-5 shrink-0" />
                             <input
                                 value={buscadorEmpresas}
@@ -364,18 +364,18 @@ function Configuracion() {
                                     setBuscadorEmpresas(event.target.value)
                                 }
                                 placeholder="Buscar empresa"
-                                className="w-full bg-transparent text-base outline-none placeholder:text-[#91a0b7]"
+                                className="w-full bg-transparent text-base outline-none placeholder:text-text-soft"
                             />
                         </label>
 
-                        <div className="mt-4 max-h-72 overflow-y-auto rounded-2xl border border-[#dce3ee] p-2">
+                        <div className="mt-4 max-h-72 overflow-y-auto rounded-[10px] border border-border p-2">
                             {modalLoading && (
-                                <p className="px-3 py-4 text-[#5b6e8b]">
+                                <p className="px-3 py-4 text-text-soft">
                                     Cargando empresas asignadas...
                                 </p>
                             )}
                             {!modalLoading && empresasFiltradas.length === 0 && (
-                                <p className="px-3 py-4 text-[#5b6e8b]">
+                                <p className="px-3 py-4 text-text-soft">
                                     No hay empresas disponibles.
                                 </p>
                             )}
@@ -383,7 +383,7 @@ function Configuracion() {
                                 empresasFiltradas.map((empresa) => (
                                     <label
                                         key={empresa.id}
-                                        className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-3 transition hover:bg-[#f0f4fa]"
+                                        className="flex cursor-pointer items-center gap-3 rounded-[8px] px-3 py-3 transition hover:bg-neutral-bg"
                                     >
                                         <input
                                             type="checkbox"
@@ -393,13 +393,13 @@ function Configuracion() {
                                             onChange={() =>
                                                 alternarEmpresa(empresa.id)
                                             }
-                                            className="h-5 w-5 shrink-0 accent-[#3162e9]"
+                                            className="h-5 w-5 shrink-0 accent-action"
                                         />
-                                        <span className="font-semibold text-[#071b3b]">
+                                        <span className="font-semibold text-text-main">
                                             {empresa.nombre_empresa}
                                         </span>
                                         {!empresa.activo && (
-                                            <span className="rounded-full bg-[#f1f4f9] px-2 py-0.5 text-xs font-bold text-[#5b6e8b]">
+                                            <span className="rounded-full bg-neutral-bg px-2 py-0.5 text-xs font-bold text-text-soft">
                                                 Inactiva
                                             </span>
                                         )}
@@ -407,7 +407,7 @@ function Configuracion() {
                                 ))}
                         </div>
 
-                        <p className="mt-3 text-sm font-semibold text-[#5b6e8b]">
+                        <p className="mt-3 text-sm font-semibold text-text-soft">
                             {seleccion.length} empresa(s) seleccionada(s)
                         </p>
 
@@ -415,7 +415,7 @@ function Configuracion() {
                             <button
                                 type="button"
                                 onClick={() => setModalUser(null)}
-                                className="h-12 cursor-pointer rounded-2xl border border-[#dce3ee] bg-white px-5 font-bold text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                                className="h-12 cursor-pointer rounded-[10px] border border-border bg-surface px-5 font-bold text-text-main transition hover:bg-neutral-bg"
                             >
                                 Cancelar
                             </button>
@@ -423,7 +423,7 @@ function Configuracion() {
                                 type="button"
                                 onClick={guardar}
                                 disabled={guardando}
-                                className="h-12 cursor-pointer rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca] disabled:cursor-not-allowed disabled:opacity-60"
+                                className="h-12 cursor-pointer rounded-[10px] bg-action px-5 font-bold text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 {guardando ? "Guardando..." : "Guardar"}
                             </button>

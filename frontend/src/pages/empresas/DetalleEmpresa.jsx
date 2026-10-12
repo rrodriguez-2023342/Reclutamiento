@@ -43,19 +43,19 @@ function Modal({ action, loading, onClose, onConfirm }) {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-ink/45 p-4"
             role="dialog"
             aria-modal="true"
         >
-            <div className="w-full max-w-md rounded-[26px] bg-white p-6 shadow-2xl">
-                <h2 className="text-xl font-bold text-[#071b3b]">{action.title}</h2>
-                <p className="mt-2 text-[#5b6e8b]">{action.description}</p>
+            <div className="w-full max-w-md rounded-[10px] border border-border bg-surface p-6 shadow-2xl">
+                <h2 className="text-xl font-bold text-text-main">{action.title}</h2>
+                <p className="mt-2 text-text-soft">{action.description}</p>
                 <div className="mt-6 flex justify-end gap-3">
                     <button
                         type="button"
                         onClick={onClose}
                         disabled={loading}
-                        className="rounded-xl border border-[#dce3ee] px-4 py-2.5 font-semibold text-[#071b3b] cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                        className="rounded-[8px] border border-border px-4 py-2.5 font-semibold text-text-main cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         Cancelar
                     </button>
@@ -63,7 +63,7 @@ function Modal({ action, loading, onClose, onConfirm }) {
                         type="button"
                         onClick={onConfirm}
                         disabled={loading}
-                        className="rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                        className="rounded-[8px] bg-action px-4 py-2.5 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         {loading ? "Procesando..." : "Confirmar"}
                     </button>
@@ -131,7 +131,7 @@ function DetalleEmpresa() {
     return (
         <DashboardLayout title="Detalle de Empresa">
             {loading && (
-                <div className="rounded-[26px] bg-white p-12 text-center text-[#5b6e8b] shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
+                <div className="rounded-[10px] border border-border bg-surface p-12 text-center text-text-soft shadow-none">
                     Cargando empresa...
                 </div>
             )}
@@ -139,7 +139,7 @@ function DetalleEmpresa() {
             {!loading && error && (
                 <div
                     role="alert"
-                    className="rounded-[26px] border border-red-200 bg-red-50 p-6 font-semibold text-red-600"
+                    className="rounded-[10px] border border-danger bg-danger-bg p-6 font-semibold text-danger"
                 >
                     {error}
                     <button
@@ -158,7 +158,7 @@ function DetalleEmpresa() {
                         <button
                             type="button"
                             onClick={() => navigate("/empresas")}
-                            className="flex h-11 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                            className="flex h-11 cursor-pointer items-center gap-2 rounded-[10px] border border-border bg-surface px-4 font-semibold text-text-main transition hover:bg-neutral-bg"
                         >
                             <ArrowLeft className="h-5 w-5" />
                             Volver a empresas
@@ -169,7 +169,7 @@ function DetalleEmpresa() {
                                 <button
                                     type="button"
                                     onClick={() => navigate(`/empresas/${empresa.id}/editar`)}
-                                    className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
+                                    className="flex h-12 cursor-pointer items-center gap-2 rounded-[10px] bg-action px-5 font-bold text-white transition hover:bg-ink"
                                 >
                                     <Pencil className="h-5 w-5" />
                                     Editar
@@ -187,7 +187,7 @@ function DetalleEmpresa() {
                                                 : `¿Deseas activar a ${empresa.nombre_empresa}?`,
                                         })
                                     }
-                                    className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-bold text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                                    className="flex h-12 cursor-pointer items-center gap-2 rounded-[10px] border border-border bg-surface px-4 font-bold text-text-main transition hover:bg-neutral-bg"
                                 >
                                     <Power className="h-5 w-5" />
                                     {empresa.activo ? "Desactivar" : "Activar"}
@@ -196,113 +196,113 @@ function DetalleEmpresa() {
                         )}
                     </div>
 
-                    <section className="rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
-                        <div className="flex flex-col gap-5 border-b border-[#dce3ee] pb-7 sm:flex-row sm:items-center sm:justify-between">
+                    <section className="rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8">
+                        <div className="flex flex-col gap-5 border-b border-border pb-7 sm:flex-row sm:items-center sm:justify-between">
                             <div className="flex items-center gap-4">
-                                <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#f0f4fa] text-xl font-bold text-[#3162e9]">
+                                <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[10px] bg-neutral-bg text-xl font-bold text-action">
                                     <Building2 className="h-7 w-7" />
                                 </span>
                                 <div>
-                                    <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
+                                    <h1 className="text-2xl font-bold tracking-[-0.04em] text-text-main sm:text-3xl">
                                         {empresa.nombre_empresa}
                                     </h1>
-                                    <p className="mt-2 text-[#5b6e8b]">
+                                    <p className="mt-2 text-text-soft">
                                         Información general de la empresa
                                     </p>
                                 </div>
                             </div>
 
                             <span
-                                className={`self-start rounded-full px-3 py-1 text-sm font-semibold ${empresa.activo ? "bg-[#c9f3dd] text-[#087947]" : "bg-[#f1f4f9] text-[#5b6e8b]"}`}
+                                className={`self-start rounded-full px-3 py-1 text-sm font-semibold ${empresa.activo ? "bg-success-bg text-success" : "bg-danger-bg text-danger"}`}
                             >
                                 {empresa.activo ? "Activa" : "Inactiva"}
                             </span>
                         </div>
 
                         <div className="mt-7 grid gap-5 sm:grid-cols-2">
-                            <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">Nombre</p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                            <div className="rounded-[8px] bg-neutral-bg p-5">
+                                <p className="text-sm font-semibold text-text-soft">Nombre</p>
+                                <p className="mt-2 text-lg font-bold text-text-main">
                                     {empresa.nombre_empresa}
                                 </p>
                             </div>
-                            <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">Estado</p>
-                                <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                            <div className="rounded-[8px] bg-neutral-bg p-5">
+                                <p className="text-sm font-semibold text-text-soft">Estado</p>
+                                <p className="mt-2 text-lg font-bold text-text-main">
                                     {empresa.activo ? "Activa" : "Inactiva"}
                                 </p>
                             </div>
-                            <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
+                            <div className="rounded-[8px] bg-neutral-bg p-5 sm:col-span-2">
                                 <p
-                                    className={`text-sm font-semibold ${isEmpty(empresa.detalle_empresa) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                    className={`text-sm font-semibold ${isEmpty(empresa.detalle_empresa) ? "text-danger" : "text-text-soft"}`}
                                 >
                                     Detalle de la Empresa
                                 </p>
                                 <p
-                                    className={`mt-2 text-lg font-bold ${isEmpty(empresa.detalle_empresa) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                    className={`mt-2 text-lg font-bold ${isEmpty(empresa.detalle_empresa) ? "text-danger" : "text-text-main"}`}
                                 >
                                     {empresa.detalle_empresa || "\u2014"}
                                 </p>
                             </div>
 
-                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                            <div className="rounded-[8px] bg-neutral-bg p-5">
                                 <p
-                                    className={`text-sm font-semibold ${isEmpty(empresa.direccion) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                    className={`text-sm font-semibold ${isEmpty(empresa.direccion) ? "text-danger" : "text-text-soft"}`}
                                 >
                                     Dirección
                                 </p>
                                 <p
-                                    className={`mt-2 text-lg font-bold ${isEmpty(empresa.direccion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                    className={`mt-2 text-lg font-bold ${isEmpty(empresa.direccion) ? "text-danger" : "text-text-main"}`}
                                 >
                                     {empresa.direccion || "\u2014"}
                                 </p>
                             </div>
 
-                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                            <div className="rounded-[8px] bg-neutral-bg p-5">
                                 <p
-                                    className={`text-sm font-semibold ${isEmpty(empresa.telefono) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                    className={`text-sm font-semibold ${isEmpty(empresa.telefono) ? "text-danger" : "text-text-soft"}`}
                                 >
                                     Teléfono
                                 </p>
                                 <p
-                                    className={`mt-2 text-lg font-bold ${isEmpty(empresa.telefono) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                    className={`mt-2 text-lg font-bold ${isEmpty(empresa.telefono) ? "text-danger" : "text-text-main"}`}
                                 >
                                     {empresa.telefono || "\u2014"}
                                 </p>
                             </div>
 
-                            <div className="rounded-xl bg-[#f0f4fa] p-5">
+                            <div className="rounded-[8px] bg-neutral-bg p-5">
                                 <p
-                                    className={`text-sm font-semibold ${isEmpty(empresa.correo) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                    className={`text-sm font-semibold ${isEmpty(empresa.correo) ? "text-danger" : "text-text-soft"}`}
                                 >
                                     Correo
                                 </p>
                                 <p
-                                    className={`mt-2 text-lg font-bold ${isEmpty(empresa.correo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                    className={`mt-2 text-lg font-bold ${isEmpty(empresa.correo) ? "text-danger" : "text-text-main"}`}
                                 >
                                     {empresa.correo || "\u2014"}
                                 </p>
                             </div>
 
-                            <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
+                            <div className="rounded-[8px] bg-neutral-bg p-5 sm:col-span-2">
                                 <p
-                                    className={`text-sm font-semibold ${isEmpty(empresa.fecha_aniversario) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                                    className={`text-sm font-semibold ${isEmpty(empresa.fecha_aniversario) ? "text-danger" : "text-text-soft"}`}
                                 >
                                     Fecha de aniversario
                                 </p>
                                 <p
-                                    className={`mt-2 flex items-center gap-2 text-lg font-bold ${isEmpty(empresa.fecha_aniversario) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                    className={`mt-2 flex items-center gap-2 text-lg font-bold ${isEmpty(empresa.fecha_aniversario) ? "text-danger" : "text-text-main"}`}
                                 >
-                                    <CalendarDays className="h-4 w-4 text-[#3162e9]" />
+                                    <CalendarDays className="h-4 w-4 text-action" />
                                     {formatAniversario(empresa.fecha_aniversario)}
                                 </p>
                             </div>
-                            <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
-                                <p className="text-sm font-semibold text-[#5b6e8b]">
+                            <div className="rounded-[8px] bg-neutral-bg p-5 sm:col-span-2">
+                                <p className="text-sm font-semibold text-text-soft">
                                     Fecha de creación
                                 </p>
-                                <p className="mt-2 flex items-center gap-2 text-lg font-bold text-[#071b3b]">
-                                    <CalendarDays className="h-4 w-4 text-[#3162e9]" />
+                                <p className="mt-2 flex items-center gap-2 text-lg font-bold text-text-main">
+                                    <CalendarDays className="h-4 w-4 text-action" />
                                     {formatDate(empresa.creado_en)}
                                 </p>
                             </div>

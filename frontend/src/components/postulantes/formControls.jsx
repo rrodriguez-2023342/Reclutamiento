@@ -5,12 +5,12 @@ import { Controller } from "react-hook-form";
 export function Field({ label, error, children, className = "" }) {
   return (
     <label className={`block ${className}`}>
-      <span className="mb-2 block text-sm font-semibold text-[#071b3b]">
+      <span className="mb-2 block text-sm font-semibold text-text-main">
         {label}
       </span>
       {children}
       {error && (
-        <span className="mt-1 block text-xs font-semibold text-red-500">
+        <span className="mt-1 block text-xs font-semibold text-danger">
           {error}
         </span>
       )}
@@ -28,7 +28,7 @@ export function RadioGroup({ control, name, options, className = "", disabled = 
           control={control}
           rules={{ required: required ? "Este campo es requerido" : false }}
           render={({ field: { onChange, onBlur, value } }) => (
-            <label className="flex items-center gap-2 text-sm text-[#5b6e8b] cursor-pointer">
+            <label className="flex items-center gap-2 text-sm text-text-soft cursor-pointer">
               <input
                 type="radio"
                 name={name}
@@ -41,7 +41,7 @@ export function RadioGroup({ control, name, options, className = "", disabled = 
                 }}
                 onBlur={onBlur}
                 disabled={disabled}
-                className="h-4 w-4 accent-[#3162e9] cursor-pointer"
+                className="h-4 w-4 accent-action cursor-pointer"
               />
               <span>{opt.label}</span>
             </label>
@@ -59,7 +59,7 @@ export function Radio({ control, name, value: radioValue, label, className = "",
       control={control}
       rules={{ required: required ? "Este campo es requerido" : false }}
       render={({ field: { onChange, onBlur, value } }) => (
-        <label className={`flex items-center gap-2 text-sm text-[#5b6e8b] cursor-pointer ${className}`}>
+        <label className={`flex items-center gap-2 text-sm text-text-soft cursor-pointer ${className}`}>
           <input
             type="radio"
             name={name}
@@ -72,7 +72,7 @@ export function Radio({ control, name, value: radioValue, label, className = "",
             }}
             onBlur={onBlur}
             disabled={disabled}
-            className="h-4 w-4 accent-[#3162e9] cursor-pointer"
+            className="h-4 w-4 accent-action cursor-pointer"
           />
           <span>{label}</span>
         </label>
@@ -87,10 +87,10 @@ export function Input({ registration, error, ...props }) {
       <input
         {...registration}
         {...props}
-        className="h-14 w-full rounded-xl border border-[#dce3ee] bg-white px-4 text-base text-[#071b3b] outline-none transition placeholder:text-[#91a0b7] focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
+        className="h-14 w-full rounded-[8px] border border-border bg-surface px-4 text-base text-text-main outline-none transition placeholder:text-text-soft focus:border-action focus:ring-2 focus:ring-action/15"
       />
       {error && (
-        <span className="mt-1 block text-xs font-semibold text-red-500">
+        <span className="mt-1 block text-xs font-semibold text-danger">
           {error}
         </span>
       )}
@@ -104,10 +104,10 @@ export function Textarea({ registration, error, ...props }) {
       <textarea
         {...registration}
         {...props}
-        className="min-h-28 w-full rounded-xl border border-[#dce3ee] bg-white px-4 py-3 text-base text-[#071b3b] outline-none transition placeholder:text-[#91a0b7] focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
+        className="min-h-28 w-full rounded-[8px] border border-border bg-surface px-4 py-3 text-base text-text-main outline-none transition placeholder:text-text-soft focus:border-action focus:ring-2 focus:ring-action/15"
       />
       {error && (
-        <span className="mt-1 block text-xs font-semibold text-red-500">
+        <span className="mt-1 block text-xs font-semibold text-danger">
           {error}
         </span>
       )}
@@ -126,14 +126,14 @@ export function Select({ registration, error, children, onChange, ...props }) {
             registration?.onChange?.(event);
             onChange?.(event);
           }}
-          className="h-14 w-full appearance-none rounded-xl border border-[#dce3ee] bg-white px-4 pr-10 text-base text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
+          className="h-14 w-full appearance-none rounded-[8px] border border-border bg-surface px-4 pr-10 text-base text-text-main outline-none transition focus:border-action focus:ring-2 focus:ring-action/15"
         >
           {children}
         </select>
-        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#65758f]" />
+        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-soft" />
       </div>
       {error && (
-        <span className="mt-1 block text-xs font-semibold text-red-500">
+        <span className="mt-1 block text-xs font-semibold text-danger">
           {error}
         </span>
       )}
@@ -144,23 +144,23 @@ export function Select({ registration, error, children, onChange, ...props }) {
 export function BooleanField({ label, value, onChange }) {
   return (
     <div>
-      <p className="mb-2 text-sm font-semibold text-[#071b3b]">{label}</p>
+      <p className="mb-2 text-sm font-semibold text-text-main">{label}</p>
       <div className="flex gap-5">
-        <label className="flex items-center gap-2 text-sm text-[#5b6e8b]">
+        <label className="flex items-center gap-2 text-sm text-text-soft">
           <input
             type="radio"
             checked={value === true}
             onChange={() => onChange(true)}
-            className="h-4 w-4 accent-[#3162e9]"
+            className="h-4 w-4 accent-action"
           />
           Sí
         </label>
-        <label className="flex items-center gap-2 text-sm text-[#5b6e8b]">
+        <label className="flex items-center gap-2 text-sm text-text-soft">
           <input
             type="radio"
             checked={value === false}
             onChange={() => onChange(false)}
-            className="h-4 w-4 accent-[#3162e9]"
+            className="h-4 w-4 accent-action"
           />
           No
         </label>
@@ -210,13 +210,13 @@ export function PasswordInput({
           type="button"
           onClick={() => setShow((v) => !v)}
           tabIndex={-1}
-          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#65758f] transition hover:text-[#071b3b] cursor-pointer"
+          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-text-soft transition hover:text-text-main cursor-pointer"
         >
           {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
         </button>
       </div>
       {error && (
-        <span className="mt-1 block text-xs font-semibold text-red-500">
+        <span className="mt-1 block text-xs font-semibold text-danger">
           {error}
         </span>
       )}
@@ -288,7 +288,7 @@ function SearchableSelectInner({
     <div ref={ref} className={`relative ${className}`}>
       <div
         onClick={handleClick}
-        className={`flex h-14 cursor-pointer items-center rounded-2xl border border-[#dce3ee] bg-white px-4 text-base font-semibold text-[#071b3b] transition focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15 ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+        className={`flex h-14 cursor-pointer items-center rounded-[10px] border border-border bg-surface px-4 text-base font-semibold text-text-main transition focus-within:border-action focus-within:ring-2 focus-within:ring-action/15 ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
       >
         <input
           ref={inputRef}
@@ -296,7 +296,7 @@ function SearchableSelectInner({
           onChange={handleInputChange}
           onFocus={handleFocus}
           placeholder={placeholder}
-          className="h-full w-full bg-transparent outline-none placeholder:text-[#91a0b7]"
+          className="h-full w-full bg-transparent outline-none placeholder:text-text-soft"
           readOnly={!open && !!displayValue}
           disabled={disabled}
           tabIndex={-1}
@@ -305,18 +305,18 @@ function SearchableSelectInner({
           <button
             type="button"
             onClick={handleClear}
-            className="ml-1 cursor-pointer p-1 text-[#65758f] hover:text-[#071b3b]"
+            className="ml-1 cursor-pointer p-1 text-text-soft hover:text-text-main"
           >
             <X className="h-4 w-4" />
           </button>
         )}
-        <ChevronDown className="ml-1 h-5 w-5 shrink-0 text-[#65758f]" />
-        {open && <Search className="ml-1 h-5 w-5 shrink-0 text-[#65758f]" />}
+        <ChevronDown className="ml-1 h-5 w-5 shrink-0 text-text-soft" />
+        {open && <Search className="ml-1 h-5 w-5 shrink-0 text-text-soft" />}
       </div>
       {open && !disabled && (
-        <ul className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-xl border border-[#dce3ee] bg-white py-1 shadow-lg">
+        <ul className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-[8px] border border-border bg-surface py-1 shadow-lg">
           {filtered.length === 0 && (
-            <li className="px-4 py-3 text-sm text-[#91a0b7]">
+            <li className="px-4 py-3 text-sm text-text-soft">
               Sin resultados
             </li>
           )}
@@ -333,10 +333,10 @@ function SearchableSelectInner({
                   event.preventDefault();
                   handleSelect(o.value);
                 }}
-                className={`w-full cursor-pointer px-4 py-3 text-left text-base transition hover:bg-[#f0f4fa] ${
+                className={`w-full cursor-pointer px-4 py-3 text-left text-base transition hover:bg-neutral-bg ${
                   String(o.value) === String(value ?? "")
-                    ? "font-semibold text-[#3162e9] bg-[#f0f4fa]"
-                    : "text-[#071b3b]"
+                    ? "font-semibold text-action bg-neutral-bg"
+                    : "text-text-main"
                 }`}
               >
                 {o.label}
@@ -346,7 +346,7 @@ function SearchableSelectInner({
         </ul>
       )}
       {error && (
-        <span className="mt-1 block text-xs font-semibold text-red-500">
+        <span className="mt-1 block text-xs font-semibold text-danger">
           {error}
         </span>
       )}

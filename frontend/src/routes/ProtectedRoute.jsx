@@ -7,7 +7,7 @@ function ProtectedRoute({ children }) {
 
   if (loading) {
     return (
-      <div className="flex h-dvh items-center justify-center font-sans text-[#071b3b]">
+      <div className="flex h-dvh items-center justify-center font-sans text-text-main">
         Cargando...
       </div>
     )

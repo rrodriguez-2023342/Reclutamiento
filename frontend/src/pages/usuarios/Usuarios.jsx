@@ -43,19 +43,19 @@ function Modal({ action, loading, onClose, onConfirm }) {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-ink/45 p-4"
             role="dialog"
             aria-modal="true"
         >
-            <div className="w-full max-w-md rounded-[26px] bg-white p-6 shadow-2xl">
-                <h2 className="text-xl font-bold text-[#071b3b]">{action.title}</h2>
-                <p className="mt-2 text-[#5b6e8b]">{action.description}</p>
+            <div className="w-full max-w-md rounded-[10px] border border-border bg-surface p-6 shadow-2xl">
+                <h2 className="text-xl font-bold text-text-main">{action.title}</h2>
+                <p className="mt-2 text-text-soft">{action.description}</p>
                 <div className="mt-6 flex justify-end gap-3">
                     <button
                         type="button"
                         onClick={onClose}
                         disabled={loading}
-                        className="rounded-xl border border-[#dce3ee] px-4 py-2.5 font-semibold text-[#071b3b] cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                        className="rounded-[8px] border border-border px-4 py-2.5 font-semibold text-text-main cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         Cancelar
                     </button>
@@ -63,7 +63,7 @@ function Modal({ action, loading, onClose, onConfirm }) {
                         type="button"
                         onClick={onConfirm}
                         disabled={loading}
-                        className="rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                        className="rounded-[8px] bg-action px-4 py-2.5 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         {loading ? "Procesando..." : action.confirmText}
                     </button>
@@ -253,7 +253,7 @@ function Usuarios() {
             {successMessage && (
                 <div
                     role="status"
-                    className="mb-5 rounded-2xl border border-[#b9e8ce] bg-[#edfff4] px-5 py-4 font-semibold text-[#087947]"
+                    className="mb-5 rounded-[10px] border border-border bg-success-bg px-5 py-4 font-semibold text-success"
                 >
                     {successMessage}
                 </div>
@@ -262,13 +262,13 @@ function Usuarios() {
             {error && (
                 <div
                     role="alert"
-                    className="mb-5 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 font-semibold text-red-600"
+                    className="mb-5 rounded-[10px] border border-danger bg-danger-bg px-5 py-4 font-semibold text-danger"
                 >
                     {error}
                 </div>
             )}
 
-            <section className="rounded-[26px] bg-white p-5 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-6">
+            <section className="rounded-[10px] border border-border bg-surface p-5 shadow-none sm:p-6">
                 <div className="grid gap-4 md:grid-cols-[200px_240px_180px_auto_auto]">
                     <div className="relative">
                         <select
@@ -278,7 +278,7 @@ function Usuarios() {
                                 setEmpresaId(event.target.value);
                                 setPage(1);
                             }}
-                            className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
+                            className="h-14 w-full appearance-none rounded-[10px] border border-border bg-surface px-4 pr-10 text-base font-semibold text-text-main outline-none transition focus:border-action focus:ring-2 focus:ring-action/15"
                         >
                             <option value="">Empresas</option>
                             {empresas.map((empresa) => (
@@ -287,7 +287,7 @@ function Usuarios() {
                                 </option>
                             ))}
                         </select>
-                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#65758f]" />
+                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-soft" />
                     </div>
 
                     <div className="relative">
@@ -298,7 +298,7 @@ function Usuarios() {
                                 setPatronoId(event.target.value);
                                 setPage(1);
                             }}
-                            className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
+                            className="h-14 w-full appearance-none rounded-[10px] border border-border bg-surface px-4 pr-10 text-base font-semibold text-text-main outline-none transition focus:border-action focus:ring-2 focus:ring-action/15"
                         >
                             <option value="">Patronos</option>
                             {patronos.map((patrono) => (
@@ -307,7 +307,7 @@ function Usuarios() {
                                 </option>
                             ))}
                         </select>
-                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#65758f]" />
+                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-soft" />
                     </div>
 
                     <div className="relative">
@@ -318,19 +318,19 @@ function Usuarios() {
                                 setActivo(event.target.value);
                                 setPage(1);
                             }}
-                            className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
+                            className="h-14 w-full appearance-none rounded-[10px] border border-border bg-surface px-4 pr-10 text-base font-semibold text-text-main outline-none transition focus:border-action focus:ring-2 focus:ring-action/15"
                         >
                             <option value="">Estado</option>
                             <option value="true">Activos</option>
                             <option value="false">Inactivos</option>
                         </select>
-                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#65758f]" />
+                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-soft" />
                     </div>
 
                     <button
                         type="button"
                         onClick={() => navigate("/colaboradores/nuevo")}
-                        className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-6 font-bold text-white shadow-[0_7px_16px_rgba(49,98,233,0.18)] transition hover:bg-[#183fca]"
+                        className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-action px-6 font-bold text-white shadow-none transition hover:bg-ink"
                     >
                         <Plus className="h-5 w-5" />
                         Nuevo Colaborador
@@ -339,27 +339,27 @@ function Usuarios() {
                 </div>
             </section>
 
-            <section className="mt-7 overflow-hidden rounded-[26px] bg-white shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
+            <section className="mt-7 overflow-hidden rounded-[10px] border border-border bg-surface shadow-none">
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-[1100px] border-separate border-spacing-0 text-left">
                         <thead>
-                            <tr className="text-base font-semibold text-[#5b6e8b]">
-                                <th className="border-b border-[#dfe5ee] px-6 py-5 font-semibold">
+                            <tr className="text-base font-semibold text-text-soft">
+                                <th className="border-b border-border px-6 py-5 font-semibold">
                                     Nombre
                                 </th>
-                                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                <th className="border-b border-border px-5 py-5 font-semibold">
                                     Empresa
                                 </th>
-                                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                <th className="border-b border-border px-5 py-5 font-semibold">
                                     Patrono
                                 </th>
-                                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                <th className="border-b border-border px-5 py-5 font-semibold">
                                     Estado
                                 </th>
-                                <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                <th className="border-b border-border px-5 py-5 font-semibold">
                                     Creado
                                 </th>
-                                <th className="border-b border-[#dfe5ee] px-6 py-5 text-right font-semibold">
+                                <th className="border-b border-border px-6 py-5 text-right font-semibold">
                                     Acciones
                                 </th>
                             </tr>
@@ -369,7 +369,7 @@ function Usuarios() {
                                 <tr>
                                     <td
                                         colSpan="6"
-                                        className="px-6 py-12 text-center text-[#65758f]"
+                                        className="px-6 py-12 text-center text-text-soft"
                                     >
                                         Cargando colaboradores...
                                     </td>
@@ -380,7 +380,7 @@ function Usuarios() {
                                 <tr>
                                     <td
                                         colSpan="6"
-                                        className="px-6 py-12 text-center text-[#65758f]"
+                                        className="px-6 py-12 text-center text-text-soft"
                                     >
                                         No hay colaboradores que coincidan con la búsqueda.
                                     </td>
@@ -389,34 +389,34 @@ function Usuarios() {
 
                             {!loading &&
                                 result.data.map((usuario) => (
-                                    <tr key={usuario.id} className="align-middle text-[#071b3b]">
-                                        <td className="border-b border-[#eef2f8] px-6 py-4 font-semibold">
+                                    <tr key={usuario.id} className="align-middle text-text-main">
+                                        <td className="border-b border-border px-6 py-4 font-semibold">
                                             {usuario.nombre}
                                         </td>
-                                        <td className="border-b border-[#eef2f8] px-5 py-4 text-[#5b6e8b]">
+                                        <td className="border-b border-border px-5 py-4 text-text-soft">
                                             {usuario.empresa?.nombre_empresa || "—"}
                                         </td>
-                                        <td className="border-b border-[#eef2f8] px-5 py-4 text-[#5b6e8b]">
+                                        <td className="border-b border-border px-5 py-4 text-text-soft">
                                             {usuario.patrono?.razon_social || "—"}
                                         </td>
-                                        <td className="border-b border-[#eef2f8] px-5 py-4">
+                                        <td className="border-b border-border px-5 py-4">
                                             <span
-                                                className={`rounded-full px-2.5 py-1 text-xs font-bold ${usuario.activo ? "bg-[#c9f3dd] text-[#087947]" : "bg-[#f1f4f9] text-[#5b6e8b]"}`}
+                                                className={`rounded-full px-2.5 py-1 text-xs font-bold ${usuario.activo ? "bg-success-bg text-success" : "bg-danger-bg text-danger"}`}
                                             >
                                                 {usuario.activo ? "Activo" : "Inactivo"}
                                             </span>
                                         </td>
-                                        <td className="border-b border-[#eef2f8] px-5 py-4 text-[#5b6e8b]">
+                                        <td className="border-b border-border px-5 py-4 font-mono tabular-nums text-text-soft">
                                             {formatDate(usuario.creado_en)}
                                         </td>
-                                        <td className="border-b border-[#eef2f8] px-6 py-4">
+                                        <td className="border-b border-border px-6 py-4">
                                             <div className="flex justify-end gap-2">
                                                 <button
                                                     type="button"
                                                     onClick={() =>
                                                         navigate(`/colaboradores/${usuario.id}`)
                                                     }
-                                                    className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-[#dce3ee] bg-white text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                                                    className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-[8px] border border-border bg-surface text-text-main transition hover:bg-neutral-bg"
                                                     aria-label={`Ver detalle de ${usuario.nombre}`}
                                                 >
                                                     <Eye className="h-4 w-4" />
@@ -426,7 +426,7 @@ function Usuarios() {
                                                     onClick={() =>
                                                         navigate(`/colaboradores/${usuario.id}/editar`)
                                                     }
-                                                    className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-[#dce3ee] bg-white text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                                                    className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-[8px] border border-border bg-surface text-text-main transition hover:bg-neutral-bg"
                                                     aria-label={`Editar ${usuario.nombre}`}
                                                 >
                                                     <Pencil className="h-4 w-4" />
@@ -449,7 +449,7 @@ function Usuarios() {
                                                         })
                                                     }
                                                     disabled={actionLoading}
-                                                    className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-[#dce3ee] bg-white text-[#071b3b] transition hover:bg-[#f0f4fa] disabled:cursor-not-allowed disabled:opacity-60"
+                                                    className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-[8px] border border-border bg-surface text-text-main transition hover:bg-neutral-bg disabled:cursor-not-allowed disabled:opacity-60"
                                                     aria-label={
                                                         usuario.activo
                                                             ? `Desactivar ${usuario.nombre}`
@@ -470,7 +470,7 @@ function Usuarios() {
                                                         })
                                                     }
                                                     disabled={actionLoading}
-                                                    className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-[#dce3ee] bg-white text-[#071b3b] transition hover:bg-[#f0f4fa] disabled:cursor-not-allowed disabled:opacity-60"
+                                                    className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-[8px] border border-border bg-surface text-text-main transition hover:bg-neutral-bg disabled:cursor-not-allowed disabled:opacity-60"
                                                     aria-label={`Resetear contraseña de ${usuario.nombre}`}
                                                 >
                                                     <Key className="h-4 w-4" />
@@ -484,7 +484,7 @@ function Usuarios() {
                 </div>
             </section>
 
-            <footer className="mt-7 flex flex-col gap-4 px-2 py-2 text-[#5b6e8b] sm:flex-row sm:items-center sm:justify-between">
+            <footer className="mt-7 flex flex-col gap-4 px-2 py-2 text-text-soft sm:flex-row sm:items-center sm:justify-between">
                 <p>
                     Mostrando {firstItem} a {lastItem} de{" "}
                     {result.total.toLocaleString("es-GT")} colaboradores
@@ -494,12 +494,12 @@ function Usuarios() {
                         type="button"
                         disabled={loading || result.page <= 1}
                         onClick={() => setPage((current) => Math.max(1, current - 1))}
-                        className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
+                        className="flex h-11 cursor-pointer items-center gap-1 rounded-[10px] border border-border px-4 font-semibold text-text-main disabled:cursor-not-allowed disabled:opacity-45"
                     >
                         <ChevronLeft className="h-4 w-4" />
                         Anterior
                     </button>
-                    <span className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-[#3162e9] px-3 font-bold text-white">
+                    <span className="flex h-11 min-w-11 items-center justify-center rounded-[8px] bg-action px-3 font-bold text-white">
                         {result.page}
                     </span>
                     <button
@@ -508,7 +508,7 @@ function Usuarios() {
                         onClick={() =>
                             setPage((current) => Math.min(result.totalPages, current + 1))
                         }
-                        className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
+                        className="flex h-11 cursor-pointer items-center gap-1 rounded-[10px] border border-border px-4 font-semibold text-text-main disabled:cursor-not-allowed disabled:opacity-45"
                     >
                         Siguiente
                         <ChevronRight className="h-4 w-4" />

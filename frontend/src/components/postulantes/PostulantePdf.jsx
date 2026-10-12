@@ -134,7 +134,7 @@ function PostulantePdf({ postulante, fotoUrl, onError }) {
       onError?.("No fue posible preparar el documento para imprimir.");
     }
   };
-  return <button type="button" onClick={handlePrint} className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#3162e9] px-4 py-3 font-bold text-white transition hover:bg-[#183fca]"><Download className="h-4 w-4" />Imprimir solicitud</button>;
+  return <button type="button" onClick={handlePrint} className="inline-flex cursor-pointer items-center gap-2 rounded-[8px] bg-action px-4 py-3 font-bold text-white transition hover:bg-ink"><Download className="h-4 w-4" />Imprimir solicitud</button>;
 }
 
 export default PostulantePdf;

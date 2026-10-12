@@ -61,14 +61,14 @@ function DetallePlaza() {
   return (
     <DashboardLayout title="Detalle de Plaza">
       {loading && (
-        <div className="rounded-[26px] bg-white p-12 text-center text-[#5b6e8b] shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
+        <div className="rounded-[10px] border border-border bg-surface p-12 text-center text-text-soft shadow-none">
           Cargando plaza...
         </div>
       )}
       {!loading && error && (
         <div
           role="alert"
-          className="rounded-[26px] border border-red-200 bg-red-50 p-6 font-semibold text-red-600"
+          className="rounded-[10px] border border-danger bg-danger-bg p-6 font-semibold text-danger"
         >
           {error}
           <button
@@ -86,7 +86,7 @@ function DetallePlaza() {
             <button
               type="button"
               onClick={() => navigate("/plazas")}
-              className="flex h-11 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa]"
+              className="flex h-11 cursor-pointer items-center gap-2 rounded-[10px] border border-border bg-surface px-4 font-semibold text-text-main transition hover:bg-neutral-bg"
             >
               <ArrowLeft className="h-5 w-5" />
               Volver a plazas
@@ -94,54 +94,54 @@ function DetallePlaza() {
             <button
               type="button"
               onClick={() => navigate(`/plazas/${plaza.id}/editar`)}
-              className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
+              className="flex h-12 cursor-pointer items-center gap-2 rounded-[10px] bg-action px-5 font-bold text-white transition hover:bg-ink"
             >
               <Pencil className="h-5 w-5" />
               Editar plaza
             </button>
           </div>
-          <section className="rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
-            <div className="flex flex-col gap-5 border-b border-[#dce3ee] pb-7 sm:flex-row sm:items-start sm:justify-between">
+          <section className="rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8">
+            <div className="flex flex-col gap-5 border-b border-border pb-7 sm:flex-row sm:items-start sm:justify-between">
               <div className="flex items-start gap-4">
-                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#f0f4fa] text-[#3162e9]">
+                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[10px] bg-neutral-bg text-action">
                   <BriefcaseBusiness className="h-7 w-7" />
                 </span>
                 <div>
-                  <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
+                  <h1 className="text-2xl font-bold tracking-[-0.04em] text-text-main sm:text-3xl">
                     {plaza.nombre}
                   </h1>
-                  <p className="mt-2 text-[#5b6e8b]">
+                  <p className="mt-2 text-text-soft">
                     Información general de la plaza
                   </p>
                 </div>
               </div>
               <span
-                className={`self-start rounded-full px-3 py-1 text-sm font-semibold ${plaza.activo ? "bg-[#c9f3dd] text-[#087947]" : "bg-[#f1f4f9] text-[#5b6e8b]"}`}
+                className={`self-start rounded-full px-3 py-1 text-sm font-semibold ${plaza.activo ? "bg-success-bg text-success" : "bg-danger-bg text-danger"}`}
               >
                 {plaza.activo ? "Activa" : "Inactiva"}
               </span>
             </div>
             <div className="grid gap-5 py-7 sm:grid-cols-2">
-              <div className="rounded-xl bg-[#f0f4fa] p-5">
+              <div className="rounded-[8px] bg-neutral-bg p-5">
                 <p
-                  className={`text-sm font-semibold ${isEmpty(plaza.salario_min) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                  className={`text-sm font-semibold ${isEmpty(plaza.salario_min) ? "text-danger" : "text-text-soft"}`}
                 >
                   Percentil mínimo
                 </p>
                 <p
-                  className={`mt-2 text-xl font-bold ${isEmpty(plaza.salario_min) ? "text-[#df353c]" : "text-[#3162e9]"}`}
+                  className={`mt-2 text-xl font-bold ${isEmpty(plaza.salario_min) ? "text-danger" : "text-action"}`}
                 >
                   {formatSalary(plaza.salario_min, plaza.tipo_moneda)}
                 </p>
               </div>
-              <div className="rounded-xl bg-[#f0f4fa] p-5">
+              <div className="rounded-[8px] bg-neutral-bg p-5">
                 <p
-                  className={`text-sm font-semibold ${isEmpty(plaza.salario_max) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                  className={`text-sm font-semibold ${isEmpty(plaza.salario_max) ? "text-danger" : "text-text-soft"}`}
                 >
                   Percentil máximo
                 </p>
                 <p
-                  className={`mt-2 text-xl font-bold ${isEmpty(plaza.salario_max) ? "text-[#df353c]" : "text-[#3162e9]"}`}
+                  className={`mt-2 text-xl font-bold ${isEmpty(plaza.salario_max) ? "text-danger" : "text-action"}`}
                 >
                   {formatSalary(plaza.salario_max, plaza.tipo_moneda)}
                 </p>
@@ -150,22 +150,22 @@ function DetallePlaza() {
             <div className="grid gap-7 sm:grid-cols-2">
               <div>
                 <h2
-                  className={`text-lg font-bold ${isEmpty(plaza.descripcion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                  className={`text-lg font-bold ${isEmpty(plaza.descripcion) ? "text-danger" : "text-text-main"}`}
                 >
                   Descripción
                 </h2>
                 <p
-                  className={`mt-3 whitespace-pre-line leading-7 ${isEmpty(plaza.descripcion) ? "text-[#df353c]" : "text-[#5b6e8b]"}`}
+                  className={`mt-3 whitespace-pre-line leading-7 ${isEmpty(plaza.descripcion) ? "text-danger" : "text-text-soft"}`}
                 >
                   {plaza.descripcion || "No hay una descripción registrada."}
                 </p>
               </div>
               <div>
-                <h2 className="text-lg font-bold text-[#071b3b]">
+                <h2 className="text-lg font-bold text-text-main">
                   Fecha de creación
                 </h2>
-                <p className="mt-3 flex items-center gap-2 text-[#5b6e8b]">
-                  <CalendarDays className="h-5 w-5 text-[#3162e9]" />
+                <p className="mt-3 flex items-center gap-2 text-text-soft">
+                  <CalendarDays className="h-5 w-5 text-action" />
                   {formatDate(plaza.creado_en)}
                 </p>
               </div>

@@ -5,9 +5,9 @@ import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { getDashboardSummary } from "../../services/dashboard.service.js";
 
 const statusStyles = {
-  POSTULANTE: "bg-[#fff0bd] text-[#a86b00]",
-  CONTRATADO: "bg-[#c9f3dd] text-[#087947]",
-  RECHAZADO: "bg-[#ffe0e2] text-[#df353c]",
+  POSTULANTE: "bg-pending-bg text-pending",
+  CONTRATADO: "bg-success-bg text-success",
+  RECHAZADO: "bg-danger-bg text-danger",
 };
 
 const statusLabels = {
@@ -76,31 +76,31 @@ function Dashboard() {
         {metrics.map(({ label, value, icon: Icon }) => (
           <article
             key={label}
-            className="rounded-[26px] bg-white px-7 py-7 shadow-[0_10px_24px_rgba(20,43,89,0.06)]"
+            className="rounded-[10px] border border-border bg-surface px-7 py-7 shadow-none"
           >
             <div className="flex items-start justify-between gap-4">
-              <p className="text-base font-medium uppercase tracking-[0.01em] text-[#5b6e8b]">
+              <p className="text-base font-medium uppercase tracking-[0.01em] text-text-soft">
                 {label}
               </p>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f0f4fa] text-[#3162e9]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-[10px] bg-neutral-bg text-action">
                 <Icon className="h-6 w-6" strokeWidth={2} />
               </div>
             </div>
-            <p className="mt-4 text-5xl font-bold tracking-[-0.055em] text-[#071b3b]">
+            <p className="mt-4 text-5xl font-bold tracking-[-0.055em] text-text-main">
               {loading ? "—" : (value || 0).toLocaleString("es-GT")}
             </p>
           </article>
         ))}
       </section>
 
-      <section className="mt-7 rounded-[26px] bg-white px-5 py-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:px-7 sm:py-7">
+      <section className="mt-7 rounded-[10px] border border-border bg-surface px-5 py-6 shadow-none sm:px-7 sm:py-7">
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-2xl">
+          <h2 className="text-xl font-bold tracking-[-0.04em] text-text-main sm:text-2xl">
             Últimas solicitudes ingresadas
           </h2>
           <Link
             to="/postulantes"
-            className="text-sm font-semibold text-[#315cf5] transition hover:text-[#183fca]"
+            className="text-sm font-semibold text-action transition hover:text-action"
           >
             Ver todas
           </Link>
@@ -108,7 +108,7 @@ function Dashboard() {
         <div className="mt-6 overflow-x-auto">
           <table className="w-full min-w-[720px] border-separate border-spacing-0 text-left">
             <thead>
-              <tr className="bg-[#f0f4fa] text-sm font-semibold text-[#5b6e8b]">
+              <tr className="bg-neutral-bg text-sm font-semibold text-text-soft">
                 <th className="rounded-l-2xl px-5 py-4 font-semibold">
                   Postulante
                 </th>
@@ -122,7 +122,7 @@ function Dashboard() {
                 <tr>
                   <td
                     colSpan="4"
-                    className="px-5 py-12 text-center text-[#5b6e8b]"
+                    className="px-5 py-12 text-center text-text-soft"
                   >
                     Cargando solicitudes…
                   </td>
@@ -132,7 +132,7 @@ function Dashboard() {
                 <tr>
                   <td
                     colSpan="4"
-                    className="px-5 py-12 text-center text-[#df353c]"
+                    className="px-5 py-12 text-center text-danger"
                   >
                     {error}
                   </td>
@@ -142,7 +142,7 @@ function Dashboard() {
                 <tr>
                   <td
                     colSpan="4"
-                    className="px-5 py-12 text-center text-[#5b6e8b]"
+                    className="px-5 py-12 text-center text-text-soft"
                   >
                     Aún no hay solicitudes registradas.
                   </td>
@@ -152,20 +152,20 @@ function Dashboard() {
                 !error &&
                 applications.map((application) => (
                   <tr key={application.id} className="text-base">
-                    <td className="border-b border-[#dfe5ee] px-5 py-5 font-semibold text-[#071b3b]">
+                    <td className="border-b border-border px-5 py-5 font-semibold text-text-main">
                       {application.nombre_completo}
                     </td>
-                    <td className="border-b border-[#dfe5ee] px-5 py-5 text-[#5b6e8b]">
+                    <td className="border-b border-border px-5 py-5 text-text-soft">
                       {application.plaza?.nombre || "—"}
                     </td>
-                    <td className="border-b border-[#dfe5ee] px-5 py-5">
+                    <td className="border-b border-border px-5 py-5">
                       <span
-                        className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${statusStyles[application.estado] || "bg-[#f1f4f9] text-[#5b6e8b]"}`}
+                        className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${statusStyles[application.estado] || "bg-neutral-bg text-text-soft"}`}
                       >
                         {statusLabels[application.estado] || application.estado}
                       </span>
                     </td>
-                    <td className="border-b border-[#dfe5ee] px-5 py-5 text-[#5b6e8b]">
+                    <td className="border-b border-border px-5 py-5 text-text-soft">
                       {formatDate(application.fecha_registro)}
                     </td>
                   </tr>

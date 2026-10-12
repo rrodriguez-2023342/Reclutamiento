@@ -12,7 +12,7 @@ const steps = [
 function StepIndicator({ currentStep, maxStep, onGoTo }) {
   return (
     <nav
-      className="overflow-x-auto rounded-[26px] bg-white px-5 py-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)]"
+      className="overflow-x-auto rounded-[10px] border border-border bg-surface px-5 py-6 shadow-none"
       aria-label="Progreso del formulario"
     >
       <ol className="flex min-w-[1050px] items-center justify-between gap-3">
@@ -27,7 +27,7 @@ function StepIndicator({ currentStep, maxStep, onGoTo }) {
                 type="button"
                 disabled={!available}
                 onClick={() => onGoTo(step)}
-                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-bold transition cursor-pointer ${active ? "bg-[#3162e9] text-white" : done ? "bg-[#1e3a8a] text-white" : "bg-[#f0f4fa] text-[#65758f]"} disabled:cursor-default`}
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-bold transition cursor-pointer ${active ? "bg-action text-white" : done ? "bg-ink text-white" : "bg-neutral-bg text-text-soft"} disabled:cursor-default`}
               >
                 {step}
               </button>
@@ -35,13 +35,13 @@ function StepIndicator({ currentStep, maxStep, onGoTo }) {
                 type="button"
                 disabled={!available}
                 onClick={() => onGoTo(step)}
-                className={`min-w-0 text-left text-sm cursor-pointer disabled:cursor-default ${active ? "text-[#071b3b]" : "text-[#65758f]"}`}
+                className={`min-w-0 text-left text-sm cursor-pointer disabled:cursor-default ${active ? "text-text-main" : "text-text-soft"}`}
               >
                 <span className="block font-bold">{stepLabel}</span>
                 <span className="block leading-tight">{label}</span>
               </button>
               {step < steps.length && (
-                <span className="h-px flex-1 bg-[#dce3ee]" />
+                <span className="h-px flex-1 bg-border" />
               )}
             </li>
           );

@@ -94,19 +94,19 @@ function Modal({ action, loading, onClose, onConfirm }) {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-ink/45 p-4"
             role="dialog"
             aria-modal="true"
         >
-            <div className="w-full max-w-md rounded-[26px] bg-white p-6 shadow-2xl">
-                <h2 className="text-xl font-bold text-[#071b3b]">{action.title}</h2>
-                <p className="mt-2 text-[#5b6e8b]">{action.description}</p>
+            <div className="w-full max-w-md rounded-[10px] border border-border bg-surface p-6 shadow-2xl">
+                <h2 className="text-xl font-bold text-text-main">{action.title}</h2>
+                <p className="mt-2 text-text-soft">{action.description}</p>
                 <div className="mt-6 flex justify-end gap-3">
                     <button
                         type="button"
                         onClick={onClose}
                         disabled={loading}
-                        className="rounded-xl border border-[#dce3ee] px-4 py-2.5 font-semibold text-[#071b3b] cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                        className="rounded-[8px] border border-border px-4 py-2.5 font-semibold text-text-main cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         Cancelar
                     </button>
@@ -114,7 +114,7 @@ function Modal({ action, loading, onClose, onConfirm }) {
                         type="button"
                         onClick={onConfirm}
                         disabled={loading}
-                        className="rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                        className="rounded-[8px] bg-action px-4 py-2.5 font-bold text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         {loading ? "Procesando..." : "Confirmar"}
                     </button>
@@ -213,7 +213,7 @@ function DetalleUsuario() {
     return (
         <DashboardLayout title="Detalle de Colaborador">
             {loading && (
-                <div className="rounded-[26px] bg-white p-12 text-center text-[#5b6e8b] shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
+                <div className="rounded-[10px] border border-border bg-surface p-12 text-center text-text-soft shadow-none">
                     Cargando colaborador...
                 </div>
             )}
@@ -221,7 +221,7 @@ function DetalleUsuario() {
             {!loading && error && (
                 <div
                     role="alert"
-                    className="rounded-[26px] border border-red-200 bg-red-50 p-6 font-semibold text-red-600"
+                    className="rounded-[10px] border border-danger bg-danger-bg p-6 font-semibold text-danger"
                 >
                     {error}
                     <button
@@ -240,7 +240,7 @@ function DetalleUsuario() {
                         <button
                             type="button"
                             onClick={() => navigate("/colaboradores")}
-                            className="flex h-11 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                            className="flex h-11 cursor-pointer items-center gap-2 rounded-[10px] border border-border bg-surface px-4 font-semibold text-text-main transition hover:bg-neutral-bg"
                         >
                             <ArrowLeft className="h-5 w-5" />
                             Volver a colaboradores
@@ -250,7 +250,7 @@ function DetalleUsuario() {
                             <button
                                 type="button"
                                 onClick={() => navigate(`/informes?colaborador=${usuario.id}`)}
-                                className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-bold text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                                className="flex h-12 cursor-pointer items-center gap-2 rounded-[10px] border border-border bg-surface px-4 font-bold text-text-main transition hover:bg-neutral-bg"
                             >
                                 <FileText className="h-5 w-5" />
                                 Generar documento
@@ -258,7 +258,7 @@ function DetalleUsuario() {
                             <button
                                 type="button"
                                 onClick={() => navigate(`/colaboradores/${usuario.id}/editar`)}
-                                className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
+                                className="flex h-12 cursor-pointer items-center gap-2 rounded-[10px] bg-action px-5 font-bold text-white transition hover:bg-ink"
                             >
                                 <Pencil className="h-5 w-5" />
                                 Editar
@@ -276,7 +276,7 @@ function DetalleUsuario() {
                                             : `¿Deseas activar a ${usuario.nombre}?`,
                                     })
                                 }
-                                className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-bold text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                                className="flex h-12 cursor-pointer items-center gap-2 rounded-[10px] border border-border bg-surface px-4 font-bold text-text-main transition hover:bg-neutral-bg"
                             >
                                 <Power className="h-5 w-5" />
                                 {usuario.activo ? "Desactivar" : "Activar"}
@@ -290,7 +290,7 @@ function DetalleUsuario() {
                                         description: `¿Deseas enviar una contraseña temporal a ${usuario.nombre}?`,
                                     })
                                 }
-                                className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-bold text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                                className="flex h-12 cursor-pointer items-center gap-2 rounded-[10px] border border-border bg-surface px-4 font-bold text-text-main transition hover:bg-neutral-bg"
                             >
                                 <Key className="h-5 w-5" />
                                 Resetear contraseña
@@ -299,192 +299,192 @@ function DetalleUsuario() {
                     </div>
 
                     <div className="space-y-6">
-                        <section className="rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
-                            <div className="flex flex-col gap-5 border-b border-[#dce3ee] pb-7 sm:flex-row sm:items-center sm:justify-between">
+                        <section className="rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8">
+                            <div className="flex flex-col gap-5 border-b border-border pb-7 sm:flex-row sm:items-center sm:justify-between">
                                 <div className="flex items-center gap-4">
-                                    <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#f0f4fa] text-xl font-bold text-[#3162e9]">
+                                    <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[10px] bg-neutral-bg text-xl font-bold text-action">
                                         {initialsFromName(usuario.nombre)}
                                     </span>
                                     <div>
-                                        <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
+                                        <h1 className="text-2xl font-bold tracking-[-0.04em] text-text-main sm:text-3xl">
                                             {usuario.nombre}
                                         </h1>
-                                        <p className="mt-2 text-[#5b6e8b]">
+                                        <p className="mt-2 text-text-soft">
                                             Información general del colaborador
                                         </p>
                                     </div>
                                 </div>
 
                                 <span
-                                    className={`self-start rounded-full px-3 py-1 text-sm font-semibold ${usuario.activo ? "bg-[#c9f3dd] text-[#087947]" : "bg-[#f1f4f9] text-[#5b6e8b]"}`}
+                                    className={`self-start rounded-full px-3 py-1 text-sm font-semibold ${usuario.activo ? "bg-success-bg text-success" : "bg-danger-bg text-danger"}`}
                                 >
                                     {usuario.activo ? "Activo" : "Inactivo"}
                                 </span>
                             </div>
 
                             <div className="mt-7 grid gap-5 sm:grid-cols-2">
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Correo</p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Correo</p>
+                                    <p className="mt-2 text-lg font-bold text-text-main">
                                         {usuario.correo || "—"}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Usuario</p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Usuario</p>
+                                    <p className="mt-2 text-lg font-bold text-text-main">
                                         {usuario.usuario || "—"}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Rol</p>
-                                    <p className="mt-2 flex items-center gap-2 text-lg font-bold text-[#071b3b]">
-                                        <Eye className="h-4 w-4 text-[#3162e9]" />
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Rol</p>
+                                    <p className="mt-2 flex items-center gap-2 text-lg font-bold text-text-main">
+                                        <Eye className="h-4 w-4 text-action" />
                                         {usuario.rol?.nombre || "Sin rol"}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Estado</p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Estado</p>
+                                    <p className="mt-2 text-lg font-bold text-text-main">
                                         {usuario.activo ? "Activo" : "Inactivo"}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">
                                         Fecha de creación
                                     </p>
-                                    <p className="mt-2 flex items-center gap-2 text-lg font-bold text-[#071b3b]">
-                                        <CalendarDays className="h-4 w-4 text-[#3162e9]" />
+                                    <p className="mt-2 flex items-center gap-2 text-lg font-bold text-text-main">
+                                        <CalendarDays className="h-4 w-4 text-action" />
                                         {formatDate(usuario.creado_en)}
                                     </p>
                                 </div>
                             </div>
                         </section>
 
-                        <section className="rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
-                            <h2 className="text-lg font-bold text-[#071b3b]">
+                        <section className="rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8">
+                            <h2 className="text-lg font-bold text-text-main">
                                 Datos personales
                             </h2>
                             <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">
                                         Fecha de nacimiento
                                     </p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.fecha_nacimiento) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.fecha_nacimiento) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {formatDate(usuario.fecha_nacimiento)}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Edad</p>
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Edad</p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.fecha_nacimiento) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.fecha_nacimiento) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {calcularEdad(usuario.fecha_nacimiento)}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">
                                         Fecha de contratación
                                     </p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.fecha_contratacion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.fecha_contratacion) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {formatDate(usuario.fecha_contratacion)}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">
                                         Tipo de contrato
                                     </p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                    <p className="mt-2 text-lg font-bold text-text-main">
                                         {usuario.tipo_contrato === "DEFINIDO"
                                             ? "Definido"
                                             : "Indefinido"}
                                     </p>
                                     {usuario.tipo_contrato === "DEFINIDO" && (
-                                        <p className="mt-2 text-sm text-[#5b6e8b]">
+                                        <p className="mt-2 text-sm text-text-soft">
                                             Finaliza:{" "}
-                                            <span className="font-semibold text-[#071b3b]">
+                                            <span className="font-semibold text-text-main">
                                                 {formatDate(usuario.fecha_fin_contrato)}
                                             </span>
                                         </p>
                                     )}
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Sexo</p>
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Sexo</p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.sexo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.sexo) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {traducirEnum(usuario.sexo)}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Estado civil</p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Estado civil</p>
+                                    <p className="mt-2 text-lg font-bold text-text-main">
                                         {traducirEnum(usuario.estado_civil)}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Nacionalidad</p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Nacionalidad</p>
+                                    <p className="mt-2 text-lg font-bold text-text-main">
                                         {usuario.nacionalidad || "—"}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Teléfono</p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Teléfono</p>
+                                    <p className="mt-2 text-lg font-bold text-text-main">
                                         {usuario.telefono || "—"}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Último grado cursado</p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Último grado cursado</p>
+                                    <p className="mt-2 text-lg font-bold text-text-main">
                                         {traducirEnum(usuario.ultimo_grado_cursado)}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">DPI</p>
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">DPI</p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.dpi) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.dpi) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {usuario.dpi || "—"}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">NIT</p>
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">NIT</p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.nit) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.nit) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {usuario.nit || "—"}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">
                                         No. de afiliación IGSS
                                     </p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.numero_afiliacion_igss) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.numero_afiliacion_igss) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {usuario.numero_afiliacion_igss || "—"}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">
                                         Extendido en
                                     </p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.dpi_extendido_en) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.dpi_extendido_en) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {usuario.dpi_extendido_en || "—"}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5 sm:col-span-2">
+                                    <p className="text-sm font-semibold text-text-soft">
                                         Dirección
                                     </p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.direccion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.direccion) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {usuario.direccion || "—"}
                                     </p>
@@ -492,57 +492,57 @@ function DetalleUsuario() {
                             </div>
                         </section>
 
-                        <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
-                            <h2 className="text-lg font-bold text-[#071b3b]">
+                        <section className="mt-6 rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8">
+                            <h2 className="text-lg font-bold text-text-main">
                                 Información bancaria
                             </h2>
                             <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Banco</p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">{usuario.banco || "—"}</p>
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Banco</p>
+                                    <p className="mt-2 text-lg font-bold text-text-main">{usuario.banco || "—"}</p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Tipo de cuenta</p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">{usuario.tipo_cuenta_bancaria || "—"}</p>
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Tipo de cuenta</p>
+                                    <p className="mt-2 text-lg font-bold text-text-main">{usuario.tipo_cuenta_bancaria || "—"}</p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">No. de cuenta bancaria</p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">{usuario.numero_cuenta_bancaria || "—"}</p>
+                                <div className="rounded-[8px] bg-neutral-bg p-5 sm:col-span-2">
+                                    <p className="text-sm font-semibold text-text-soft">No. de cuenta bancaria</p>
+                                    <p className="mt-2 text-lg font-bold text-text-main">{usuario.numero_cuenta_bancaria || "—"}</p>
                                 </div>
                             </div>
                         </section>
 
-                        <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
-                            <h2 className="text-lg font-bold text-[#071b3b]">
+                        <section className="mt-6 rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8">
+                            <h2 className="text-lg font-bold text-text-main">
                                 Contacto de emergencia
                             </h2>
                             <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Nombre</p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">{usuario.contacto_emergencia_nombre || "—"}</p>
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Nombre</p>
+                                    <p className="mt-2 text-lg font-bold text-text-main">{usuario.contacto_emergencia_nombre || "—"}</p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Teléfono</p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">{usuario.contacto_emergencia_telefono || "—"}</p>
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Teléfono</p>
+                                    <p className="mt-2 text-lg font-bold text-text-main">{usuario.contacto_emergencia_telefono || "—"}</p>
                                 </div>
                             </div>
                         </section>
 
                         {(usuario.fecha_baja || usuario.motivo_baja || usuario.notas_baja || usuario.reingreso_baja !== null) && (
-                            <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
-                                <h2 className="text-lg font-bold text-[#071b3b]">Datos de baja</h2>
+                            <section className="mt-6 rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8">
+                                <h2 className="text-lg font-bold text-text-main">Datos de baja</h2>
                                 <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                                    <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                        <p className="text-sm font-semibold text-[#5b6e8b]">Fecha de baja</p>
-                                        <p className="mt-2 text-lg font-bold text-[#071b3b]">{formatDate(usuario.fecha_baja)}</p>
+                                    <div className="rounded-[8px] bg-neutral-bg p-5">
+                                        <p className="text-sm font-semibold text-text-soft">Fecha de baja</p>
+                                        <p className="mt-2 text-lg font-bold text-text-main">{formatDate(usuario.fecha_baja)}</p>
                                     </div>
-                                    <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                        <p className="text-sm font-semibold text-[#5b6e8b]">Motivo</p>
-                                        <p className="mt-2 text-lg font-bold text-[#071b3b]">{usuario.motivo_baja || "—"}</p>
+                                    <div className="rounded-[8px] bg-neutral-bg p-5">
+                                        <p className="text-sm font-semibold text-text-soft">Motivo</p>
+                                        <p className="mt-2 text-lg font-bold text-text-main">{usuario.motivo_baja || "—"}</p>
                                     </div>
-                                    <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                        <p className="text-sm font-semibold text-[#5b6e8b]">¿Puede reingresar?</p>
-                                        <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                    <div className="rounded-[8px] bg-neutral-bg p-5">
+                                        <p className="text-sm font-semibold text-text-soft">¿Puede reingresar?</p>
+                                        <p className="mt-2 text-lg font-bold text-text-main">
                                             {usuario.reingreso_baja == null
                                                 ? "—"
                                                 : usuario.reingreso_baja
@@ -550,45 +550,45 @@ function DetalleUsuario() {
                                                   : "No"}
                                         </p>
                                     </div>
-                                    <div className="rounded-xl bg-[#f0f4fa] p-5 sm:col-span-2">
-                                        <p className="text-sm font-semibold text-[#5b6e8b]">Notas</p>
-                                        <p className="mt-2 whitespace-pre-wrap text-[#071b3b]">{usuario.notas_baja || "—"}</p>
+                                    <div className="rounded-[8px] bg-neutral-bg p-5 sm:col-span-2">
+                                        <p className="text-sm font-semibold text-text-soft">Notas</p>
+                                        <p className="mt-2 whitespace-pre-wrap text-text-main">{usuario.notas_baja || "—"}</p>
                                     </div>
                                 </div>
                             </section>
                         )}
 
-                        <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                        <section className="mt-6 rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8">
                             <div className="flex items-center justify-between">
-                                <h2 className="text-lg font-bold text-[#071b3b]">
+                                <h2 className="text-lg font-bold text-text-main">
                                     Empresa y patrono
                                 </h2>
                                 <button
                                     type="button"
                                     onClick={() => setShowHistorialEmpresa(true)}
-                                    className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#3162e9] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#183fca]"
+                                    className="flex cursor-pointer items-center gap-2 rounded-[8px] bg-action px-4 py-2 text-sm font-bold text-white transition hover:bg-ink"
                                 >
                                     <Clock className="h-4 w-4" />
                                     Ver historial
                                 </button>
                             </div>
                             <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">
                                         Empresa
                                     </p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.empresa) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.empresa) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {usuario.empresa?.nombre_empresa || "Sin empresa"}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">
                                         Patrono
                                     </p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.patrono) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.patrono) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {usuario.patrono?.razon_social || "Sin patrono"}
                                     </p>
@@ -596,37 +596,37 @@ function DetalleUsuario() {
                             </div>
                         </section>
 
-                        <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                        <section className="mt-6 rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8">
                             <div className="flex items-center justify-between">
-                                <h2 className="text-lg font-bold text-[#071b3b]">
+                                <h2 className="text-lg font-bold text-text-main">
                                     Información económica
                                 </h2>
                                 <button
                                     type="button"
                                     onClick={() => setShowHistorial(true)}
-                                    className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#3162e9] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#183fca]"
+                                    className="flex cursor-pointer items-center gap-2 rounded-[8px] bg-action px-4 py-2 text-sm font-bold text-white transition hover:bg-ink"
                                 >
                                     <Clock className="h-4 w-4" />
                                     Ver historial
                                 </button>
                             </div>
                             <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">
                                         Sueldo Base
                                     </p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.sueldo) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.sueldo) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {formatCurrency(usuario.sueldo, usuario.moneda_sueldo)}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">
                                         Bonificación decreto ley
                                     </p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.bonos) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.bonos) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {formatCurrency(usuario.bonos, usuario.moneda_sueldo)}
                                     </p>
@@ -634,64 +634,64 @@ function DetalleUsuario() {
                             </div>
                         </section>
 
-                        <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                        <section className="mt-6 rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8">
                             <div className="flex items-center gap-3">
-                                <Shield className="h-6 w-6 text-[#3162e9]" />
-                                <h2 className="text-lg font-bold text-[#071b3b]">Seguros</h2>
+                                <Shield className="h-6 w-6 text-action" />
+                                <h2 className="text-lg font-bold text-text-main">Seguros</h2>
                             </div>
                             <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">
                                         Seguro de Gastos Médicos
                                     </p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${!usuario.tiene_seguro_gastos_medicos ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${!usuario.tiene_seguro_gastos_medicos ? "text-danger" : "text-text-main"}`}
                                     >
                                         {usuario.tiene_seguro_gastos_medicos ? "Sí" : "No"}
                                     </p>
                                     {usuario.tiene_seguro_gastos_medicos && (
                                         <>
-                                            <p className="mt-2 text-sm text-[#5b6e8b]">
+                                            <p className="mt-2 text-sm text-text-soft">
                                                 Empresa:{" "}
-                                                <span className="font-semibold text-[#071b3b]">
+                                                <span className="font-semibold text-text-main">
                                                     {usuario.empresa_seguro_gastos_medicos || "—"}
                                                 </span>
                                             </p>
-                                            <p className="mt-2 text-sm text-[#5b6e8b]">
+                                            <p className="mt-2 text-sm text-text-soft">
                                                 Modalidad:{" "}
-                                                <span className="font-semibold text-[#071b3b]">
+                                                <span className="font-semibold text-text-main">
                                                     {usuario.tipo_seguro_gastos_medicos || "—"}
                                                 </span>
                                             </p>
-                                            <p className="mt-2 text-sm text-[#5b6e8b]">
+                                            <p className="mt-2 text-sm text-text-soft">
                                                 Categoría:{" "}
-                                                <span className="font-semibold text-[#071b3b]">
+                                                <span className="font-semibold text-text-main">
                                                     {usuario.categoria_seguro_gastos_medicos || "—"}
                                                 </span>
                                             </p>
                                         </>
                                     )}
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">
                                         Seguro de Vida
                                     </p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${!usuario.tiene_seguro_vida ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${!usuario.tiene_seguro_vida ? "text-danger" : "text-text-main"}`}
                                     >
                                         {usuario.tiene_seguro_vida ? "Sí" : "No"}
                                     </p>
                                     {usuario.tiene_seguro_vida && (
                                         <>
-                                            <p className="mt-2 text-sm text-[#5b6e8b]">
+                                            <p className="mt-2 text-sm text-text-soft">
                                                 Empresa:{" "}
-                                                <span className="font-semibold text-[#071b3b]">
+                                                <span className="font-semibold text-text-main">
                                                     {usuario.empresa_seguro_vida || "—"}
                                                 </span>
                                             </p>
-                                            <p className="mt-2 text-sm text-[#5b6e8b]">
+                                            <p className="mt-2 text-sm text-text-soft">
                                                 Categoría:{" "}
-                                                <span className="font-semibold text-[#071b3b]">
+                                                <span className="font-semibold text-text-main">
                                                     {usuario.categoria_seguro_vida || "—"}
                                                 </span>
                                             </p>
@@ -701,32 +701,32 @@ function DetalleUsuario() {
                             </div>
                         </section>
 
-                        <section className="mt-6 rounded-[26px] bg-white p-6 shadow-[0_10px_24px_rgba(20,43,89,0.06)] sm:p-8">
+                        <section className="mt-6 rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8">
                             <div className="flex items-center gap-3">
-                                <Briefcase className="h-6 w-6 text-[#3162e9]" />
-                                <h2 className="text-lg font-bold text-[#071b3b]">Puesto</h2>
+                                <Briefcase className="h-6 w-6 text-action" />
+                                <h2 className="text-lg font-bold text-text-main">Puesto</h2>
                             </div>
                             <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Puesto</p>
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Puesto</p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.puesto) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.puesto) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {usuario.puesto?.nombre || "Sin puesto"}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">Departamento</p>
-                                    <p className="mt-2 text-lg font-bold text-[#071b3b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">Departamento</p>
+                                    <p className="mt-2 text-lg font-bold text-text-main">
                                         {usuario.puesto?.departamento?.nombre || "—"}
                                     </p>
                                 </div>
-                                <div className="rounded-xl bg-[#f0f4fa] p-5">
-                                    <p className="text-sm font-semibold text-[#5b6e8b]">
+                                <div className="rounded-[8px] bg-neutral-bg p-5">
+                                    <p className="text-sm font-semibold text-text-soft">
                                         Descripción
                                     </p>
                                     <p
-                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.puesto?.descripcion) ? "text-[#df353c]" : "text-[#071b3b]"}`}
+                                        className={`mt-2 text-lg font-bold ${isEmpty(usuario.puesto?.descripcion) ? "text-danger" : "text-text-main"}`}
                                     >
                                         {usuario.puesto?.descripcion || "—"}
                                     </p>
@@ -789,19 +789,19 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-ink/45 p-4"
             role="dialog"
             aria-modal="true"
         >
-            <div className="w-full max-w-5xl max-h-[80vh] overflow-hidden rounded-[26px] bg-white shadow-2xl flex flex-col">
-                <div className="flex items-center justify-between border-b border-[#dce3ee] px-6 py-4">
-                    <h2 className="text-xl font-bold text-[#071b3b]">
+            <div className="w-full max-w-5xl max-h-[80vh] overflow-hidden rounded-[10px] border border-border bg-surface shadow-2xl flex flex-col">
+                <div className="flex items-center justify-between border-b border-border px-6 py-4">
+                    <h2 className="text-xl font-bold text-text-main">
                         Historial de sueldo base y bonificación decreto ley
                     </h2>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="cursor-pointer text-[#5b6e8b] transition hover:text-[#071b3b]"
+                        className="cursor-pointer text-text-soft transition hover:text-text-main"
                     >
                         ✕
                     </button>
@@ -809,58 +809,58 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
 
                 <div className="overflow-auto flex-1 p-6">
                     {loading ? (
-                        <p className="text-center text-[#5b6e8b]">Cargando historial...</p>
+                        <p className="text-center text-text-soft">Cargando historial...</p>
                     ) : data.length === 0 ? (
-                        <p className="text-center text-[#5b6e8b]">
+                        <p className="text-center text-text-soft">
                             No hay registros de cambios de sueldo base.
                         </p>
                     ) : (
                         <table className="w-full border-separate border-spacing-0 text-left text-sm">
                             <thead>
-                                <tr className="text-base font-semibold text-[#5b6e8b]">
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">Fecha</th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                <tr className="text-base font-semibold text-text-soft">
+                                    <th className="border-b border-border px-4 py-3">Fecha</th>
+                                    <th className="border-b border-border px-4 py-3">
                                         Sueldo base anterior
                                     </th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                    <th className="border-b border-border px-4 py-3">
                                         Sueldo base nuevo
                                     </th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                    <th className="border-b border-border px-4 py-3">
                                         Bonificación anterior
                                     </th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                    <th className="border-b border-border px-4 py-3">
                                         Bonificación nuevo
                                     </th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                    <th className="border-b border-border px-4 py-3">
                                         Motivo
                                     </th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                    <th className="border-b border-border px-4 py-3">
                                         Cambiado por
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {data.map((item) => (
-                                    <tr key={item.id} className="text-[#071b3b]">
-                                        <td className="border-b border-[#dfe5ee] px-4 py-3 whitespace-nowrap">
+                                    <tr key={item.id} className="text-text-main">
+                                        <td className="border-b border-border px-4 py-3 whitespace-nowrap">
                                             {formatDate(item.fecha_cambio)}
                                         </td>
-                                        <td className="border-b border-[#dfe5ee] px-4 py-3">
+                                        <td className="border-b border-border px-4 py-3">
                                             {formatCurrency(item.sueldo_anterior)}
                                         </td>
-                                        <td className="border-b border-[#dfe5ee] px-4 py-3 font-semibold">
+                                        <td className="border-b border-border px-4 py-3 font-semibold">
                                             {formatCurrency(item.sueldo_nuevo)}
                                         </td>
-                                        <td className="border-b border-[#dfe5ee] px-4 py-3">
+                                        <td className="border-b border-border px-4 py-3">
                                             {formatCurrency(item.bonos_anterior)}
                                         </td>
-                                        <td className="border-b border-[#dfe5ee] px-4 py-3 font-semibold">
+                                        <td className="border-b border-border px-4 py-3 font-semibold">
                                             {formatCurrency(item.bonos_nuevo)}
                                         </td>
-                                        <td className="border-b border-[#dfe5ee] px-4 py-3">
+                                        <td className="border-b border-border px-4 py-3">
                                             {item.motivo}
                                         </td>
-                                        <td className="border-b border-[#dfe5ee] px-4 py-3">
+                                        <td className="border-b border-border px-4 py-3">
                                             {item.cambiado_por?.nombre || "—"}
                                         </td>
                                     </tr>
@@ -871,23 +871,23 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
                 </div>
 
                 {totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-3 border-t border-[#dce3ee] px-6 py-4">
+                    <div className="flex items-center justify-center gap-3 border-t border-border px-6 py-4">
                         <button
                             type="button"
                             disabled={page <= 1}
                             onClick={() => setPage((p) => p - 1)}
-                            className="cursor-pointer rounded-xl border border-[#dce3ee] px-4 py-2 text-sm font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa] disabled:cursor-not-allowed disabled:opacity-60"
+                            className="cursor-pointer rounded-[8px] border border-border px-4 py-2 text-sm font-semibold text-text-main transition hover:bg-neutral-bg disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             Anterior
                         </button>
-                        <span className="text-sm text-[#5b6e8b]">
+                        <span className="text-sm text-text-soft">
                             Página {page} de {totalPages}
                         </span>
                         <button
                             type="button"
                             disabled={page >= totalPages}
                             onClick={() => setPage((p) => p + 1)}
-                            className="cursor-pointer rounded-xl border border-[#dce3ee] px-4 py-2 text-sm font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa] disabled:cursor-not-allowed disabled:opacity-60"
+                            className="cursor-pointer rounded-[8px] border border-border px-4 py-2 text-sm font-semibold text-text-main transition hover:bg-neutral-bg disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             Siguiente
                         </button>
@@ -926,19 +926,19 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[#071b3b]/45 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-ink/45 p-4"
             role="dialog"
             aria-modal="true"
         >
-            <div className="w-full max-w-5xl max-h-[80vh] overflow-hidden rounded-[26px] bg-white shadow-2xl flex flex-col">
-                <div className="flex items-center justify-between border-b border-[#dce3ee] px-6 py-4">
-                    <h2 className="text-xl font-bold text-[#071b3b]">
+            <div className="w-full max-w-5xl max-h-[80vh] overflow-hidden rounded-[10px] border border-border bg-surface shadow-2xl flex flex-col">
+                <div className="flex items-center justify-between border-b border-border px-6 py-4">
+                    <h2 className="text-xl font-bold text-text-main">
                         Historial de cambios de empresa
                     </h2>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="cursor-pointer text-[#5b6e8b] transition hover:text-[#071b3b]"
+                        className="cursor-pointer text-text-soft transition hover:text-text-main"
                     >
                         ✕
                     </button>
@@ -946,46 +946,46 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
 
                 <div className="overflow-auto flex-1 p-6">
                     {loading ? (
-                        <p className="text-center text-[#5b6e8b]">Cargando historial...</p>
+                        <p className="text-center text-text-soft">Cargando historial...</p>
                     ) : data.length === 0 ? (
-                        <p className="text-center text-[#5b6e8b]">
+                        <p className="text-center text-text-soft">
                             No hay registros de cambios de empresa.
                         </p>
                     ) : (
                         <table className="w-full border-separate border-spacing-0 text-left text-sm">
                             <thead>
-                                <tr className="text-base font-semibold text-[#5b6e8b]">
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">Fecha</th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                <tr className="text-base font-semibold text-text-soft">
+                                    <th className="border-b border-border px-4 py-3">Fecha</th>
+                                    <th className="border-b border-border px-4 py-3">
                                         Empresa anterior
                                     </th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                    <th className="border-b border-border px-4 py-3">
                                         Empresa nueva
                                     </th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                    <th className="border-b border-border px-4 py-3">
                                         Motivo
                                     </th>
-                                    <th className="border-b border-[#dfe5ee] px-4 py-3">
+                                    <th className="border-b border-border px-4 py-3">
                                         Cambiado por
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {data.map((item) => (
-                                    <tr key={item.id} className="text-[#071b3b]">
-                                        <td className="border-b border-[#dfe5ee] px-4 py-3 whitespace-nowrap">
+                                    <tr key={item.id} className="text-text-main">
+                                        <td className="border-b border-border px-4 py-3 whitespace-nowrap">
                                             {formatDate(item.fecha_cambio)}
                                         </td>
-                                        <td className="border-b border-[#dfe5ee] px-4 py-3">
+                                        <td className="border-b border-border px-4 py-3">
                                             {item.empresa_anterior?.nombre_empresa || "Sin empresa"}
                                         </td>
-                                        <td className="border-b border-[#dfe5ee] px-4 py-3 font-semibold">
+                                        <td className="border-b border-border px-4 py-3 font-semibold">
                                             {item.empresa_nuevo?.nombre_empresa || "Sin empresa"}
                                         </td>
-                                        <td className="border-b border-[#dfe5ee] px-4 py-3">
+                                        <td className="border-b border-border px-4 py-3">
                                             {item.motivo}
                                         </td>
-                                        <td className="border-b border-[#dfe5ee] px-4 py-3">
+                                        <td className="border-b border-border px-4 py-3">
                                             {item.cambiado_por?.nombre || "—"}
                                         </td>
                                     </tr>
@@ -996,23 +996,23 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
                 </div>
 
                 {totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-3 border-t border-[#dce3ee] px-6 py-4">
+                    <div className="flex items-center justify-center gap-3 border-t border-border px-6 py-4">
                         <button
                             type="button"
                             disabled={page <= 1}
                             onClick={() => setPage((p) => p - 1)}
-                            className="cursor-pointer rounded-xl border border-[#dce3ee] px-4 py-2 text-sm font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa] disabled:cursor-not-allowed disabled:opacity-60"
+                            className="cursor-pointer rounded-[8px] border border-border px-4 py-2 text-sm font-semibold text-text-main transition hover:bg-neutral-bg disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             Anterior
                         </button>
-                        <span className="text-sm text-[#5b6e8b]">
+                        <span className="text-sm text-text-soft">
                             Página {page} de {totalPages}
                         </span>
                         <button
                             type="button"
                             disabled={page >= totalPages}
                             onClick={() => setPage((p) => p + 1)}
-                            className="cursor-pointer rounded-xl border border-[#dce3ee] px-4 py-2 text-sm font-semibold text-[#071b3b] transition hover:bg-[#f0f4fa] disabled:cursor-not-allowed disabled:opacity-60"
+                            className="cursor-pointer rounded-[8px] border border-border px-4 py-2 text-sm font-semibold text-text-main transition hover:bg-neutral-bg disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             Siguiente
                         </button>

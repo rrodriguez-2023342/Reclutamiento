@@ -37,13 +37,13 @@ function SelectField({ ariaLabel, value, onChange, children }) {
                 aria-label={ariaLabel}
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
-                className="h-14 w-full appearance-none rounded-2xl border border-[#dce3ee] bg-white px-4 pr-10 text-base font-semibold text-[#071b3b] outline-none transition focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
+                className="h-14 w-full appearance-none rounded-[10px] border border-border bg-surface px-4 pr-10 text-base font-semibold text-text-main outline-none transition focus:border-action focus:ring-2 focus:ring-action/15"
             >
                 {children}
             </select>
             <ChevronDown
                 aria-hidden="true"
-                className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#65758f]"
+                className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-soft"
             />
         </div>
     );
@@ -85,7 +85,7 @@ export function SearchableSelect({ placeholder, value, options, onChange }) {
                     setOpen(true);
                     setTimeout(() => inputRef.current?.focus(), 0);
                 }}
-                className="flex h-14 cursor-pointer items-center rounded-2xl border border-[#dce3ee] bg-white px-4 text-base font-semibold text-[#071b3b] transition focus-within:border-[#3162e9] focus-within:ring-2 focus-within:ring-[#3162e9]/15"
+                className="flex h-14 cursor-pointer items-center rounded-[10px] border border-border bg-surface px-4 text-base font-semibold text-text-main transition focus-within:border-action focus-within:ring-2 focus-within:ring-action/15"
             >
                 <input
                     ref={inputRef}
@@ -93,7 +93,7 @@ export function SearchableSelect({ placeholder, value, options, onChange }) {
                     onChange={(event) => setQuery(event.target.value)}
                     onFocus={() => setOpen(true)}
                     placeholder={placeholder}
-                    className="h-full w-full bg-transparent outline-none placeholder:text-[#91a0b7]"
+                    className="h-full w-full bg-transparent outline-none placeholder:text-text-soft"
                     readOnly={!open && !!displayValue}
                 />
                 {displayValue && !open && (
@@ -103,26 +103,26 @@ export function SearchableSelect({ placeholder, value, options, onChange }) {
                             event.stopPropagation();
                             onChange("");
                         }}
-                        className="ml-1 cursor-pointer p-1 text-[#65758f] hover:text-[#071b3b]"
+                        className="ml-1 cursor-pointer p-1 text-text-soft hover:text-text-main"
                     >
                         <X className="h-4 w-4" />
                     </button>
                 )}
-                <ChevronDown className="ml-1 h-5 w-5 shrink-0 text-[#65758f]" />
+                <ChevronDown className="ml-1 h-5 w-5 shrink-0 text-text-soft" />
             </div>
             {open && (
-                <ul className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-xl border border-[#dce3ee] bg-white py-1 shadow-lg">
+                <ul className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-[8px] border border-border bg-surface py-1 shadow-lg">
                     {filtered.length === 0 && (
-                        <li className="px-4 py-3 text-sm text-[#91a0b7]">Sin resultados</li>
+                        <li className="px-4 py-3 text-sm text-text-soft">Sin resultados</li>
                     )}
                     {filtered.map((option) => (
                         <li
                             key={option.value}
                             onClick={() => handleSelect(option.value)}
-                            className={`cursor-pointer px-4 py-3 text-base transition hover:bg-[#f0f4fa] ${
+                            className={`cursor-pointer px-4 py-3 text-base transition hover:bg-neutral-bg ${
                                 String(option.value) === String(value)
-                                    ? "bg-[#f0f4fa] font-semibold text-[#3162e9]"
-                                    : "text-[#071b3b]"
+                                    ? "bg-neutral-bg font-semibold text-action"
+                                    : "text-text-main"
                             }`}
                         >
                             {option.label}
@@ -216,10 +216,10 @@ function Divisiones() {
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
                 <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-[-0.04em] text-[#071b3b] sm:text-3xl">
+                        <h1 className="text-2xl font-bold tracking-[-0.04em] text-text-main sm:text-3xl">
                             Divisiones
                         </h1>
-                        <p className="mt-1 text-[#5b6e8b]">
+                        <p className="mt-1 text-text-soft">
                             Administra las divisiones disponibles para los puestos.
                         </p>
                     </div>
@@ -228,7 +228,7 @@ function Divisiones() {
                             <button
                                 type="button"
                                 onClick={() => navigate("/empresas/divisiones/nueva")}
-                                className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#3162e9] px-5 font-bold text-white transition hover:bg-[#183fca]"
+                                className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-action px-5 font-bold text-white transition hover:bg-ink"
                             >
                                 <Plus className="h-5 w-5" />
                                 Nueva División
@@ -241,23 +241,23 @@ function Divisiones() {
                 {successMessage && (
                     <div
                         role="status"
-                        className="mb-5 rounded-2xl border border-[#b9e8ce] bg-[#edfff4] px-5 py-4 font-semibold text-[#087947]"
+                        className="mb-5 rounded-[10px] border border-border bg-success-bg px-5 py-4 font-semibold text-success"
                     >
                         {successMessage}
                     </div>
                 )}
 
-                <div className="rounded-[26px] bg-white shadow-[0_10px_24px_rgba(20,43,89,0.06)]">
-                    <div className="border-b border-[#dce3ee] p-4 sm:px-6">
+                <div className="rounded-[10px] border border-border bg-surface shadow-none">
+                    <div className="border-b border-border p-4 sm:px-6">
                         <div className="flex flex-col sm:flex-row gap-4">
                             <div className="relative flex-1">
-                                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#9ba8c2]" />
+                                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-soft" />
                                 <input
                                     type="text"
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder="Buscar por nombre..."
-                                    className="h-12 w-full rounded-xl border border-[#dce3ee] bg-white pl-12 pr-4 text-base text-[#071b3b] outline-none transition placeholder:text-[#9ba8c2] focus:border-[#3162e9] focus:ring-2 focus:ring-[#3162e9]/15"
+                                    className="h-12 w-full rounded-[8px] border border-border bg-surface pl-12 pr-4 text-base text-text-main outline-none transition placeholder:text-text-soft focus:border-action focus:ring-2 focus:ring-action/15"
                                 />
                             </div>
 
@@ -278,20 +278,20 @@ function Divisiones() {
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left">
                             <thead>
-                                <tr className="text-base font-semibold text-[#5b6e8b]">
-                                    <th className="border-b border-[#dfe5ee] px-7 py-5 font-semibold">
+                                <tr className="text-base font-semibold text-text-soft">
+                                    <th className="border-b border-border px-7 py-5 font-semibold">
                                         Nombre
                                     </th>
-                                    <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                    <th className="border-b border-border px-5 py-5 font-semibold">
                                         Descripción
                                     </th>
-                                    <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                    <th className="border-b border-border px-5 py-5 font-semibold">
                                         Estado
                                     </th>
-                                    <th className="border-b border-[#dfe5ee] px-5 py-5 font-semibold">
+                                    <th className="border-b border-border px-5 py-5 font-semibold">
                                         Creado
                                     </th>
-                                    <th className="border-b border-[#dfe5ee] px-7 py-5 text-right font-semibold">
+                                    <th className="border-b border-border px-7 py-5 text-right font-semibold">
                                         Acciones
                                     </th>
                                 </tr>
@@ -301,7 +301,7 @@ function Divisiones() {
                                     <tr>
                                         <td
                                             colSpan="5"
-                                            className="px-7 py-14 text-center text-[#5b6e8b]"
+                                            className="px-7 py-14 text-center text-text-soft"
                                         >
                                             Cargando divisiones…
                                         </td>
@@ -311,7 +311,7 @@ function Divisiones() {
                                     <tr>
                                         <td
                                             colSpan="5"
-                                            className="px-7 py-14 text-center text-[#df353c]"
+                                            className="px-7 py-14 text-center text-danger"
                                         >
                                             {error}
                                         </td>
@@ -321,7 +321,7 @@ function Divisiones() {
                                     <tr>
                                         <td
                                             colSpan="5"
-                                            className="px-7 py-14 text-center text-[#5b6e8b]"
+                                            className="px-7 py-14 text-center text-text-soft"
                                         >
                                             No se encontraron divisiones.
                                         </td>
@@ -331,25 +331,25 @@ function Divisiones() {
                                     !error &&
                                     result.data.map((division) => (
                                         <tr key={division.id} className="text-base">
-                                            <td className="border-b border-[#dfe5ee] px-7 py-6 font-bold text-[#071b3b]">
+                                            <td className="border-b border-border px-7 py-6 font-bold text-text-main">
                                                 {division.nombre}
                                             </td>
-                                            <td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">
+                                            <td className="border-b border-border px-5 py-6 text-text-soft">
                                                 <span className="block max-w-[360px] truncate">
                                                     {division.descripcion || "—"}
                                                 </span>
                                             </td>
-                                            <td className="border-b border-[#dfe5ee] px-5 py-6">
+                                            <td className="border-b border-border px-5 py-6">
                                                 <span
-                                                    className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${division.activo ? "bg-[#c9f3dd] text-[#087947]" : "bg-[#f1f4f9] text-[#5b6e8b]"}`}
+                                                    className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${division.activo ? "bg-success-bg text-success" : "bg-danger-bg text-danger"}`}
                                                 >
                                                     {division.activo ? "Activa" : "Inactiva"}
                                                 </span>
                                             </td>
-                                            <td className="border-b border-[#dfe5ee] px-5 py-6 text-[#5b6e8b]">
+                                            <td className="border-b border-border px-5 py-6 text-text-soft">
                                                 {formatDate(division.creado_en)}
                                             </td>
-                                            <td className="border-b border-[#dfe5ee] px-7 py-6">
+                                            <td className="border-b border-border px-7 py-6">
                                                 <div className="flex justify-end gap-2">
                                                     <button
                                                         type="button"
@@ -357,7 +357,7 @@ function Divisiones() {
                                                             navigate(`/empresas/divisiones/${division.id}`)
                                                         }
                                                         aria-label={`Ver ${division.nombre}`}
-                                                        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
+                                                        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-[8px] bg-neutral-bg text-text-main transition hover:bg-border"
                                                     >
                                                         <Eye className="h-5 w-5" />
                                                     </button>
@@ -370,7 +370,7 @@ function Divisiones() {
                                                                 )
                                                             }
                                                             aria-label={`Editar ${division.nombre}`}
-                                                            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e4ebf6]"
+                                                            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-[8px] bg-neutral-bg text-text-main transition hover:bg-border"
                                                         >
                                                             <Pencil className="h-5 w-5" />
                                                         </button>
@@ -383,7 +383,7 @@ function Divisiones() {
                         </table>
                     </div>
 
-                    <footer className="flex flex-col gap-4 px-7 py-5 text-[#5b6e8b] sm:flex-row sm:items-center sm:justify-between">
+                    <footer className="flex flex-col gap-4 px-7 py-5 text-text-soft sm:flex-row sm:items-center sm:justify-between">
                         <p>
                             Mostrando {firstItem} a {lastItem} de{" "}
                             {result.total.toLocaleString("es-GT")} divisiones
@@ -393,12 +393,12 @@ function Divisiones() {
                                 type="button"
                                 disabled={loading || result.page <= 1}
                                 onClick={() => setPage((current) => Math.max(1, current - 1))}
-                                className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
+                                className="flex h-11 cursor-pointer items-center gap-1 rounded-[10px] border border-border px-4 font-semibold text-text-main disabled:cursor-not-allowed disabled:opacity-45"
                             >
                                 <ChevronLeft className="h-4 w-4" />
                                 Anterior
                             </button>
-                            <span className="flex h-11 min-w-11 items-center justify-center rounded-xl bg-[#3162e9] px-3 font-bold text-white">
+                            <span className="flex h-11 min-w-11 items-center justify-center rounded-[8px] bg-action px-3 font-bold text-white">
                                 {result.page}
                             </span>
                             <button
@@ -407,7 +407,7 @@ function Divisiones() {
                                 onClick={() =>
                                     setPage((current) => Math.min(result.totalPages, current + 1))
                                 }
-                                className="flex h-11 cursor-pointer items-center gap-1 rounded-2xl border border-[#dce3ee] px-4 font-semibold text-[#071b3b] disabled:cursor-not-allowed disabled:opacity-45"
+                                className="flex h-11 cursor-pointer items-center gap-1 rounded-[10px] border border-border px-4 font-semibold text-text-main disabled:cursor-not-allowed disabled:opacity-45"
                             >
                                 Siguiente
                                 <ChevronRight className="h-4 w-4" />

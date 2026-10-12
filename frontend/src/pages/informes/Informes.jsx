@@ -796,10 +796,6 @@ function Informes() {
 
             {activeTab === 'plantillas' && (
               <div className="space-y-5">
-                <div className="rounded-[10px] border border-action bg-accent-soft px-5 py-4 text-sm leading-6 text-action">
-                  <strong className="block text-base">Configura primero el tipo de documento y después su plantilla.</strong>
-                  <span>Las versiones anteriores se conservan. Puedes activar una versión nueva sin perder el historial.</span>
-                </div>
                 <div className="grid items-start gap-5 xl:grid-cols-[minmax(300px,0.8fr)_minmax(420px,1.2fr)]">
                 <Panel title="Tipos de documento">
                   {admin && (
@@ -941,10 +937,6 @@ function Informes() {
 
             {activeTab === 'solicitudes' && (
               <div className="space-y-5">
-                <div className="rounded-[10px] border border-action bg-accent-soft px-5 py-4 text-sm leading-6 text-action">
-                  <strong className="block text-base">Cómo atender una solicitud</strong>
-                  <span>Selecciona una solicitud, revisa los datos, elige la versión correcta, verifica la vista previa y luego genera o rechaza con un motivo.</span>
-                </div>
                 <div className="grid items-start gap-5 xl:grid-cols-[minmax(340px,0.9fr)_minmax(400px,1.1fr)]">
                 <Panel title={`Solicitudes recibidas${solicitudesPendientes ? ` · ${solicitudesPendientes} por atender` : ''}`}>
                   {admin && (
@@ -1107,10 +1099,6 @@ function Informes() {
 
             {activeTab === 'directo' && (
               <div className="space-y-5">
-                <div className="rounded-[10px] border border-pending bg-pending-bg px-5 py-4 text-sm leading-6 text-pending">
-                  <strong className="block text-base">Genera un documento sin solicitud previa.</strong>
-                  <span>Úsalo cuando Recursos Humanos necesite preparar un documento por iniciativa propia. El colaborador recibirá una notificación cuando esté listo.</span>
-                </div>
                 <Panel title="1. Selecciona al colaborador, el documento y la versión">
                   {admin && (
                     <label className="mb-4 block text-sm font-semibold">Filtrar tipos por empresa

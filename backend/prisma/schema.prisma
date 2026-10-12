@@ -170,24 +170,30 @@ model Puesto {
 }
 
 model Patrono {
-  id                    Int          @id @default(autoincrement())
-  razon_social          String       @unique @map("razon_social") @db.VarChar(150)
-  numero_patronal       String?      @map("numero_patronal") @db.VarChar(50)
-  nit                   String?      @map("nit") @db.VarChar(20)
-  representante_legal   String?      @map("representante_legal") @db.VarChar(150)
-  dpi_representante     String?      @map("dpi_representante") @db.VarChar(20)
-  fecha_vencimiento_dpi DateTime?    @map("fecha_vencimiento_dpi") @db.Date
-  fecha_nacimiento      DateTime?    @map("fecha_nacimiento") @db.Date
-  sexo                  Sexo?        @map("sexo")
-  estado_civil          EstadoCivil? @map("estado_civil")
-  profesion             String?      @map("profesion") @db.VarChar(100)
-  dpi_extendido_en      String?      @map("dpi_extendido_en") @db.VarChar(100)
-  direccion             String?      @map("direccion") @db.Text
-  telefono              String?      @map("telefono") @db.VarChar(20)
-  correo                String?      @map("correo") @db.VarChar(100)
-  activo                Boolean      @default(true) @map("activa")
-  creado_en             DateTime     @default(now()) @map("creado_en") @db.Timestamp(0)
-  usuarios              Usuario[]
+  id                         Int          @id @default(autoincrement())
+  razon_social               String       @unique @map("razon_social") @db.VarChar(150)
+  numero_patronal            String?      @map("numero_patronal") @db.VarChar(50)
+  nit                        String?      @map("nit") @db.VarChar(20)
+  representante_legal        String?      @map("representante_legal") @db.VarChar(150)
+  dpi_representante          String?      @map("dpi_representante") @db.VarChar(20)
+  fecha_vencimiento_dpi      DateTime?    @map("fecha_vencimiento_dpi") @db.Date
+  fecha_nacimiento           DateTime?    @map("fecha_nacimiento") @db.Date
+  sexo                       Sexo?        @map("sexo")
+  estado_civil               EstadoCivil? @map("estado_civil")
+  profesion                  String?      @map("profesion") @db.VarChar(100)
+  dpi_extendido_en           String?      @map("dpi_extendido_en") @db.VarChar(100)
+  direccion                  String?      @map("direccion") @db.Text
+  direccion_patente_comercio String?      @map("direccion_patente_comercio") @db.Text
+  fecha_autorizacion_acta    DateTime?    @map("fecha_autorizacion_acta") @db.Date
+  autorizada_por_notario     String?      @map("autorizada_por_notario") @db.VarChar(150)
+  numero_registro            String?      @map("numero_registro") @db.VarChar(50)
+  numero_folio               String?      @map("numero_folio") @db.VarChar(50)
+  numero_libro               String?      @map("numero_libro") @db.VarChar(50)
+  telefono                   String?      @map("telefono") @db.VarChar(20)
+  correo                     String?      @map("correo") @db.VarChar(100)
+  activo                     Boolean      @default(true) @map("activa")
+  creado_en                  DateTime     @default(now()) @map("creado_en") @db.Timestamp(0)
+  usuarios                   Usuario[]
 
   @@map("patronos")
 }

@@ -83,6 +83,12 @@ class PatronoService {
         profesion: data.profesion || null,
         dpi_extendido_en: data.dpi_extendido_en || null,
         direccion: data.direccion || null,
+        direccion_patente_comercio: data.direccion_patente_comercio || null,
+        fecha_autorizacion_acta: data.fecha_autorizacion_acta ? new Date(data.fecha_autorizacion_acta) : null,
+        autorizada_por_notario: data.autorizada_por_notario || null,
+        numero_registro: data.numero_registro || null,
+        numero_folio: data.numero_folio || null,
+        numero_libro: data.numero_libro || null,
         telefono: data.telefono || null,
         correo: data.correo || null,
         activo,
@@ -115,6 +121,9 @@ class PatronoService {
           : undefined,
         fecha_nacimiento: data.fecha_nacimiento !== undefined
           ? (data.fecha_nacimiento ? new Date(data.fecha_nacimiento) : null)
+          : undefined,
+        fecha_autorizacion_acta: data.fecha_autorizacion_acta !== undefined
+          ? (data.fecha_autorizacion_acta ? new Date(data.fecha_autorizacion_acta) : null)
           : undefined,
       },
     })

@@ -43,6 +43,12 @@ function NuevoPatrono() {
                 profesion: values.profesion || null,
                 dpi_extendido_en: values.dpi_extendido_en || null,
                 direccion: values.direccion || null,
+                direccion_patente_comercio: values.direccion_patente_comercio || null,
+                fecha_autorizacion_acta: values.fecha_autorizacion_acta || null,
+                autorizada_por_notario: values.autorizada_por_notario || null,
+                numero_registro: values.numero_registro || null,
+                numero_folio: values.numero_folio || null,
+                numero_libro: values.numero_libro || null,
                 telefono: values.telefono || null,
                 correo: values.correo || null,
             };
@@ -125,6 +131,17 @@ function NuevoPatrono() {
                         </Field>
 
                         <Field
+                            label="Dirección fiscal patronal"
+                            error={errors.direccion?.message}
+                            className="sm:col-span-2"
+                        >
+                            <Input
+                                registration={register("direccion")}
+                                placeholder="Ej. 4ta Avenida 12-34, Zona 1"
+                            />
+                        </Field>
+
+                        <Field
                             label="Representante Legal"
                             error={errors.representante_legal?.message}
                         >
@@ -151,6 +168,16 @@ function NuevoPatrono() {
                             <Input
                                 registration={register("fecha_vencimiento_dpi")}
                                 type="date"
+                            />
+                        </Field>
+
+                        <Field
+                            label="Dónde se extendió DPI"
+                            error={errors.dpi_extendido_en?.message}
+                        >
+                            <Input
+                                registration={register("dpi_extendido_en")}
+                                placeholder="Ej. Guatemala"
                             />
                         </Field>
 
@@ -188,27 +215,6 @@ function NuevoPatrono() {
                         </Field>
 
                         <Field
-                            label="Dónde se extendió DPI"
-                            error={errors.dpi_extendido_en?.message}
-                        >
-                            <Input
-                                registration={register("dpi_extendido_en")}
-                                placeholder="Ej. Guatemala"
-                            />
-                        </Field>
-
-                        <Field
-                            label="Dirección"
-                            error={errors.direccion?.message}
-                            className="sm:col-span-2"
-                        >
-                            <Input
-                                registration={register("direccion")}
-                                placeholder="Ej. 4ta Avenida 12-34, Zona 1"
-                            />
-                        </Field>
-
-                        <Field
                             label="Teléfono"
                             error={errors.telefono?.message}
                         >
@@ -226,6 +232,63 @@ function NuevoPatrono() {
                                 type="email"
                                 registration={register("correo")}
                                 placeholder="Ej. correo@ejemplo.com"
+                            />
+                        </Field>
+
+                        <Field
+                            label="Dirección de la patente de comercio"
+                            error={errors.direccion_patente_comercio?.message}
+                        >
+                            <Input
+                                registration={register("direccion_patente_comercio")}
+                                placeholder="Ej. 4ta Avenida 12-34, Zona 1"
+                            />
+                        </Field>
+
+                        <Field
+                            label="Fecha de autorización de acta"
+                            error={errors.fecha_autorizacion_acta?.message}
+                        >
+                            <Input type="date" registration={register("fecha_autorizacion_acta")} />
+                        </Field>
+
+                        <Field
+                            label="Autorizada por el notario"
+                            error={errors.autorizada_por_notario?.message}
+                        >
+                            <Input
+                                registration={register("autorizada_por_notario")}
+                                placeholder="Nombre del notario"
+                            />
+                        </Field>
+
+                        <Field
+                            label="No. de registro"
+                            error={errors.numero_registro?.message}
+                        >
+                            <Input
+                                registration={register("numero_registro")}
+                                placeholder="Ej. 12345"
+                            />
+                        </Field>
+
+                        <Field
+                            label="No. de folio"
+                            error={errors.numero_folio?.message}
+                        >
+                            <Input
+                                registration={register("numero_folio")}
+                                placeholder="Ej. 45"
+                            />
+                        </Field>
+
+                        <Field
+                            label="No. de libro"
+                            error={errors.numero_libro?.message}
+                        >
+                            <Input
+                                registration={register("numero_libro")}
+                                placeholder="Ej. 12"
                             />
                         </Field>
                     </div>

@@ -31,6 +31,7 @@ function formatAniversario(value) {
         : new Intl.DateTimeFormat("es-GT", {
             day: "numeric",
             month: "long",
+            year: "numeric",
         }).format(date);
 }
 

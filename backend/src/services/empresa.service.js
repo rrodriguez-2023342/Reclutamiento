@@ -7,12 +7,6 @@ function crearError(mensaje, status) {
   return error
 }
 
-// Convierte una fecha string a Date usando año fijo 2000 (para aniversarios)
-function convertirAFechaAniversario(fechaStr) {
-  const fecha = new Date(fechaStr)
-  return new Date(2000, fecha.getMonth(), fecha.getDate())
-}
-
 function normalizarDatosEmpresa(data) {
   const resultado = { ...data }
 
@@ -23,7 +17,7 @@ function normalizarDatosEmpresa(data) {
 
   if (resultado.fecha_aniversario !== undefined) {
     resultado.fecha_aniversario = resultado.fecha_aniversario
-      ? convertirAFechaAniversario(resultado.fecha_aniversario)
+      ? new Date(resultado.fecha_aniversario)
       : null
   }
 

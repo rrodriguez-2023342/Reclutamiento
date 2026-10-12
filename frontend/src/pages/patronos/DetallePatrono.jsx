@@ -363,30 +363,6 @@ function DetallePatrono() {
                             </div>
                             <div className="rounded-[8px] bg-neutral-bg p-5">
                                 <p
-                                    className={`text-sm font-semibold ${isEmpty(patrono.dpi_extendido_en) ? "text-danger" : "text-text-soft"}`}
-                                >
-                                    DPI Extendido en
-                                </p>
-                                <p
-                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.dpi_extendido_en) ? "text-danger" : "text-text-main"}`}
-                                >
-                                    {patrono.dpi_extendido_en || "\u2014"}
-                                </p>
-                            </div>
-                            <div className="rounded-[8px] bg-neutral-bg p-5 sm:col-span-2">
-                                <p
-                                    className={`text-sm font-semibold ${isEmpty(patrono.direccion) ? "text-danger" : "text-text-soft"}`}
-                                >
-                                    Dirección del Representante
-                                </p>
-                                <p
-                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.direccion) ? "text-danger" : "text-text-main"}`}
-                                >
-                                    {patrono.direccion || "\u2014"}
-                                </p>
-                            </div>
-                            <div className="rounded-[8px] bg-neutral-bg p-5">
-                                <p
                                     className={`text-sm font-semibold ${isEmpty(patrono.telefono) ? "text-danger" : "text-text-soft"}`}
                                 >
                                     Teléfono del Representante
@@ -407,6 +383,102 @@ function DetallePatrono() {
                                     className={`mt-2 text-lg font-bold ${isEmpty(patrono.correo) ? "text-danger" : "text-text-main"}`}
                                 >
                                     {patrono.correo || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-[8px] bg-neutral-bg p-5">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.dpi_extendido_en) ? "text-danger" : "text-text-soft"}`}
+                                >
+                                    DPI Extendido en
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.dpi_extendido_en) ? "text-danger" : "text-text-main"}`}
+                                >
+                                    {patrono.dpi_extendido_en || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-[8px] bg-neutral-bg p-5 sm:col-span-2">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.direccion) ? "text-danger" : "text-text-soft"}`}
+                                >
+                                    Dirección fiscal patronal
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.direccion) ? "text-danger" : "text-text-main"}`}
+                                >
+                                    {patrono.direccion || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-[8px] bg-neutral-bg p-5 sm:col-span-2">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.direccion_patente_comercio) ? "text-danger" : "text-text-soft"}`}
+                                >
+                                    Dirección de la patente de comercio
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.direccion_patente_comercio) ? "text-danger" : "text-text-main"}`}
+                                >
+                                    {patrono.direccion_patente_comercio || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-[8px] bg-neutral-bg p-5">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.fecha_autorizacion_acta) ? "text-danger" : "text-text-soft"}`}
+                                >
+                                    Fecha de autorización de acta
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.fecha_autorizacion_acta) ? "text-danger" : "text-text-main"}`}
+                                >
+                                    {formatDate(patrono.fecha_autorizacion_acta)}
+                                </p>
+                            </div>
+                            <div className="rounded-[8px] bg-neutral-bg p-5">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.autorizada_por_notario) ? "text-danger" : "text-text-soft"}`}
+                                >
+                                    Autorizada por el notario
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.autorizada_por_notario) ? "text-danger" : "text-text-main"}`}
+                                >
+                                    {patrono.autorizada_por_notario || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-[8px] bg-neutral-bg p-5">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.numero_registro) ? "text-danger" : "text-text-soft"}`}
+                                >
+                                    No. de registro
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.numero_registro) ? "text-danger" : "text-text-main"}`}
+                                >
+                                    {patrono.numero_registro || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-[8px] bg-neutral-bg p-5">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.numero_folio) ? "text-danger" : "text-text-soft"}`}
+                                >
+                                    No. de folio
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.numero_folio) ? "text-danger" : "text-text-main"}`}
+                                >
+                                    {patrono.numero_folio || "\u2014"}
+                                </p>
+                            </div>
+                            <div className="rounded-[8px] bg-neutral-bg p-5">
+                                <p
+                                    className={`text-sm font-semibold ${isEmpty(patrono.numero_libro) ? "text-danger" : "text-text-soft"}`}
+                                >
+                                    No. de libro
+                                </p>
+                                <p
+                                    className={`mt-2 text-lg font-bold ${isEmpty(patrono.numero_libro) ? "text-danger" : "text-text-main"}`}
+                                >
+                                    {patrono.numero_libro || "\u2014"}
                                 </p>
                             </div>
                             <div className="rounded-[8px] bg-neutral-bg p-5 sm:col-span-2">

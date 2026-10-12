@@ -12,12 +12,16 @@ export function fechaExcel(valor) {
   });
 }
 
-// Fecha ISO -> dd/mm (para aniversarios sin año)
+// Fecha ISO -> dd/mm/aaaa (para aniversarios con año)
 export function fechaCortaExcel(valor) {
   if (!valor) return "";
   const fecha = new Date(valor);
   if (Number.isNaN(fecha.getTime())) return "";
-  return fecha.toLocaleDateString("es-GT", { day: "2-digit", month: "2-digit" });
+  return fecha.toLocaleDateString("es-GT", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 }
 
 // Booleano -> "Sí" / "No" / ""

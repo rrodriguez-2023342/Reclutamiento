@@ -66,7 +66,6 @@ function Empresas() {
 
     useEffect(() => {
         let active = true;
-        setLoading(true);
         getEmpresas({
             page,
             limit: PAGE_SIZE,

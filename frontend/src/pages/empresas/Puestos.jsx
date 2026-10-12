@@ -189,7 +189,6 @@ function Puestos() {
 
     useEffect(() => {
         let active = true;
-        setLoading(true);
         getPuestos({
             page,
             limit: PAGE_SIZE,

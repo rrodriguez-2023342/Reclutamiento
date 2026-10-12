@@ -60,7 +60,6 @@ function Patronos() {
 
     useEffect(() => {
         let active = true;
-        setLoading(true);
         getPatronos({
             page,
             limit: PAGE_SIZE,

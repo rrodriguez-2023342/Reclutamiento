@@ -171,7 +171,6 @@ function Divisiones() {
 
     useEffect(() => {
         let active = true;
-        setLoading(true);
         getDivisiones({
             page,
             limit: PAGE_SIZE,

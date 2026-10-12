@@ -36,7 +36,6 @@ function EditarEmpresa() {
 
     useEffect(() => {
         let active = true;
-        setLoadingEmpresa(true);
         getEmpresaById(id)
             .then((data) => {
                 if (active) {

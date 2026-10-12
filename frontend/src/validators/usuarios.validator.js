@@ -1,5 +1,10 @@
 import { z } from 'zod'
 
+const fechaOpcional = z.preprocess(
+    (valor) => (valor === '' ? undefined : valor),
+    z.iso.date().nullish(),
+)
+
 const validarSeguros = (data, ctx) => {
     if (data.tipo_contrato === 'DEFINIDO' && !data.fecha_fin_contrato?.trim()) {
         ctx.addIssue({ code: 'custom', path: ['fecha_fin_contrato'], message: 'La fecha de finalización es requerida para un contrato definido' })
@@ -64,9 +69,13 @@ export const usuarioSchema = z.object({
     empresa_seguro_gastos_medicos: z.string().trim().max(100).nullish(),
     tipo_seguro_gastos_medicos: z.enum(['INDIVIDUAL', 'FAMILIAR']).nullish().or(z.literal('')),
     categoria_seguro_gastos_medicos: z.string().trim().max(100).nullish(),
+    fecha_alta_seguro_gastos_medicos: fechaOpcional,
+    fecha_baja_seguro_gastos_medicos: fechaOpcional,
     tiene_seguro_vida: z.boolean().nullish(),
     empresa_seguro_vida: z.string().trim().max(100).nullish(),
     categoria_seguro_vida: z.string().trim().max(100).nullish(),
+    fecha_alta_seguro_vida: fechaOpcional,
+    fecha_baja_seguro_vida: fechaOpcional,
     puesto_id: z.coerce.number().int().positive().nullish(),
 }).superRefine(validarSeguros).superRefine((data, ctx) => {
     // Todo usuario debe poder iniciar sesión: al menos un correo o un usuario
@@ -112,8 +121,12 @@ export const defaultUsuarioValues = {
     empresa_seguro_gastos_medicos: '',
     tipo_seguro_gastos_medicos: '',
     categoria_seguro_gastos_medicos: '',
+    fecha_alta_seguro_gastos_medicos: '',
+    fecha_baja_seguro_gastos_medicos: '',
     tiene_seguro_vida: false,
     empresa_seguro_vida: '',
     categoria_seguro_vida: '',
+    fecha_alta_seguro_vida: '',
+    fecha_baja_seguro_vida: '',
     puesto_id: null,
 }

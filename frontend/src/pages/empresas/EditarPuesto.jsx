@@ -54,7 +54,6 @@ function EditarPuesto() {
 
     useEffect(() => {
         let active = true;
-        setLoadingPuesto(true);
         getPuestoById(id)
             .then((data) => {
                 if (active) {

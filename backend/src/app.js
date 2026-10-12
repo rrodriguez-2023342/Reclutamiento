@@ -17,6 +17,8 @@ import documentosRoutes from './routes/documento.routes.js'
 import historialSueldoRoutes from './routes/historial-sueldo.routes.js'
 import historialEmpresaRoutes from './routes/historial-empresa.routes.js'
 import historialRechazoRoutes from './routes/historial-rechazo.routes.js'
+import documentosLaboralesRoutes from './routes/documentos-laborales.routes.js'
+import notificacionesRoutes from './routes/notificaciones.routes.js'
 
 const app = express()
 
@@ -43,6 +45,8 @@ app.use('/api/empresas/puestos', puestosRoutes)
 app.use('/api/empresas', empresaRoutes)
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/postulantes', documentosRoutes)
+app.use('/api/documentos', documentosLaboralesRoutes)
+app.use('/api/notificaciones', notificacionesRoutes)
 app.use('/api/historial-sueldo', historialSueldoRoutes)
 app.use('/api/historial-empresa', historialEmpresaRoutes)
 app.use('/api/historial-rechazo', historialRechazoRoutes)

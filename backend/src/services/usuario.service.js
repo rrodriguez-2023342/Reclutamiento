@@ -284,12 +284,24 @@ class UsuarioService {
         categoria_seguro_gastos_medicos: data.tiene_seguro_gastos_medicos
           ? data.categoria_seguro_gastos_medicos ?? null
           : null,
+        fecha_alta_seguro_gastos_medicos: data.fecha_alta_seguro_gastos_medicos
+          ? new Date(`${data.fecha_alta_seguro_gastos_medicos}T00:00:00.000Z`)
+          : null,
+        fecha_baja_seguro_gastos_medicos: data.fecha_baja_seguro_gastos_medicos
+          ? new Date(`${data.fecha_baja_seguro_gastos_medicos}T00:00:00.000Z`)
+          : null,
         tiene_seguro_vida: data.tiene_seguro_vida ?? false,
         empresa_seguro_vida: data.tiene_seguro_vida
           ? data.empresa_seguro_vida ?? null
           : null,
         categoria_seguro_vida: data.tiene_seguro_vida
           ? data.categoria_seguro_vida ?? null
+          : null,
+        fecha_alta_seguro_vida: data.fecha_alta_seguro_vida
+          ? new Date(`${data.fecha_alta_seguro_vida}T00:00:00.000Z`)
+          : null,
+        fecha_baja_seguro_vida: data.fecha_baja_seguro_vida
+          ? new Date(`${data.fecha_baja_seguro_vida}T00:00:00.000Z`)
           : null,
       },
       include: {
@@ -462,6 +474,18 @@ class UsuarioService {
     }
     if (data.tipo_contrato === "INDEFINIDO") {
       updateData.fecha_fin_contrato = null;
+    }
+    for (const campo of [
+      "fecha_alta_seguro_gastos_medicos",
+      "fecha_baja_seguro_gastos_medicos",
+      "fecha_alta_seguro_vida",
+      "fecha_baja_seguro_vida",
+    ]) {
+      if (data[campo] !== undefined) {
+        updateData[campo] = data[campo]
+          ? new Date(`${data[campo]}T00:00:00.000Z`)
+          : null;
+      }
     }
 
     // Detectar cambios en sueldo o bonos para registrar historial

@@ -5,6 +5,7 @@ import {
     CalendarDays,
     Clock,
     Eye,
+    FileText,
     Key,
     Pencil,
     Power,
@@ -131,7 +132,6 @@ function DetalleUsuario() {
     const [error, setError] = useState("");
     const [modalAction, setModalAction] = useState(null);
     const [actionLoading, setActionLoading] = useState(false);
-    const [successMessage, setSuccessMessage] = useState("");
     const [showHistorial, setShowHistorial] = useState(false);
     const [showHistorialEmpresa, setShowHistorialEmpresa] = useState(false);
 
@@ -166,7 +166,6 @@ function DetalleUsuario() {
             } else {
                 await activarUsuario(usuario.id);
             }
-            setSuccessMessage(msg);
             setModalAction(null);
             navigate("/colaboradores", { state: { mensaje: msg } });
         } catch (requestError) {
@@ -186,9 +185,6 @@ function DetalleUsuario() {
             setActionLoading(true);
             await resetPasswordUsuario(usuario.id);
             setModalAction(null);
-            setSuccessMessage(
-                "Se envió contraseña temporal al correo del colaborador",
-            );
             navigate("/colaboradores", {
                 state: {
                     mensaje: "Se envió contraseña temporal al correo del colaborador",
@@ -251,6 +247,14 @@ function DetalleUsuario() {
                         </button>
 
                         <div className="flex flex-wrap gap-3">
+                            <button
+                                type="button"
+                                onClick={() => navigate(`/informes?colaborador=${usuario.id}`)}
+                                className="flex h-12 cursor-pointer items-center gap-2 rounded-2xl border border-[#dce3ee] bg-white px-4 font-bold text-[#071b3b] transition hover:bg-[#f0f4fa]"
+                            >
+                                <FileText className="h-5 w-5" />
+                                Generar documento
+                            </button>
                             <button
                                 type="button"
                                 onClick={() => navigate(`/colaboradores/${usuario.id}/editar`)}
@@ -766,7 +770,6 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
     useEffect(() => {
         if (!usuarioId) return;
         let active = true;
-        setLoading(true);
         getHistorialSueldo(usuarioId, { page, limit: 10 })
             .then((result) => {
                 if (active) {
@@ -904,7 +907,6 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
     useEffect(() => {
         if (!usuarioId) return;
         let active = true;
-        setLoading(true);
         getHistorialEmpresa(usuarioId, { page, limit: 10 })
             .then((result) => {
                 if (active) {

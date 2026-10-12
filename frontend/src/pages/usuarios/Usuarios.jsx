@@ -129,7 +129,6 @@ function Usuarios() {
 
     useEffect(() => {
         let active = true;
-        setLoading(true);
         getUsuarios({
             page,
             limit: PAGE_SIZE,

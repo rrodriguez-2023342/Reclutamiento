@@ -1,5 +1,6 @@
-import { Bell, Menu, PanelLeftClose, Search } from "lucide-react";
+import { Menu, PanelLeftClose, Search } from "lucide-react";
 import UserMenu from "./UserMenu.jsx";
+import NotificationBell from "./NotificationBell.jsx";
 
 function Header({
   title = "Resumen general",
@@ -45,13 +46,7 @@ function Header({
         </label>
       )}
       <div className="flex shrink-0 items-center gap-2 sm:gap-5">
-        <button
-          type="button"
-          aria-label="Notificaciones"
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-[#f1f4f9] text-[#071b3b] transition hover:bg-[#e8edf6] cursor-pointer"
-        >
-          <Bell className="h-5 w-5" strokeWidth={2} />
-        </button>
+        <NotificationBell />
         <div className="hidden border-l border-[#e1e6ef] pl-5 sm:block">
           <UserMenu onClick={onOpenProfile} />
         </div>

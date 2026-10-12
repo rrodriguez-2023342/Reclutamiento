@@ -36,7 +36,6 @@ function EditarDivision() {
 
     useEffect(() => {
         let active = true;
-        setLoadingDivision(true);
         getDivisionById(id)
             .then((data) => {
                 if (active) {

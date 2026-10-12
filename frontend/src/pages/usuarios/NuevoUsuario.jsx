@@ -208,6 +208,8 @@ function NuevoUsuario() {
                 categoria_seguro_gastos_medicos: values.tiene_seguro_gastos_medicos
                     ? values.categoria_seguro_gastos_medicos || null
                     : null,
+                fecha_alta_seguro_gastos_medicos: values.fecha_alta_seguro_gastos_medicos || null,
+                fecha_baja_seguro_gastos_medicos: values.fecha_baja_seguro_gastos_medicos || null,
                 tiene_seguro_vida: values.tiene_seguro_vida || false,
                 empresa_seguro_vida: values.tiene_seguro_vida
                     ? values.empresa_seguro_vida || null
@@ -215,6 +217,8 @@ function NuevoUsuario() {
                 categoria_seguro_vida: values.tiene_seguro_vida
                     ? values.categoria_seguro_vida || null
                     : null,
+                fecha_alta_seguro_vida: values.fecha_alta_seguro_vida || null,
+                fecha_baja_seguro_vida: values.fecha_baja_seguro_vida || null,
             };
             const creado = await createUsuario(payload);
             navigate("/colaboradores", {
@@ -571,6 +575,14 @@ function NuevoUsuario() {
                                             )}
                                         </div>
                                     )}
+                                    <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                                        <Field label="Fecha de alta del seguro médico">
+                                            <Input type="date" registration={register("fecha_alta_seguro_gastos_medicos")} />
+                                        </Field>
+                                        <Field label="Fecha de baja del seguro médico">
+                                            <Input type="date" registration={register("fecha_baja_seguro_gastos_medicos")} />
+                                        </Field>
+                                    </div>
                                 </div>
 
                                 <div className="rounded-xl bg-[#f0f4fa] p-5">
@@ -610,6 +622,14 @@ function NuevoUsuario() {
                                             </Field>
                                         </div>
                                     )}
+                                    <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                                        <Field label="Fecha de alta del seguro de vida">
+                                            <Input type="date" registration={register("fecha_alta_seguro_vida")} />
+                                        </Field>
+                                        <Field label="Fecha de baja del seguro de vida">
+                                            <Input type="date" registration={register("fecha_baja_seguro_vida")} />
+                                        </Field>
+                                    </div>
                                 </div>
                             </div>
                         </section>

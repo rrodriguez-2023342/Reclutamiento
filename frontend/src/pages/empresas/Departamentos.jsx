@@ -171,7 +171,6 @@ function Departamentos() {
 
     useEffect(() => {
         let active = true;
-        setLoading(true);
         getDepartamentos({
             page,
             limit: PAGE_SIZE,

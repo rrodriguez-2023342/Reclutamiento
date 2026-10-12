@@ -36,7 +36,6 @@ function EditarPatrono() {
 
     useEffect(() => {
         let active = true;
-        setLoadingPatrono(true);
         getPatronoById(id)
             .then((data) => {
                 if (active) {

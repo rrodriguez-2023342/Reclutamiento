@@ -8,6 +8,8 @@ const PORT = process.env.PORT || 4000
 // Crea las carpetas de uploads si todavía no existen.
 fs.mkdirSync('uploads', { recursive: true })
 fs.mkdirSync('uploads/postulantes', { recursive: true })
+fs.mkdirSync('uploads/documentos/plantillas', { recursive: true })
+fs.mkdirSync('uploads/documentos/generados', { recursive: true })
 
 // Ejecuta solo los seeds necesarios para la app: roles y usuario administrador.
 try {

@@ -36,7 +36,6 @@ function EditarDepartamento() {
 
     useEffect(() => {
         let active = true;
-        setLoadingDepartamento(true);
         getDepartamentoById(id)
             .then((data) => {
                 if (active) {

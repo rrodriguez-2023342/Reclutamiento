@@ -1419,7 +1419,6 @@ function HistorialRechazoModal({ postulanteId, onClose }) {
   useEffect(() => {
     if (!postulanteId) return;
     let active = true;
-    setLoading(true);
     getHistorialRechazo(postulanteId, { page, limit: 10 })
       .then((result) => {
         if (active) {

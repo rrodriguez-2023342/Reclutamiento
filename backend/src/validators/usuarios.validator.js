@@ -4,6 +4,10 @@ import { z } from "zod";
 const texto = (max) => z.string().trim().max(max);
 // Define una funcion para campos de texto opcionales
 const textoOpcional = (max) => texto(max).nullish();
+const fechaOpcional = z.preprocess(
+  (valor) => (valor === "" ? null : valor),
+  z.iso.date().nullish(),
+);
 
 const validarSeguros = (data, ctx) => {
   if (data.tipo_contrato === "DEFINIDO" && !data.fecha_fin_contrato?.trim()) {
@@ -114,9 +118,13 @@ export const createUsuarioSchema = z.object({
   empresa_seguro_gastos_medicos: z.string().trim().max(100).nullish(),
   tipo_seguro_gastos_medicos: z.enum(["INDIVIDUAL", "FAMILIAR"]).nullish(),
   categoria_seguro_gastos_medicos: textoOpcional(100),
+  fecha_alta_seguro_gastos_medicos: fechaOpcional,
+  fecha_baja_seguro_gastos_medicos: fechaOpcional,
   tiene_seguro_vida: z.boolean().nullish(),
   empresa_seguro_vida: z.string().trim().max(100).nullish(),
   categoria_seguro_vida: textoOpcional(100),
+  fecha_alta_seguro_vida: fechaOpcional,
+  fecha_baja_seguro_vida: fechaOpcional,
 })
   .superRefine(validarSeguros)
   .superRefine(validarIdentificadorLogin);
@@ -168,9 +176,13 @@ export const updateUsuarioSchema = z.object({
   empresa_seguro_gastos_medicos: z.string().trim().max(100).nullish(),
   tipo_seguro_gastos_medicos: z.enum(["INDIVIDUAL", "FAMILIAR"]).nullish(),
   categoria_seguro_gastos_medicos: textoOpcional(100),
+  fecha_alta_seguro_gastos_medicos: fechaOpcional,
+  fecha_baja_seguro_gastos_medicos: fechaOpcional,
   tiene_seguro_vida: z.boolean().nullish(),
   empresa_seguro_vida: z.string().trim().max(100).nullish(),
   categoria_seguro_vida: textoOpcional(100),
+  fecha_alta_seguro_vida: fechaOpcional,
+  fecha_baja_seguro_vida: fechaOpcional,
 })
   .superRefine(validarSeguros)
   .superRefine(validarIdentificadorLogin);

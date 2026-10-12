@@ -107,6 +107,14 @@ export const cambiarEstadoPlantilla = async (req, res) => {
   res.json({ status: 'ok', data })
 }
 
+export const eliminarVersionPlantilla = async (req, res) => {
+  const data = await documentosLaboralesService.eliminarVersionPlantilla({
+    ...identidad(req),
+    plantillaId: idParam(req, 'plantillaId'),
+  })
+  res.json({ status: 'ok', data })
+}
+
 function descargar(res, next, ruta, nombre) {
   res.download(ruta, nombre, (error) => {
     if (error && !res.headersSent) next(error)
@@ -138,6 +146,23 @@ export const listarMisSolicitudes = async (req, res) => {
 
 export const listarMisDocumentosDirectos = async (req, res) => {
   const data = await documentosLaboralesService.listarMisDocumentosDirectos(req.userId)
+  res.json({ status: 'ok', data })
+}
+
+export const listarDocumentosGenerados = async (req, res) => {
+  const filtros = validar(z.object({ empresa_id: z.coerce.number().int().positive().optional() }), req.query)
+  const data = await documentosLaboralesService.listarDocumentosGenerados({
+    ...identidad(req),
+    empresaId: filtros.empresa_id,
+  })
+  res.json({ status: 'ok', data })
+}
+
+export const eliminarDocumentoGenerado = async (req, res) => {
+  const data = await documentosLaboralesService.eliminarDocumentoGenerado({
+    ...identidad(req),
+    documentoId: idParam(req, 'documentoId'),
+  })
   res.json({ status: 'ok', data })
 }
 

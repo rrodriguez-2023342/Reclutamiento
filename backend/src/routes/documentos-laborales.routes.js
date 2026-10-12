@@ -6,8 +6,11 @@ import {
   crearTipoDocumento,
   descargarDocumentoGenerado,
   descargarPlantilla,
+  eliminarDocumentoGenerado,
+  eliminarVersionPlantilla,
   generarDocumento,
   listarDestinosGeneracion,
+  listarDocumentosGenerados,
   listarMarcadores,
   listarMisDocumentosDirectos,
   listarMisSolicitudes,
@@ -38,6 +41,7 @@ router.patch('/tipos/:tipoDocumentoId', authorize(...gestores), actualizarTipoDo
 router.get('/tipos/:tipoDocumentoId/plantillas', authorize(...gestores), listarVersionesPlantilla)
 router.post('/tipos/:tipoDocumentoId/plantillas', authorize(...gestores), uploadPlantilla.single('archivo'), subirPlantilla)
 router.patch('/plantillas/:plantillaId/estado', authorize(...gestores), cambiarEstadoPlantilla)
+router.delete('/plantillas/:plantillaId', authorize(...gestores), eliminarVersionPlantilla)
 router.get('/plantillas/:plantillaId/descargar', authorize(...gestores), descargarPlantilla)
 
 router.post('/solicitudes', authorize(COLABORADOR_ROLE), crearSolicitudDocumento)
@@ -49,7 +53,9 @@ router.post('/solicitudes/:solicitudId/rechazar', authorize(...gestores), rechaz
 
 router.post('/previsualizar', authorize(...gestores), previsualizarDocumento)
 router.post('/generar', authorize(...gestores), generarDocumento)
+router.get('/generados', authorize(...gestores), listarDocumentosGenerados)
 router.get('/generados/directos/mios', authorize(...gestores), listarMisDocumentosDirectos)
+router.delete('/generados/:documentoId', authorize(...gestores), eliminarDocumentoGenerado)
 router.get('/generados/:documentoId/descargar', authorize(...gestores), descargarDocumentoGenerado)
 
 export default router

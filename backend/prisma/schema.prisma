@@ -268,10 +268,12 @@ model Usuario {
   historial_rechazos              HistorialRechazo[]     @relation("RechazadoPor")
   tipos_documento_creados         TipoDocumentoLaboral[] @relation("TipoDocumentoCreadoPor")
   plantillas_subidas              PlantillaDocumento[]   @relation("PlantillaSubidaPor")
+  plantillas_eliminadas           PlantillaDocumento[]   @relation("PlantillaEliminadaPor")
   solicitudes_documento           SolicitudDocumento[]   @relation("SolicitudColaborador")
   solicitudes_atendidas           SolicitudDocumento[]   @relation("SolicitudAtendidaPor")
   documentos_generados            DocumentoGenerado[]    @relation("DocumentoColaborador")
   documentos_generados_por        DocumentoGenerado[]    @relation("DocumentoGeneradoPor")
+  documentos_eliminados           DocumentoGenerado[]    @relation("DocumentoEliminadoPor")
   notificaciones                  Notificacion[]
 
   @@map("usuarios")
@@ -598,12 +600,16 @@ model PlantillaDocumento {
   estado            EstadoPlantillaDocumento @default(ACTIVA)
   creada_por_id     Int                      @map("creada_por_id")
   creada_en         DateTime                 @default(now()) @map("creada_en") @db.Timestamp(0)
+  eliminada_en      DateTime?                @map("eliminada_en") @db.Timestamp(0)
+  eliminada_por_id  Int?                     @map("eliminada_por_id")
   tipo_documento    TipoDocumentoLaboral     @relation(fields: [tipo_documento_id], references: [id], onDelete: Restrict)
   creada_por        Usuario                  @relation("PlantillaSubidaPor", fields: [creada_por_id], references: [id], onDelete: Restrict)
+  eliminada_por     Usuario?                 @relation("PlantillaEliminadaPor", fields: [eliminada_por_id], references: [id], onDelete: SetNull)
   documentos        DocumentoGenerado[]
 
   @@unique([tipo_documento_id, version])
   @@index([tipo_documento_id, estado, version])
+  @@index([eliminada_en])
   @@map("plantillas_documento")
 }
 
@@ -641,14 +647,18 @@ model DocumentoGenerado {
   tamano_bytes    Int                 @map("tamano_bytes")
   sha256          String              @db.Char(64)
   generado_en     DateTime            @default(now()) @map("generado_en") @db.Timestamp(0)
+  eliminado_en    DateTime?           @map("eliminado_en") @db.Timestamp(0)
+  eliminado_por_id Int?               @map("eliminado_por_id")
   solicitud       SolicitudDocumento? @relation(fields: [solicitud_id], references: [id], onDelete: Restrict)
   plantilla       PlantillaDocumento  @relation(fields: [plantilla_id], references: [id], onDelete: Restrict)
   colaborador     Usuario             @relation("DocumentoColaborador", fields: [colaborador_id], references: [id], onDelete: Restrict)
   empresa         Empresa             @relation(fields: [empresa_id], references: [id], onDelete: Restrict)
   generado_por    Usuario             @relation("DocumentoGeneradoPor", fields: [generado_por_id], references: [id], onDelete: Restrict)
+  eliminado_por   Usuario?            @relation("DocumentoEliminadoPor", fields: [eliminado_por_id], references: [id], onDelete: SetNull)
 
   @@index([empresa_id, generado_en])
   @@index([colaborador_id, generado_en])
+  @@index([eliminado_en])
   @@map("documentos_generados")
 }
 

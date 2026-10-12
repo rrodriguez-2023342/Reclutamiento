@@ -45,6 +45,11 @@ export async function cambiarEstadoPlantilla(id, estado) {
   return data.data
 }
 
+export async function eliminarVersionPlantilla(id) {
+  const { data } = await api.delete(`/documentos/plantillas/${id}`)
+  return data.data
+}
+
 export async function descargarPlantilla(id) {
   const { data } = await api.get(`/documentos/plantillas/${id}/descargar`, {
     responseType: 'blob',
@@ -99,4 +104,14 @@ export async function descargarDocumentoGenerado(id) {
     responseType: 'blob',
   })
   return data
+}
+
+export async function getDocumentosGenerados(params = {}) {
+  const { data } = await api.get('/documentos/generados', { params })
+  return data.data
+}
+
+export async function eliminarDocumentoGenerado(id) {
+  const { data } = await api.delete(`/documentos/generados/${id}`)
+  return data.data
 }

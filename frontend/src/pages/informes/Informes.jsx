@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ArrowRight, Check, ChevronDown, ClipboardList, Copy, FilePlus2, FileText, Search, Settings2, Sparkles, X } from 'lucide-react'
+import { ArrowRight, Check, ChevronDown, ClipboardList, Copy, FilePlus2, FileText, Search, Settings2, Sparkles, Trash2, X } from 'lucide-react'
 import DashboardLayout from '../../layouts/DashboardLayout.jsx'
 import { useAuth } from '../../hooks/useAuth.js'
 import { getEmpresas } from '../../services/usuarios.service.js'
@@ -10,7 +10,10 @@ import {
   crearTipoDocumento,
   descargarDocumentoGenerado,
   descargarPlantilla,
+  eliminarDocumentoGenerado,
+  eliminarVersionPlantilla,
   getDestinosDocumento,
+  getDocumentosGenerados,
   generarDocumento,
   getCamposDocumento,
   getMisSolicitudes,
@@ -220,6 +223,7 @@ function Informes() {
   const [notasCambio, setNotasCambio] = useState('')
   const [resultadoSubida, setResultadoSubida] = useState(null)
   const [solicitudes, setSolicitudes] = useState([])
+  const [documentosGenerados, setDocumentosGenerados] = useState([])
   const [misSolicitudes, setMisSolicitudes] = useState([])
   const [filtroEstado, setFiltroEstado] = useState('')
   const [filtroTipo, setFiltroTipo] = useState('')
@@ -309,6 +313,17 @@ function Informes() {
       activo = false
     }
   }, [colaborador, activeTab, filtroEstado, filtroTipo, filtroColaborador, empresaFiltro, refresh])
+
+  useEffect(() => {
+    if (colaborador || activeTab !== 'documentos-generados') return
+    let activo = true
+    getDocumentosGenerados(empresaFiltro ? { empresa_id: empresaFiltro } : {})
+      .then((data) => activo && setDocumentosGenerados(data))
+      .catch((err) => activo && setError(err.response?.data?.message || 'No se pudieron cargar los documentos generados.'))
+    return () => {
+      activo = false
+    }
+  }, [colaborador, activeTab, empresaFiltro, refresh])
 
   useEffect(() => {
     if (colaborador) return
@@ -515,6 +530,28 @@ function Informes() {
   const descargar = async (id, nombre) => {
     const blob = await ejecutar(() => descargarDocumentoGenerado(id))
     if (blob) guardarBlob(blob, nombre || 'documento.docx')
+  }
+
+  const eliminarVersion = async (version) => {
+    if (!window.confirm(`¿Quieres retirar la versión ${version.version}? Se conservarán el archivo y el historial; los documentos ya generados no cambiarán.`)) return
+    const resultado = await ejecutar(
+      () => eliminarVersionPlantilla(version.id),
+      'Versión retirada del catálogo. El archivo se conserva en el historial.',
+    )
+    if (resultado) setRefresh((actual) => actual + 1)
+  }
+
+  const eliminarDocumento = async (documento) => {
+    if (!window.confirm(`¿Quieres retirar "${documento.nombre_archivo}"? Se conservarán el archivo y el registro histórico.`)) return
+    const resultado = await ejecutar(
+      () => eliminarDocumentoGenerado(documento.id),
+      'Documento retirado de la lista. El archivo se conserva de forma privada.',
+    )
+    if (resultado) {
+      setDocumentosGenerados((actuales) => actuales.filter((item) => item.id !== documento.id))
+      setSeleccionada((actual) => actual?.documento?.id === documento.id ? { ...actual, documento: null } : actual)
+      setRefresh((actual) => actual + 1)
+    }
   }
 
   const obtenerPreviewDirecto = async (tipoId, colaboradorId, versionId) => {
@@ -748,6 +785,7 @@ function Informes() {
               onChange={cambiarTab}
               items={[
                 { id: 'solicitudes', label: 'Solicitudes', description: 'Revisar y entregar documentos', icon: ClipboardList, count: solicitudesPendientes },
+                { id: 'documentos-generados', label: 'Documentos generados', description: 'Consultar, descargar o retirar entregas', icon: FileText },
                 { id: 'plantillas', label: 'Tipos y plantillas', description: 'Configurar documentos y versiones', icon: Settings2 },
                 { id: 'directo', label: 'Generación directa', description: 'Crear sin solicitud previa', icon: FilePlus2 },
                 { id: 'campos', label: 'Campos disponibles', description: 'Marcadores para Word', icon: FileText },
@@ -871,6 +909,7 @@ function Informes() {
                                   if (blob) guardarBlob(blob, version.nombre_archivo)
                                 }} className="text-sm font-bold text-[#3162e9]">Descargar original</button>
                                 {(admin || tipoActivo.empresa_id) && (
+                                <>
                                   <SearchableSelect value={version.estado} placeholder="Estado de versión" options={[
                                     { value: 'ACTIVA', label: 'Activa' },
                                     { value: 'INACTIVA', label: 'Inactiva' },
@@ -879,6 +918,10 @@ function Informes() {
                                     const actualizado = await ejecutar(() => cambiarEstadoPlantilla(version.id, estado), 'Estado de versión actualizado.')
                                     if (actualizado) setRefresh((actual) => actual + 1)
                                   }} />
+                                  <button type="button" disabled={cargando} onClick={() => eliminarVersion(version)} aria-label={`Eliminar versión ${version.version}`} title="Retirar versión" className="rounded-lg border border-red-200 p-2 text-red-700 transition hover:bg-red-50 disabled:opacity-50">
+                                    <Trash2 className="h-4 w-4" />
+                                  </button>
+                                </>
                                 )}
                               </div>
                             </article>
@@ -956,7 +999,9 @@ function Informes() {
                         {seleccionada.motivo_rechazo && <p className="text-red-700 sm:col-span-2"><span className="block text-xs font-semibold uppercase tracking-wide">Motivo de rechazo</span>{seleccionada.motivo_rechazo}</p>}
                       </div>
                       {seleccionada.estado === 'GENERADO' ? (
-                        seleccionada.documento && <button type="button" onClick={() => descargar(seleccionada.documento.id, seleccionada.documento.nombre_archivo)} className="rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white">Descargar documento entregado</button>
+                        seleccionada.documento
+                          ? <button type="button" onClick={() => descargar(seleccionada.documento.id, seleccionada.documento.nombre_archivo)} className="rounded-xl bg-[#3162e9] px-4 py-2.5 font-bold text-white">Descargar documento entregado</button>
+                          : <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">El archivo fue retirado de la lista de documentos disponibles. El registro de la entrega se conserva en el historial.</p>
                       ) : seleccionada.estado !== 'RECHAZADA' ? (
                         <>
                           <label className="block text-sm font-semibold text-[#33445f]">1. Elige la versión de plantilla
@@ -984,6 +1029,42 @@ function Informes() {
                 </Panel>
               </div>
               </div>
+            )}
+
+            {activeTab === 'documentos-generados' && (
+              <Panel title="Documentos generados">
+                {admin && (
+                  <label className="mb-4 block max-w-md text-sm font-semibold text-[#33445f]">
+                    Filtrar empresa
+                    <div className="mt-1"><SearchableSelect value={String(empresaFiltro)} onChange={setEmpresaFiltro} placeholder="Todas las empresas" options={[
+                      { value: '', label: 'Todas las empresas' },
+                      ...empresas.map((empresa) => ({ value: String(empresa.id), label: empresa.nombre_empresa })),
+                    ]} /></div>
+                  </label>
+                )}
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[760px] text-left text-sm">
+                    <thead><tr className="border-b text-[#65758f]"><th className="p-3">Documento</th><th className="p-3">Destinatario</th><th className="p-3">Empresa</th><th className="p-3">Generado</th><th className="p-3">Acciones</th></tr></thead>
+                    <tbody>{documentosGenerados.map((documento) => (
+                      <tr key={documento.id} className="border-b border-[#eef1f6]">
+                        <td className="p-3"><strong className="block">{documento.tipo_documento.nombre}</strong><span className="text-xs text-[#65758f]">Versión {documento.version_plantilla}</span></td>
+                        <td className="p-3">{documento.colaborador.nombre}</td>
+                        <td className="p-3">{documento.empresa.nombre_empresa}</td>
+                        <td className="p-3">{fecha(documento.generado_en)}</td>
+                        <td className="p-3">
+                          <div className="flex items-center gap-3">
+                            <button type="button" onClick={() => descargar(documento.id, documento.nombre_archivo)} className="font-bold text-[#3162e9]">Descargar</button>
+                            <button type="button" disabled={cargando} onClick={() => eliminarDocumento(documento)} className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-2.5 py-1.5 font-semibold text-red-700 transition hover:bg-red-50 disabled:opacity-50">
+                              <Trash2 className="h-3.5 w-3.5" />Eliminar
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}</tbody>
+                  </table>
+                </div>
+                {!documentosGenerados.length && <p className="py-8 text-center text-sm text-[#65758f]">No hay documentos generados para mostrar.</p>}
+              </Panel>
             )}
 
             {activeTab === 'campos' && (

@@ -204,7 +204,7 @@ async function obtenerDestinoDocumento(destinoId, empresaId, actorRol) {
 
 async function obtenerVersion(plantillaId, tipoDocumentoId) {
   const plantilla = await prisma.plantillaDocumento.findFirst({
-    where: { id: plantillaId, tipo_documento_id: tipoDocumentoId },
+    where: { id: plantillaId, tipo_documento_id: tipoDocumentoId, eliminada_en: null },
   })
   if (!plantilla) throw crearError('La versión seleccionada no pertenece a este tipo de documento', 404)
   return plantilla
@@ -241,7 +241,7 @@ function respuestaPlantilla(plantilla) {
 function respuestaSolicitud(solicitud) {
   return {
     ...solicitud,
-    documento: solicitud.documento
+    documento: solicitud.documento && !solicitud.documento.eliminado_en
       ? {
           id: solicitud.documento.id,
           nombre_archivo: solicitud.documento.nombre_archivo,
@@ -442,7 +442,7 @@ class DocumentosLaboralesService {
       await verificarEmpresa(userId, rol, tipo.empresa_id)
     }
     const versiones = await prisma.plantillaDocumento.findMany({
-      where: { tipo_documento_id: tipo.id },
+      where: { tipo_documento_id: tipo.id, eliminada_en: null },
       include: { creada_por: { select: { id: true, nombre: true } } },
       orderBy: { version: 'desc' },
     })
@@ -508,7 +508,7 @@ class DocumentosLaboralesService {
       where: { id: plantillaId },
       include: { tipo_documento: true },
     })
-    if (!plantilla) throw crearError('Versión de plantilla no encontrada', 404)
+    if (!plantilla || plantilla.eliminada_en) throw crearError('Versión de plantilla no encontrada', 404)
     await verificarEmpresa(userId, rol, plantilla.tipo_documento.empresa_id)
     if (rol === COLABORADOR_ROLE) throw crearError('No tiene permiso para modificar plantillas', 403)
     const updated = await prisma.plantillaDocumento.update({
@@ -519,12 +519,30 @@ class DocumentosLaboralesService {
     return respuestaPlantilla(updated)
   }
 
+  async eliminarVersionPlantilla({ userId, rol, plantillaId }) {
+    if (rol !== ADMIN_ROLE && rol !== RRHH_ROLE) {
+      throw crearError('No tiene permiso para eliminar versiones de plantilla', 403)
+    }
+    const plantilla = await prisma.plantillaDocumento.findUnique({
+      where: { id: plantillaId },
+      include: { tipo_documento: true },
+    })
+    if (!plantilla || plantilla.eliminada_en) throw crearError('Versión de plantilla no encontrada', 404)
+    await verificarEmpresa(userId, rol, plantilla.tipo_documento.empresa_id)
+    const resultado = await prisma.plantillaDocumento.updateMany({
+      where: { id: plantillaId, eliminada_en: null },
+      data: { eliminada_en: new Date(), eliminada_por_id: userId },
+    })
+    if (!resultado.count) throw crearError('La versión ya fue eliminada', 409)
+    return { id: plantillaId, eliminada: true }
+  }
+
   async descargarPlantilla({ userId, rol, plantillaId }) {
     const plantilla = await prisma.plantillaDocumento.findUnique({
       where: { id: plantillaId },
       include: { tipo_documento: true },
     })
-    if (!plantilla) throw crearError('Versión de plantilla no encontrada', 404)
+    if (!plantilla || plantilla.eliminada_en) throw crearError('Versión de plantilla no encontrada', 404)
     if (!(rol === RRHH_ROLE && plantilla.tipo_documento.empresa_id === null)) {
       await verificarEmpresa(userId, rol, plantilla.tipo_documento.empresa_id)
     }
@@ -575,7 +593,7 @@ class DocumentosLaboralesService {
       where: { colaborador_id: userId },
       include: {
         tipo_documento: { select: { id: true, nombre: true } },
-        documento: { select: { id: true, nombre_archivo: true, generado_en: true } },
+        documento: { select: { id: true, nombre_archivo: true, generado_en: true, eliminado_en: true } },
       },
       orderBy: { solicitada_en: 'desc' },
     })
@@ -584,7 +602,7 @@ class DocumentosLaboralesService {
 
   async listarMisDocumentosDirectos(userId) {
     return prisma.documentoGenerado.findMany({
-      where: { colaborador_id: userId, solicitud_id: null },
+      where: { colaborador_id: userId, solicitud_id: null, eliminado_en: null },
       select: {
         id: true,
         nombre_archivo: true,
@@ -600,6 +618,71 @@ class DocumentosLaboralesService {
       ...documento,
       tipo_documento: plantilla.tipo_documento,
     })))
+  }
+
+  async listarDocumentosGenerados({ userId, rol, empresaId }) {
+    if (rol !== ADMIN_ROLE && rol !== RRHH_ROLE) {
+      throw crearError('No tiene permiso para listar documentos generados', 403)
+    }
+    if (empresaId && rol === RRHH_ROLE) await verificarEmpresa(userId, rol, empresaId)
+    const scope = rol === ADMIN_ROLE
+      ? {}
+      : {
+          empresa_id: {
+            in: (await prisma.usuarioEmpresa.findMany({
+              where: { usuario_id: userId },
+              select: { empresa_id: true },
+            })).map(({ empresa_id }) => empresa_id),
+          },
+        }
+    const documentos = await prisma.documentoGenerado.findMany({
+      where: {
+        eliminado_en: null,
+        ...scope,
+        ...(empresaId ? { empresa_id: empresaId } : {}),
+      },
+      include: {
+        empresa: { select: { id: true, nombre_empresa: true } },
+        colaborador: { select: { id: true, nombre: true } },
+        generado_por: { select: { id: true, nombre: true } },
+        plantilla: {
+          select: {
+            tipo_documento: { select: { nombre: true } },
+            version: true,
+          },
+        },
+      },
+      orderBy: { generado_en: 'desc' },
+    })
+    return documentos.map((documento) => ({
+      id: documento.id,
+      nombre_archivo: documento.nombre_archivo,
+      generado_en: documento.generado_en,
+      solicitud_id: documento.solicitud_id,
+      empresa: documento.empresa,
+      colaborador: documento.colaborador,
+      generado_por: documento.generado_por,
+      tipo_documento: documento.plantilla.tipo_documento,
+      version_plantilla: documento.plantilla.version,
+    }))
+  }
+
+  async eliminarDocumentoGenerado({ userId, rol, documentoId }) {
+    if (rol !== ADMIN_ROLE && rol !== RRHH_ROLE) {
+      throw crearError('No tiene permiso para eliminar documentos generados', 403)
+    }
+    const documento = await prisma.documentoGenerado.findUnique({
+      where: { id: documentoId },
+      select: { id: true, empresa_id: true, eliminado_en: true },
+    })
+    if (!documento || documento.eliminado_en) throw crearError('Documento generado no encontrado', 404)
+    await verificarEmpresa(userId, rol, documento.empresa_id)
+    const resultado = await prisma.documentoGenerado.updateMany({
+      where: { id: documentoId, eliminado_en: null },
+      data: { eliminado_en: new Date(), eliminado_por_id: userId },
+    })
+    if (!resultado.count) throw crearError('El documento ya fue eliminado', 409)
+    return { id: documentoId, eliminado: true }
   }
 
   async listarSolicitudes({ userId, rol, filtros }) {
@@ -637,7 +720,7 @@ class DocumentosLaboralesService {
         colaborador: { select: { id: true, nombre: true } },
         empresa: { select: { id: true, nombre_empresa: true } },
         atendida_por: { select: { id: true, nombre: true } },
-        documento: { select: { id: true, nombre_archivo: true, generado_en: true } },
+        documento: { select: { id: true, nombre_archivo: true, generado_en: true, eliminado_en: true } },
       },
       orderBy: { solicitada_en: 'desc' },
     })
@@ -651,7 +734,7 @@ class DocumentosLaboralesService {
         tipo_documento: { select: { id: true, nombre: true } },
         colaborador: { select: { id: true, nombre: true } },
         empresa: { select: { id: true, nombre_empresa: true } },
-        documento: { select: { id: true, nombre_archivo: true, generado_en: true } },
+        documento: { select: { id: true, nombre_archivo: true, generado_en: true, eliminado_en: true } },
       },
     })
     if (!solicitud) throw crearError('Solicitud no encontrada', 404)
@@ -876,7 +959,7 @@ class DocumentosLaboralesService {
     const documento = await prisma.documentoGenerado.findUnique({
       where: { id: documentoId },
     })
-    if (!documento) throw crearError('Documento generado no encontrado', 404)
+    if (!documento || documento.eliminado_en) throw crearError('Documento generado no encontrado', 404)
     await verificarEmpresa(userId, rol, documento.empresa_id)
     const ruta = rutaPrivada(documento.ruta_archivo)
     return { ruta, nombre: documento.nombre_archivo }

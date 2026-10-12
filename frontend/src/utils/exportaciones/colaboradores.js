@@ -92,6 +92,7 @@ export function hojasColaborador(usuarios) {
         col("Motivo de baja", (u) => texto(u.motivo_baja)),
         col("¿Puede reingresar?", (u) => siNo(u.reingreso_baja)),
         col("Notas de baja", (u) => texto(u.notas_baja)),
+        col("Notas del Alta", (u) => texto(u.notas)),
       ],
       filas: usuarios,
     },

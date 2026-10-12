@@ -187,9 +187,9 @@ export const updateUsuarioSchema = z.object({
   categoria_seguro_vida: textoOpcional(100),
   fecha_alta_seguro_vida: fechaOpcional,
   fecha_baja_seguro_vida: fechaOpcional,
+  notas: z.string().trim().max(500).nullish(),
 })
-  .superRefine(validarSeguros)
-  .superRefine(validarIdentificadorLogin);
+  .superRefine(validarSeguros);
 
 // Esquema para validar la asignacion de empresas a un usuario (rol Recursos Humanos)
 export const asignarEmpresasSchema = z.object({

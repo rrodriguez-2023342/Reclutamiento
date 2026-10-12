@@ -447,11 +447,27 @@ class UsuarioService {
 
     const updateData = {
       ...restFields,
-      rol: { connect: { id: rol_id } },
-      empresa: empresa_id ? { connect: { id: empresa_id } } : { disconnect: true },
-      patrono: patrono_id ? { connect: { id: patrono_id } } : { disconnect: true },
-      puesto: puesto_id ? { connect: { id: puesto_id } } : { disconnect: true },
     };
+
+    // Solo conectar rol si se proporcionó
+    if (rol_id !== undefined) {
+      updateData.rol = { connect: { id: rol_id } };
+    }
+
+    // Empresa: conectar si hay ID, desconectar si es null, no tocar si undefined
+    if (empresa_id !== undefined) {
+      updateData.empresa = empresa_id ? { connect: { id: empresa_id } } : { disconnect: true };
+    }
+
+    // Patrono
+    if (patrono_id !== undefined) {
+      updateData.patrono = patrono_id ? { connect: { id: patrono_id } } : { disconnect: true };
+    }
+
+    // Puesto
+    if (puesto_id !== undefined) {
+      updateData.puesto = puesto_id ? { connect: { id: puesto_id } } : { disconnect: true };
+    }
     if (data.tiene_seguro_gastos_medicos === false) {
       updateData.empresa_seguro_gastos_medicos = null;
       updateData.tipo_seguro_gastos_medicos = null;

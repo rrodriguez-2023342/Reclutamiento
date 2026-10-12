@@ -657,6 +657,7 @@ function NuevoUsuario() {
 
                         <UsuarioPdf
                             getUsuario={getValues}
+                            notasInicial=""
                             puesto={puestoSeleccionado}
                             empresa={empresaSeleccionada}
                             patrono={patronoSeleccionado}

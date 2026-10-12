@@ -749,6 +749,7 @@ function EditarUsuario() {
                                 motivoBajaInicial={usuarioOriginal?.motivo_baja}
                                 notasBajaInicial={usuarioOriginal?.notas_baja}
                                 reingresoBajaInicial={usuarioOriginal?.reingreso_baja}
+                                notasInicial={usuarioOriginal?.notas}
                                 puesto={puestoSeleccionado}
                                 empresa={empresaSeleccionada}
                                 patrono={patronoSeleccionado}

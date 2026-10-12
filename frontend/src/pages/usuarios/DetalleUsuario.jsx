@@ -528,6 +528,15 @@ function DetalleUsuario() {
                             </div>
                         </section>
 
+                        {usuario.notas && (
+                            <section className="mt-6 rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8">
+                                <h2 className="text-lg font-bold text-text-main">Notas del Alta</h2>
+                                <div className="mt-5">
+                                    <p className="whitespace-pre-wrap text-text-main">{usuario.notas}</p>
+                                </div>
+                            </section>
+                        )}
+
                         {(usuario.fecha_baja || usuario.motivo_baja || usuario.notas_baja || usuario.reingreso_baja !== null) && (
                             <section className="mt-6 rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-8">
                                 <h2 className="text-lg font-bold text-text-main">Datos de baja</h2>

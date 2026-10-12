@@ -240,6 +240,7 @@ model Usuario {
   motivo_baja                     String?                @map("motivo_baja") @db.VarChar(100)
   notas_baja                      String?                @map("notas_baja") @db.Text
   reingreso_baja                  Boolean?               @map("reingreso_baja")
+  notas                           String?                @map("notas") @db.Text
   nit                             String?                @map("nit") @db.VarChar(20)
   numero_afiliacion_igss          String?                @map("numero_afiliacion_igss") @db.VarChar(30)
   sueldo                          Decimal?               @map("sueldo") @db.Decimal(10, 2)

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Download, X } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth.js";
-import { registrarBajaUsuario } from "../../services/usuarios.service.js";
+import { registrarBajaUsuario, updateUsuario } from "../../services/usuarios.service.js";
 
 const escapeHtml = (value) =>
     String(value ?? "").replace(/[&<>"']/g, (character) => {
@@ -307,6 +307,7 @@ function UsuarioPdf({
     motivoBajaInicial,
     notasBajaInicial,
     reingresoBajaInicial,
+    notasInicial,
     puesto,
     empresa,
     patrono,
@@ -315,7 +316,7 @@ function UsuarioPdf({
 }) {
     const { user: authUser } = useAuth();
     const [modalType, setModalType] = useState(null);
-    const [notes, setNotes] = useState("");
+    const [notes, setNotes] = useState(notasInicial || "");
     const [notesBaja, setNotesBaja] = useState(notasBajaInicial || "");
     const [fechaBaja, setFechaBaja] = useState(
         fechaBajaInicial ? String(fechaBajaInicial).split("T")[0] : "",
@@ -362,6 +363,10 @@ function UsuarioPdf({
                 onBajaSaved?.();
             }
 
+            if (tipoDocumento === "ALTA" && usuarioId && notes.trim()) {
+                await updateUsuario(usuarioId, { notas: notes.trim() });
+            }
+
             printWindow.document.write(
                 buildPdfHtml({
                     usuario: getUsuario(),
@@ -391,7 +396,7 @@ function UsuarioPdf({
             printWindow.close();
             setModalError(
                 error.response?.data?.message ||
-                    "No fue posible guardar los datos de la baja.",
+                    "No fue posible guardar los datos.",
             );
         } finally {
             setIsSavingBaja(false);
@@ -548,7 +553,7 @@ function UsuarioPdf({
                                         ? setNotesBaja(event.target.value)
                                         : setNotes(event.target.value)
                                 }
-                                maxLength={160}
+                                maxLength={modalType === "BAJA" ? 160 : 500}
                                 rows={7}
                                 className="w-full rounded-[10px] border border-border bg-neutral-bg px-4 py-3 text-text-main outline-none transition focus:border-action"
                                 placeholder="Escribe aquí las observaciones, comentarios o información adicional que quieres incluir en el PDF..."

@@ -66,7 +66,7 @@ export const usuarioSchema = z.object({
     tipo_cuenta_bancaria: z.string().trim().max(50).nullish(),
     numero_cuenta_bancaria: z.string().trim().max(50).nullish(),
     contacto_emergencia_nombre: z.string().trim().max(150).nullish(),
-    contacto_emergencia_telefono: z.string().trim().max(20).nullish(),
+contacto_emergencia_telefono: z.string().trim().max(20).nullish(),
     motivo_cambio_sueldo: z.string().trim().nullish(),
     motivo_cambio_empresa: z.string().trim().nullish(),
     tiene_seguro_gastos_medicos: z.boolean().nullish(),
@@ -80,7 +80,7 @@ export const usuarioSchema = z.object({
     categoria_seguro_vida: z.string().trim().max(100).nullish(),
     fecha_alta_seguro_vida: fechaOpcional,
     fecha_baja_seguro_vida: fechaOpcional,
-    puesto_id: z.coerce.number().int().positive().nullish(),
+    notas: z.string().trim().max(500).nullish(),
 }).superRefine(validarSeguros).superRefine((data, ctx) => {
     // Todo usuario debe poder iniciar sesión: al menos un correo o un usuario
     if (!data.correo && !data.usuario) {
@@ -132,5 +132,6 @@ export const defaultUsuarioValues = {
     categoria_seguro_vida: '',
     fecha_alta_seguro_vida: '',
     fecha_baja_seguro_vida: '',
+    notas: '',
     puesto_id: null,
 }

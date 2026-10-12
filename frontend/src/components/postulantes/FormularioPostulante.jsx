@@ -299,13 +299,24 @@ function normalizarPostulante(p) {
 }
 
 function FormularioPostulante({ postulanteId }) {
-  const esEdicion = Boolean(postulanteId);
+  const [postulanteCreadoId, setPostulanteCreadoId] = useState(null);
+  const postulanteGuardadoId = postulanteId || postulanteCreadoId;
+  const esEdicion = Boolean(postulanteGuardadoId);
   const navigate = useNavigate();
   const [draft] = useState(() =>
     !esEdicion && typeof window !== "undefined"
       ? window.localStorage.getItem(DRAFT_KEY)
       : null,
   );
+  const [draftError] = useState(() => {
+    if (!draft) return "";
+    try {
+      JSON.parse(draft);
+      return "";
+    } catch {
+      return "No se pudo recuperar el borrador guardado. Se inició un formulario nuevo.";
+    }
+  });
   const [cargando, setCargando] = useState(esEdicion);
   const [errorCarga, setErrorCarga] = useState("");
   const [step, setStep] = useState(1);
@@ -313,6 +324,7 @@ function FormularioPostulante({ postulanteId }) {
   const [serverError, setServerError] = useState("");
   const [draftDismissed, setDraftDismissed] = useState(false);
   const [documentosExistentes, setDocumentosExistentes] = useState([]);
+  const [documentosPendientes, setDocumentosPendientes] = useState([]);
   const [cancelOpen, setCancelOpen] = useState(false);
   const [cancelPassword, setCancelPassword] = useState("");
   const [cancelError, setCancelError] = useState("");
@@ -343,7 +355,12 @@ function FormularioPostulante({ postulanteId }) {
     let active = true;
     getPlazas({ activo: true })
       .then((data) => active && setPlazas(data))
-      .catch(() => active && setPlazas([]));
+      .catch(() => {
+        if (active) {
+          setPlazas([]);
+          setServerError("No se pudieron cargar las plazas. Recarga la página e inténtalo de nuevo.");
+        }
+      });
     return () => {
       active = false;
     };
@@ -360,20 +377,23 @@ function FormularioPostulante({ postulanteId }) {
 
   useEffect(() => {
     if (esEdicion) return;
-    const timer = window.setTimeout(
-      () => window.localStorage.setItem(DRAFT_KEY, JSON.stringify(values)),
-      500,
-    );
+    const timer = window.setTimeout(() => {
+      try {
+        window.localStorage.setItem(DRAFT_KEY, JSON.stringify(values));
+      } catch {
+        setServerError("No se pudo guardar el borrador automáticamente. Continúa el formulario y guarda tus cambios.");
+      }
+    }, 500);
     return () => window.clearTimeout(timer);
   }, [values, esEdicion]);
 
   // En modo edición se cargan los datos del postulante y se precargan normalizados en el formulario
   useEffect(() => {
-    if (!esEdicion) return undefined;
+    if (!postulanteId) return undefined;
     let active = true;
     Promise.all([
       getPostulanteById(postulanteId),
-      getDocumentos(postulanteId).catch(() => []),
+      getDocumentos(postulanteId),
     ])
       .then(([data, docs]) => {
         if (active && data) {
@@ -395,7 +415,7 @@ function FormularioPostulante({ postulanteId }) {
     return () => {
       active = false;
     };
-  }, [esEdicion, postulanteId, reset]);
+  }, [postulanteId, reset]);
 
   const boolean = (name, label) => (
     <BooleanField
@@ -482,36 +502,46 @@ function FormularioPostulante({ postulanteId }) {
     if (step !== 8) return;
     setServerError("");
     try {
-      let postulanteIdFinal = postulanteId;
+      let postulanteIdFinal = postulanteGuardadoId;
 
-      if (esEdicion) {
-        await updatePostulante(postulanteId, data);
+      if (postulanteGuardadoId) {
+        await updatePostulante(postulanteGuardadoId, data);
       } else {
         const creado = await createPostulante(data);
         postulanteIdFinal = creado.id;
+        setPostulanteCreadoId(creado.id);
         window.localStorage.removeItem(DRAFT_KEY);
       }
 
       // Subir documentos seleccionados (si los hay)
       const documentos = getValues("documentos") || {};
-      for (const tipo of TIPOS_DOCUMENTO) {
+      const tiposParaSubir = documentosPendientes.length
+        ? documentosPendientes
+        : TIPOS_DOCUMENTO.filter((tipo) => documentos[tipo] instanceof File);
+      const tiposFallidos = [];
+      const erroresSubida = [];
+      for (const tipo of tiposParaSubir) {
         const archivo = documentos[tipo];
         if (archivo instanceof File) {
           try {
             await subirDocumento(postulanteIdFinal, tipo, archivo);
           } catch (docError) {
-            if (docError.response?.status === 413) {
-              alert(
-                `${tipo}: ${docError.response.data?.message || "El archivo excede el límite máximo de 2MB"}`,
-              );
-            } else {
-              console.error(`Error subiendo ${tipo}:`, docError);
-            }
+            tiposFallidos.push(tipo);
+            erroresSubida.push(
+              `${tipo}: ${docError.response?.data?.message || "No fue posible subir este documento."}`,
+            );
           }
         }
       }
+      setDocumentosPendientes(tiposFallidos);
+      if (erroresSubida.length) {
+        setServerError(
+          `La información del postulante se guardó, pero algunos documentos no se pudieron subir. Corrige los archivos e inténtalo de nuevo:\n${erroresSubida.join("\n")}`,
+        );
+        return;
+      }
 
-      navigate(esEdicion ? `/postulantes/${postulanteId}` : "/postulantes", {
+      navigate(esEdicion ? `/postulantes/${postulanteGuardadoId}` : "/postulantes", {
         state: {
           mensaje: esEdicion
             ? "Postulante actualizado correctamente"
@@ -540,7 +570,7 @@ function FormularioPostulante({ postulanteId }) {
     try {
       await verifyCurrentPassword(cancelPassword);
       if (!esEdicion) window.localStorage.removeItem(DRAFT_KEY);
-      navigate(esEdicion ? `/postulantes/${postulanteId}` : "/postulantes");
+      navigate(esEdicion ? `/postulantes/${postulanteGuardadoId}` : "/postulantes");
     } catch (error) {
       setCancelError(
         error.response?.data?.message ||
@@ -666,8 +696,13 @@ function FormularioPostulante({ postulanteId }) {
             </button>
           </div>
         )}
+        {draftError && (
+          <div role="alert" className="mb-6 rounded-[8px] border border-danger bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">
+            {draftError}
+          </div>
+        )}
         {serverError && (
-          <div className="mb-6 rounded-[8px] border border-danger bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">
+          <div role="alert" className="mb-6 whitespace-pre-line rounded-[8px] border border-danger bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">
             {serverError}
           </div>
         )}
@@ -1565,7 +1600,7 @@ function FormularioPostulante({ postulanteId }) {
           <section>
             <Title
               title="Sección 8: Documentos (opcional)"
-              description="Adjunte los documentos requeridos. Solo se aceptan PDF (máx. 5 MB) para documentos e imágenes para la foto."
+              description="Adjunte los documentos requeridos. Solo se aceptan PDF (máx. 2 MB) para documentos e imágenes para la foto."
             />
             <div className="space-y-4">
               {TIPOS_DOCUMENTO.map((tipo) => {
@@ -1584,8 +1619,8 @@ function FormularioPostulante({ postulanteId }) {
                       </span>
                       <span className="text-xs text-text-soft">
                         {tipo === "FOTO"
-                          ? "JPG, PNG, WebP (máx. 5 MB)"
-                          : "PDF (máx. 5 MB)"}
+                          ? "JPG, PNG, WebP (máx. 2 MB)"
+                          : "PDF (máx. 2 MB)"}
                       </span>
                     </div>
                     <div className="flex items-center gap-3">
@@ -1610,9 +1645,9 @@ function FormularioPostulante({ postulanteId }) {
                           onChange={(e) => {
                             const file = e.target.files[0];
                             if (file) {
-                              if (file.size > 5 * 1024 * 1024) {
+                              if (file.size > 2 * 1024 * 1024) {
                                 alert(
-                                  "El archivo excede el tamaño máximo de 5 MB",
+                                  "El archivo excede el tamaño máximo de 2 MB",
                                 );
                                 e.target.value = "";
                                 return;

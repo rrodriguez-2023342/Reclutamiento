@@ -1,12 +1,17 @@
 import { z } from 'zod'
 
+const campoOpcional = (schema) => z.preprocess(
+  (valor) => typeof valor === 'string' && valor.trim() === '' ? undefined : valor,
+  schema.nullish(),
+)
+
 // Schemas de validacion para patronos
 export const createPatronoSchema = z.object({
   razon_social: z.string().trim().min(1, 'La razón social es requerida').max(150),
   numero_patronal: z.string().trim().max(50).nullish(),
-  nit: z.string().trim().regex(/^\d{7}-\d$/, 'NIT inválido (formato: 1234567-8)').nullish(),
+  nit: campoOpcional(z.string().trim().regex(/^\d{7}-\d$/, 'NIT inválido (formato: 1234567-8)')),
   representante_legal: z.string().trim().max(150).nullish(),
-  dpi_representante: z.string().trim().regex(/^\d{13}$/, 'DPI inválido (13 dígitos)').nullish(),
+  dpi_representante: campoOpcional(z.string().trim().regex(/^\d{13}$/, 'DPI inválido (13 dígitos)')),
   fecha_vencimiento_dpi: z.string().nullish(),
   fecha_nacimiento: z.string().nullish(),
   sexo: z.enum(['MASCULINO', 'FEMENINO']).nullish(),
@@ -14,8 +19,8 @@ export const createPatronoSchema = z.object({
   profesion: z.string().trim().max(100).nullish(),
   dpi_extendido_en: z.string().trim().max(100).nullish(),
   direccion: z.string().trim().max(500).nullish(),
-  telefono: z.string().trim().regex(/^\d{8,15}$/, 'Teléfono inválido').nullish(),
-  correo: z.string().trim().email('Correo inválido').max(100).nullish(),
+  telefono: campoOpcional(z.string().trim().regex(/^\d{8,15}$/, 'Teléfono inválido')),
+  correo: campoOpcional(z.string().trim().email('Correo inválido').max(100)),
   activo: z.boolean().nullish(),
 })
 
@@ -23,9 +28,9 @@ export const createPatronoSchema = z.object({
 export const updatePatronoSchema = z.object({
   razon_social: z.string().trim().min(1, 'La razón social es requerida').max(150).nullish(),
   numero_patronal: z.string().trim().max(50).nullish(),
-  nit: z.string().trim().regex(/^\d{7}-\d$/, 'NIT inválido (formato: 1234567-8)').nullish(),
+  nit: campoOpcional(z.string().trim().regex(/^\d{7}-\d$/, 'NIT inválido (formato: 1234567-8)')),
   representante_legal: z.string().trim().max(150).nullish(),
-  dpi_representante: z.string().trim().regex(/^\d{13}$/, 'DPI inválido (13 dígitos)').nullish(),
+  dpi_representante: campoOpcional(z.string().trim().regex(/^\d{13}$/, 'DPI inválido (13 dígitos)')),
   fecha_vencimiento_dpi: z.string().nullish(),
   fecha_nacimiento: z.string().nullish(),
   sexo: z.enum(['MASCULINO', 'FEMENINO']).nullish(),
@@ -33,8 +38,8 @@ export const updatePatronoSchema = z.object({
   profesion: z.string().trim().max(100).nullish(),
   dpi_extendido_en: z.string().trim().max(100).nullish(),
   direccion: z.string().trim().max(500).nullish(),
-  telefono: z.string().trim().regex(/^\d{8,15}$/, 'Teléfono inválido').nullish(),
-  correo: z.string().trim().email('Correo inválido').max(100).nullish(),
+  telefono: campoOpcional(z.string().trim().regex(/^\d{8,15}$/, 'Teléfono inválido')),
+  correo: campoOpcional(z.string().trim().email('Correo inválido').max(100)),
   activo: z.boolean().nullish(),
 })
 

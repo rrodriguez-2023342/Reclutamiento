@@ -173,6 +173,7 @@ function Postulantes() {
     totalPages: 1,
   });
   const [plazas, setPlazas] = useState([]);
+  const [errorPlazas, setErrorPlazas] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState(
@@ -200,7 +201,12 @@ function Postulantes() {
         (data) =>
           active && setPlazas(data.map(({ id, nombre }) => ({ id, nombre }))),
       )
-      .catch(() => active && setPlazas([]));
+      .catch(() => {
+        if (active) {
+          setPlazas([]);
+          setErrorPlazas("No se pudieron cargar las plazas para el filtro.");
+        }
+      });
     return () => {
       active = false;
     };
@@ -284,6 +290,11 @@ function Postulantes() {
         >
           {successMessage}
         </div>
+      )}
+      {errorPlazas && (
+        <p role="alert" className="mb-5 rounded-[8px] border border-danger bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">
+          {errorPlazas}
+        </p>
       )}
       <section className="rounded-[10px] border border-border bg-surface p-5 shadow-none sm:p-6">
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_192px_176px_232px_auto]">

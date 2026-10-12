@@ -764,6 +764,7 @@ function DetalleUsuario() {
 function HistorialSueldoModal({ usuarioId, onClose }) {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
@@ -777,8 +778,11 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
                     setTotalPages(result?.totalPages || 1);
                 }
             })
-            .catch(() => {
-                if (active) setData([]);
+            .catch((requestError) => {
+                if (active) {
+                    setData([]);
+                    setError(requestError.response?.data?.message || "No fue posible cargar el historial de sueldos.");
+                }
             })
             .finally(() => active && setLoading(false));
 
@@ -808,6 +812,7 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
                 </div>
 
                 <div className="overflow-auto flex-1 p-6">
+                    {error && <p role="alert" className="mb-4 rounded-[8px] bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">{error}</p>}
                     {loading ? (
                         <p className="text-center text-text-soft">Cargando historial...</p>
                     ) : data.length === 0 ? (
@@ -901,6 +906,7 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
 function HistorialEmpresaModal({ usuarioId, onClose }) {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
@@ -914,8 +920,11 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
                     setTotalPages(result?.totalPages || 1);
                 }
             })
-            .catch(() => {
-                if (active) setData([]);
+            .catch((requestError) => {
+                if (active) {
+                    setData([]);
+                    setError(requestError.response?.data?.message || "No fue posible cargar el historial de empresas.");
+                }
             })
             .finally(() => active && setLoading(false));
 
@@ -945,6 +954,7 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
                 </div>
 
                 <div className="overflow-auto flex-1 p-6">
+                    {error && <p role="alert" className="mb-4 rounded-[8px] bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">{error}</p>}
                     {loading ? (
                         <p className="text-center text-text-soft">Cargando historial...</p>
                     ) : data.length === 0 ? (

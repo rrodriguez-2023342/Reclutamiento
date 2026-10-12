@@ -90,6 +90,7 @@ function Usuarios() {
     });
     const [empresas, setEmpresas] = useState([]);
     const [patronos, setPatronos] = useState([]);
+    const [errorFiltros, setErrorFiltros] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState(
@@ -117,10 +118,20 @@ function Usuarios() {
         let active = true;
         getEmpresas()
             .then((data) => active && setEmpresas(data || []))
-            .catch(() => active && setEmpresas([]));
+            .catch(() => {
+                if (active) {
+                    setEmpresas([]);
+                    setErrorFiltros("No se pudieron cargar las empresas para el filtro.");
+                }
+            });
         getPatronos()
             .then((data) => active && setPatronos(data || []))
-            .catch(() => active && setPatronos([]));
+            .catch(() => {
+                if (active) {
+                    setPatronos([]);
+                    setErrorFiltros("No se pudieron cargar los patronos para el filtro.");
+                }
+            });
 
         return () => {
             active = false;
@@ -265,6 +276,14 @@ function Usuarios() {
                     className="mb-5 rounded-[10px] border border-danger bg-danger-bg px-5 py-4 font-semibold text-danger"
                 >
                     {error}
+                </div>
+            )}
+            {errorFiltros && (
+                <div
+                    role="alert"
+                    className="mb-5 rounded-[10px] border border-danger bg-danger-bg px-5 py-4 font-semibold text-danger"
+                >
+                    {errorFiltros}
                 </div>
             )}
 

@@ -49,6 +49,7 @@ function EditarPuesto() {
             .catch(() => {
                 setDivisiones([]);
                 setDepartamentos([]);
+                setServerError("No se pudieron cargar las divisiones y departamentos. Recarga la página e inténtalo de nuevo.");
             });
     }, []);
 

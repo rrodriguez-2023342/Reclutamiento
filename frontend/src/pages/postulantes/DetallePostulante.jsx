@@ -890,6 +890,7 @@ function SectionContent({ section, p, onReload }) {
 function DocumentosSection({ p, onReload }) {
   const [documentos, setDocumentos] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
   const [eliminando, setEliminando] = useState(null);
   const [subiendo, setSubiendo] = useState(null);
 
@@ -899,7 +900,14 @@ function DocumentosSection({ p, onReload }) {
       .then((data) => {
         if (active) setDocumentos(data);
       })
-      .catch(() => {})
+      .catch((requestError) => {
+        if (active) {
+          setError(
+            requestError.response?.data?.message ||
+              "No fue posible cargar los documentos del postulante.",
+          );
+        }
+      })
       .finally(() => {
         if (active) setCargando(false);
       });
@@ -909,6 +917,7 @@ function DocumentosSection({ p, onReload }) {
   }, [p.id]);
 
   const handleDescargar = async (tipo) => {
+    setError("");
     try {
       const blob = await descargarDocumento(p.id, tipo);
       const doc = documentos.find((d) => d.tipo === tipo);
@@ -920,20 +929,27 @@ function DocumentosSection({ p, onReload }) {
       a.click();
       a.remove();
       window.setTimeout(() => window.URL.revokeObjectURL(url), 1000);
-    } catch {
-      alert("No fue posible descargar el documento.");
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message ||
+          "No fue posible descargar el documento.",
+      );
     }
   };
 
   const handleEliminar = async (tipo) => {
     if (!window.confirm("¿Está seguro de eliminar este documento?")) return;
+    setError("");
     setEliminando(tipo);
     try {
       await eliminarDocumento(p.id, tipo);
       setDocumentos((prev) => prev.filter((d) => d.tipo !== tipo));
       onReload?.();
-    } catch {
-      alert("No fue posible eliminar el documento.");
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message ||
+          "No fue posible eliminar el documento.",
+      );
     } finally {
       setEliminando(null);
     }
@@ -941,6 +957,7 @@ function DocumentosSection({ p, onReload }) {
 
   const handleSubir = async (tipo, file) => {
     if (!file) return;
+    setError("");
     setSubiendo(tipo);
     try {
       await subirDocumento(p.id, tipo, file);
@@ -949,12 +966,15 @@ function DocumentosSection({ p, onReload }) {
       onReload?.();
     } catch (error) {
       if (error.response?.status === 413) {
-        alert(
+        setError(
           error.response.data?.message ||
             "El archivo excede el límite máximo de 2MB",
         );
       } else {
-        alert("No fue posible subir el documento.");
+        setError(
+          error.response?.data?.message ||
+            "No fue posible subir el documento.",
+        );
       }
     } finally {
       setSubiendo(null);
@@ -967,6 +987,11 @@ function DocumentosSection({ p, onReload }) {
         <h2 className="text-2xl font-bold text-text-main">
           Detalles del Candidato - Documentos
         </h2>
+        {error && (
+          <p role="alert" className="mt-4 rounded-[8px] border border-danger bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">
+            {error}
+          </p>
+        )}
         <p className="mt-8 text-text-soft">Cargando documentos…</p>
       </>
     );
@@ -1050,8 +1075,8 @@ function DocumentosSection({ p, onReload }) {
                     onChange={(e) => {
                       const file = e.target.files[0];
                       if (file) {
-                        if (file.size > 5 * 1024 * 1024) {
-                          alert("El archivo excede 5 MB");
+                        if (file.size > 2 * 1024 * 1024) {
+                          setError("El archivo excede el límite máximo de 2 MB.");
                           e.target.value = "";
                           return;
                         }
@@ -1413,6 +1438,7 @@ export default DetallePostulante;
 function HistorialRechazoModal({ postulanteId, onClose }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -1426,8 +1452,11 @@ function HistorialRechazoModal({ postulanteId, onClose }) {
           setTotalPages(result?.totalPages || 1);
         }
       })
-      .catch(() => {
-        if (active) setData([]);
+      .catch((requestError) => {
+        if (active) {
+          setData([]);
+          setError(requestError.response?.data?.message || "No fue posible cargar el historial de rechazos.");
+        }
       })
       .finally(() => active && setLoading(false));
     return () => {
@@ -1464,6 +1493,7 @@ function HistorialRechazoModal({ postulanteId, onClose }) {
         </div>
 
         <div className="overflow-auto flex-1 p-6">
+          {error && <p role="alert" className="mb-4 rounded-[8px] bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">{error}</p>}
           {loading ? (
             <p className="text-center text-text-soft">Cargando historial...</p>
           ) : data.length === 0 ? (

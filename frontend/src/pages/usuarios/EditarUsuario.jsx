@@ -99,6 +99,8 @@ function EditarUsuario() {
                     setRoles([]);
                     setEmpresas([]);
                     setPatronos([]);
+                    setPuestos([]);
+                    setServerError("No se pudieron cargar los datos necesarios del formulario. Recarga la página e inténtalo de nuevo.");
                 }
             });
 
@@ -203,7 +205,12 @@ function EditarUsuario() {
         setValue("activo", false);
         getUsuarioById(id)
             .then((data) => setUsuarioOriginal(data))
-            .catch(() => {});
+            .catch((requestError) => {
+                setServerError(
+                    requestError.response?.data?.message ||
+                        "Se guardó la baja, pero no fue posible actualizar la información del colaborador.",
+                );
+            });
     };
 
     const onSubmit = async (values) => {

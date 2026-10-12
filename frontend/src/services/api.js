@@ -18,7 +18,8 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const isPasswordResetRequest = error.config?.url?.includes('/auth/reset-password')
+    if (error.response?.status === 401 && !isPasswordResetRequest) {
       localStorage.removeItem('token')
       // Si estamos en otra ruta distinta al login, redirigimos.
       if (window.location.pathname !== '/login') {

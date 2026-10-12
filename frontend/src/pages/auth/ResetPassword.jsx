@@ -13,6 +13,7 @@ function ResetPassword() {
   const { token } = useParams();
   const { resetPassword } = useAuth();
   const [status, setStatus] = useState("idle"); // idle, loading, success, error
+  const [errorMessage, setErrorMessage] = useState("");
   const {
     register,
     handleSubmit,
@@ -26,8 +27,14 @@ function ResetPassword() {
       await resetPassword(token, data.newPassword);
       setStatus("success");
       setTimeout(() => navigate("/login", { replace: true }), 2000);
-    } catch {
+    } catch (error) {
       setStatus("error");
+      setErrorMessage(
+        error.response?.status === 401
+          ? "El enlace es inválido o expiró. Solicita uno nuevo."
+          : error.response?.data?.message ||
+              "No fue posible restablecer la contraseña. Revisa tu conexión e inténtalo de nuevo.",
+      );
     }
   };
 
@@ -54,7 +61,7 @@ function ResetPassword() {
           )}
           {status === "error" && (
             <p className="rounded-[8px] bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">
-              Token inválido o expirado. Solicita un nuevo enlace.
+              {errorMessage}
             </p>
           )}
 

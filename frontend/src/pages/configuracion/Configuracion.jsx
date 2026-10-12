@@ -30,6 +30,7 @@ function Configuracion() {
     const [empresas, setEmpresas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [errorEmpresas, setErrorEmpresas] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const [search, setSearch] = useState("");
     const [modalUser, setModalUser] = useState(null);
@@ -88,7 +89,10 @@ function Configuracion() {
                 if (active) setEmpresas(data?.data || []);
             })
             .catch(() => {
-                if (active) setEmpresas([]);
+                if (active) {
+                    setEmpresas([]);
+                    setErrorEmpresas("No se pudieron cargar las empresas. Recarga la página e inténtalo de nuevo.");
+                }
             });
         return () => {
             active = false;
@@ -130,8 +134,11 @@ function Configuracion() {
         try {
             const asignadas = await getUsuarioEmpresas(usuario.id);
             setSeleccion((asignadas || []).map((empresa) => empresa.id));
-        } catch {
-            // Se mantienen las empresas del listado
+        } catch (requestError) {
+            setModalError(
+                requestError.response?.data?.message ||
+                    "No fue posible cargar las empresas asignadas. Revisa la selección antes de guardar.",
+            );
         } finally {
             setModalLoading(false);
         }
@@ -182,6 +189,14 @@ function Configuracion() {
                     className="mb-5 rounded-[10px] border border-danger bg-danger-bg px-5 py-4 font-semibold text-danger"
                 >
                     {error}
+                </div>
+            )}
+            {errorEmpresas && (
+                <div
+                    role="alert"
+                    className="mb-5 rounded-[10px] border border-danger bg-danger-bg px-5 py-4 font-semibold text-danger"
+                >
+                    {errorEmpresas}
                 </div>
             )}
 

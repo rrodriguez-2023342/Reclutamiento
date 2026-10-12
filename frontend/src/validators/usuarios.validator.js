@@ -4,6 +4,10 @@ const fechaOpcional = z.preprocess(
     (valor) => (valor === '' ? undefined : valor),
     z.iso.date().nullish(),
 )
+const montoOpcional = z.preprocess(
+    (valor) => valor === '' || valor === undefined || Number.isNaN(valor) ? undefined : valor,
+    z.coerce.number().min(0, 'El monto no puede ser negativo').nullish(),
+)
 
 const validarSeguros = (data, ctx) => {
     if (data.tipo_contrato === 'DEFINIDO' && !data.fecha_fin_contrato?.trim()) {
@@ -55,8 +59,8 @@ export const usuarioSchema = z.object({
     dpi: z.string().trim().max(20).nullish(),
     dpi_extendido_en: z.string().trim().max(100).nullish(),
     direccion: z.string().trim().nullish(),
-    sueldo: z.coerce.number().positive().nullish(),
-    bonos: z.coerce.number().positive().nullish(),
+    sueldo: montoOpcional,
+    bonos: montoOpcional,
     moneda_sueldo: z.enum(['QUETZAL', 'DOLAR']).default('QUETZAL'),
     banco: z.string().trim().max(100).nullish(),
     tipo_cuenta_bancaria: z.string().trim().max(50).nullish(),

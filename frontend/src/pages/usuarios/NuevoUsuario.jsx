@@ -98,6 +98,8 @@ function NuevoUsuario() {
                     setRoles([]);
                     setEmpresas([]);
                     setPatronos([]);
+                    setPuestos([]);
+                    setServerError("No se pudieron cargar los datos necesarios del formulario. Recarga la página e inténtalo de nuevo.");
                 }
             });
 

@@ -160,6 +160,7 @@ function Puestos() {
     );
     const [departamentos, setDepartamentos] = useState([]);
     const [divisiones, setDivisiones] = useState([]);
+    const [errorFiltros, setErrorFiltros] = useState("");
 
     useEffect(() => {
         Promise.all([getDivisionesForSelect(), getDepartamentosForSelect()])
@@ -170,6 +171,7 @@ function Puestos() {
             .catch(() => {
                 setDivisiones([]);
                 setDepartamentos([]);
+                setErrorFiltros("No se pudieron cargar las divisiones y departamentos para los filtros.");
             });
     }, []);
 
@@ -267,6 +269,11 @@ function Puestos() {
                     >
                         {successMessage}
                     </div>
+                )}
+                {errorFiltros && (
+                    <p role="alert" className="mb-5 rounded-[8px] border border-danger bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">
+                        {errorFiltros}
+                    </p>
                 )}
 
                 <div className="rounded-[10px] border border-border bg-surface shadow-none">

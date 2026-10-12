@@ -9,29 +9,52 @@ export const AuthContext = createContext(null)
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(() => !!localStorage.getItem('token'))
+  const [authError, setAuthError] = useState('')
 
-  // Al montar, si hay un token guardado, pedimos los datos del usuario
-  useEffect(() => {
+  const refreshUser = useCallback(async () => {
     const token = localStorage.getItem('token')
     if (!token) {
+      setUser(null)
+      setAuthError('')
+      setLoading(false)
       return
     }
 
-    authService
-      .getCurrentUser()
-      .then((data) => setUser(data))
-      .catch(() => {
+    setLoading(true)
+    setAuthError('')
+    try {
+      const data = await authService.getCurrentUser()
+      setUser(data)
+    } catch (error) {
+      if (error.response?.status === 401) {
         localStorage.removeItem('token')
         setUser(null)
-      })
-      .finally(() => setLoading(false))
+        setAuthError('Tu sesión expiró. Inicia sesión nuevamente.')
+      } else {
+        setAuthError('No fue posible verificar tu sesión. Revisa tu conexión e inténtalo de nuevo.')
+      }
+    } finally {
+      setLoading(false)
+    }
   }, [])
+
+  useEffect(() => {
+    if (!localStorage.getItem('token')) return undefined
+    let active = true
+    Promise.resolve().then(() => {
+      if (active) refreshUser()
+    })
+    return () => {
+      active = false
+    }
+  }, [refreshUser])
 
   // Función de inicio de sesión: guarda el token y establece el usuario.
   const login = useCallback(async (credentials) => {
     const { token, user: userData } = await authService.login(credentials)
     localStorage.setItem('token', token)
     setUser(userData)
+    setAuthError('')
     return userData
   }, [])
 
@@ -60,6 +83,8 @@ export function AuthProvider({ children }) {
     user,
     loading,
     isAuthenticated: !!user,
+    authError,
+    refreshUser,
     login,
     logout,
     changePassword,

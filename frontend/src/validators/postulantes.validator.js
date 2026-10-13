@@ -9,6 +9,10 @@ const optionalText = (max) =>
   z.preprocess(emptyToNull, z.string().trim().max(max).nullable());
 const optionalNumber = (min, max) =>
   z.preprocess(emptyToNull, z.number().min(min).max(max).nullable());
+const optionalEmail = z.preprocess(
+  emptyToNull,
+  z.string().trim().email("Correo inválido").max(100).nullable(),
+);
 const optionalDate = z.preprocess(
   emptyToNull,
   z
@@ -124,7 +128,7 @@ export const postulanteSchema = z.object({
       return !Number.isNaN(date.getTime()) && date < new Date();
     }, "La fecha de nacimiento debe ser anterior a hoy"),
   telefono: phone,
-  correo: z.string().trim().email("Correo inválido").max(100),
+  correo: optionalEmail,
   estado_civil: z.enum(["SOLTERO", "CASADO", "UNIDO", "VIUDO", "DIVORCIADO"], {
     error: "Seleccione el estado civil",
   }),

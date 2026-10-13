@@ -1,5 +1,11 @@
 import { z } from 'zod'
 
+// Helper para campos opcionales: convierte string vacío a undefined
+const campoOpcional = (schema) => z.preprocess(
+    (valor) => typeof valor === 'string' && valor.trim() === '' ? undefined : valor,
+    schema.nullish(),
+)
+
 // Estados posibles de un postulante en el proceso de selección
 export const ESTADOS_POSTULANTE = ['POSTULANTE', 'CONTRATADO', 'RECHAZADO']
 
@@ -98,7 +104,7 @@ export const createPostulanteSchema = z.object({
   lugar_nacimiento: z.string().trim().min(1, 'El lugar de nacimiento es requerido').max(100),
   fecha_nacimiento: fechaNacimientoSchema,
   telefono: telefonoSchema,
-  correo: z.string().trim().email('Correo inválido').max(100),
+  correo: campoOpcional(z.string().trim().email('Correo inválido').max(100)),
   estado_civil: z.enum(ESTADOS_CIVILES, { error: 'Estado civil inválido' }),
   sexo: z.enum(['MASCULINO', 'FEMENINO']).nullish(),
   dpi: dpiSchema,

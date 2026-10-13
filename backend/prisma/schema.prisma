@@ -307,7 +307,7 @@ model Postulante {
   lugar_nacimiento                       String                @map("lugar_nacimiento") @db.VarChar(100)
   fecha_nacimiento                       DateTime              @map("fecha_nacimiento") @db.Date
   telefono                               String                @map("telefono") @db.VarChar(20)
-  correo                                 String                @map("correo") @db.VarChar(100)
+  correo                                 String?               @map("correo") @db.VarChar(100)
   estado_civil                           EstadoCivil           @map("estado_civil")
   sexo                                   Sexo?                 @map("sexo")
   dpi                                    String                @unique @map("dpi") @db.VarChar(20)

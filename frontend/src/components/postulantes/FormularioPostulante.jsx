@@ -755,7 +755,7 @@ function FormularioPostulante({ postulanteId }) {
                 />
               </Field>
               <Field
-                label="Correo electrónico *"
+                label="Correo electrónico"
                 error={errors.correo?.message}
               >
                 <Input type="email" registration={register("correo")} />

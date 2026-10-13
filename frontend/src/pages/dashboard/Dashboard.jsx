@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BriefcaseBusiness, CircleDot, UsersRound } from "lucide-react";
+import { BriefcaseBusiness, CheckCircle2, UsersRound, XCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { getDashboardSummary } from "../../services/dashboard.service.js";
@@ -59,11 +59,11 @@ function Dashboard() {
       icon: UsersRound,
     },
     {
-      label: "Plazas solicitadas",
-      value: summary?.plazasSolicitadas,
-      icon: BriefcaseBusiness,
+      label: "Total contratados",
+      value: summary?.contratados,
+      icon: CheckCircle2,
     },
-    { label: "Pendientes", value: summary?.pendientes, icon: CircleDot },
+    { label: "Total rechazados", value: summary?.rechazados, icon: XCircle },
   ];
   const applications = summary?.ultimasSolicitudes || [];
 

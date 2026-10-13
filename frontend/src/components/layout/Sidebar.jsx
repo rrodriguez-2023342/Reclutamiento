@@ -69,7 +69,7 @@ function Sidebar({ isOpen, onClose, onOpenProfile }) {
         </div>
         <div className="min-w-0">
           <p className="truncate text-[23px] font-extrabold leading-none tracking-[-0.045em]">
-            GHCorp
+            GH<span className="font-script">Corp.</span>
           </p>
           <p className="mt-1 text-xs text-white/65">Gestión de candidatos</p>
         </div>

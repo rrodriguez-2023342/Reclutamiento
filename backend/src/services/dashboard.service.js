@@ -4,9 +4,10 @@ import prisma from '../config/prisma.js'
 class DashboardService {
   // Obtiene el resumen del dashboard
   async obtenerResumen() {
-    const [totalPostulantes, pendientes, totalPlazas, ultimasSolicitudes] = await prisma.$transaction([
+    const [totalPostulantes, contratados, rechazados, totalPlazas, ultimasSolicitudes] = await prisma.$transaction([
       prisma.postulante.count(),
-      prisma.postulante.count({ where: { estado: 'POSTULANTE' } }),
+      prisma.postulante.count({ where: { estado: 'CONTRATADO' } }),
+      prisma.postulante.count({ where: { estado: 'RECHAZADO' } }),
       prisma.plaza.count({ where: { activo: true } }),
       prisma.postulante.findMany({
         take: 4,
@@ -24,7 +25,8 @@ class DashboardService {
     return {
       totalPostulantes,
       plazasSolicitadas: totalPlazas,
-      pendientes,
+      contratados,
+      rechazados,
       ultimasSolicitudes,
     }
   }

@@ -71,6 +71,7 @@ function buildHtml(p, photo) {
     detail("Nombre completo", p.nombre_completo), detail("Fecha de postulación", date(p.fecha_registro)),
     detail("Dirección", p.direccion), detail("Teléfono", p.telefono),
     detail("Lugar de nacimiento", p.lugar_nacimiento), detail("Fecha de nacimiento", date(p.fecha_nacimiento)),
+    detail("Departamento", p.departamento), detail("Departamento (extranjero)", p.departamento_extranjero),
     detail("Correo electrónico", p.correo), detail("Estado civil", etiquetasEstadoCivil[p.estado_civil] || "—"),
     detail("Sexo", etiquetasSexo[p.sexo] || "—"), detail("DPI / CUI", dpi(p.dpi)),
     detail("Extendido en", p.dpi_extendido_en), detail("NIT", p.nit), detail("No. afiliación IGSS", p.igss),

@@ -63,6 +63,32 @@ export const estilosEstadoPostulante = {
   RECHAZADO: "bg-[#ffe0e2] text-[#df353c]",
 };
 
+// Departamentos de Guatemala (catálogo fijo)
+export const DEPARTAMENTOS_GT = [
+  "ALTA VERAPAZ",
+  "BAJA VERAPAZ",
+  "CHIMALTENANGO",
+  "CHIQUIMULA",
+  "EL PROGRESO",
+  "ESCUINTLA",
+  "GUATEMALA",
+  "HUEHUETENANGO",
+  "IZABAL",
+  "JALAPA",
+  "JUTIAPA",
+  "PETÉN",
+  "QUETZALTENANGO",
+  "QUICHÉ",
+  "RETALHULEU",
+  "SACATEPÉQUEZ",
+  "SAN MARCOS",
+  "SANTA ROSA",
+  "SOLOLÁ",
+  "SUCHITEPEQUEZ",
+  "TOTONICAPÁN",
+  "ZACAPA",
+];
+
 // Etiquetas para el tipo de documento
 export const etiquetasTipoDocumento = {
   FOTO: "Foto",

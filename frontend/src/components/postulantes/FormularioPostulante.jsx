@@ -44,6 +44,7 @@ import {
   TIPOS_DOCUMENTO,
   etiquetasTipoDocumento,
   acceptPorTipo,
+  DEPARTAMENTOS_GT,
 } from "./etiquetas.js";
 import { verifyCurrentPassword } from "../../services/auth.service.js";
 
@@ -147,6 +148,12 @@ function normalizarPostulante(p) {
     nombre_completo: aTexto(p.nombre_completo),
     direccion: aTexto(p.direccion),
     lugar_nacimiento: aTexto(p.lugar_nacimiento),
+    departamento: p.departamento
+      ? aTexto(p.departamento)
+      : p.departamento_extranjero
+        ? "EXTRANJERO"
+        : "",
+    departamento_extranjero: aTexto(p.departamento_extranjero),
     fecha_nacimiento: aFecha(p.fecha_nacimiento),
     telefono: aTexto(p.telefono),
     correo: aTexto(p.correo),
@@ -511,6 +518,14 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
     if (step !== 8) return;
     setServerError("");
 
+    // El select usa "EXTRANJERO" como valor de UI; en BD van campos separados
+    if (data.departamento === "EXTRANJERO") {
+      data.departamento = null;
+      data.departamento_extranjero = data.departamento_extranjero?.trim() || null;
+    } else {
+      data.departamento_extranjero = null;
+    }
+
     if (isPublic) {
       if (!hcaptchaOmitido && !hcaptchaToken) {
         setHcaptchaError("Complete la verificación hCaptcha antes de enviar.");
@@ -643,10 +658,6 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
   };
 
   const onCancelarClick = () => {
-    if (isPublic) {
-      navigate("/aplicar");
-      return;
-    }
     setCancelOpen(true);
   };
 
@@ -800,6 +811,40 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
               >
                 <Input registration={register("lugar_nacimiento")} />
               </Field>
+              <Field
+                label="Departamento"
+                error={errors.departamento?.message}
+              >
+                <Select
+                  value={values.departamento === "EXTRANJERO" ? "EXTRANJERO" : (values.departamento || "")}
+                  onChange={(event) => {
+                    const valor = event.target.value;
+                    setValue("departamento", valor, { shouldDirty: true });
+                    if (valor !== "EXTRANJERO") {
+                      setValue("departamento_extranjero", "", { shouldDirty: true });
+                    }
+                  }}
+                >
+                  <option value="">Seleccione</option>
+                  {DEPARTAMENTOS_GT.map((depto) => (
+                    <option key={depto} value={depto}>
+                      {depto}
+                    </option>
+                  ))}
+                  <option value="EXTRANJERO">Extranjero</option>
+                </Select>
+              </Field>
+              {values.departamento === "EXTRANJERO" && (
+                <Field
+                  label="Departamento (extranjero)"
+                  error={errors.departamento_extranjero?.message}
+                >
+                  <Input
+                    registration={register("departamento_extranjero")}
+                    placeholder="Nombre del departamento"
+                  />
+                </Field>
+              )}
               <Field
                 label="Fecha de nacimiento *"
                 error={errors.fecha_nacimiento?.message}
@@ -1776,13 +1821,15 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
         <div className="mt-9 flex flex-col-reverse gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
             {step === 1 ? (
-              <button
-                type="button"
-                onClick={onCancelarClick}
-                className="rounded-[8px] border border-border px-5 py-3 cursor-pointer font-semibold text-text-main transition hover:bg-neutral-bg"
-              >
-                {esEdicion ? "Cancelar edición" : "Cancelar registro"}
-              </button>
+              !isPublic && (
+                <button
+                  type="button"
+                  onClick={onCancelarClick}
+                  className="rounded-[8px] border border-border px-5 py-3 cursor-pointer font-semibold text-text-main transition hover:bg-neutral-bg"
+                >
+                  {esEdicion ? "Cancelar edición" : "Cancelar registro"}
+                </button>
+              )
             ) : (
               <div className="flex flex-wrap gap-3">
                 <button
@@ -1793,13 +1840,15 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
                   <ArrowLeft className="h-4 w-4" />
                   Paso anterior
                 </button>
-                <button
-                  type="button"
-                  onClick={onCancelarClick}
-                  className="rounded-[8px] border border-border px-5 py-3 cursor-pointer font-semibold text-danger transition hover:bg-danger-bg"
-                >
-                  Cancelar formulario
-                </button>
+                {!isPublic && (
+                  <button
+                    type="button"
+                    onClick={onCancelarClick}
+                    className="rounded-[8px] border border-border px-5 py-3 cursor-pointer font-semibold text-danger transition hover:bg-danger-bg"
+                  >
+                    Cancelar formulario
+                  </button>
+                )}
               </div>
             )}
           </div>

@@ -256,6 +256,12 @@ function SectionContent({ section, p, onReload }) {
                 `${text(p.lugar_nacimiento)}, ${date(p.fecha_nacimiento)}`,
                 p.lugar_nacimiento,
               ],
+              ["Departamento", text(p.departamento), p.departamento],
+              [
+                "Departamento (extranjero)",
+                text(p.departamento_extranjero),
+                p.departamento_extranjero,
+              ],
               ["DPI / CUI", dpi(p.dpi), p.dpi],
               ["NIT", text(p.nit), p.nit],
               ["No. afiliación I.G.S.S.", text(p.igss), p.igss],

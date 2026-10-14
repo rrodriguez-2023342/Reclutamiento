@@ -102,6 +102,8 @@ export const createPostulanteSchema = z.object({
   nombre_completo: z.string().trim().min(1, 'El nombre completo es requerido').max(150),
   direccion: z.string().trim().min(1, 'La dirección es requerida').max(5000),
   lugar_nacimiento: z.string().trim().min(1, 'El lugar de nacimiento es requerido').max(100),
+  departamento: campoOpcional(z.string().trim().max(100)),
+  departamento_extranjero: campoOpcional(z.string().trim().max(100)),
   fecha_nacimiento: fechaNacimientoSchema,
   telefono: telefonoSchema,
   correo: campoOpcional(z.string().trim().email('Correo inválido').max(100)),

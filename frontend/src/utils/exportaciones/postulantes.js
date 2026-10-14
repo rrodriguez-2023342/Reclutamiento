@@ -51,6 +51,8 @@ function columnasPostulante() {
     col("Nombre completo", (p) => texto(p.nombre_completo)),
     col("Dirección", (p) => texto(p.direccion)),
     col("Lugar de nacimiento", (p) => texto(p.lugar_nacimiento)),
+    col("Departamento", (p) => texto(p.departamento)),
+    col("Departamento (extranjero)", (p) => texto(p.departamento_extranjero)),
     col("Fecha de nacimiento", (p) => fechaExcel(p.fecha_nacimiento)),
     col("Teléfono", (p) => texto(p.telefono)),
     col("Correo electrónico", (p) => texto(p.correo)),

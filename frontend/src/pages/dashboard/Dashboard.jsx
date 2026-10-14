@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BriefcaseBusiness, CheckCircle2, UsersRound, XCircle } from "lucide-react";
+import { CheckCircle2, UsersRound, XCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import { getDashboardSummary } from "../../services/dashboard.service.js";

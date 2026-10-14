@@ -120,6 +120,8 @@ export const postulanteSchema = z.object({
     .trim()
     .min(1, "El lugar de nacimiento es requerido")
     .max(100),
+  departamento: optionalText(100),
+  departamento_extranjero: optionalText(100),
   fecha_nacimiento: z
     .string()
     .min(1, "La fecha de nacimiento es requerida")
@@ -266,6 +268,8 @@ export const defaultPostulanteValues = {
   nombre_completo: "",
   direccion: "",
   lugar_nacimiento: "",
+  departamento: "",
+  departamento_extranjero: "",
   fecha_nacimiento: "",
   telefono: "",
   correo: "",

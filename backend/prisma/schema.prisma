@@ -305,6 +305,8 @@ model Postulante {
   nombre_completo                        String                @map("nombre_completo") @db.VarChar(150)
   direccion                              String                @map("direccion") @db.Text
   lugar_nacimiento                       String                @map("lugar_nacimiento") @db.VarChar(100)
+  departamento                           String?               @map("departamento") @db.VarChar(100)
+  departamento_extranjero                String?               @map("departamento_extranjero") @db.VarChar(100)
   fecha_nacimiento                       DateTime              @map("fecha_nacimiento") @db.Date
   telefono                               String                @map("telefono") @db.VarChar(20)
   correo                                 String?               @map("correo") @db.VarChar(100)

@@ -35,3 +35,9 @@ export const updateEstadoPostulante = async (id, payload) => {
   const { data } = await api.patch(`/postulantes/${id}/estado`, payload);
   return data.data;
 };
+
+// Crear un nuevo postulante (público - sin autenticación)
+export const createPublicPostulante = async (postulante, hcaptchaToken) => {
+  const { data } = await api.post("/public/postulantes", { ...postulante, hcaptchaToken });
+  return data.data;
+};

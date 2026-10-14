@@ -12,12 +12,23 @@ export const getDocumento = async (postulanteId, tipo) => {
   return data.data
 }
 
-// Subir un documento para un postulante
+// Subir un documento para un postulante (admin)
 export const subirDocumento = async (postulanteId, tipo, archivo) => {
   const formData = new FormData()
   formData.append('tipo', tipo)
   formData.append('archivo', archivo)
   const { data } = await api.post(`/postulantes/${postulanteId}/documentos`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  return data.data
+}
+
+// Subir un documento para un postulante (público, sin autenticación)
+export const subirDocumentoPublico = async (postulanteId, tipo, archivo) => {
+  const formData = new FormData()
+  formData.append('tipo', tipo)
+  formData.append('archivo', archivo)
+  const { data } = await api.post(`/public/postulantes/${postulanteId}/documentos`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   })
   return data.data

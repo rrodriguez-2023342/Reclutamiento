@@ -9,6 +9,8 @@ import Postulantes from "../pages/postulantes/Postulantes.jsx";
 import NuevoPostulante from "../pages/postulantes/NuevoPostulante.jsx";
 import EditarPostulante from "../pages/postulantes/EditarPostulante.jsx";
 import DetallePostulante from "../pages/postulantes/DetallePostulante.jsx";
+import PostulantePublico from "../pages/postulantes/PostulantePublico.jsx";
+import AplicarGracias from "../pages/postulantes/AplicarGracias.jsx";
 import Plazas from "../pages/plazas/Plazas.jsx";
 import NuevaPlaza from "../pages/plazas/NuevaPlaza.jsx";
 import EditarPlaza from "../pages/plazas/EditarPlaza.jsx";
@@ -102,6 +104,22 @@ function AppRouter() {
         element={
           <PublicRoute>
             <ForgotPassword />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/aplicar"
+        element={
+          <PublicRoute>
+            <PostulantePublico />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/aplicar/gracias"
+        element={
+          <PublicRoute>
+            <AplicarGracias />
           </PublicRoute>
         }
       />

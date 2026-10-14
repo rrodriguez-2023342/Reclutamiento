@@ -10,6 +10,7 @@ import {
   Upload,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
 import {
   AffiliationField,
@@ -25,12 +26,14 @@ import StepIndicator from "../../components/postulantes/StepIndicator.jsx";
 import ItemRepetible from "../../components/postulantes/ItemRepetible.jsx";
 import {
   createPostulante,
+  createPublicPostulante,
   getPostulanteById,
   updatePostulante,
 } from "../../services/postulantes.service.js";
-import { getPlazas } from "../../services/plazas.service.js";
+import { getPlazas, getPublicPlazas } from "../../services/plazas.service.js";
 import {
   subirDocumento,
+  subirDocumentoPublico,
   getDocumentos,
 } from "../../services/documentos.service.js";
 import {
@@ -298,7 +301,7 @@ function normalizarPostulante(p) {
   };
 }
 
-function FormularioPostulante({ postulanteId }) {
+function FormularioPostulante({ postulanteId, isPublic = false }) {
   const [postulanteCreadoId, setPostulanteCreadoId] = useState(null);
   const postulanteGuardadoId = postulanteId || postulanteCreadoId;
   const esEdicion = Boolean(postulanteGuardadoId);
@@ -330,6 +333,12 @@ function FormularioPostulante({ postulanteId }) {
   const [cancelError, setCancelError] = useState("");
   const [cancelando, setCancelando] = useState(false);
   const [plazas, setPlazas] = useState([]);
+  const [hcaptchaToken, setHcaptchaToken] = useState("");
+  const [hcaptchaError, setHcaptchaError] = useState("");
+  const hcaptchaSiteKey =
+    import.meta.env.VITE_HCAPTCHA_SITE_KEY || "your_hcaptcha_site_key_here";
+  const hcaptchaOmitido =
+    !hcaptchaSiteKey || hcaptchaSiteKey === "your_hcaptcha_site_key_here";
   const {
     register,
     control,
@@ -353,7 +362,7 @@ function FormularioPostulante({ postulanteId }) {
 
   useEffect(() => {
     let active = true;
-    getPlazas({ activo: true })
+    (isPublic ? getPublicPlazas() : getPlazas({ activo: true }))
       .then((data) => active && setPlazas(data))
       .catch(() => {
         if (active) {
@@ -501,6 +510,58 @@ function FormularioPostulante({ postulanteId }) {
   const submit = async (data) => {
     if (step !== 8) return;
     setServerError("");
+
+    if (isPublic) {
+      if (!hcaptchaOmitido && !hcaptchaToken) {
+        setHcaptchaError("Complete la verificación hCaptcha antes de enviar.");
+        return;
+      }
+      try {
+        const creado = await createPublicPostulante(
+          { ...data, documentos: undefined },
+          hcaptchaToken,
+        );
+        window.localStorage.removeItem(DRAFT_KEY);
+
+        // Subir documentos seleccionados (si los hay)
+        const documentos = getValues("documentos") || {};
+        const tiposParaSubir = TIPOS_DOCUMENTO.filter(
+          (tipo) => documentos[tipo] instanceof File,
+        );
+        const erroresSubida = [];
+        for (const tipo of tiposParaSubir) {
+          const archivo = documentos[tipo];
+          try {
+            await subirDocumentoPublico(creado.id, tipo, archivo);
+          } catch (docError) {
+            erroresSubida.push(
+              `${tipo}: ${docError.response?.data?.message || "No fue posible subir este documento."}`,
+            );
+          }
+        }
+
+        if (erroresSubida.length) {
+          setServerError(
+            `Su postulación fue registrada, pero algunos documentos no se pudieron subir. Intente de nuevo desde el correo de confirmación o contacte a RRHH:\n${erroresSubida.join("\n")}`,
+          );
+          return;
+        }
+
+        navigate("/aplicar/gracias", { replace: true });
+      } catch (error) {
+        if (error.response?.data?.errors) {
+          setHcaptchaError("Verificación hCaptcha fallida. Intente de nuevo.");
+          setHcaptchaToken("");
+        } else {
+          setServerError(
+            error.response?.data?.message ||
+              "No fue posible enviar la postulación.",
+          );
+        }
+      }
+      return;
+    }
+
     try {
       let postulanteIdFinal = postulanteGuardadoId;
 
@@ -581,6 +642,14 @@ function FormularioPostulante({ postulanteId }) {
     }
   };
 
+  const onCancelarClick = () => {
+    if (isPublic) {
+      navigate("/aplicar");
+      return;
+    }
+    setCancelOpen(true);
+  };
+
   const titulo = esEdicion ? "Editar Postulante" : "Nuevo Postulante";
 
   if (cargando)
@@ -611,16 +680,8 @@ function FormularioPostulante({ postulanteId }) {
       </DashboardLayout>
     );
 
-  return (
-    <DashboardLayout
-      title={titulo}
-      locked
-      headerSearch={{
-        value: "",
-        onChange: () => {},
-        placeholder: "Buscar postulante...",
-      }}
-    >
+  const contenido = (
+    <>
       {cancelOpen && (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-ink/50 p-4">
           <form
@@ -1599,8 +1660,16 @@ function FormularioPostulante({ postulanteId }) {
         {step === 8 && (
           <section>
             <Title
-              title="Sección 8: Documentos (opcional)"
-              description="Adjunte los documentos requeridos. Solo se aceptan PDF (máx. 2 MB) para documentos e imágenes para la foto."
+              title={
+                isPublic
+                  ? "Paso final: Documentos y verificación"
+                  : "Sección 8: Documentos (opcional)"
+              }
+              description={
+                isPublic
+                  ? "Adjunte sus documentos (opcional) y complete la verificación de seguridad para enviar su postulación."
+                  : "Adjunte los documentos requeridos. Solo se aceptan PDF (máx. 2 MB) para documentos e imágenes para la foto."
+              }
             />
             <div className="space-y-4">
               {TIPOS_DOCUMENTO.map((tipo) => {
@@ -1666,6 +1735,42 @@ function FormularioPostulante({ postulanteId }) {
                 );
               })}
             </div>
+            {isPublic && (
+              <div className="mt-7 max-w-md">
+                <label className="mb-2 block text-sm font-semibold text-text-main">
+                  Verificación de seguridad
+                </label>
+                {!hcaptchaOmitido ? (
+                  <HCaptcha
+                    sitekey={hcaptchaSiteKey}
+                    onVerify={(token) => {
+                      setHcaptchaToken(token);
+                      setHcaptchaError("");
+                    }}
+                    onExpired={() => setHcaptchaToken("")}
+                    onError={() => {
+                      setHcaptchaError("Error en hCaptcha. Intente de nuevo.");
+                      setHcaptchaToken("");
+                    }}
+                    theme="light"
+                    size="normal"
+                  />
+                ) : (
+                  <p className="rounded-[8px] border border-border bg-neutral-bg px-3 py-2 text-xs text-text-soft">
+                    Verificación de seguridad deshabilitada (entorno de
+                    desarrollo).
+                  </p>
+                )}
+                {hcaptchaError && (
+                  <p
+                    className="mt-2 text-sm font-semibold text-danger"
+                    role="alert"
+                  >
+                    {hcaptchaError}
+                  </p>
+                )}
+              </div>
+            )}
           </section>
         )}
         <div className="mt-9 flex flex-col-reverse gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
@@ -1673,7 +1778,7 @@ function FormularioPostulante({ postulanteId }) {
             {step === 1 ? (
               <button
                 type="button"
-                onClick={() => setCancelOpen(true)}
+                onClick={onCancelarClick}
                 className="rounded-[8px] border border-border px-5 py-3 cursor-pointer font-semibold text-text-main transition hover:bg-neutral-bg"
               >
                 {esEdicion ? "Cancelar edición" : "Cancelar registro"}
@@ -1690,7 +1795,7 @@ function FormularioPostulante({ postulanteId }) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setCancelOpen(true)}
+                  onClick={onCancelarClick}
                   className="rounded-[8px] border border-border px-5 py-3 cursor-pointer font-semibold text-danger transition hover:bg-danger-bg"
                 >
                   Cancelar formulario
@@ -1710,19 +1815,42 @@ function FormularioPostulante({ postulanteId }) {
           ) : (
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={
+                isSubmitting ||
+                (isPublic && !hcaptchaOmitido && !hcaptchaToken)
+              }
               className="inline-flex items-center justify-center gap-2 rounded-[8px] bg-action px-5 py-3 cursor-pointer font-bold text-white transition hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Save className="h-4 w-4" />
               {isSubmitting
-                ? "Guardando…"
-                : esEdicion
-                  ? "Guardar cambios"
-                  : "Registrar postulante"}
+                ? isPublic
+                  ? "Enviando…"
+                  : "Guardando…"
+                : isPublic
+                  ? "Enviar postulación"
+                  : esEdicion
+                    ? "Guardar cambios"
+                    : "Registrar postulante"}
             </button>
           )}
         </div>
       </form>
+    </>
+  );
+
+  if (isPublic) return contenido;
+
+  return (
+    <DashboardLayout
+      title={titulo}
+      locked
+      headerSearch={{
+        value: "",
+        onChange: () => {},
+        placeholder: "Buscar postulante...",
+      }}
+    >
+      {contenido}
     </DashboardLayout>
   );
 }

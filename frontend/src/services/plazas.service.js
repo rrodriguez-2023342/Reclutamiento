@@ -6,6 +6,12 @@ export const getPlazas = async (params) => {
   return data.data;
 };
 
+// Obtener lista pública de plazas activas (sin autenticación)
+export const getPublicPlazas = async () => {
+  const { data } = await api.get("/public/plazas");
+  return data.data;
+};
+
 // Exportar todas las plazas filtradas
 export const getPlazasExport = async (params) => {
   const { data } = await api.get("/plazas/export", { params });

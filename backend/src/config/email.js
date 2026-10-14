@@ -102,3 +102,17 @@ export const sendTemporalPasswordEmail = async (
   });
 };
 
+export const sendPostulanteConfirmacionEmail = async (to, nombre) => {
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h2 style="color: #1e3a8a;">¡Gracias por postularte!</h2>
+      <p>Hola <strong>${nombre}</strong>,</p>
+      <p>Hemos recibido tu postulación correctamente. Nuestro equipo la revisará y te contactaremos pronto.</p>
+      <hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e4e7;">
+      <p style="color: #6b6375; font-size: 12px;">Sistema GHCorp</p>
+    </div>
+  `;
+
+  await sendEmail({ to, subject: "Confirmación de postulación - GHCorp", html });
+};
+

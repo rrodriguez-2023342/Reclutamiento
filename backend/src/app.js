@@ -19,6 +19,8 @@ import historialEmpresaRoutes from './routes/historial-empresa.routes.js'
 import historialRechazoRoutes from './routes/historial-rechazo.routes.js'
 import documentosLaboralesRoutes from './routes/documentos-laborales.routes.js'
 import notificacionesRoutes from './routes/notificaciones.routes.js'
+import publicPostulantesRoutes from './routes/public.postulantes.routes.js'
+import publicPlazasRoutes from './routes/public.plazas.routes.js'
 
 const app = express()
 
@@ -32,6 +34,9 @@ app.use(express.json())
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
+
+app.use('/api/public/postulantes', publicPostulantesRoutes)
+app.use('/api/public/plazas', publicPlazasRoutes)
 
 app.use('/api/roles', roleRoutes)
 app.use('/api/auth', authRoutes)

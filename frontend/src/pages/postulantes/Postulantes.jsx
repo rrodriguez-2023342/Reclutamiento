@@ -6,7 +6,6 @@ import {
   Eye,
   Pencil,
   Plus,
-  Search,
   X,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -297,16 +296,7 @@ function Postulantes() {
         </p>
       )}
       <section className="rounded-[10px] border border-border bg-surface p-5 shadow-none sm:p-6">
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_192px_176px_232px_auto]">
-          <label className="flex h-14 items-center gap-3 rounded-[10px] border border-border px-4 text-text-soft focus-within:border-action focus-within:ring-2 focus-within:ring-action/15">
-            <Search className="h-5 w-5 shrink-0" />
-            <input
-              value={search}
-              onChange={(event) => updateSearch(event.target.value)}
-              placeholder="Buscar por nombre o DPI..."
-              className="w-full bg-transparent text-base outline-none placeholder:text-text-soft"
-            />
-          </label>
+        <div className="grid gap-4 xl:grid-cols-[192px_176px_232px_auto]">
           <SelectField
             ariaLabel="Filtrar por estado"
             value={estado}

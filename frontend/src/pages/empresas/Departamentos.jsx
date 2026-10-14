@@ -6,7 +6,6 @@ import {
     Eye,
     Pencil,
     Plus,
-    Search,
     X,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -215,32 +214,18 @@ function Departamentos() {
     };
 
     return (
-        <DashboardLayout title="Departamentos">
+        <DashboardLayout
+            title="Departamentos"
+            headerSearch={{
+                value: search,
+                onChange: (value) => {
+                    setSearch(value);
+                    setPage(1);
+                },
+                placeholder: "Buscar por nombre...",
+            }}
+        >
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-                <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 className="text-2xl font-bold tracking-[-0.04em] text-text-main sm:text-3xl">
-                            Departamentos
-                        </h1>
-                        <p className="mt-1 text-text-soft">
-                            Administra los departamentos disponibles para los puestos.
-                        </p>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-3">
-                        {esAdmin && (
-                            <button
-                                type="button"
-                                onClick={() => navigate("/empresas/departamentos/nueva")}
-                                className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-action px-5 font-bold text-white transition hover:bg-ink"
-                            >
-                                <Plus className="h-5 w-5" />
-                                Nuevo Departamento
-                            </button>
-                        )}
-                        <ExportarExcelButton onExport={manejarExportar} compacto />
-                    </div>
-                </div>
-
                 {successMessage && (
                     <div
                         role="status"
@@ -253,17 +238,6 @@ function Departamentos() {
                 <div className="rounded-[10px] border border-border bg-surface shadow-none">
                     <div className="border-b border-border p-4 sm:px-6">
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <div className="relative flex-1">
-                                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-soft" />
-                                <input
-                                    type="text"
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    placeholder="Buscar por nombre..."
-                                    className="h-12 w-full rounded-[8px] border border-border bg-surface pl-12 pr-4 text-base text-text-main outline-none transition placeholder:text-text-soft focus:border-action focus:ring-2 focus:ring-action/15"
-                                />
-                            </div>
-
                             <div className="w-full max-w-[200px]">
                                 <SelectField
                                     ariaLabel="Estado de departamentos"
@@ -275,6 +249,18 @@ function Departamentos() {
                                     <option value="false">Inactivos</option>
                                 </SelectField>
                             </div>
+
+                            {esAdmin && (
+                                <button
+                                    type="button"
+                                    onClick={() => navigate("/empresas/departamentos/nueva")}
+                                    className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-action px-5 font-bold text-white transition hover:bg-ink"
+                                >
+                                    <Plus className="h-5 w-5" />
+                                    Nuevo Departamento
+                                </button>
+                            )}
+                            <ExportarExcelButton onExport={manejarExportar} />
                         </div>
                     </div>
 

@@ -6,7 +6,6 @@ import {
     Eye,
     Pencil,
     Plus,
-    Search,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout.jsx";
@@ -107,7 +106,17 @@ function Empresas() {
     };
 
     return (
-        <DashboardLayout title="Gestión de Empresas">
+        <DashboardLayout
+            title="Gestión de Empresas"
+            headerSearch={{
+                value: search,
+                onChange: (value) => {
+                    setSearch(value);
+                    setPage(1);
+                },
+                placeholder: "Buscar por nombre de empresa",
+            }}
+        >
             {successMessage && (
                 <div
                     role="status"
@@ -127,20 +136,7 @@ function Empresas() {
             )}
 
             <section className="rounded-[10px] border border-border bg-surface p-5 shadow-none sm:p-6">
-                <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_auto_auto]">
-                    <label className="flex h-14 items-center gap-3 rounded-[10px] border border-border px-4 text-text-soft focus-within:border-action focus-within:ring-2 focus-within:ring-action/15">
-                        <Search className="h-5 w-5 shrink-0" />
-                        <input
-                            value={search}
-                            onChange={(event) => {
-                                setSearch(event.target.value);
-                                setPage(1);
-                            }}
-                            placeholder="Buscar por nombre de empresa"
-                            className="w-full bg-transparent text-base outline-none placeholder:text-text-soft"
-                        />
-                    </label>
-
+                <div className="grid gap-4 md:grid-cols-[220px_auto_auto]">
                     <div className="relative">
                         <select
                             aria-label="Filtrar por estado"

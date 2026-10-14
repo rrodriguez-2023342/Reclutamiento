@@ -35,7 +35,7 @@ function Header({
         </h1>
       </div>
       {headerSearch && (
-        <label className="hidden w-full max-w-[360px] items-center gap-2 rounded-[8px] border border-border bg-bg px-3 py-2.5 text-text-soft xl:flex">
+        <label className="flex w-full min-w-0 max-w-[170px] items-center gap-2 rounded-[8px] border border-border bg-bg px-3 py-2.5 text-text-soft sm:max-w-[260px] xl:max-w-[360px]">
           <Search className="h-5 w-5 shrink-0" />
           <input
             value={headerSearch.value}

@@ -22,8 +22,9 @@ enum EstadoCivil {
 }
 
 enum Sexo {
-  MASCULINO @map("Masculino")
-  FEMENINO  @map("Femenino")
+  MASCULINO          @map("Masculino")
+  FEMENINO           @map("Femenino")
+  PREFIERO_NO_DECIRLO @map("Prefiero_no_decirlo")
 }
 
 enum ViviendaTipo {

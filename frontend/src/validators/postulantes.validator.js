@@ -136,7 +136,7 @@ export const postulanteSchema = z.object({
   }),
   sexo: z.preprocess(
     emptyToNull,
-    z.enum(["MASCULINO", "FEMENINO"]).nullable(),
+    z.enum(["MASCULINO", "FEMENINO", "PREFIERO_NO_DECIRLO"]).nullable(),
   ),
   dpi: z
     .string()

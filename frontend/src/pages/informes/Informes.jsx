@@ -614,11 +614,48 @@ function Informes() {
     }
   }
 
-  const copiarMarcador = async (marcador) => {
+  const copiarTexto = async (texto) => {
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(texto)
+        return true
+      } catch {
+        // Contexto inseguro o permiso denegado: usa el fallback de abajo
+      }
+    }
     try {
-      await navigator.clipboard.writeText(`{${marcador}}`)
-      setMensaje(`Se copió {${marcador}}.`)
+      const area = document.createElement('textarea')
+      area.value = texto
+      area.setAttribute('readonly', '')
+      area.style.position = 'fixed'
+      area.style.top = '-9999px'
+      document.body.appendChild(area)
+      if (navigator.platform && /iP/.test(navigator.platform)) {
+        area.contentEditable = 'true'
+        area.readOnly = false
+        const range = document.createRange()
+        range.selectNodeContents(area)
+        const seleccion = window.getSelection()
+        seleccion.removeAllRanges()
+        seleccion.addRange(range)
+        area.setSelectionRange(0, 999999)
+      } else {
+        area.select()
+      }
+      const copiado = document.execCommand('copy')
+      document.body.removeChild(area)
+      return copiado
     } catch {
+      return false
+    }
+  }
+
+  const copiarMarcador = async (marcador) => {
+    const texto = `{${marcador}}`
+    const copiado = await copiarTexto(texto)
+    if (copiado) {
+      setMensaje(`Se copió ${texto}.`)
+    } else {
       setError('No se pudo copiar el marcador. Selecciónalo y cópialo manualmente.')
     }
   }

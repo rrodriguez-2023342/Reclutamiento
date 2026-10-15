@@ -40,6 +40,7 @@ function traducirEnum(valor) {
     const traducciones = {
         MASCULINO: "Masculino",
         FEMENINO: "Femenino",
+        PREFIERO_NO_DECIRLO: "Prefiero no decirlo",
         SOLTERO: "Soltero (a)",
         CASADO: "Casado (a)",
         UNIDO: "Unido (a)",

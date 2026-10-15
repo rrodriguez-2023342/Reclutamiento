@@ -108,7 +108,7 @@ export const createPostulanteSchema = z.object({
   telefono: telefonoSchema,
   correo: campoOpcional(z.string().trim().email('Correo inválido').max(100)),
   estado_civil: z.enum(ESTADOS_CIVILES, { error: 'Estado civil inválido' }),
-  sexo: z.enum(['MASCULINO', 'FEMENINO']).nullish(),
+  sexo: z.enum(['MASCULINO', 'FEMENINO', 'PREFIERO_NO_DECIRLO']).nullish(),
   dpi: dpiSchema,
   plaza_id: z.coerce.number({ error: 'Seleccione una plaza válida' }).int('Seleccione una plaza válida').positive('Seleccione una plaza válida'),
 

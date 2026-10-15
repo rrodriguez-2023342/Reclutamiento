@@ -16,26 +16,21 @@ export const MARCADORES_DOCUMENTO = [
       ['fecha_nacimiento', 'Fecha de nacimiento'],
       ['estado_civil', 'Estado civil'],
       ['sexo', 'Sexo'],
+      ['ultimo_grado_cursado', 'Último grado cursado'],
       ['fecha_contratacion', 'Fecha de contratación'],
       ['tipo_contrato', 'Tipo de contrato'],
       ['fecha_fin_contrato', 'Fecha de fin de contrato'],
       ['fecha_baja', 'Fecha de baja'],
       ['motivo_baja', 'Motivo de baja'],
+      ['notas_baja', 'Notas de la baja'],
       ['reingreso_baja', 'Elegible para reingreso'],
-      ['puesto', 'Puesto'],
-      ['puesto_descripcion', 'Descripción del puesto'],
-      ['departamento', 'Departamento'],
-      ['division', 'División'],
-      ['patrono', 'Razón social del patrono'],
-      ['patrono_representante_legal', 'Representante legal del patrono'],
-      ['patrono_edad', 'Edad del patrono en años'],
-      ['patrono_sexo', 'Sexo del patrono'],
-      ['patrono_profesion', 'Profesión del patrono'],
-      ['patrono_dpi', 'DPI del patrono'],
-      ['patrono_dpi_extendido_en', 'Lugar de extensión del DPI del patrono'],
-      ['numero_patronal', 'Número patronal'],
       ['salario', 'Sueldo mensual con moneda'],
       ['bonos', 'Bonos con moneda'],
+      ['banco', 'Banco'],
+      ['tipo_cuenta_bancaria', 'Tipo de cuenta bancaria'],
+      ['numero_cuenta_bancaria', 'Número de cuenta bancaria'],
+      ['contacto_emergencia_nombre', 'Nombre del contacto de emergencia'],
+      ['contacto_emergencia_telefono', 'Teléfono del contacto de emergencia'],
       ['empresa_seguro_vida', 'Empresa del seguro de vida'],
       ['categoria_seguro_vida', 'Categoría del seguro de vida'],
       ['fecha_alta_seguro_vida', 'Fecha de alta del seguro de vida'],
@@ -47,6 +42,32 @@ export const MARCADORES_DOCUMENTO = [
     ],
   },
   {
+    grupo: 'Patrono',
+    campos: [
+      ['patrono', 'Razón social del patrono'],
+      ['patrono_representante_legal', 'Representante legal del patrono'],
+      ['patrono_nit', 'NIT del patrono'],
+      ['numero_patronal', 'Número patronal'],
+      ['patrono_dpi', 'DPI del representante legal'],
+      ['patrono_dpi_extendido_en', 'Lugar de extensión del DPI del representante legal'],
+      ['patrono_fecha_vencimiento_dpi', 'Fecha de vencimiento del DPI del representante legal'],
+      ['patrono_edad', 'Edad del patrono en años'],
+      ['patrono_fecha_nacimiento', 'Fecha de nacimiento del representante legal'],
+      ['patrono_sexo', 'Sexo del representante legal'],
+      ['patrono_estado_civil', 'Estado civil del representante legal'],
+      ['patrono_profesion', 'Profesión del representante legal'],
+      ['patrono_direccion', 'Dirección del patrono'],
+      ['patrono_direccion_patente_comercio', 'Dirección de la patente de comercio'],
+      ['patrono_fecha_autorizacion_acta', 'Fecha de autorización del acta'],
+      ['patrono_autorizada_por_notario', 'Autorizada por notario'],
+      ['patrono_numero_registro', 'Número de registro'],
+      ['patrono_numero_folio', 'Número de folio'],
+      ['patrono_numero_libro', 'Número de libro'],
+      ['patrono_telefono', 'Teléfono del patrono'],
+      ['patrono_correo', 'Correo del patrono'],
+    ],
+  },
+  {
     grupo: 'Empresa',
     campos: [
       ['empresa_nombre', 'Nombre de la empresa'],
@@ -54,6 +75,28 @@ export const MARCADORES_DOCUMENTO = [
       ['empresa_telefono', 'Teléfono de la empresa'],
       ['empresa_correo', 'Correo de la empresa'],
       ['empresa_detalle', 'Detalle de la empresa'],
+      ['empresa_fecha_aniversario', 'Fecha de aniversario de la empresa'],
+    ],
+  },
+  {
+    grupo: 'Puesto',
+    campos: [
+      ['puesto', 'Nombre del puesto'],
+      ['puesto_descripcion', 'Descripción del puesto'],
+    ],
+  },
+  {
+    grupo: 'División',
+    campos: [
+      ['division', 'Nombre de la división'],
+      ['division_descripcion', 'Descripción de la división'],
+    ],
+  },
+  {
+    grupo: 'Departamento',
+    campos: [
+      ['departamento', 'Nombre del departamento'],
+      ['departamento_descripcion', 'Descripción del departamento'],
     ],
   },
   {
@@ -102,7 +145,7 @@ function calcularEdad(value) {
 }
 
 function traducirSexo(value) {
-  return { MASCULINO: 'Masculino', FEMENINO: 'Femenino' }[value] || value || ''
+  return { MASCULINO: 'Masculino', FEMENINO: 'Femenino', PREFIERO_NO_DECIRLO: 'Prefiero no decirlo' }[value] || value || ''
 }
 
 function traducirEstadoCivil(value) {
@@ -112,6 +155,18 @@ function traducirEstadoCivil(value) {
     UNIDO: 'Unido(a)',
     VIUDO: 'Viudo(a)',
     DIVORCIADO: 'Divorciado(a)',
+  }[value] || value || ''
+}
+
+function traducirNivelEducativo(value) {
+  return {
+    PRIMARIA: 'Primaria',
+    BASICOS: 'Básicos',
+    DIVERSIFICADO: 'Diversificado',
+    TECNICO: 'Técnico',
+    LICENCIATURA: 'Licenciatura',
+    MAESTRIA: 'Maestría',
+    OTRO: 'Otro',
   }[value] || value || ''
 }
 
@@ -167,11 +222,13 @@ export async function obtenerDatosPlantilla(colaboradorId, empresaId) {
     estado_civil_colaborador: traducirEstadoCivil(colaborador.estado_civil),
     sexo: traducirSexo(colaborador.sexo),
     sexo_colaborador: traducirSexo(colaborador.sexo),
+    ultimo_grado_cursado: traducirNivelEducativo(colaborador.ultimo_grado_cursado),
     fecha_contratacion: formatearFecha(colaborador.fecha_contratacion),
     tipo_contrato: colaborador.tipo_contrato || '',
     fecha_fin_contrato: formatearFecha(colaborador.fecha_fin_contrato),
     fecha_baja: formatearFecha(colaborador.fecha_baja),
     motivo_baja: colaborador.motivo_baja || '',
+    notas_baja: colaborador.notas_baja || '',
     reingreso_baja:
       colaborador.reingreso_baja === null || colaborador.reingreso_baja === undefined
         ? ''
@@ -181,18 +238,38 @@ export async function obtenerDatosPlantilla(colaboradorId, empresaId) {
     puesto: colaborador.puesto?.nombre || '',
     puesto_descripcion: colaborador.puesto?.descripcion || '',
     departamento: colaborador.puesto?.departamento?.nombre || '',
+    departamento_descripcion: colaborador.puesto?.departamento?.descripcion || '',
     division: colaborador.puesto?.division?.nombre || '',
+    division_descripcion: colaborador.puesto?.division?.descripcion || '',
     patrono: colaborador.patrono?.razon_social || '',
     patrono_razon_social: colaborador.patrono?.razon_social || '',
     patrono_representante_legal: colaborador.patrono?.representante_legal || '',
+    patrono_nit: colaborador.patrono?.nit || '',
     patrono_edad: calcularEdad(colaborador.patrono?.fecha_nacimiento),
+    patrono_fecha_nacimiento: formatearFecha(colaborador.patrono?.fecha_nacimiento),
     patrono_sexo: traducirSexo(colaborador.patrono?.sexo),
+    patrono_estado_civil: traducirEstadoCivil(colaborador.patrono?.estado_civil),
     patrono_profesion: colaborador.patrono?.profesion || '',
-    patrono_dpi: colaborador.patrono?.dpi || '',
+    patrono_dpi: colaborador.patrono?.dpi_representante || '',
     patrono_dpi_extendido_en: colaborador.patrono?.dpi_extendido_en || '',
+    patrono_fecha_vencimiento_dpi: formatearFecha(colaborador.patrono?.fecha_vencimiento_dpi),
+    patrono_direccion: colaborador.patrono?.direccion || '',
+    patrono_direccion_patente_comercio: colaborador.patrono?.direccion_patente_comercio || '',
+    patrono_fecha_autorizacion_acta: formatearFecha(colaborador.patrono?.fecha_autorizacion_acta),
+    patrono_autorizada_por_notario: colaborador.patrono?.autorizada_por_notario || '',
+    patrono_numero_registro: colaborador.patrono?.numero_registro || '',
+    patrono_numero_folio: colaborador.patrono?.numero_folio || '',
+    patrono_numero_libro: colaborador.patrono?.numero_libro || '',
+    patrono_telefono: colaborador.patrono?.telefono || '',
+    patrono_correo: colaborador.patrono?.correo || '',
     numero_patronal: colaborador.patrono?.numero_patronal || '',
     salario: formatearMoneda(colaborador.sueldo, colaborador.moneda_sueldo),
     bonos: formatearMoneda(colaborador.bonos, colaborador.moneda_sueldo),
+    banco: colaborador.banco || '',
+    tipo_cuenta_bancaria: colaborador.tipo_cuenta_bancaria || '',
+    numero_cuenta_bancaria: colaborador.numero_cuenta_bancaria || '',
+    contacto_emergencia_nombre: colaborador.contacto_emergencia_nombre || '',
+    contacto_emergencia_telefono: colaborador.contacto_emergencia_telefono || '',
     empresa_seguro_vida: colaborador.empresa_seguro_vida || '',
     categoria_seguro_vida: colaborador.categoria_seguro_vida || '',
     fecha_alta_seguro_vida: formatearFecha(colaborador.fecha_alta_seguro_vida),
@@ -206,6 +283,7 @@ export async function obtenerDatosPlantilla(colaboradorId, empresaId) {
     empresa_telefono: empresa?.telefono || '',
     empresa_correo: empresa?.correo || '',
     empresa_detalle: empresa?.detalle_empresa || '',
+    empresa_fecha_aniversario: formatearFecha(empresa?.fecha_aniversario),
     fecha_actual: formatearFecha(new Date()),
   }
 }

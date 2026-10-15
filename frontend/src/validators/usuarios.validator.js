@@ -55,7 +55,7 @@ export const usuarioSchema = z.object({
     fecha_fin_contrato: z.string().nullish(),
     nit: z.string().trim().max(20).nullish(),
     numero_afiliacion_igss: z.string().trim().max(30).nullish(),
-    sexo: z.enum(['MASCULINO', 'FEMENINO']).nullish(),
+    sexo: z.enum(['MASCULINO', 'FEMENINO', 'PREFIERO_NO_DECIRLO']).nullish(),
     dpi: z.string().trim().max(20).nullish(),
     dpi_extendido_en: z.string().trim().max(100).nullish(),
     direccion: z.string().trim().nullish(),

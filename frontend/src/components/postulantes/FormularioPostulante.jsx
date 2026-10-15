@@ -57,12 +57,12 @@ const civilStates = [
   ["DIVORCIADO", "Divorciado(a)"],
 ];
 const relationships = [
+  ["EMERGENCIA", "Emergencia"],
   ["PADRE", "Padre"],
   ["MADRE", "Madre"],
   ["ESPOSO_A", "Esposo(a)"],
   ["HIJO_A", "Hijo(a)"],
   ["HERMANO_A", "Hermano(a)"],
-  ["EMERGENCIA", "Emergencia"],
 ];
 const educationLevels = [
   ["PRIMARIA", "Primaria"],
@@ -75,7 +75,7 @@ const educationLevels = [
 ];
 
 const emptyFamily = {
-  parentesco: "PADRE",
+  parentesco: "EMERGENCIA",
   nombres_apellidos: "",
   edad: undefined,
   direccion: "",
@@ -259,7 +259,7 @@ function normalizarPostulante(p) {
     conoce_detenido_entorno: p.conoce_detenido_entorno ?? null,
     conoce_detenido_motivo: aTexto(p.conoce_detenido_motivo),
     datosFamiliares: lista(p.datosFamiliares).map((i) => ({
-      parentesco: i.parentesco ?? "PADRE",
+      parentesco: i.parentesco ?? "EMERGENCIA",
       nombres_apellidos: aTexto(i.nombres_apellidos),
       edad: aNumero(i.edad),
       direccion: aTexto(i.direccion),
@@ -313,26 +313,11 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
   const postulanteGuardadoId = postulanteId || postulanteCreadoId;
   const esEdicion = Boolean(postulanteGuardadoId);
   const navigate = useNavigate();
-  const [draft] = useState(() =>
-    !esEdicion && typeof window !== "undefined"
-      ? window.localStorage.getItem(DRAFT_KEY)
-      : null,
-  );
-  const [draftError] = useState(() => {
-    if (!draft) return "";
-    try {
-      JSON.parse(draft);
-      return "";
-    } catch {
-      return "No se pudo recuperar el borrador guardado. Se inició un formulario nuevo.";
-    }
-  });
   const [cargando, setCargando] = useState(esEdicion);
   const [errorCarga, setErrorCarga] = useState("");
   const [step, setStep] = useState(1);
   const [maxStep, setMaxStep] = useState(1);
   const [serverError, setServerError] = useState("");
-  const [draftDismissed, setDraftDismissed] = useState(false);
   const [documentosExistentes, setDocumentosExistentes] = useState([]);
   const [documentosPendientes, setDocumentosPendientes] = useState([]);
   const [cancelOpen, setCancelOpen] = useState(false);
@@ -383,25 +368,8 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
   }, []);
 
   useEffect(() => {
-    if (!draft) return;
-    try {
-      reset({ ...defaultPostulanteValues, ...JSON.parse(draft) });
-    } catch {
-      window.localStorage.removeItem(DRAFT_KEY);
-    }
-  }, [draft, reset]);
-
-  useEffect(() => {
-    if (esEdicion) return;
-    const timer = window.setTimeout(() => {
-      try {
-        window.localStorage.setItem(DRAFT_KEY, JSON.stringify(values));
-      } catch {
-        setServerError("No se pudo guardar el borrador automáticamente. Continúa el formulario y guarda tus cambios.");
-      }
-    }, 500);
-    return () => window.clearTimeout(timer);
-  }, [values, esEdicion]);
+    window.localStorage.removeItem(DRAFT_KEY);
+  }, []);
 
   // En modo edición se cargan los datos del postulante y se precargan normalizados en el formulario
   useEffect(() => {
@@ -633,12 +601,6 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
       );
     }
   };
-  const discardDraft = () => {
-    window.localStorage.removeItem(DRAFT_KEY);
-    reset(defaultPostulanteValues);
-    setDraftDismissed(true);
-  };
-
   const cancelarFormulario = async (event) => {
     event.preventDefault();
     setCancelError("");
@@ -700,7 +662,7 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
             className="w-full max-w-md rounded-[10px] border border-border bg-surface p-6 shadow-2xl"
           >
             <h2 className="text-xl font-bold text-text-main">
-              Cancelar formulario
+              Salir del formulario
             </h2>
             <p className="mt-2 text-sm text-text-soft">
               Confirma la contraseña del usuario conectado para salir.
@@ -756,23 +718,6 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
         }}
         className="mt-7 rounded-[10px] border border-border bg-surface p-5 shadow-none sm:p-7 lg:p-10"
       >
-        {draft && !draftDismissed && (
-          <div className="mb-6 flex flex-col justify-between gap-3 rounded-[8px] border border-border bg-neutral-bg px-4 py-3 text-sm text-action sm:flex-row sm:items-center">
-            Se restauró un borrador guardado automáticamente.
-            <button
-              type="button"
-              onClick={discardDraft}
-              className="font-bold underline cursor-pointer"
-            >
-              Descartar borrador
-            </button>
-          </div>
-        )}
-        {draftError && (
-          <div role="alert" className="mb-6 rounded-[8px] border border-danger bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">
-            {draftError}
-          </div>
-        )}
         {serverError && (
           <div role="alert" className="mb-6 whitespace-pre-line rounded-[8px] border border-danger bg-danger-bg px-4 py-3 text-sm font-semibold text-danger">
             {serverError}
@@ -884,6 +829,7 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
                   <option value="">Seleccione</option>
                   <option value="MASCULINO">Masculino</option>
                   <option value="FEMENINO">Femenino</option>
+                  <option value="PREFIERO_NO_DECIRLO">Prefiero no decirlo</option>
                 </Select>
               </Field>
               <Field label="Número de DPI *" error={errors.dpi?.message}>
@@ -1827,7 +1773,7 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
                   onClick={onCancelarClick}
                   className="rounded-[8px] border border-border px-5 py-3 cursor-pointer font-semibold text-text-main transition hover:bg-neutral-bg"
                 >
-                  {esEdicion ? "Cancelar edición" : "Cancelar registro"}
+                  {esEdicion ? "Salir del formulario" : "Salir del formulario"}
                 </button>
               )
             ) : (
@@ -1846,7 +1792,7 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
                     onClick={onCancelarClick}
                     className="rounded-[8px] border border-border px-5 py-3 cursor-pointer font-semibold text-danger transition hover:bg-danger-bg"
                   >
-                    Cancelar formulario
+                    Salir del formulario
                   </button>
                 )}
               </div>
@@ -2164,7 +2110,7 @@ function DynamicEducation({
         </div>
       </div>
       <div>
-        <SectionHeader title="Equipo o maquinaria que sabe operar" />
+        <SectionHeader title="Equipo, Software y/o maquinaria que sabe operar" />
         <Field label="Especifique">
           <Textarea
             registration={register("equipo_maquinaria")}

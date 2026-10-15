@@ -10,6 +10,7 @@ export const etiquetasEstadoCivil = {
 export const etiquetasSexo = {
   MASCULINO: "Masculino",
   FEMENINO: "Femenino",
+  PREFIERO_NO_DECIRLO: "Prefiero no decirlo",
 };
 // Etiquetas para el parentesco
 export const etiquetasParentesco = {

@@ -260,6 +260,7 @@ function EditarPatrono() {
                                     <option value="">Seleccione...</option>
                                     <option value="MASCULINO">Masculino</option>
                                     <option value="FEMENINO">Femenino</option>
+                                    <option value="PREFIERO_NO_DECIRLO">Prefiero no decirlo</option>
                                 </Select>
                             </Field>
 

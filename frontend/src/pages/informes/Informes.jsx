@@ -47,7 +47,7 @@ function estadoLabel(estado) {
   return ESTADOS.find(([value]) => value === estado)?.[1] || estado
 }
 
-function Badge({ estado }) {
+function Badge({ estado, texto }) {
   const color = {
     PENDIENTE: 'bg-pending-bg text-pending',
     EN_PROCESO: 'bg-pending-bg text-pending',
@@ -57,7 +57,7 @@ function Badge({ estado }) {
     INACTIVA: 'bg-danger-bg text-danger',
     OBSOLETA: 'bg-pending-bg text-pending',
   }[estado] || 'bg-neutral-bg text-text-main'
-  return <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${color}`}>{estadoLabel(estado)}</span>
+  return <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${color}`}>{texto || estadoLabel(estado)}</span>
 }
 
 function guardarBlob(blob, nombre) {
@@ -157,7 +157,7 @@ function PasoNav({ items, active, onChange }) {
   return (
     <nav
       aria-label="Secciones de documentos"
-      className={`grid gap-2 ${items.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2 xl:grid-cols-4'}`}
+      className={`grid gap-2 ${items.length <= 2 ? 'sm:grid-cols-2' : items.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2 xl:grid-cols-4'}`}
     >
       {items.map(({ id, label, description, icon: Icon, count }) => {
         const seleccionado = active === id
@@ -213,10 +213,12 @@ function Informes() {
   const [refresh, setRefresh] = useState(0)
   const [campos, setCampos] = useState([])
   const [busquedaCampo, setBusquedaCampo] = useState('')
-  const [nuevoTipo, setNuevoTipo] = useState({ clave: '', nombre: '', descripcion: '', empresa_id: '' })
+  const [nuevoTipo, setNuevoTipo] = useState({ clave: '', nombre: '', descripcion: '', empresa_id: '', visible_colaboradores: true })
   const [tipoSeleccionado, setTipoSeleccionado] = useState('')
+  const [seccionPlantillas, setSeccionPlantillas] = useState('tipos')
   const [nombreTipoEditado, setNombreTipoEditado] = useState('')
   const [descripcionTipoEditada, setDescripcionTipoEditada] = useState('')
+  const [visibleColaboradoresEditado, setVisibleColaboradoresEditado] = useState(true)
   const [versiones, setVersiones] = useState([])
   const [versionesDirectas, setVersionesDirectas] = useState([])
   const [archivo, setArchivo] = useState(null)
@@ -254,6 +256,14 @@ function Informes() {
     if (solicitudEnlace && nuevoTab !== activeTab) {
       navigate('/informes', { replace: true })
     }
+  }
+
+  const seleccionarTipo = (tipo) => {
+    setTipoSeleccionado(String(tipo.id))
+    setNombreTipoEditado(tipo.nombre)
+    setDescripcionTipoEditada(tipo.descripcion || '')
+    setVisibleColaboradoresEditado(tipo.visible_colaboradores)
+    setResultadoSubida(null)
   }
 
   useEffect(() => {
@@ -492,7 +502,7 @@ function Informes() {
       'Tipo de documento creado.',
     )
     if (resultado) {
-      setNuevoTipo({ clave: '', nombre: '', descripcion: '', empresa_id: '' })
+      setNuevoTipo({ clave: '', nombre: '', descripcion: '', empresa_id: '', visible_colaboradores: true })
       setRefresh((actual) => actual + 1)
     }
   }
@@ -833,10 +843,18 @@ function Informes() {
 
             {activeTab === 'plantillas' && (
               <div className="space-y-5">
-                <div className="grid items-start gap-5 xl:grid-cols-[minmax(300px,0.8fr)_minmax(420px,1.2fr)]">
+                <PasoNav
+                  active={seccionPlantillas}
+                  onChange={setSeccionPlantillas}
+                  items={[
+                    { id: 'tipos', label: 'Tipos de documento', description: 'Crear, editar y definir disponibilidad', icon: Settings2 },
+                    { id: 'versiones', label: 'Plantillas y versiones', description: 'Subir Word y administrar versiones', icon: FileText },
+                  ]}
+                />
+                {seccionPlantillas === 'tipos' && (
                 <Panel title="Tipos de documento">
                   {admin && (
-                    <label className="mb-4 block text-sm font-semibold">
+                    <label className="mb-4 block max-w-xl text-sm font-semibold">
                       Filtrar empresa
                       <div className="mt-1">
                         <SearchableSelect value={String(empresaFiltro)} onChange={setEmpresaFiltro} placeholder="Todas las empresas" options={[
@@ -848,26 +866,29 @@ function Informes() {
                   )}
                   <div className="space-y-2">
                     {tipos.map((tipo) => (
-                      <div key={tipo.id} className={`flex items-center justify-between gap-2 rounded-[8px] border p-3 ${tipoSeleccionado === String(tipo.id) ? 'border-action bg-accent-soft' : 'border-border'}`}>
-                        <button type="button" onClick={() => { setTipoSeleccionado(String(tipo.id)); setNombreTipoEditado(tipo.nombre); setDescripcionTipoEditada(tipo.descripcion || ''); setResultadoSubida(null) }} className="min-w-0 flex-1 text-left">
+                      <div key={tipo.id} className={`flex flex-col gap-3 rounded-[10px] border p-4 lg:flex-row lg:items-center lg:justify-between ${tipoSeleccionado === String(tipo.id) ? 'border-action bg-accent-soft' : 'border-border'}`}>
+                          <button type="button" onClick={() => seleccionarTipo(tipo)} className="min-w-0 flex-1 text-left">
                           <span className="block whitespace-normal break-words font-bold">{tipo.nombre}</span>
-                          <span className="text-xs text-text-soft">{tipo.empresa?.nombre_empresa || 'Global'} · {tipo.clave}</span>
+                            <span className="mt-1 block whitespace-normal break-words text-xs text-text-soft">{tipo.empresa?.nombre_empresa || 'Global'} · {tipo.clave}</span>
                         </button>
-                        <div className="flex items-center gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
                           <Badge estado={tipo.activo ? 'ACTIVA' : 'INACTIVA'} />
+                          {!tipo.visible_colaboradores && <Badge estado="INACTIVA" texto="Oculto a colaboradores" />}
                           {(admin || tipo.empresa_id) && (
                             <button type="button" disabled={cargando} onClick={async () => {
                               const actualizado = await ejecutar(() => actualizarTipoDocumento(tipo.id, { activo: !tipo.activo }), 'Se actualizó el tipo de documento.')
                               if (actualizado) setRefresh((actual) => actual + 1)
-                            }} className="min-h-9 cursor-pointer rounded-lg px-2 py-2 text-xs font-bold text-action">{tipo.activo ? 'Desactivar' : 'Activar'}</button>
+                            }} className="min-h-10 cursor-pointer rounded-lg border border-border px-3 py-2 text-xs font-bold text-action">{tipo.activo ? 'Desactivar' : 'Activar'}</button>
                           )}
+                          <button type="button" onClick={() => { seleccionarTipo(tipo); setSeccionPlantillas('versiones') }} className="min-h-10 cursor-pointer rounded-lg bg-action px-3 py-2 text-xs font-bold text-white transition hover:bg-ink">Administrar plantillas</button>
                         </div>
                       </div>
                     ))}
                     {!tipos.length && <p className="py-5 text-center text-sm text-text-soft">No hay tipos de documento.</p>}
                   </div>
-                  <form onSubmit={crearTipo} className="mt-6 space-y-3 border-t border-border pt-5">
-                    <h3 className="font-bold">Crear tipo de documento</h3>
+                  <details className="mt-6 rounded-[10px] border border-border">
+                    <summary className="cursor-pointer px-4 py-3 font-bold text-text-main">Crear tipo de documento</summary>
+                    <form onSubmit={crearTipo} className="space-y-3 border-t border-border p-4">
                     <input required maxLength={80} placeholder="Clave (ej. CONSTANCIA_LABORAL)" value={nuevoTipo.clave} onChange={(event) => setNuevoTipo({ ...nuevoTipo, clave: event.target.value })} className="w-full rounded-[8px] border border-border p-3" />
                     <input required maxLength={150} placeholder="Nombre visible" value={nuevoTipo.nombre} onChange={(event) => setNuevoTipo({ ...nuevoTipo, nombre: event.target.value })} className="w-full rounded-[8px] border border-border p-3" />
                     <textarea maxLength={5000} placeholder="Descripción opcional" value={nuevoTipo.descripcion} onChange={(event) => setNuevoTipo({ ...nuevoTipo, descripcion: event.target.value })} className="w-full rounded-[8px] border border-border p-3" rows={2} />
@@ -882,69 +903,114 @@ function Informes() {
                         ...empresas.map((empresa) => ({ value: String(empresa.id), label: empresa.nombre_empresa })),
                       ]} />
                     )}
-                    <button disabled={cargando} className="rounded-[8px] bg-action px-4 py-2.5 font-bold text-white disabled:opacity-50">Crear tipo</button>
-                  </form>
+                    <label className="flex items-center gap-2 text-sm font-semibold">
+                      <input type="checkbox" checked={nuevoTipo.visible_colaboradores} onChange={(event) => setNuevoTipo({ ...nuevoTipo, visible_colaboradores: event.target.checked })} className="h-4 w-4 accent-action" />
+                      Visible para colaboradores
+                      <span className="text-xs font-normal text-text-soft">(pueden verlo y solicitarlo)</span>
+                    </label>
+                      <button disabled={cargando} className="min-h-11 w-full rounded-[8px] bg-action px-4 py-2.5 font-bold text-white disabled:opacity-50 sm:w-auto">Crear tipo</button>
+                    </form>
+                  </details>
                   {tipoActivo && (admin || tipoActivo.empresa_id) && (
+                    <details className="mt-5 rounded-[10px] border border-border">
+                    <summary className="cursor-pointer px-4 py-3 font-bold text-text-main">Editar tipo seleccionado</summary>
                     <form onSubmit={async (event) => {
                       event.preventDefault()
                       const resultado = await ejecutar(
                         () => actualizarTipoDocumento(tipoActivo.id, {
                           nombre: nombreTipoEditado,
                           descripcion: descripcionTipoEditada || null,
+                          visible_colaboradores: visibleColaboradoresEditado,
                         }),
                         'Tipo de documento actualizado.',
                       )
                       if (resultado) setRefresh((actual) => actual + 1)
-                    }} className="mt-6 space-y-3 border-t border-border pt-5">
-                      <h3 className="font-bold">Editar tipo seleccionado</h3>
+                    }} className="space-y-3 border-t border-border p-4">
                       <input required maxLength={150} value={nombreTipoEditado} onChange={(event) => setNombreTipoEditado(event.target.value)} className="w-full rounded-[8px] border border-border p-3" />
                       <textarea maxLength={5000} value={descripcionTipoEditada} onChange={(event) => setDescripcionTipoEditada(event.target.value)} className="w-full rounded-[8px] border border-border p-3" rows={2} />
-                      <button disabled={cargando} className="rounded-[8px] border border-action px-4 py-2.5 font-bold text-action disabled:opacity-50">Guardar cambios</button>
+                      <label className="flex items-center gap-2 text-sm font-semibold">
+                        <input type="checkbox" checked={visibleColaboradoresEditado} onChange={(event) => setVisibleColaboradoresEditado(event.target.checked)} className="h-4 w-4 accent-action" />
+                        Visible para colaboradores
+                        <span className="text-xs font-normal text-text-soft">(pueden verlo y solicitarlo)</span>
+                      </label>
+                      <button disabled={cargando} className="min-h-11 w-full rounded-[8px] border border-action px-4 py-2.5 font-bold text-action disabled:opacity-50 sm:w-auto">Guardar cambios</button>
                     </form>
+                    </details>
                   )}
                 </Panel>
-
-                <div className="space-y-6">
-                  <Panel title={tipoActivo ? `Plantillas: ${tipoActivo.nombre}` : 'Plantillas'}>
+                )}
+                {seccionPlantillas === 'versiones' && (
+                  <Panel title="Plantillas y versiones">
+                    <div className="mb-5 max-w-2xl">
+                      <label className="block text-sm font-semibold text-text-soft">1. Selecciona el tipo de documento
+                        <div className="mt-1">
+                          <SearchableSelect
+                            value={tipoSeleccionado}
+                            onChange={(value) => {
+                              const tipo = tipos.find((item) => String(item.id) === String(value))
+                              if (tipo) {
+                                seleccionarTipo(tipo)
+                              } else {
+                                setTipoSeleccionado('')
+                                setVersiones([])
+                                setResultadoSubida(null)
+                              }
+                            }}
+                            placeholder="Buscar tipo de documento"
+                            options={tipos.map((tipo) => ({ value: String(tipo.id), label: `${tipo.nombre} · ${tipo.empresa?.nombre_empresa || 'Global'}` }))}
+                          />
+                        </div>
+                      </label>
+                    </div>
                     {tipoActivo && (
                       <>
                         {(admin || tipoActivo.empresa_id) ? (
-                          <form onSubmit={subirNuevaPlantilla} className="grid gap-3 rounded-[10px] bg-neutral-bg p-4 md:grid-cols-2">
-                          <label className="text-sm font-semibold">Plantilla Word (.docx, máximo 2 MB)
-                            <input required type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(event) => setArchivo(event.target.files?.[0] || null)} className="mt-2 block w-full text-sm" />
+                          <form onSubmit={subirNuevaPlantilla} className="space-y-4 rounded-[10px] border border-border p-4 sm:p-5">
+                          <div>
+                            <h3 className="font-bold text-text-main">2. Subir una nueva versión</h3>
+                            <p className="mt-1 text-sm text-text-soft">Cada carga crea una versión nueva; las anteriores se conservan.</p>
+                          </div>
+                          <div className="grid gap-4 lg:grid-cols-2">
+                          <label className="block text-sm font-semibold text-text-soft">Plantilla Word (.docx, máximo 2 MB)
+                            <input required type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(event) => setArchivo(event.target.files?.[0] || null)} className="mt-2 block min-h-11 w-full rounded-[8px] border border-border bg-bg p-2 text-sm text-text-main" />
                           </label>
-                          <label className="text-sm font-semibold">Notas del cambio
-                            <textarea value={notasCambio} onChange={(event) => setNotasCambio(event.target.value)} maxLength={5000} rows={2} className="mt-2 w-full rounded-[8px] border border-border p-3" />
+                          <label className="block text-sm font-semibold text-text-soft">Notas del cambio
+                            <textarea value={notasCambio} onChange={(event) => setNotasCambio(event.target.value)} maxLength={5000} rows={3} className="mt-2 w-full rounded-[8px] border border-border p-3 text-text-main" />
                           </label>
-                          <button disabled={cargando || !archivo} className="rounded-[8px] bg-action px-4 py-2.5 font-bold text-white disabled:opacity-50 md:col-span-2">Subir nueva versión inmutable</button>
+                          </div>
+                          <button disabled={cargando || !archivo} className="min-h-11 w-full rounded-[8px] bg-action px-4 py-2.5 font-bold text-white disabled:opacity-50 sm:w-auto">Subir nueva versión inmutable</button>
                           </form>
                         ) : (
                           <p className="rounded-[8px] bg-accent-soft p-4 text-sm text-action">Esta plantilla es global y está en modo de solo lectura. Solicita al Administrador RHCorp los cambios.</p>
                         )}
                         {resultadoSubida && (
-                          <div className="mt-4 rounded-[8px] border border-border p-4">
+                          <div className="mt-4 rounded-[10px] border border-border p-4 sm:p-5">
                             <h3 className="font-bold">Validación de la versión</h3>
-                            <p className="mt-2 text-sm text-text-soft">Marcadores reconocidos: {resultadoSubida.reconocidos.join(', ') || 'ninguno'}</p>
-                            {resultadoSubida.desconocidos.length > 0 && <ul className="mt-2 list-inside list-disc text-sm text-pending">{resultadoSubida.desconocidos.map((item) => <li key={item.marcador}>{`{${item.marcador}}`}{item.sugerencia ? ` — ¿Quisiste decir {${item.sugerencia}}?` : ''}</li>)}</ul>}
-                            {resultadoSubida.advertencias.map((item) => <p key={item} className="mt-2 text-sm text-pending">{item}</p>)}
+                            <p className="mt-2 break-words text-sm text-text-soft">Marcadores reconocidos: {resultadoSubida.reconocidos.join(', ') || 'ninguno'}</p>
+                            {resultadoSubida.desconocidos.length > 0 && <ul className="mt-2 list-inside list-disc break-words text-sm text-pending">{resultadoSubida.desconocidos.map((item) => <li key={item.marcador}>{`{${item.marcador}}`}{item.sugerencia ? ` — ¿Quisiste decir {${item.sugerencia}}?` : ''}</li>)}</ul>}
+                            {resultadoSubida.advertencias.map((item) => <p key={item} className="mt-2 break-words text-sm text-pending">{item}</p>)}
                           </div>
                         )}
-                        <div className="mt-5 space-y-2">
+                        <div className="mt-6 space-y-3">
+                          <h3 className="font-bold text-text-main">Historial de versiones</h3>
                           {versiones.map((version) => (
-                            <article key={version.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[8px] border border-border p-4">
-                              <div>
-                                <p className="font-bold">Versión {version.version} <Badge estado={version.estado} /></p>
+                            <article key={version.id} className="space-y-4 rounded-[10px] border border-border p-4 sm:p-5">
+                              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                              <div className="min-w-0">
+                                <p className="flex flex-wrap items-center gap-2 font-bold">Versión {version.version} <Badge estado={version.estado} /></p>
                                 <p className="mt-1 text-xs text-text-soft">{fecha(version.creada_en)} · {version.creada_por?.nombre || 'Usuario'}</p>
-                                {version.notas_cambio && <p className="mt-1 text-sm text-text-soft">{version.notas_cambio}</p>}
-                                <p className="mt-1 text-xs text-text-soft">Marcadores: {version.marcadores.join(', ') || 'ninguno'}</p>
+                                {version.notas_cambio && <p className="mt-2 whitespace-pre-line break-words text-sm text-text-soft">{version.notas_cambio}</p>}
+                                <p className="mt-2 break-words text-xs text-text-soft">Marcadores: {version.marcadores.join(', ') || 'ninguno'}</p>
                               </div>
-                              <div className="flex items-center gap-3">
-                                <button type="button" onClick={async () => {
-                                  const blob = await ejecutar(() => descargarPlantilla(version.id))
-                                  if (blob) guardarBlob(blob, version.nombre_archivo)
-                                }} className="min-h-10 cursor-pointer rounded-lg px-3 py-2 text-sm font-bold text-action">Descargar original</button>
-                                {(admin || tipoActivo.empresa_id) && (
-                                <>
+                              <button type="button" onClick={async () => {
+                                const blob = await ejecutar(() => descargarPlantilla(version.id))
+                                if (blob) guardarBlob(blob, version.nombre_archivo)
+                              }} className="min-h-11 w-full shrink-0 cursor-pointer rounded-lg border border-border px-3 py-2 text-sm font-bold text-action sm:w-auto">Descargar original</button>
+                              </div>
+                              {(admin || tipoActivo.empresa_id) && (
+                              <div className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center">
+                                <label className="min-w-0 flex-1 text-xs font-semibold text-text-soft">Estado de la versión
+                                  <div className="mt-1">
                                   <SearchableSelect value={version.estado} placeholder="Estado de versión" options={[
                                     { value: 'ACTIVA', label: 'Activa' },
                                     { value: 'INACTIVA', label: 'Inactiva' },
@@ -953,22 +1019,22 @@ function Informes() {
                                     const actualizado = await ejecutar(() => cambiarEstadoPlantilla(version.id, estado), 'Estado de versión actualizado.')
                                     if (actualizado) setRefresh((actual) => actual + 1)
                                   }} />
-                                  <button type="button" disabled={cargando} onClick={() => eliminarVersion(version)} aria-label={`Eliminar versión ${version.version}`} title="Retirar versión" className="inline-flex min-h-10 min-w-10 cursor-pointer items-center justify-center rounded-lg border border-danger p-2.5 text-danger transition hover:bg-danger-bg disabled:opacity-50">
-                                    <Trash2 className="h-4 w-4" />
-                                  </button>
-                                </>
-                                )}
+                                  </div>
+                                </label>
+                                <button type="button" disabled={cargando} onClick={() => eliminarVersion(version)} aria-label={`Eliminar versión ${version.version}`} title="Retirar versión" className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center self-end rounded-lg border border-danger p-2.5 text-danger transition hover:bg-danger-bg disabled:opacity-50 sm:self-auto">
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
                               </div>
+                              )}
                             </article>
                           ))}
-                          {!versiones.length && <p className="py-5 text-center text-sm text-text-soft">Aún no hay versiones. Sube el primer archivo Word.</p>}
+                          {!versiones.length && <p className="rounded-[10px] border border-dashed border-border px-5 py-8 text-center text-sm text-text-soft">Aún no hay versiones. Sube el primer archivo Word.</p>}
                         </div>
                       </>
                     )}
                     {!tipoActivo && <p className="text-sm text-text-soft">Selecciona un tipo de documento.</p>}
                   </Panel>
-                </div>
-              </div>
+                )}
               </div>
             )}
 

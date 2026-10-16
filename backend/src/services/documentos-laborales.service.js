@@ -160,11 +160,12 @@ async function obtenerTipo(tipoDocumentoId) {
   return tipo
 }
 
-async function obtenerTipoDisponible(tipoDocumentoId, empresaId, soloActivos = true) {
+async function obtenerTipoDisponible(tipoDocumentoId, empresaId, { soloActivos = true, soloVisibles = false } = {}) {
   const tipo = await prisma.tipoDocumentoLaboral.findFirst({
     where: {
       id: tipoDocumentoId,
       ...(soloActivos ? { activo: true } : {}),
+      ...(soloVisibles ? { visible_colaboradores: true } : {}),
       OR: [{ empresa_id: null }, { empresa_id: empresaId }],
     },
   })
@@ -219,6 +220,7 @@ function respuestaTipo(tipo) {
     nombre: tipo.nombre,
     descripcion: tipo.descripcion,
     activo: tipo.activo,
+    visible_colaboradores: tipo.visible_colaboradores,
     creado_en: tipo.creado_en,
   }
 }
@@ -383,6 +385,7 @@ class DocumentosLaboralesService {
     }
     const where = {
       ...(activo === undefined ? {} : { activo }),
+      ...(rol === COLABORADOR_ROLE ? { visible_colaboradores: true } : {}),
       ...(rol === ADMIN_ROLE && empresaFiltro === undefined
         ? {}
         : { OR: [{ empresa_id: null }, { empresa_id: empresaFiltro }] }),
@@ -417,6 +420,7 @@ class DocumentosLaboralesService {
         clave: data.clave,
         nombre: data.nombre,
         descripcion: data.descripcion || null,
+        visible_colaboradores: data.visible_colaboradores ?? true,
         creado_por_id: userId,
       },
       include: { empresa: { select: { id: true, nombre_empresa: true } } },
@@ -555,7 +559,7 @@ class DocumentosLaboralesService {
     if (usuario.rol.nombre !== COLABORADOR_ROLE || !usuario.empresa_id) {
       throw crearError('Solo un colaborador con empresa asignada puede solicitar documentos', 403)
     }
-    const tipo = await obtenerTipoDisponible(tipoDocumentoId, usuario.empresa_id)
+    const tipo = await obtenerTipoDisponible(tipoDocumentoId, usuario.empresa_id, { soloVisibles: true })
     const recursosHumanosIds = await obtenerUsuariosRH(usuario.empresa_id)
     if (!recursosHumanosIds.length) {
       throw crearError('No hay usuarios activos de Recursos Humanos asignados a tu empresa para recibir la solicitud', 409)
@@ -851,7 +855,7 @@ class DocumentosLaboralesService {
       await verificarEmpresa(userId, rol, empresaId)
     }
     await obtenerDestinoDocumento(destinoId, empresaId, rol)
-    const tipo = await obtenerTipoDisponible(tipoId, empresaId, false)
+    const tipo = await obtenerTipoDisponible(tipoId, empresaId, { soloActivos: false })
     const plantilla = await obtenerVersion(plantillaId, tipo.id)
     const datos = {
       solicitud,

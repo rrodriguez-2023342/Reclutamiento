@@ -12,12 +12,14 @@ export const crearTipoDocumentoSchema = z.object({
     .regex(/^[a-zA-Z0-9_-]+$/, 'Use solo letras, números, guiones y guiones bajos'),
   nombre: z.string().trim().min(2).max(150),
   descripcion: z.string().trim().max(5000).nullable().optional(),
+  visible_colaboradores: z.boolean().optional(),
 })
 
 export const actualizarTipoDocumentoSchema = z.object({
   nombre: z.string().trim().min(2).max(150).optional(),
   descripcion: z.string().trim().max(5000).nullable().optional(),
   activo: z.boolean().optional(),
+  visible_colaboradores: z.boolean().optional(),
 }).refine((data) => Object.keys(data).length > 0, 'Indique al menos un campo para actualizar')
 
 export const subirPlantillaSchema = z.object({

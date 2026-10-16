@@ -124,7 +124,7 @@ function SearchableSelect({ placeholder, value, options, onChange }) {
               e.stopPropagation();
               onChange("");
             }}
-            className="ml-1 cursor-pointer p-1 text-text-soft hover:text-text-main"
+            className="ml-1 flex min-h-9 min-w-9 cursor-pointer items-center justify-center p-2 text-text-soft hover:text-text-main"
           >
             <X className="h-4 w-4" />
           </button>
@@ -331,7 +331,7 @@ function Postulantes() {
 
       <section className="mt-7 overflow-hidden rounded-[10px] border border-border bg-surface shadow-none">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left">
+          <table className="responsive-actions-table w-full min-w-[980px] border-separate border-spacing-0 text-left">
             <thead>
               <tr className="text-base font-semibold text-text-soft">
                 <th className="border-b border-border px-7 py-5 font-semibold">
@@ -442,7 +442,7 @@ function Postulantes() {
             Mostrando {firstItem} a {lastItem} de{" "}
             {result.total.toLocaleString("es-GT")} postulantes
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
             <button
               type="button"
               disabled={loading || result.page <= 1}

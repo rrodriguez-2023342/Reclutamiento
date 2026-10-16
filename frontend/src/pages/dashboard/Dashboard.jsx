@@ -100,7 +100,7 @@ function Dashboard() {
           </h2>
           <Link
             to="/postulantes"
-            className="text-sm font-semibold text-action transition hover:text-action"
+            className="inline-flex min-h-10 items-center px-2 text-sm font-semibold text-action transition hover:text-action"
           >
             Ver todas
           </Link>

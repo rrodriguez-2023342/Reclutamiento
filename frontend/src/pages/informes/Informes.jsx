@@ -131,7 +131,7 @@ function SearchableSelect({ value, options, placeholder, onChange, disabled = fa
           className="min-w-0 flex-1 bg-transparent py-2.5 text-sm text-text-main outline-none placeholder:text-text-soft"
         />
         {selected && !disabled && (
-          <button type="button" aria-label="Limpiar selección" onClick={() => { onChange(''); setQuery(''); setOpen(false) }} className="rounded p-1 text-text-soft hover:bg-neutral-bg hover:text-text-soft">
+          <button type="button" aria-label="Limpiar selección" onClick={() => { onChange(''); setQuery(''); setOpen(false) }} className="flex min-h-10 min-w-10 cursor-pointer items-center justify-center rounded p-2.5 text-text-soft hover:bg-neutral-bg hover:text-text-soft">
             <X className="h-4 w-4" />
           </button>
         )}
@@ -850,7 +850,7 @@ function Informes() {
                     {tipos.map((tipo) => (
                       <div key={tipo.id} className={`flex items-center justify-between gap-2 rounded-[8px] border p-3 ${tipoSeleccionado === String(tipo.id) ? 'border-action bg-accent-soft' : 'border-border'}`}>
                         <button type="button" onClick={() => { setTipoSeleccionado(String(tipo.id)); setNombreTipoEditado(tipo.nombre); setDescripcionTipoEditada(tipo.descripcion || ''); setResultadoSubida(null) }} className="min-w-0 flex-1 text-left">
-                          <span className="block truncate font-bold">{tipo.nombre}</span>
+                          <span className="block whitespace-normal break-words font-bold">{tipo.nombre}</span>
                           <span className="text-xs text-text-soft">{tipo.empresa?.nombre_empresa || 'Global'} · {tipo.clave}</span>
                         </button>
                         <div className="flex items-center gap-2">
@@ -859,7 +859,7 @@ function Informes() {
                             <button type="button" disabled={cargando} onClick={async () => {
                               const actualizado = await ejecutar(() => actualizarTipoDocumento(tipo.id, { activo: !tipo.activo }), 'Se actualizó el tipo de documento.')
                               if (actualizado) setRefresh((actual) => actual + 1)
-                            }} className="text-xs font-bold text-action">{tipo.activo ? 'Desactivar' : 'Activar'}</button>
+                            }} className="min-h-9 cursor-pointer rounded-lg px-2 py-2 text-xs font-bold text-action">{tipo.activo ? 'Desactivar' : 'Activar'}</button>
                           )}
                         </div>
                       </div>
@@ -942,7 +942,7 @@ function Informes() {
                                 <button type="button" onClick={async () => {
                                   const blob = await ejecutar(() => descargarPlantilla(version.id))
                                   if (blob) guardarBlob(blob, version.nombre_archivo)
-                                }} className="text-sm font-bold text-action">Descargar original</button>
+                                }} className="min-h-10 cursor-pointer rounded-lg px-3 py-2 text-sm font-bold text-action">Descargar original</button>
                                 {(admin || tipoActivo.empresa_id) && (
                                 <>
                                   <SearchableSelect value={version.estado} placeholder="Estado de versión" options={[
@@ -953,7 +953,7 @@ function Informes() {
                                     const actualizado = await ejecutar(() => cambiarEstadoPlantilla(version.id, estado), 'Estado de versión actualizado.')
                                     if (actualizado) setRefresh((actual) => actual + 1)
                                   }} />
-                                  <button type="button" disabled={cargando} onClick={() => eliminarVersion(version)} aria-label={`Eliminar versión ${version.version}`} title="Retirar versión" className="rounded-lg border border-danger p-2 text-danger transition hover:bg-danger-bg disabled:opacity-50">
+                                  <button type="button" disabled={cargando} onClick={() => eliminarVersion(version)} aria-label={`Eliminar versión ${version.version}`} title="Retirar versión" className="inline-flex min-h-10 min-w-10 cursor-pointer items-center justify-center rounded-lg border border-danger p-2.5 text-danger transition hover:bg-danger-bg disabled:opacity-50">
                                     <Trash2 className="h-4 w-4" />
                                   </button>
                                 </>
@@ -1007,7 +1007,7 @@ function Informes() {
                       ]} /></div>
                     </label>
                   </div>
-                  <div className="max-h-[70vh] space-y-2 overflow-y-auto">
+                  <div className="max-h-[40dvh] space-y-2 overflow-y-auto sm:max-h-[70vh]">
                     {solicitudes.map((solicitud) => (
                       <button key={solicitud.id} type="button" onClick={() => { setSeleccionada(solicitud); setPreview(null); setPlantillaId('') }} className={`w-full rounded-[10px] border p-4 text-left transition ${seleccionada?.id === solicitud.id ? 'border-action bg-accent-soft shadow-sm' : 'border-border hover:border-border hover:bg-neutral-bg'}`}>
                         <span className="flex flex-wrap items-center justify-between gap-2"><strong className="text-text-main">{solicitud.colaborador.nombre}</strong><Badge estado={solicitud.estado} /></span>
@@ -1074,7 +1074,7 @@ function Informes() {
                   </label>
                 )}
                 <div className="overflow-x-auto">
-                  <table className="w-full min-w-[760px] text-left text-sm">
+                  <table className="responsive-actions-table w-full min-w-[760px] text-left text-sm">
                     <thead><tr className="border-b text-text-soft"><th className="p-3">Documento</th><th className="p-3">Destinatario</th><th className="p-3">Empresa</th><th className="p-3">Generado</th><th className="p-3">Acciones</th></tr></thead>
                     <tbody>{documentosGenerados.map((documento) => (
                       <tr key={documento.id} className="border-b border-border">
@@ -1084,8 +1084,8 @@ function Informes() {
                         <td className="p-3 font-mono tabular-nums">{fecha(documento.generado_en)}</td>
                         <td className="p-3">
                           <div className="flex items-center gap-3">
-                            <button type="button" onClick={() => descargar(documento.id, documento.nombre_archivo)} className="font-bold text-action">Descargar</button>
-                            <button type="button" disabled={cargando} onClick={() => eliminarDocumento(documento)} className="inline-flex items-center gap-1 rounded-lg border border-danger px-2.5 py-1.5 font-semibold text-danger transition hover:bg-danger-bg disabled:opacity-50">
+                            <button type="button" onClick={() => descargar(documento.id, documento.nombre_archivo)} className="min-h-10 cursor-pointer rounded-lg px-2 py-2 font-bold text-action">Descargar</button>
+                            <button type="button" disabled={cargando} onClick={() => eliminarDocumento(documento)} className="inline-flex min-h-10 items-center gap-1 rounded-lg border border-danger px-3 py-2.5 font-semibold text-danger transition hover:bg-danger-bg disabled:opacity-50">
                               <Trash2 className="h-3.5 w-3.5" />Eliminar
                             </button>
                           </div>
@@ -1123,7 +1123,7 @@ function Informes() {
                               <span className="block font-medium text-text-soft">{campo.descripcion}</span>
                               <code className="mt-1 inline-block rounded-md bg-neutral-bg px-2 py-1 text-xs font-semibold text-text-main">{`{${campo.marcador}}`}</code>
                             </span>
-                            <button type="button" onClick={() => copiarMarcador(campo.marcador)} className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs font-bold text-action transition hover:border-action hover:bg-accent-soft"><Copy className="h-3.5 w-3.5" />Copiar</button>
+                            <button type="button" onClick={() => copiarMarcador(campo.marcador)} className="inline-flex min-h-10 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-border px-4 py-2.5 text-xs font-bold text-action transition hover:border-action hover:bg-accent-soft"><Copy className="h-3.5 w-3.5" />Copiar</button>
                           </li>
                         ))}
                       </ul>

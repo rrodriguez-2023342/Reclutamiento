@@ -10,7 +10,7 @@ const initialsFromName = (name = "") =>
     .join("")
     .toUpperCase() || "US";
 
-function UserMenu({ compact = false, onClick }) {
+function UserMenu({ compact = false, hideTextMobile = false, onClick }) {
   const { user } = useAuth();
   const name = user?.nombre || "Colaborador";
   const role = user?.rol || "Sin rol";
@@ -21,7 +21,9 @@ function UserMenu({ compact = false, onClick }) {
       >
         {initialsFromName(name)}
       </div>
-      <div className="min-w-0 text-left">
+      <div
+        className={`min-w-0 text-left ${hideTextMobile ? "hidden sm:block" : ""}`}
+      >
         <p
           className={`truncate font-medium ${compact ? "text-sm text-white" : "text-sm text-text-main"}`}
         >

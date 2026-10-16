@@ -230,7 +230,7 @@ function Configuracion() {
 
             <section className="mt-7 overflow-hidden rounded-[10px] border border-border bg-surface shadow-none">
                 <div className="overflow-x-auto">
-                    <table className="w-full min-w-[860px] border-separate border-spacing-0 text-left">
+                    <table className="responsive-actions-table w-full min-w-[860px] border-separate border-spacing-0 text-left">
                         <thead>
                             <tr className="text-base font-semibold text-text-soft">
                                 <th className="border-b border-border px-7 py-5 font-semibold">
@@ -312,13 +312,15 @@ function Configuracion() {
                                                                         fila.empresa
                                                                             .id
                                                                     }
-                                                                    className="inline-flex items-center gap-1 rounded-full bg-neutral-bg px-3 py-1 text-sm font-semibold text-action"
+                                                                    className="inline-flex max-w-[240px] items-center gap-1 rounded-full bg-neutral-bg px-3 py-1 text-sm font-semibold text-action"
                                                                 >
-                                                                    <Building2 className="h-3.5 w-3.5" />
-                                                                    {
-                                                                        fila.empresa
-                                                                            .nombre_empresa
-                                                                    }
+                                                                    <Building2 className="h-3.5 w-3.5 shrink-0" />
+                                                                    <span className="min-w-0 whitespace-normal break-words">
+                                                                        {
+                                                                            fila.empresa
+                                                                                .nombre_empresa
+                                                                        }
+                                                                    </span>
                                                                 </span>
                                                             ),
                                                         )}
@@ -354,7 +356,7 @@ function Configuracion() {
                     role="dialog"
                     aria-modal="true"
                 >
-                    <div className="w-full max-w-lg rounded-[10px] border border-border bg-surface p-6 shadow-2xl">
+                    <div className="max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-[10px] border border-border bg-surface p-6 shadow-2xl">
                         <h2 className="text-xl font-bold text-text-main">
                             Asignar empresas
                         </h2>
@@ -426,7 +428,7 @@ function Configuracion() {
                             {seleccion.length} empresa(s) seleccionada(s)
                         </p>
 
-                        <div className="mt-5 flex justify-end gap-3">
+                        <div className="mt-5 flex flex-wrap justify-end gap-3">
                             <button
                                 type="button"
                                 onClick={() => setModalUser(null)}

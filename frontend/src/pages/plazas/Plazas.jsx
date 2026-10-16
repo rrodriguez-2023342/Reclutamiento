@@ -237,10 +237,10 @@ function Plazas() {
                 </span>
               </div>
               <div className="mt-6">
-                <h2 className="text-[22px] font-bold tracking-[-0.035em] text-text-main">
+                <h2 className="break-words text-[22px] font-bold tracking-[-0.035em] text-text-main">
                   {plaza.nombre}
                 </h2>
-                <p className="mt-1 line-clamp-1 text-base text-text-soft">
+                <p className="mt-1 whitespace-normal break-words text-base text-text-soft">
                   {plaza.descripcion || "Sin descripción"}
                 </p>
               </div>
@@ -267,7 +267,7 @@ function Plazas() {
           Mostrando {firstItem} a {lastItem} de{" "}
           {plazas.length.toLocaleString("es-GT")} plazas
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
           <button
             type="button"
             disabled={loading || page <= 1}

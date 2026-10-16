@@ -576,7 +576,7 @@ function DetalleUsuario() {
                                 <button
                                     type="button"
                                     onClick={() => setShowHistorialEmpresa(true)}
-                                    className="flex cursor-pointer items-center gap-2 rounded-[8px] bg-action px-4 py-2 text-sm font-bold text-white transition hover:bg-ink"
+                                    className="flex min-h-10 cursor-pointer items-center gap-2 rounded-[8px] bg-action px-4 py-2.5 text-sm font-bold text-white transition hover:bg-ink"
                                 >
                                     <Clock className="h-4 w-4" />
                                     Ver historial
@@ -614,7 +614,7 @@ function DetalleUsuario() {
                                 <button
                                     type="button"
                                     onClick={() => setShowHistorial(true)}
-                                    className="flex cursor-pointer items-center gap-2 rounded-[8px] bg-action px-4 py-2 text-sm font-bold text-white transition hover:bg-ink"
+                                    className="flex min-h-10 cursor-pointer items-center gap-2 rounded-[8px] bg-action px-4 py-2.5 text-sm font-bold text-white transition hover:bg-ink"
                                 >
                                     <Clock className="h-4 w-4" />
                                     Ver historial
@@ -814,8 +814,9 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
                     </h2>
                     <button
                         type="button"
+                        aria-label="Cerrar"
                         onClick={onClose}
-                        className="cursor-pointer text-text-soft transition hover:text-text-main"
+                        className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-soft transition hover:text-text-main"
                     >
                         ✕
                     </button>
@@ -830,7 +831,7 @@ function HistorialSueldoModal({ usuarioId, onClose }) {
                             No hay registros de cambios de sueldo base.
                         </p>
                     ) : (
-                        <table className="w-full border-separate border-spacing-0 text-left text-sm">
+                        <table className="w-full min-w-[720px] border-separate border-spacing-0 text-left text-sm">
                             <thead>
                                 <tr className="text-base font-semibold text-text-soft">
                                     <th className="border-b border-border px-4 py-3">Fecha</th>
@@ -956,8 +957,9 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
                     </h2>
                     <button
                         type="button"
+                        aria-label="Cerrar"
                         onClick={onClose}
-                        className="cursor-pointer text-text-soft transition hover:text-text-main"
+                        className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-soft transition hover:text-text-main"
                     >
                         ✕
                     </button>
@@ -972,7 +974,7 @@ function HistorialEmpresaModal({ usuarioId, onClose }) {
                             No hay registros de cambios de empresa.
                         </p>
                     ) : (
-                        <table className="w-full border-separate border-spacing-0 text-left text-sm">
+                        <table className="w-full min-w-[560px] border-separate border-spacing-0 text-left text-sm">
                             <thead>
                                 <tr className="text-base font-semibold text-text-soft">
                                     <th className="border-b border-border px-4 py-3">Fecha</th>

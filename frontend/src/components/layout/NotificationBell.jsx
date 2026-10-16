@@ -105,7 +105,7 @@ function NotificationBell() {
               type="button"
               onClick={marcarTodas}
               disabled={!noLeidas || cargando}
-              className="flex items-center gap-1 text-xs font-medium text-action disabled:opacity-50"
+              className="flex min-h-10 items-center gap-1 px-1 text-xs font-medium text-action disabled:opacity-50"
             >
               <CheckCheck className="h-4 w-4" />
               Marcar todas leídas

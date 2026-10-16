@@ -112,7 +112,7 @@ function ResetPassword() {
           <button
             type="button"
             onClick={() => navigate("/login")}
-            className="text-sm font-medium cursor-pointer text-action transition hover:text-action"
+            className="inline-flex min-h-10 cursor-pointer items-center px-2 text-sm font-medium text-action transition hover:text-action"
           >
             Volver al login
           </button>

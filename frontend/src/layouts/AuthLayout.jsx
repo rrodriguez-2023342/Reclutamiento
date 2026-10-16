@@ -2,9 +2,9 @@ import { BriefcaseBusiness } from 'lucide-react'
 
 function AuthLayout({ children }) {
   return (
-    <main className="flex h-dvh items-center justify-center overflow-hidden bg-bg px-4 py-4 font-sans text-text-main sm:px-8 sm:py-6">
-      <section className="grid h-full w-full max-w-[1296px] overflow-hidden rounded-[10px] border border-border bg-surface shadow-none lg:grid-cols-2">
-        <div className="flex min-h-0 flex-col px-7 py-6 sm:px-12 sm:py-10 lg:px-16 lg:py-14">
+    <main className="flex min-h-dvh items-center justify-center overflow-x-hidden bg-bg px-4 py-6 font-sans text-text-main sm:px-8">
+      <section className="grid w-full max-w-[1296px] rounded-[10px] border border-border bg-surface shadow-none lg:grid-cols-2">
+        <div className="flex flex-col px-7 py-6 sm:px-12 sm:py-10 lg:px-16 lg:py-14">
           {children}
         </div>
         <aside className="relative hidden items-center justify-center overflow-hidden bg-ink px-10 py-10 text-center text-white lg:flex">

@@ -11,7 +11,7 @@ function Header({
   onOpenProfile,
 }) {
   return (
-    <header className="sticky top-0 z-10 flex h-[68px] items-center justify-between gap-4 border-b border-border bg-surface px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-10 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 border-b border-border bg-surface px-4 py-3 sm:flex sm:h-[68px] sm:justify-between sm:gap-4 sm:py-0 sm:px-6 lg:px-8">
       <div className="flex min-w-0 items-center gap-3">
         {showSidebarToggle && (
           <button
@@ -30,12 +30,12 @@ function Header({
             )}
           </button>
         )}
-        <h1 className="truncate text-xl font-semibold tracking-[-0.035em] text-ink sm:text-2xl">
+        <h1 className="min-w-0 break-words text-base font-semibold leading-tight tracking-[-0.035em] text-ink sm:truncate sm:text-2xl">
           {title}
         </h1>
       </div>
       {headerSearch && (
-        <label className="flex w-full min-w-0 max-w-[170px] items-center gap-2 rounded-[8px] border border-border bg-bg px-3 py-2.5 text-text-soft sm:max-w-[260px] xl:max-w-[360px]">
+        <label className="col-span-2 flex w-full min-w-0 items-center gap-2 rounded-[8px] border border-border bg-bg px-3 py-2.5 text-text-soft sm:col-span-1 sm:ml-auto sm:w-full sm:max-w-[260px] xl:max-w-[360px]">
           <Search className="h-5 w-5 shrink-0" />
           <input
             value={headerSearch.value}
@@ -47,8 +47,8 @@ function Header({
       )}
       <div className="flex shrink-0 items-center gap-2 sm:gap-5">
         <NotificationBell />
-        <div className="hidden border-l border-border pl-5 sm:block">
-          <UserMenu onClick={onOpenProfile} />
+        <div className="min-w-0 sm:border-l sm:border-border sm:pl-5">
+          <UserMenu onClick={onOpenProfile} hideTextMobile />
         </div>
       </div>
     </header>

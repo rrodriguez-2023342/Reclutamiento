@@ -90,7 +90,7 @@ function Login() {
           </label>
 
           <div className="flex flex-col gap-4 pt-0.5 text-sm sm:flex-row sm:items-center sm:justify-between sm:text-base">
-            <label className="flex w-fit cursor-pointer items-center gap-2 text-text-soft">
+            <label className="flex min-h-10 w-fit cursor-pointer items-center gap-2 py-1.5 text-text-soft">
               <input
                 className="h-4 w-4 accent-action"
                 defaultChecked

@@ -210,7 +210,7 @@ export function PasswordInput({
           type="button"
           onClick={() => setShow((v) => !v)}
           tabIndex={-1}
-          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-text-soft transition hover:text-text-main cursor-pointer"
+          className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 text-text-soft transition hover:text-text-main cursor-pointer"
         >
           {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
         </button>
@@ -305,7 +305,7 @@ function SearchableSelectInner({
           <button
             type="button"
             onClick={handleClear}
-            className="ml-1 cursor-pointer p-1 text-text-soft hover:text-text-main"
+            className="ml-1 flex min-h-9 min-w-9 cursor-pointer items-center justify-center p-2 text-text-soft hover:text-text-main"
           >
             <X className="h-4 w-4" />
           </button>

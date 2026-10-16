@@ -735,7 +735,7 @@ function EditarUsuario() {
                             </label>
                         </div>
 
-                        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
                             <button
                                 type="button"
                                 onClick={() => navigate("/colaboradores")}

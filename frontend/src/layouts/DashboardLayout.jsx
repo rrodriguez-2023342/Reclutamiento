@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Header from '../components/layout/Header.jsx'
 import ProfilePanel from '../components/layout/ProfilePanel.jsx'
 import Sidebar from '../components/layout/Sidebar.jsx'
@@ -10,6 +10,13 @@ function DashboardLayout({ children, title, headerSearch, locked = false }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 1024)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const openProfile = () => setIsProfileOpen(true)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)')
+    const sincronizar = () => setIsSidebarOpen(mq.matches)
+    mq.addEventListener('change', sincronizar)
+    return () => mq.removeEventListener('change', sincronizar)
+  }, [])
 
   return (
     <div className="min-h-dvh overflow-x-hidden bg-bg font-sans text-text-main">

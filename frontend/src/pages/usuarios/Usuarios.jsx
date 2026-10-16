@@ -288,7 +288,7 @@ function Usuarios() {
             )}
 
             <section className="rounded-[10px] border border-border bg-surface p-5 shadow-none sm:p-6">
-                <div className="grid gap-4 md:grid-cols-[200px_240px_180px_auto_auto]">
+                <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-[200px_240px_180px_auto_auto]">
                     <div className="relative">
                         <select
                             aria-label="Filtrar por empresa"
@@ -360,7 +360,7 @@ function Usuarios() {
 
             <section className="mt-7 overflow-hidden rounded-[10px] border border-border bg-surface shadow-none">
                 <div className="overflow-x-auto">
-                    <table className="w-full min-w-[1100px] border-separate border-spacing-0 text-left">
+                    <table className="responsive-actions-table w-full min-w-[1100px] border-separate border-spacing-0 text-left">
                         <thead>
                             <tr className="text-base font-semibold text-text-soft">
                                 <th className="border-b border-border px-6 py-5 font-semibold">
@@ -508,7 +508,7 @@ function Usuarios() {
                     Mostrando {firstItem} a {lastItem} de{" "}
                     {result.total.toLocaleString("es-GT")} colaboradores
                 </p>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
                     <button
                         type="button"
                         disabled={loading || result.page <= 1}

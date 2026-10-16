@@ -118,7 +118,7 @@ function AddButton({ children, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-2 cursor-pointer text-sm font-bold text-action transition hover:text-action"
+      className="inline-flex min-h-11 items-center gap-2 px-2 -mx-2 cursor-pointer text-sm font-bold text-action transition hover:text-action"
     >
       <Plus className="h-4 w-4" />
       {children}
@@ -659,7 +659,7 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-ink/50 p-4">
           <form
             onSubmit={cancelarFormulario}
-            className="w-full max-w-md rounded-[10px] border border-border bg-surface p-6 shadow-2xl"
+            className="max-h-[85dvh] w-full max-w-md overflow-y-auto rounded-[10px] border border-border bg-surface p-6 shadow-2xl"
           >
             <h2 className="text-xl font-bold text-text-main">
               Salir del formulario
@@ -681,7 +681,7 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
                 className="h-12 w-full rounded-[8px] border border-border px-4 outline-none focus:border-action"
               />
             </label>
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
               <button
                 type="button"
                 onClick={() => {
@@ -1683,14 +1683,14 @@ function FormularioPostulante({ postulanteId, isPublic = false }) {
                           : "PDF (máx. 2 MB)"}
                       </span>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex min-w-0 flex-wrap items-center gap-3">
                       {existente && !archivoNuevo && (
-                        <span className="text-xs text-success font-medium truncate max-w-[200px]">
+                        <span className="max-w-full break-all text-xs font-medium text-success sm:max-w-[200px]">
                           {existente.nombre_archivo}
                         </span>
                       )}
                       {archivoNuevo && (
-                        <span className="text-xs text-action font-medium truncate max-w-[200px]">
+                        <span className="max-w-full break-all text-xs font-medium text-action sm:max-w-[200px]">
                           Nuevo: {archivoNuevo.name}
                         </span>
                       )}

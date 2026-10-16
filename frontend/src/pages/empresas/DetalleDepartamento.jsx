@@ -196,7 +196,7 @@ function DetalleDepartamento() {
                         <button
                             type="button"
                             onClick={() => navigate("/empresas/departamentos")}
-                            className="ml-3 cursor-pointer underline"
+                            className="ml-3 inline-flex min-h-10 cursor-pointer items-center px-1 underline"
                         >
                             Volver a departamentos
                         </button>

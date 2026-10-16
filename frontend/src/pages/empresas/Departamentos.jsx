@@ -265,7 +265,7 @@ function Departamentos() {
                     </div>
 
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left">
+                        <table className="responsive-actions-table w-full min-w-[980px] border-separate border-spacing-0 text-left">
                             <thead>
                                 <tr className="text-base font-semibold text-text-soft">
                                     <th className="border-b border-border px-7 py-5 font-semibold">
@@ -324,7 +324,7 @@ function Departamentos() {
                                                 {departamento.nombre}
                                             </td>
                                             <td className="border-b border-border px-5 py-6 text-text-soft">
-                                                <span className="block max-w-[360px] truncate">
+                                                <span className="block max-w-[360px] whitespace-normal break-words">
                                                     {departamento.descripcion || "—"}
                                                 </span>
                                             </td>
@@ -379,7 +379,7 @@ function Departamentos() {
                             Mostrando {firstItem} a {lastItem} de{" "}
                             {result.total.toLocaleString("es-GT")} departamentos
                         </p>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
                             <button
                                 type="button"
                                 disabled={loading || result.page <= 1}

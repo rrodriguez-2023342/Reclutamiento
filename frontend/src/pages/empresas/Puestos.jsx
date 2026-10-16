@@ -267,7 +267,7 @@ function Puestos() {
 
                 <div className="rounded-[10px] border border-border bg-surface shadow-none">
                     <div className="border-b border-border p-4 sm:px-6">
-                        <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
                             <div className="w-full max-w-[200px]">
                                 <SelectField
                                     ariaLabel="Estado de puestos"
@@ -324,7 +324,7 @@ function Puestos() {
                     </div>
 
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left">
+                        <table className="responsive-actions-table w-full min-w-[980px] border-separate border-spacing-0 text-left">
                             <thead>
                                 <tr className="text-base font-semibold text-text-soft">
                                     <th className="border-b border-border px-7 py-5 font-semibold">
@@ -395,7 +395,7 @@ function Puestos() {
                                                 {puesto.departamento?.nombre || "—"}
                                             </td>
                                             <td className="border-b border-border px-5 py-6 text-text-soft">
-                                                <span className="block max-w-[280px] truncate">
+                                                <span className="block max-w-[280px] whitespace-normal break-words">
                                                     {puesto.descripcion || "—"}
                                                 </span>
                                             </td>
@@ -446,7 +446,7 @@ function Puestos() {
                             Mostrando {firstItem} a {lastItem} de{" "}
                             {result.total.toLocaleString("es-GT")} puestos
                         </p>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
                             <button
                                 type="button"
                                 disabled={loading || result.page <= 1}

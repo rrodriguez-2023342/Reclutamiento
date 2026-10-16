@@ -195,7 +195,7 @@ function Modal({ action, onClose, onConfirm, loading, motivo, setMotivo }) {
       role="dialog"
       aria-modal="true"
     >
-      <div className="w-full max-w-md rounded-[10px] border border-border bg-surface p-6 shadow-2xl">
+      <div className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-[10px] border border-border bg-surface p-6 shadow-2xl">
         <h2 className="text-xl font-bold text-text-main">{action.label}</h2>
         <p className="mt-2 text-text-soft">{action.description}</p>
         {pideMotivo && (
@@ -1032,7 +1032,7 @@ function DocumentosSection({ p, onReload }) {
                     {etiquetasTipoDocumento[tipo]}
                   </p>
                   {doc ? (
-                    <p className="mt-0.5 text-xs text-text-soft truncate max-w-[300px]">
+                    <p className="mt-0.5 max-w-full break-all text-xs text-text-soft sm:max-w-[300px]">
                       {doc.nombre_archivo} ·{" "}
                       {(doc.tamano_bytes / 1024).toFixed(0)} KB
                     </p>
@@ -1041,7 +1041,7 @@ function DocumentosSection({ p, onReload }) {
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex flex-wrap items-center gap-2">
                 {doc && esFoto && doc.mime_type?.startsWith("image/") && (
                   <span className="text-xs text-text-soft italic">
                     Foto cargada
@@ -1424,7 +1424,7 @@ function DetallePostulante() {
             </button>
           ))}
         </nav>
-        <section className="min-h-[430px] rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-10">
+        <section className="min-h-[430px] min-w-0 rounded-[10px] border border-border bg-surface p-6 shadow-none sm:p-10">
           <SectionContent section={section} p={p} onReload={load} />
           <div className="mt-10 rounded-[10px] bg-neutral-bg px-5 py-4 text-sm text-text-soft">
             Esta solicitud fue digitalizada por{" "}
@@ -1491,8 +1491,9 @@ function HistorialRechazoModal({ postulanteId, onClose }) {
           </h2>
           <button
             type="button"
+            aria-label="Cerrar"
             onClick={onClose}
-            className="cursor-pointer text-text-soft transition hover:text-text-main"
+            className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-text-soft transition hover:text-text-main"
           >
             ✕
           </button>
@@ -1507,7 +1508,7 @@ function HistorialRechazoModal({ postulanteId, onClose }) {
               No hay registros de rechazos.
             </p>
           ) : (
-            <table className="w-full border-separate border-spacing-0 text-left text-sm">
+            <table className="w-full min-w-[480px] border-separate border-spacing-0 text-left text-sm">
               <thead>
                 <tr className="text-base font-semibold text-text-soft">
                   <th className="border-b border-border px-4 py-3">
@@ -1527,7 +1528,7 @@ function HistorialRechazoModal({ postulanteId, onClose }) {
                     <td className="border-b border-border px-4 py-3 whitespace-nowrap">
                       {formatDate(item.fecha_rechazo)}
                     </td>
-                    <td className="border-b border-border px-4 py-3 max-w-[200px] truncate">
+                    <td className="max-w-[200px] whitespace-normal break-words border-b border-border px-4 py-3">
                       {item.motivo}
                     </td>
                     <td className="border-b border-border px-4 py-3">

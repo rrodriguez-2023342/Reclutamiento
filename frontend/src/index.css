@@ -151,3 +151,44 @@ nav[aria-label="Navegación principal"] > a[href="/configuracion"] {
   padding-top: 12px;
   border-top: 1px solid rgb(255 255 255 / 12%);
 }
+
+div.overflow-x-auto,
+div.overflow-auto,
+nav.overflow-x-auto {
+  scrollbar-color: #6B7A8F #EEF1F4;
+  scrollbar-width: thin;
+}
+
+div.overflow-x-auto::-webkit-scrollbar,
+div.overflow-auto::-webkit-scrollbar,
+nav.overflow-x-auto::-webkit-scrollbar {
+  height: 10px;
+}
+
+div.overflow-x-auto::-webkit-scrollbar-track,
+div.overflow-auto::-webkit-scrollbar-track,
+nav.overflow-x-auto::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: #EEF1F4;
+}
+
+div.overflow-x-auto::-webkit-scrollbar-thumb,
+div.overflow-auto::-webkit-scrollbar-thumb,
+nav.overflow-x-auto::-webkit-scrollbar-thumb {
+  border: 2px solid #EEF1F4;
+  border-radius: 999px;
+  background: #6B7A8F;
+}
+
+.responsive-actions-table th:last-child,
+.responsive-actions-table td:last-child:not([colspan]) {
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  background: #FFFFFF;
+  box-shadow: -8px 0 12px -10px rgb(30 58 95 / 55%);
+}
+
+.responsive-actions-table thead th:last-child {
+  z-index: 2;
+}

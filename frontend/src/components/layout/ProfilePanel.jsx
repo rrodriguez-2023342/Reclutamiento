@@ -41,7 +41,8 @@ function ProfilePanel({ isOpen, onClose }) {
       )}
       <aside
         aria-hidden={!isOpen}
-        className={`fixed inset-y-0 right-0 z-40 flex w-full max-w-[390px] flex-col border-l border-border bg-surface p-6 transition-transform duration-300 sm:p-7 ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+        inert={!isOpen}
+        className={`fixed inset-y-0 right-0 z-40 flex w-full max-w-[390px] flex-col overflow-y-auto border-l border-border bg-surface p-6 transition-transform duration-300 sm:p-7 ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold tracking-[-0.03em] text-ink">
